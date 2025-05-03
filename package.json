@@ -1,0 +1,50 @@
+{
+  "name": "agoramind",
+  "version": "1.0.0",
+  "description": "A collaborative philosophical dialogue platform",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "philosophy",
+    "dialogue",
+    "AI",
+    "collaboration",
+    "knowledge"
+  ],
+  "author": "",
+  "license": "MIT",
+  "type": "commonjs",
+  "dependencies": {
+    "@headlessui/react": "^1.7.17",
+    "@langchain/openai": "^0.0.27",
+    "axios": "^1.6.7",
+    "dotenv": "^16.3.1",
+    "langchain": "^0.1.9",
+    "mongodb": "^6.3.0",
+    "mongoose": "^8.1.1",
+    "next": "14.0.4",
+    "next-auth": "^4.24.5",
+    "openai": "^4.24.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "socket.io": "^4.7.2",
+    "socket.io-client": "^4.7.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.5",
+    "@types/react": "^18.2.45",
+    "@types/react-dom": "^18.2.18",
+    "autoprefixer": "^10.4.16",
+    "eslint": "^8.56.0",
+    "eslint-config-next": "14.0.4",
+    "postcss": "^8.4.32",
+    "tailwindcss": "^3.4.0",
+    "typescript": "^5.3.3"
+  }
+} 
+ 

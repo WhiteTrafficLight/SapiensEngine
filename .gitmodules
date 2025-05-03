@@ -1,0 +1,3 @@
+[submodule "agoramind"]
+	path = agoramind
+	url = https://github.com/WhiteTrafficLight/AgoraMind.git
