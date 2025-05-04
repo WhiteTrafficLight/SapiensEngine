@@ -1,30 +1,39 @@
 # api_server.py 수정
-from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect, BackgroundTasks
+from fastapi import FastAPI, Depends, HTTPException, Request, WebSocket, WebSocketDisconnect, BackgroundTasks, Body, status, Form, File, UploadFile
+from fastapi.responses import HTMLResponse, JSONResponse, FileResponse
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from typing import List, Dict, Optional, Any, Union
+import asyncio
+import os
+import json
+import time
+import logging
+import uuid
+import random  # 랜덤 선택을 위한 import 추가
+from datetime import datetime
 from pydantic import BaseModel
 from typing import Optional, List, Dict, Any, Union, Set
-import logging
 import uvicorn
-import os
 import yaml
 from fastapi.staticfiles import StaticFiles
 import openai
 import requests
 from slugify import slugify
-import time
-import asyncio
-import random
 import aiohttp
 from uuid import uuid4
-from datetime import datetime
 from types import SimpleNamespace
-import json
+import re
 
 # Sapiens Engine 임포트
 from sapiens_engine.core.llm_manager import LLMManager
 from sapiens_engine.core.config_loader import ConfigLoader
 
-# NPC 임포트 부분 제거하고 직접 필요한 설명 생성
+# tiktoken 추가 - 토큰 계산용
+try:
+    import tiktoken
+except ImportError:
+    logger.warning("tiktoken 패키지를 찾을 수 없습니다. 근사치 토큰 계산을 사용합니다.")
 
 # 로깅 설정
 logging.basicConfig(level=logging.DEBUG)
@@ -93,12 +102,14 @@ class ChatRoomCreationRequest(BaseModel):
 class ChatGenerateRequest(BaseModel):
     npc_descriptions: Optional[str] = None
     npcs: Optional[List[str]] = []  # 필수 필드를 Optional로 설정
+    room_id: str  # 룸 ID 필드 추가
+    user_message: str  # 사용자 메시지 필드 추가
     topic: Optional[str] = ""
     context: Optional[str] = ""
-    previous_dialogue: Optional[str] = ""
+    previous_dialogue: Optional[str] = ""  # 하위 호환성을 위해 유지
     llm_provider: Optional[str] = "openai"
     llm_model: Optional[str] = "gpt-4o"
-    api_key: Optional[str] = None  # 클라이언트에서 받은 API 키
+    api_key: Optional[str] = None
 
 # 응답 모델 정의
 class ChatResponse(BaseModel):
@@ -399,6 +410,24 @@ async def stop_auto_conversation(room_id: str):
         logger.warning(f"No active auto conversation found for room {room_id}")
         return {"status": "not_found", "room_id": room_id, "message": "No active auto conversation found"}
 
+@app.get("/api/auto-conversation/status")
+async def check_auto_conversation_status(room_id: str):
+    """자동 대화 상태 확인 - Query parameter로 room_id를 받음"""
+    logger.info(f"Checking auto conversation status for room {room_id}")
+    
+    if room_id in active_auto_conversations:
+        is_active = active_auto_conversations[room_id].get("active", False)
+        logger.info(f"Room {room_id} auto conversation status: {'active' if is_active else 'inactive'}")
+        return {
+            "room_id": room_id,
+            "active": is_active,
+            "npcs": active_auto_conversations[room_id].get("npcs", []),
+            "topic": active_auto_conversations[room_id].get("topic", "")
+        }
+    else:
+        logger.info(f"Room {room_id} has no auto conversation record")
+        return {"room_id": room_id, "active": False}
+
 # 자동 대화 생성 루프 함수
 async def auto_conversation_loop(room_id: str, npcs: List[str], topic: str, delay_range: List[int]):
     """백그라운드에서 실행되는 자동 대화 생성 루프"""
@@ -417,6 +446,41 @@ async def auto_conversation_loop(room_id: str, npcs: List[str], topic: str, dela
         # 이전 대화 메시지를 보관할 대화 기록
         dialogue_history = ""
         
+        # 누가 언급되었는지 추적하는 변수
+        mentioned_npc = None
+        # 사용자 질문을 추적하는 변수
+        last_user_question = None
+        # 사용자 질문에 대답했는지 추적
+        user_question_answered = True
+        
+        # 룸 데이터 가져오기 - 사용자 정보 포함
+        room_data = await get_room_data(room_id)
+        
+        # 사용자 이름 매핑 초기화 (sender ID -> username)
+        user_name_mapping = {}
+        
+        # 방에 있는 사용자 정보 추출
+        if room_data and 'participants' in room_data and 'users' in room_data['participants']:
+            users = room_data['participants'].get('users', [])
+            logger.info(f"룸 {room_id}의 사용자: {users}")
+            
+            # 사용자 ID -> 이름 매핑 구성
+            for user in users:
+                if isinstance(user, dict) and 'id' in user and 'username' in user:
+                    user_name_mapping[user['id']] = user['username']
+                elif isinstance(user, str):
+                    # ID만 있는 경우 임시 이름 사용
+                    user_name_mapping[user] = f"User_{user[:4]}"
+        
+        logger.info(f"사용자 이름 매핑: {user_name_mapping}")
+        
+        # 컨텍스트에 사용자 정보 추가
+        user_context = ""
+        if user_name_mapping:
+            user_context = "현재 대화에 참여 중인 사용자:\n"
+            for user_id, username in user_name_mapping.items():
+                user_context += f"- {username}\n"
+        
         # 루프 실행 - active 플래그가 켜져 있는 동안 계속 실행
         while active_auto_conversations.get(room_id, {}).get("active", False) and message_count < max_messages:
             try:
@@ -431,35 +495,123 @@ async def auto_conversation_loop(room_id: str, npcs: List[str], topic: str, dela
                     logger.warning(f"Not enough NPCs for auto conversation in room {room_id}")
                     break
                 
-                # 먼저 채팅방의 최근 메시지를 가져옴 (최대 10개)
-                if message_count == 0 or message_count % 5 == 0:  # 처음과 5회 주기로 메시지 갱신
-                    try:
-                        logger.debug(f"채팅방 {room_id}의 최근 메시지 가져오기")
-                        recent_messages = await get_room_messages(room_id, limit=10)
+                # 먼저 채팅방의 최근 메시지를 가져옴 (최대 20개)
+                # 매 메시지마다 대화 컨텍스트를 업데이트하여 연속성 보장
+                try:
+                    logger.debug(f"채팅방 {room_id}의 최근 메시지 가져오기")
+                    recent_messages = await get_room_messages(room_id, limit=20)
+                    
+                    # 메시지를 대화 기록 형식으로 변환 및 사용자 질문/언급된 NPC 확인
+                    if recent_messages:
+                        dialogue_history = ""
+                        mentioned_npc = None
+                        last_user_question = None
                         
-                        # 메시지를 대화 기록 형식으로 변환
-                        if recent_messages:
-                            dialogue_history = ""
-                            for msg in recent_messages:
-                                sender = msg.get('senderName', msg.get('sender', 'Unknown'))
-                                text = msg.get('text', '')
-                                if text:
-                                    dialogue_history += f"{sender}: {text}\n\n"
+                        # 최근 메시지 역순으로 확인하여 사용자 질문 찾기
+                        user_messages = [msg for msg in recent_messages if msg.get('isUser', False)]
+                        if user_messages:
+                            # 가장 최근 사용자 메시지
+                            latest_user_msg = user_messages[-1]
+                            user_text = latest_user_msg.get('text', '').strip()
+                            user_id = latest_user_msg.get('sender', '')
                             
-                            logger.debug(f"대화 기록 업데이트됨: {len(recent_messages)}개 메시지")
-                            logger.debug(f"대화 기록 샘플: {dialogue_history[:200]}...")
-                        else:
-                            logger.debug(f"채팅방 {room_id}에서 가져온 메시지 없음")
-                    except Exception as e:
-                        logger.error(f"메시지 가져오기 오류: {str(e)}")
+                            # 메시지가 질문인지 확인 (한국어/영어 물음표 또는 특정 질문 패턴)
+                            is_question = '?' in user_text or '?' in user_text or '할까' in user_text or '인가요' in user_text or '인가' in user_text or '할까요' in user_text or '해요' in user_text or '해' in user_text or '해줄래' in user_text
+                            
+                            if is_question and not user_question_answered:
+                                last_user_question = user_text
+                                logger.info(f"사용자 질문 감지: {last_user_question}")
+                                
+                                # 질문에서 언급된 NPC 찾기
+                                for npc_id in current_npcs:
+                                    # NPC 정보 가져오기
+                                    npc_info = await get_npc_details(npc_id)
+                                    npc_name = npc_info.get('name', '').strip()
+                                    
+                                    # 이름이 질문에 있는지 확인 (다양한 형태)
+                                    name_variations = [
+                                        npc_name, 
+                                        npc_name + "님", 
+                                        "@" + npc_name, 
+                                        npc_id
+                                    ]
+                                    
+                                    for name_var in name_variations:
+                                        if name_var.lower() in user_text.lower():
+                                            mentioned_npc = npc_id
+                                            logger.info(f"사용자가 언급한 NPC 발견: {mentioned_npc} ({npc_name})")
+                                            break
+                                    
+                                    if mentioned_npc:
+                                        break
+                            
+                        # 대화 기록 구성
+                        for msg in recent_messages:
+                            # 발신자 이름 결정 - 사용자 메시지인 경우 실제 username 사용
+                            if msg.get('isUser', False):
+                                user_id = msg.get('sender', '')
+                                # 실제 username이 있으면 사용, 없으면 기본값
+                                sender_name = user_name_mapping.get(user_id, msg.get('senderName', 'User'))
+                            else:
+                                # NPC 메시지는 기존대로 처리
+                                sender_name = msg.get('senderName')
+                                # senderName이 없는 경우 처리
+                                if not sender_name:
+                                    try:
+                                        npc_id = msg.get('sender')
+                                        if npc_id and npc_id in current_npcs:
+                                            npc_info = await get_npc_details(npc_id)
+                                            sender_name = npc_info.get('name', npc_id.capitalize())
+                                        else:
+                                            sender_name = msg.get('sender', 'Unknown').capitalize()
+                                    except:
+                                        sender_name = msg.get('sender', 'Unknown').capitalize()
+                            
+                            text = msg.get('text', '')
+                            if text:
+                                # 대화 기록에 이름과 메시지 내용 추가
+                                dialogue_history += f"{sender_name}: {text}\n\n"
+                        
+                        # 대화 기록 구성 완료 후 NPC ID 변환 처리
+                        try:
+                            # ID-이름 매핑 생성
+                            id_name_mapping = await create_npc_id_name_mapping(current_npcs)
+                            
+                            # 대화 내용 전체에서 ID를 이름으로 변환
+                            original_dialogue = dialogue_history
+                            dialogue_history = replace_ids_with_names(dialogue_history, id_name_mapping)
+                            
+                            if original_dialogue != dialogue_history:
+                                logger.info(f"대화 기록에서 NPC ID가 이름으로 변환되었습니다.")
+                                logger.debug(f"변환 전 샘플: {original_dialogue[:200]}...")
+                                logger.debug(f"변환 후 샘플: {dialogue_history[:200]}...")
+                        except Exception as e:
+                            logger.error(f"대화 기록 ID-이름 변환 오류: {str(e)}")
+                        
+                        logger.debug(f"대화 기록 업데이트됨: {len(recent_messages)}개 메시지")
+                        logger.debug(f"대화 기록 샘플: {dialogue_history[:200]}...")
+                    else:
+                        logger.debug(f"채팅방 {room_id}에서 가져온 메시지 없음")
+                except Exception as e:
+                    logger.error(f"메시지 가져오기 오류: {str(e)}")
                 
-                # 이전 NPC와 다른 NPC 선택
-                available_npcs = [npc for npc in current_npcs if npc != prev_npc]
-                if not available_npcs:
-                    available_npcs = current_npcs
+                # NPC 선택 로직 개선
+                responding_npc_id = None
                 
-                # 무작위로 다음 NPC 선택
-                responding_npc_id = random.choice(available_npcs)
+                # 사용자 질문에서 언급된 NPC가 있으면 그 NPC가 응답
+                if mentioned_npc and mentioned_npc in current_npcs:
+                    responding_npc_id = mentioned_npc
+                    user_question_answered = True  # 질문에 응답 표시
+                    logger.info(f"사용자가 언급한 {responding_npc_id}가 응답합니다")
+                # 그렇지 않으면 이전 NPC와 다른 NPC 무작위 선택
+                else:
+                    available_npcs = [npc for npc in current_npcs if npc != prev_npc]
+                    if not available_npcs:
+                        available_npcs = current_npcs
+                    
+                    # 무작위로 다음 NPC 선택
+                    responding_npc_id = random.choice(available_npcs)
+                
                 prev_npc = responding_npc_id
                 
                 logger.debug(f"선택된 NPC ID: {responding_npc_id}")
@@ -502,18 +654,44 @@ async def auto_conversation_loop(room_id: str, npcs: List[str], topic: str, dela
                         npc_description += f". {traits_text}"
                         logger.info(f"📣 Custom NPC 추가 특성 포함: {traits_text}")
                 
-                # 메시지 생성 - 대화 기록 반영
+                # 메시지 생성 - 대화 기록 반영 및 사용자 질문에 직접 응답하도록 개선
                 logger.info(f"Generating philosophical response for {npc_info['name']} on topic: {current_topic}")
                 logger.debug(f"이전 대화 길이: {len(dialogue_history)} 문자")
                 logger.info(f"📣 NPC 설명: {npc_description}")
+                
+                # 응답 생성을 위한 추가 컨텍스트 구성
+                additional_context = user_context
+                
+                # 사용자 질문이 있고 현재 NPC가 언급된 NPC라면, 그 질문에 직접 응답하도록 가이드
+                if mentioned_npc == responding_npc_id and last_user_question:
+                    additional_context += f"\n\nIMPORTANT: The user has directly asked you a question: '{last_user_question}'. Please respond to this question specifically and directly."
+                    logger.info(f"사용자 질문에 직접 응답하도록 안내: {last_user_question}")
+                
                 try:
                     response_text, _ = llm_manager.generate_philosophical_response(
                         npc_description=npc_description,
                         topic=current_topic,
-                        context="",
+                        context=additional_context,
                         previous_dialogue=dialogue_history  # 이전 메시지 기록 전달
                     )
                     logger.debug(f"LLM에서 생성된 응답: {response_text[:100]}...")
+                    
+                    # NPC ID를 이름으로 변환하는 후처리 추가
+                    try:
+                        # 대화에 참여하는 모든 NPC의 ID-이름 매핑 생성
+                        id_name_mapping = await create_npc_id_name_mapping(current_npcs)
+                        
+                        # 응답 텍스트에서 NPC ID를 이름으로 변환
+                        original_text = response_text
+                        response_text = replace_ids_with_names(response_text, id_name_mapping)
+                        
+                        # 변환 결과 확인
+                        if original_text != response_text:
+                            logger.info(f"응답 텍스트에서 NPC ID가 이름으로 변환되었습니다.")
+                            logger.debug(f"원본: {original_text[:100]}...")
+                            logger.debug(f"변환 후: {response_text[:100]}...")
+                    except Exception as mapping_err:
+                        logger.error(f"NPC ID-이름 변환 중 오류: {str(mapping_err)}")
                 except Exception as llm_err:
                     logger.error(f"LLM 응답 생성 실패: {str(llm_err)}")
                     # 다음 사이클로 넘어감
@@ -522,11 +700,17 @@ async def auto_conversation_loop(room_id: str, npcs: List[str], topic: str, dela
                 
                 # 응답 메시지 구성 - 더 많은 NPC 정보 포함
                 message_id = f"auto-{uuid4().hex[:8]}"
+                
+                # npc_name을 명확하게 결정
+                npc_name = npc_info.get('name', '')
+                if not npc_name:
+                    npc_name = responding_npc_id.capitalize()
+                
                 message = {
                     "id": message_id,
                     "text": response_text,
                     "sender": responding_npc_id,  # sender를 NPC ID로 설정하여 프론트엔드에서 정보를 찾을 수 있게 함
-                    "senderName": npc_info.get('name', responding_npc_id.capitalize()),  # 추가: NPC 이름
+                    "senderName": npc_name,  # 항상 이름 사용
                     "senderType": "npc",  # 추가: 발신자 타입
                     "isUser": False,
                     "timestamp": datetime.now().isoformat(),
@@ -535,11 +719,16 @@ async def auto_conversation_loop(room_id: str, npcs: List[str], topic: str, dela
                 }
                 
                 logger.info(f"📣 최종 메시지 객체: {message}")
-                logger.info(f"Generated message for {message['senderName']} in room {room_id}")
+                logger.info(f"Generated message for {npc_name} in room {room_id}")
                 logger.info(f"Message: {message['text'][:100]}...")
                 
                 # 대화 기록에 새 메시지 추가
-                dialogue_history += f"{message['senderName']}: {message['text']}\n\n"
+                dialogue_history += f"{npc_name}: {message['text']}\n\n"
+                
+                # 언급된 NPC가 응답했다면 상태 재설정
+                if mentioned_npc == responding_npc_id:
+                    mentioned_npc = None
+                    user_question_answered = True
                 
                 # Next.js API를 통해 메시지 저장 및 브로드캐스트
                 nextjs_api_url = os.environ.get("NEXTJS_API_URL", "http://localhost:3000")
@@ -933,38 +1122,76 @@ async def create_npc(request: NpcCreateRequest):
     new_id = str(uuid4())
     return { "id": new_id }
 
-@app.post("/api/chat/generate")
-async def generate_chat_response(request: ChatGenerateRequest):
-    """대화 맥락에 따른 철학자 응답 생성"""
-    try:
-        logger.info(f"Received chat generate request: topic={request.topic}, npcs={request.npcs}")
-        logger.info(f"Using LLM provider: {request.llm_provider}, model: {request.llm_model}")
+# 대화 관리자 클래스 추가
+class ConversationManager:
+    """대화 상태를 관리하고 토큰 제한을 처리하는 클래스"""
+    
+    def __init__(self):
+        self.conversations = {}  # room_id를 키로 사용하는 대화 상태 저장소
+        self.max_token_limit = 7000  # 토큰 제한 (GPT-4 기준 조정 가능)
+        self.recent_messages_count = 10  # 항상 유지할 최근 메시지 수
+        self.llm_manager = llm_manager  # 기존 llm_manager 사용
+        logger.info("🔧 ConversationManager 초기화됨: 토큰 제한 %d, 최근 메시지 유지 %d개", 
+                    self.max_token_limit, self.recent_messages_count)
         
-        # API 키가 제공된 경우 임시로 설정
-        original_api_key = None
-        if request.api_key:
-            logger.info("Using API key provided by client")
-            original_api_key = os.environ.get("OPENAI_API_KEY")
-            os.environ["OPENAI_API_KEY"] = request.api_key
-            openai.api_key = request.api_key
+    async def get_or_create_conversation(self, room_id):
+        """대화 상태를 가져오거나 새로 생성"""
+        if room_id not in self.conversations:
+            # DB에서 기존 메시지와 방 정보 로드
+            try:
+                # 대화방 정보 로드
+                room_data = await get_room_data(room_id)
+                messages = await get_room_messages(room_id, limit=50)  # 최근 50개 메시지로 시작
+                
+                # 정적 정보 설정
+                self.conversations[room_id] = {
+                    "messages": messages,
+                    "npc_descriptions": {},
+                    "context": room_data.get("context", ""),
+                    "topic": room_data.get("title", ""),
+                    "npcs": room_data.get("npcs", []),
+                    "last_summary_time": time.time()
+                }
+                
+                # NPC 정보 불러오기
+                for npc_id in self.conversations[room_id]["npcs"]:
+                    await self.load_npc_description(room_id, npc_id)
+                    
+                logger.info(f"🔄 Room {room_id} 대화 DB에서 로드됨: {len(messages)}개 메시지, 토픽: {room_data.get('title', '없음')}")
+                
+                # 현재 토큰 수 계산 및 로깅
+                if messages:
+                    token_count = self._count_tokens_approx(messages)
+                    logger.debug(f"📊 Room {room_id} 현재 토큰 수: {token_count}/{self.max_token_limit} ({token_count/self.max_token_limit*100:.1f}%)")
+            except Exception as e:
+                logger.error(f"Error loading conversation data for room {room_id}: {e}")
+                # 오류 시 빈 대화로 초기화
+                self.conversations[room_id] = {
+                    "messages": [],
+                    "npc_descriptions": {},
+                    "context": "",
+                    "topic": "",
+                    "npcs": [],
+                    "last_summary_time": time.time()
+                }
+                
+        return self.conversations[room_id]
+    
+    async def load_npc_description(self, room_id, npc_id):
+        """NPC 설명 로드"""
+        conversation = await self.get_or_create_conversation(room_id)
         
+        # 이미 로드된 경우 스킵
+        if npc_id in conversation["npc_descriptions"]:
+            return conversation["npc_descriptions"][npc_id]
+            
         try:
-            # 참여하는 NPC들 중에서 응답할 NPC 선택
-            # 현재는 간단하게 첫 번째 또는 대화 내용에 언급된 NPC를 선택
-            # 더 복잡한 전략을 구현할 수 있음
-            responding_philosopher = select_responding_philosopher(request.npcs, request.previous_dialogue)
-            logger.info(f"Selected responding philosopher: {responding_philosopher}")
-            
             # NPC 정보 가져오기
-            npc_info = await get_npc_details(responding_philosopher)
-            logger.info(f"Retrieved NPC info: {npc_info.get('name', 'Unknown')}")
-            
-            # NPC 설명 구성 (제공된 설명 또는 기본 설명)
+            npc_info = await get_npc_details(npc_id)
             npc_description = f"{npc_info['name']}: {npc_info.get('description', 'A philosopher with unique perspectives')}"
             
-            # Custom NPC인 경우 추가 특성 포함
+            # 커스텀 NPC인 경우 추가 특성 포함
             if npc_info.get('is_custom', False):
-                # 추가 특성이 있으면 설명에 추가
                 additional_traits = []
                 
                 if npc_info.get('voice_style'):
@@ -980,19 +1207,274 @@ async def generate_chat_response(request: ChatGenerateRequest):
                 if additional_traits:
                     traits_text = "; ".join(additional_traits)
                     npc_description += f". {traits_text}"
-                    logger.info(f"📣 Custom NPC 추가 특성 포함: {traits_text}")
+                    
+            # 캐시에 저장
+            conversation["npc_descriptions"][npc_id] = npc_description
+            logger.info(f"NPC description loaded for {npc_id}")
             
-            logger.info(f"Using NPC description: {npc_description[:150]}...")
+            return npc_description
+        except Exception as e:
+            logger.error(f"Error loading NPC description for {npc_id}: {e}")
+            # 기본 설명 제공
+            default_description = f"Philosopher {npc_id[:6]}: A thinker with unique perspectives"
+            conversation["npc_descriptions"][npc_id] = default_description
+            return default_description
+    
+    async def add_message(self, room_id, message_data):
+        """메시지 추가 및 콘텍스트 관리"""
+        conversation = await self.get_or_create_conversation(room_id)
+        
+        # 메시지 추가
+        conversation["messages"].append(message_data)
+        
+        # 디버깅: 메시지 추가 후 토큰 수 계산
+        token_count = self._count_tokens_approx(conversation["messages"])
+        logger.debug(f"📝 메시지 추가됨 - Room {room_id}: 발신자={message_data.get('sender', 'unknown')}, 현재 토큰 수={token_count}")
+        
+        # DB에 메시지 저장 (기존 로직 사용)
+        await save_message_to_db(room_id, message_data)
+        
+        # 메시지 추가 후 필요하면 콘텍스트 최적화
+        await self._manage_context_window(room_id)
+        
+        return message_data
+    
+    async def _manage_context_window(self, room_id):
+        """토큰 제한을 고려하여 콘텍스트 창 관리"""
+        conversation = await self.get_or_create_conversation(room_id)
+        messages = conversation["messages"]
+        
+        # 메시지가 충분히 많아졌을 때만 처리
+        if len(messages) < 20:
+            return
+            
+        # 예상 토큰 수 계산
+        total_tokens = self._count_tokens_approx(messages)
+        
+        # 토큰 수가 제한에 근접하면 오래된 메시지 요약
+        if total_tokens > self.max_token_limit * 0.8:  # 80% 임계값
+            logger.info(f"⚠️ 토큰 수({total_tokens})가 제한({self.max_token_limit})의 80%에 근접 - Room {room_id} 오래된 메시지 요약")
+            await self._summarize_older_messages(room_id)
+    
+    async def _summarize_older_messages(self, room_id):
+        """오래된 메시지를 요약하여 토큰 수 줄이기"""
+        conversation = await self.get_or_create_conversation(room_id)
+        messages = conversation["messages"]
+        
+        # 최근 메시지는 보존
+        recent_messages = messages[-self.recent_messages_count:]
+        older_messages = messages[:-self.recent_messages_count]
+        
+        if len(older_messages) < 5:
+            return  # 요약할 메시지가 충분하지 않으면 스킵
+        
+        try:
+            # 오래된 메시지 포맷팅
+            formatted_messages = self._format_messages_for_summary(older_messages)
+            
+            # 요약 생성 시작 로깅
+            logger.debug(f"🔄 요약 시작 - Room {room_id}: {len(older_messages)}개 메시지 요약 중")
+            before_token_count = self._count_tokens_approx(messages)
+            
+            # 요약 생성
+            system_prompt = "Summarize the following conversation in 2-3 concise sentences, preserving key points and context."
+            summary = self.llm_manager.generate_response(
+                system_prompt=system_prompt,
+                user_prompt=formatted_messages,
+                llm_provider="openai",
+                llm_model="gpt-3.5-turbo"  # 요약에는 저렴한 모델 사용
+            )
+            
+            # 요약 메시지 생성
+            summary_message = {
+                "id": f"summary-{uuid4()}",
+                "text": f"[Previous conversation summary: {summary}]",
+                "sender": "System",
+                "is_summary": True,
+                "isUser": False,
+                "timestamp": datetime.now().isoformat()
+            }
+            
+            # 대화 상태 업데이트 - 요약으로 대체
+            conversation["messages"] = [summary_message] + recent_messages
+            after_token_count = self._count_tokens_approx(conversation["messages"])
+            
+            logger.info(f"✅ Room {room_id} 요약 완료: {len(older_messages)}개 메시지가 요약됨")
+            logger.info(f"📊 토큰 감소: {before_token_count} → {after_token_count} ({before_token_count-after_token_count}개 토큰 절약)")
+            
+            # 요약 메시지 DB에 저장
+            await save_message_to_db(room_id, summary_message)
+            
+        except Exception as e:
+            logger.error(f"❌ 메시지 요약 오류: {e}")
+            # 오류 시 단순히 오래된 메시지 잘라내기
+            conversation["messages"] = older_messages[-5:] + recent_messages  # 오래된 메시지 중 최근 5개만 유지
+            logger.warning(f"⚠️ 요약 대신 오래된 메시지 {len(older_messages)-5}개 제거됨")
+    
+    def _format_messages_for_summary(self, messages):
+        """요약을 위한 메시지 포맷팅"""
+        formatted = []
+        for msg in messages:
+            sender = msg.get("sender", "Unknown")
+            text = msg.get("text", "")
+            is_user = msg.get("isUser", False)
+            
+            prefix = "User" if is_user else sender
+            formatted.append(f"{prefix}: {text}")
+            
+        return "\n".join(formatted)
+    
+    async def get_prompt_context(self, room_id, responding_npc_id):
+        """LLM에 전달할 프롬프트 컨텍스트 생성"""
+        conversation = await self.get_or_create_conversation(room_id)
+        
+        # NPC 설명 가져오기
+        npc_description = conversation["npc_descriptions"].get(responding_npc_id, "")
+        if not npc_description:
+            npc_description = await self.load_npc_description(room_id, responding_npc_id)
+            
+        # 대화 포맷팅
+        messages = conversation["messages"]
+        formatted_dialogue = self._format_previous_dialogue(messages)
+        
+        return {
+            "npc_description": npc_description,
+            "topic": conversation["topic"],
+            "context": conversation["context"],
+            "previous_dialogue": formatted_dialogue
+        }
+    
+    def _format_previous_dialogue(self, messages):
+        """대화 기록을 프롬프트용으로 포맷팅"""
+        formatted = []
+        
+        for msg in messages:
+            # 요약 메시지는 그대로 포함
+            if msg.get("is_summary", False):
+                formatted.append(msg["text"])
+                continue
+                
+            sender = msg.get("sender", "Unknown")
+            text = msg.get("text", "")
+            is_user = msg.get("isUser", False)
+            
+            prefix = "User" if is_user else sender
+            formatted.append(f"{prefix}: {text}")
+            
+        return "\n".join(formatted)
+    
+    def _count_tokens_approx(self, messages, model="gpt-4"):
+        """메시지의 대략적인 토큰 수 계산"""
+        try:
+            if 'tiktoken' in globals():
+                encoding = tiktoken.encoding_for_model(model)
+                
+                total_tokens = 0
+                for msg in messages:
+                    # 메시지 내용의 토큰 수 계산
+                    text = msg.get("text", "")
+                    tokens = len(encoding.encode(text))
+                    # 메시지 메타데이터에 대한 추가 토큰
+                    total_tokens += tokens + 4  # 각 메시지에 대한 오버헤드
+                    
+                # 전체 요청 형식에 대한 기본 토큰 추가
+                total_tokens += 2
+                
+                return total_tokens
+            else:
+                # tiktoken이 없으면 문자 길이 기반 대략적인 추정치 반환
+                chars = sum(len(msg.get("text", "")) for msg in messages)
+                tokens_approx = chars // 4  # 영어 텍스트에서 대략 4자당 1토큰으로 추정
+                logger.debug("⚠️ tiktoken 라이브러리 없음: 문자 기반 토큰 추정치 사용 (%d 문자 → %d 토큰)", chars, tokens_approx)
+                return tokens_approx
+        except Exception as e:
+            logger.error(f"❌ 토큰 계산 오류: {e}")
+            # 오류 시 문자 길이 기반 대략적인 추정치 반환
+            chars = sum(len(msg.get("text", "")) for msg in messages)
+            return chars // 4
+
+# 대화 관리자 인스턴스 생성
+conversation_manager = ConversationManager()
+
+# ChatGenerateRequest 모델 수정
+class ChatGenerateRequest(BaseModel):
+    npc_descriptions: Optional[str] = None
+    npcs: Optional[List[str]] = []  # 필수 필드를 Optional로 설정
+    room_id: str  # 룸 ID 필드 추가
+    user_message: str  # 사용자 메시지 필드 추가
+    topic: Optional[str] = ""
+    context: Optional[str] = ""
+    previous_dialogue: Optional[str] = ""  # 하위 호환성을 위해 유지
+    llm_provider: Optional[str] = "openai"
+    llm_model: Optional[str] = "gpt-4o"
+    api_key: Optional[str] = None
+
+# API 엔드포인트 수정
+@app.post("/api/chat/generate")
+async def generate_chat_response(request: ChatGenerateRequest):
+    """대화 맥락에 따른 철학자 응답 생성 - 서버 측 대화 관리 버전"""
+    try:
+        logger.info(f"Received chat generate request: room_id={request.room_id}, npcs={request.npcs}")
+        logger.info(f"Using LLM provider: {request.llm_provider}, model: {request.llm_model}")
+        
+        # API 키가 제공된 경우 임시로 설정
+        original_api_key = None
+        if request.api_key:
+            logger.info("Using API key provided by client")
+            original_api_key = os.environ.get("OPENAI_API_KEY")
+            os.environ["OPENAI_API_KEY"] = request.api_key
+            openai.api_key = request.api_key
+        
+        try:
+            # 사용자 메시지 저장
+            user_message_data = {
+                "id": f"user-{uuid4()}",
+                "text": request.user_message,
+                "sender": "User",  # 실제 구현에서는 사용자 ID나 이름 사용
+                "isUser": True,
+                "timestamp": datetime.now().isoformat()
+            }
+            
+            # 디버깅: 클라이언트가 전체 히스토리 대신 새 메시지만 보내는지 확인
+            logger.debug(f"📥 요청 시 previous_dialogue 길이: {len(request.previous_dialogue) if request.previous_dialogue else 0}")
+            logger.debug(f"📥 사용자 메시지: '{user_message_data['text'][:50]}...'")
+            
+            # 대화 관리자에 메시지 추가
+            await conversation_manager.add_message(request.room_id, user_message_data)
+            
+            # 참여하는 NPC들 중에서 응답할 NPC 선택
+            responding_philosopher = select_responding_philosopher(request.npcs, request.user_message)
+            logger.info(f"Selected responding philosopher: {responding_philosopher}")
+            
+            # 프롬프트 컨텍스트 가져오기
+            prompt_context = await conversation_manager.get_prompt_context(request.room_id, responding_philosopher)
+            
+            # 디버깅: 서버가 유지하는 대화 히스토리 상태 로깅
+            logger.debug(f"🔍 서버 측 대화 길이: {len(prompt_context['previous_dialogue'])} 문자")
+            logger.debug(f"🔍 컨텍스트 메시지 개수: {len(conversation_manager.conversations[request.room_id]['messages'])}개")
             
             # llm_manager를 사용하여 응답 생성
             response_text, metadata = llm_manager.generate_philosophical_response(
-                npc_description=npc_description,
-                topic=request.topic,
-                context=request.context,
-                previous_dialogue=request.previous_dialogue,
+                npc_description=prompt_context["npc_description"],
+                topic=prompt_context["topic"],
+                context=prompt_context["context"],
+                previous_dialogue=prompt_context["previous_dialogue"],
                 llm_provider=request.llm_provider,
                 llm_model=request.llm_model
             )
+            
+            # AI 응답 메시지 저장
+            ai_message_data = {
+                "id": f"ai-{uuid4()}",
+                "text": response_text,
+                "sender": responding_philosopher,
+                "npc_id": responding_philosopher,
+                "isUser": False,
+                "timestamp": datetime.now().isoformat()
+            }
+            
+            # 대화 관리자에 AI 응답 추가
+            await conversation_manager.add_message(request.room_id, ai_message_data)
             
             return {
                 "response": response_text,
@@ -1009,29 +1491,240 @@ async def generate_chat_response(request: ChatGenerateRequest):
         logger.exception(f"Error generating chat response: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
-def select_responding_philosopher(npcs: List[str], previous_dialogue: str) -> str:
+def select_responding_philosopher(npcs: List[str], user_message: str) -> str:
     """대화 컨텍스트에 기반하여 응답할 철학자를 선택"""
     if not npcs:
         raise ValueError("No philosophers available to respond")
     
-    # 간단한 응답 철학자 선택 로직:
-    # 1. 이전 대화에서 특정 철학자가 언급되었는지 확인
-    # 2. 언급된 철학자가 참여 철학자 목록에 있으면 해당 철학자 선택
-    # 3. 없으면 첫 번째 철학자 선택
-    
-    # 대화에서 마지막 사용자 메시지 찾기
-    user_messages = [line for line in previous_dialogue.split('\n') if line.startswith('User:')]
-    if user_messages:
-        last_user_message = user_messages[-1].replace('User:', '').strip().lower()
+    # LLM을 활용한 NPC 선택 함수로 개선
+    try:
+        logger.info(f"📊 응답 NPC 선택 시작: '{user_message[:50]}...'")
+        logger.info(f"📊 NPC 후보 목록: {', '.join(npcs)}")
         
-        # 사용자 메시지에 언급된 철학자 찾기
-        for philosopher in npcs:
-            if philosopher.lower() in last_user_message:
-                logger.info(f"User mentioned philosopher: {philosopher}")
-                return philosopher
+        # NPC 세부 정보 로드 - NPC ID와 이름, 설명을 매핑
+        npc_details = {}
+        for npc_id in npcs:
+            try:
+                # 전역 npc_cache 사용
+                cache_key = f"npc:{npc_id}"
+                cached_info = npc_cache.get(cache_key, None)
+                if cached_info and 'data' in cached_info:
+                    npc_info = cached_info['data']
+                else:
+                    # 캐시에 없으면 직접 가져오기
+                    logger.debug(f"📋 NPC {npc_id} 정보를 캐시에서 찾지 못함, DB 조회")
+                    npc_info = asyncio.run(get_npc_details(npc_id))
+                
+                # NPC 이름, 필명, 한글 이름 등 변형 추가
+                npc_name = npc_info.get('name', '')
+                npc_details[npc_id] = {
+                    "name": npc_name,
+                    "name_lower": npc_name.lower(),
+                    "ko_name": get_korean_name(npc_id, npc_name),  # 한글 이름 추가
+                }
+                logger.debug(f"📋 NPC {npc_id} 정보: {npc_details[npc_id]}")
+            except Exception as e:
+                logger.error(f"NPC {npc_id} 정보 가져오기 오류: {e}")
+        
+        # 1. 먼저 사용자가 직접 언급한 NPC를 찾음
+        logger.info(f"🔍 1단계: 사용자 메시지에서 직접 언급된 NPC 찾기")
+        mentioned_npc = find_mentioned_npc(user_message, npc_details)
+        if mentioned_npc:
+            logger.info(f"✅ 사용자가 직접 언급한 NPC 발견: {mentioned_npc}")
+            # NPC 이름 로깅
+            npc_name = npc_details.get(mentioned_npc, {}).get('name', mentioned_npc)
+            logger.info(f"✅ 응답자 선택 완료: {mentioned_npc} ({npc_name})")
+            return mentioned_npc
+        
+        # 2. 직접 언급이 없으면 LLM을 사용하여 적합한 NPC 선택
+        logger.info(f"🔍 2단계: LLM을 사용하여 적합한 NPC 선택")
+        selected_npc = select_npc_with_llm(user_message, npcs, npc_details)
+        if selected_npc:
+            # NPC 이름 로깅
+            npc_name = npc_details.get(selected_npc, {}).get('name', selected_npc)
+            logger.info(f"✅ LLM이 선택한 NPC: {selected_npc} ({npc_name})")
+            return selected_npc
+        
+        # 3. LLM 선택 실패 시 랜덤 선택
+        logger.info(f"🔍 3단계: 랜덤 NPC 선택")
+        random_npc = random.choice(npcs)
+        # NPC 이름 로깅
+        npc_name = npc_details.get(random_npc, {}).get('name', random_npc)
+        logger.info(f"✅ 랜덤 선택된 NPC: {random_npc} ({npc_name})")
+        return random_npc
+        
+    except Exception as e:
+        logger.error(f"NPC 선택 중 오류 발생: {e}")
+        # 오류 발생 시 랜덤 선택으로 폴백
+        random_npc = random.choice(npcs)
+        logger.info(f"✅ 오류 후 랜덤 선택된 NPC: {random_npc}")
+        return random_npc
+
+# 한글 이름 매핑 추가
+def get_korean_name(npc_id: str, english_name: str) -> str:
+    """NPC의 한글 이름 반환"""
+    # 기본 한글 이름 매핑
+    ko_names = {
+        "socrates": "소크라테스",
+        "plato": "플라톤",
+        "aristotle": "아리스토텔레스",
+        "kant": "칸트",
+        "hegel": "헤겔",
+        "nietzsche": "니체",
+        "marx": "마르크스",
+        "sartre": "사르트르",
+        "camus": "카뮈",
+        "beauvoir": "보부아르",
+        "confucius": "공자",
+        "laozi": "노자",
+        "buddha": "붓다",
+        "rousseau": "루소",
+        "wittgenstein": "비트겐슈타인"
+    }
     
-    # 언급된 철학자가 없으면 첫 번째 철학자 선택
-    return npcs[0]
+    # 먼저 ID로 찾기
+    if npc_id.lower() in ko_names:
+        return ko_names[npc_id.lower()]
+    
+    # 영어 이름의 일부가 매핑에 있는지 확인
+    for en_name, ko_name in ko_names.items():
+        if en_name in english_name.lower():
+            return ko_name
+    
+    # 매핑이 없으면 영어 이름 그대로 반환
+    return english_name
+
+# 직접 언급된 NPC 찾기
+def find_mentioned_npc(message: str, npc_details: Dict[str, Dict[str, str]]) -> Optional[str]:
+    """사용자 메시지에서 직접 언급된 NPC ID 찾기"""
+    if not message or not npc_details:
+        return None
+    
+    logger.info(f"🔍 메시지에서 언급된 NPC 찾기: '{message}'")
+    
+    # LLM을 사용하여 메시지에서 언급된 NPC 찾기
+    try:
+        return select_npc_with_llm(message, list(npc_details.keys()), npc_details, is_direct_mention=True)
+    except Exception as e:
+        logger.error(f"LLM을 사용한 NPC 언급 감지 중 오류: {e}")
+        return None
+
+# LLM으로 NPC 선택
+def select_npc_with_llm(user_message: str, npcs: List[str], npc_details: Dict[str, Dict[str, str]], is_direct_mention: bool = False) -> Optional[str]:
+    """LLM을 사용하여 응답에 가장 적합한 NPC 선택"""
+    if not npcs or not user_message:
+        return None
+        
+    try:
+        # NPC 정보 목록 생성 (ID, 이름, 한글 이름 포함)
+        npc_info_list = []
+        for npc_id in npcs:
+            details = npc_details.get(npc_id, {})
+            name = details.get("name", npc_id)
+            ko_name = details.get("ko_name", "")
+            
+            # 각 NPC마다 다양한 식별자 정보 포함
+            npc_info = f"ID: {npc_id} | 이름: {name}"
+            if ko_name:
+                npc_info += f" | 한글 이름: {ko_name}"
+                
+            npc_info_list.append(npc_info)
+        
+        npc_options = "\n".join(npc_info_list)
+        
+        mode = "직접 언급 감지" if is_direct_mention else "응답 NPC 선택"
+        logger.info(f"🧠 LLM을 사용한 {mode} 시작: '{user_message[:50]}...'")
+        
+        # 시스템 프롬프트 구성 - 목적에 따라 다르게 조정
+        if is_direct_mention:
+            system_prompt = f"""
+            당신은 대화에서 사용자가 직접 언급한 참여자를 감지하는 AI입니다.
+            
+            아래 사용자 메시지에서 직접 언급된 참여자(NPC)가 있는지 분석하세요.
+            
+            가능한 NPC 목록:
+            {npc_options}
+            
+            규칙:
+            1. 사용자 메시지에서 NPC의 이름이나 ID가 직접 언급된 경우에만 해당 NPC를 선택하세요.
+            2. 오타가 있어도 분명히 특정 NPC를 지칭했다면 해당 NPC를 선택하세요.
+            3. 직접 언급이 없으면 아무 것도 선택하지 마세요.
+            4. 선택한 NPC의 ID만 정확히 반환하세요. (예: "e0c3872b-2103-4d04-8a2d-801bbd7f43cf")
+            
+            출력 형식:
+            NPC_ID: <npc_id 또는 '없음'>
+            """
+        else:
+            system_prompt = f"""
+            당신은 대화에서 사용자 메시지에 가장 적합한 응답자를 선택하는 AI입니다.
+            
+            아래 사용자 메시지를 분석하고, 응답하기에 가장 적합한 참여자(NPC)를 선택하세요.
+            
+            가능한 NPC 목록:
+            {npc_options}
+            
+            규칙:
+            1. 사용자가 특정 철학자의 견해나 이론을 언급하면, 그 철학자를 선택합니다.
+            2. 사용자의 질문이나 의견이 특정 철학자의 전문 분야와 관련있으면, 그 철학자를 선택합니다.
+            3. 모든 NPC가 동등하게 응답할 수 있는 내용이면, 가장 흥미로운 관점을 제공할 수 있는 NPC를 선택합니다.
+            4. 선택한 NPC의 ID만 정확히 반환하세요. (예: "e0c3872b-2103-4d04-8a2d-801bbd7f43cf")
+            
+            출력 형식:
+            NPC_ID: <npc_id>
+            """
+        
+        # 사용자 프롬프트
+        if is_direct_mention:
+            user_prompt = f"다음 메시지에서 사용자가 직접 언급한 NPC가 있는지 확인해주세요: '{user_message}'"
+        else:
+            user_prompt = f"다음 사용자 메시지에 응답하기에 가장 적합한 NPC를 선택해주세요: '{user_message}'"
+        
+        # LLM 호출 - 가벼운 모델 사용
+        logger.debug(f"🧠 NPC 선택 LLM 호출 중...")
+        response = llm_manager.generate_response(
+            system_prompt=system_prompt,
+            user_prompt=user_prompt,
+            llm_provider="openai",
+            llm_model="gpt-3.5-turbo"
+        )
+        
+        logger.debug(f"🧠 LLM 원본 응답: {response}")
+        
+        # 정규표현식으로 ID 추출 시도
+        id_match = re.search(r'NPC_ID: *(\S+)', response, re.IGNORECASE)
+        if id_match:
+            extracted_id = id_match.group(1).strip()
+            
+            # "없음" 처리 (직접 언급이 없는 경우)
+            if extracted_id.lower() in ["없음", "none", "null"]:
+                logger.info(f"✅ LLM 응답: 직접 언급된 NPC 없음")
+                return None
+                
+            # ID가 유효하면 반환
+            if extracted_id in npcs:
+                logger.info(f"✅ LLM이 선택한 NPC ID: {extracted_id}")
+                return extracted_id
+            else:
+                logger.warning(f"⚠️ LLM이 추출한 ID가 유효하지 않음: {extracted_id}")
+        
+        # 정규식으로 찾지 못한 경우 전체 응답에서 NPC ID 포함 여부 확인
+        for npc_id in npcs:
+            if npc_id in response:
+                logger.info(f"✅ LLM 응답에서 NPC ID 발견: {npc_id}")
+                return npc_id
+        
+        # 만약 직접 언급 검사모드였는데 찾지 못했다면 None 반환
+        if is_direct_mention:
+            logger.info("❌ 메시지에서 직접 언급된 NPC를 찾지 못했습니다.")
+            return None
+            
+        # 응답 NPC 선택 모드에서는 랜덤 선택 진행
+        logger.warning("❌ LLM에서 유효한 NPC를 선택하지 못했습니다.")
+        return None
+        
+    except Exception as e:
+        logger.error(f"LLM을 사용한 NPC 선택 중 오류: {e}")
+        return None
 
 @app.get("/api/npc/get")
 async def get_npc_details(id: str):
@@ -1527,6 +2220,180 @@ async def generate_dialogue(request: DialogueGenerateRequest):
         logger.exception(f"Error in dialogue generation: {str(e)}")
         return {"error": f"Failed to generate dialogue: {str(e)}"}
 
+# 유틸리티 함수 추가 - NPC ID 이름 매핑 생성 및 변환 함수
+async def create_npc_id_name_mapping(npc_ids: List[str]) -> Dict[str, str]:
+    """주어진 NPC ID 목록에서 ID-이름 매핑 사전을 생성합니다."""
+    mapping = {}
+    
+    for npc_id in npc_ids:
+        try:
+            # NPC 정보 가져오기
+            npc_info = await get_npc_details(npc_id)
+            
+            # 정보가 있고 이름이 있는 경우에만 매핑 추가
+            if npc_info and 'name' in npc_info:
+                npc_name = npc_info.get('name')
+                
+                # 이름이 실제로 있는지 확인
+                if npc_name and isinstance(npc_name, str) and len(npc_name.strip()) > 0:
+                    # ID를 이름으로 매핑
+                    mapping[npc_id] = npc_name
+                    
+                    # UUID 형태인 경우 추가 매핑
+                    if '-' in npc_id:
+                        # UUID 전체를 매핑
+                        mapping[npc_id] = npc_name
+                        
+                        # 대화에서 흔히 언급되는 UUID 앞부분만 매핑 (예: 638e7579)
+                        short_id = npc_id.split('-')[0]
+                        if len(short_id) >= 8:
+                            mapping[short_id] = npc_name
+                            logger.debug(f"UUID 앞부분 매핑 추가: {short_id} -> {npc_name}")
+                    
+                    logger.debug(f"ID-이름 매핑 추가: {npc_id} -> {npc_name}")
+                else:
+                    logger.warning(f"NPC {npc_id}의 이름이 없거나 유효하지 않음: {npc_name}")
+            else:
+                logger.warning(f"NPC {npc_id}의 상세 정보가 없거나 이름이 없음")
+                
+        except Exception as e:
+            logger.error(f"NPC 정보 가져오기 실패 (ID: {npc_id}): {str(e)}")
+    
+    # 매핑 전체 로깅
+    logger.info(f"생성된 ID-이름 매핑: {mapping}")
+    return mapping
+
+def replace_ids_with_names(text: str, id_name_mapping: Dict[str, str]) -> str:
+    """텍스트에서 NPC ID를 해당 이름으로 변환합니다."""
+    if not text or not id_name_mapping:
+        return text
+        
+    result = text
+    
+    # 먼저 전체 UUID 패턴 처리 (하이픈 포함된 ID 먼저)
+    uuid_pattern = r'([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})'
+    
+    # UUID 패턴을 찾아 처리
+    for npc_id in id_name_mapping:
+        if '-' in npc_id:  # UUID 형태만 우선 처리
+            npc_name = id_name_mapping[npc_id]
+            
+            # UUID + 님 패턴
+            result = re.sub(rf'{re.escape(npc_id)}님', f'{npc_name}님', result)
+            
+            # @UUID 패턴
+            result = re.sub(rf'@{re.escape(npc_id)}', f'@{npc_name}', result)
+            
+            # UUID 단독 패턴 (단어 경계 확인)
+            result = re.sub(rf'\b{re.escape(npc_id)}\b', npc_name, result)
+    
+    # 그 다음 하이픈이 없는 일반 ID 처리
+    for npc_id, npc_name in sorted(id_name_mapping.items(), key=lambda x: len(x[0]), reverse=True):
+        if '-' not in npc_id:  # 일반 ID만 처리 (UUID는 이미 처리함)
+            # 다양한 패턴 처리 (ID 자체, ID님, @ID 등)
+            patterns = [
+                f"{npc_id}", 
+                f"{npc_id}님",
+                f"@{npc_id}"
+            ]
+            
+            for pattern in patterns:
+                # 단어 경계 확인 
+                matches = re.finditer(r'(\b|^)' + re.escape(pattern) + r'(\b|$)', result)
+                
+                # 뒤에서부터 변환(인덱스가 변하지 않도록)
+                positions = [(m.start(), m.end()) for m in matches]
+                for start, end in reversed(positions):
+                    prefix = result[:start]
+                    suffix = result[end:]
+                    
+                    if "님" in pattern:
+                        replacement = f"{npc_name}님"
+                    elif "@" in pattern:
+                        replacement = f"@{npc_name}"
+                    else:
+                        replacement = npc_name
+                        
+                    result = prefix + replacement + suffix
+                    logger.debug(f"NPC ID {pattern}를 이름 {npc_name}으로 변환")
+    
+    return result
+
 # 서버 실행 (독립 실행 시)
 if __name__ == "__main__":
     uvicorn.run("api_server:app", host="0.0.0.0", port=8000, reload=True)
+
+# 대화 상태 진단용 API 엔드포인트 추가
+@app.get("/api/debug/conversation/{room_id}")
+async def debug_conversation_state(room_id: str):
+    """대화 상태를 진단하기 위한 디버깅 엔드포인트"""
+    try:
+        # 대화 상태 가져오기
+        conversation = await conversation_manager.get_or_create_conversation(room_id)
+        
+        # 토큰 수 계산
+        message_count = len(conversation["messages"])
+        total_tokens = conversation_manager._count_tokens_approx(conversation["messages"])
+        token_percentage = (total_tokens / conversation_manager.max_token_limit) * 100
+        
+        # 요약된 메시지가 있는지 확인
+        summary_count = sum(1 for msg in conversation["messages"] if msg.get("is_summary", False))
+        
+        # 응답 구성
+        response = {
+            "room_id": room_id,
+            "topic": conversation["topic"],
+            "message_count": message_count,
+            "token_count": total_tokens,
+            "token_limit": conversation_manager.max_token_limit,
+            "token_percentage": f"{token_percentage:.1f}%",
+            "summary_count": summary_count,
+            "npcs": conversation["npcs"],
+            "recent_messages": [
+                {
+                    "id": msg.get("id", "unknown"),
+                    "sender": msg.get("sender", "unknown"),
+                    "is_summary": msg.get("is_summary", False),
+                    "length": len(msg.get("text", "")),
+                    "tokens": conversation_manager._count_tokens_approx([msg])
+                }
+                for msg in conversation["messages"][-5:] # 최근 5개 메시지만 포함
+            ],
+            "server_time": datetime.now().isoformat()
+        }
+        
+        logger.info(f"🔍 대화 상태 진단 - Room {room_id}: {message_count}개 메시지, {total_tokens}개 토큰 ({token_percentage:.1f}%)")
+        return response
+        
+    except Exception as e:
+        logger.error(f"❌ 대화 상태 진단 오류: {e}")
+        raise HTTPException(status_code=500, detail=f"대화 상태를 불러올 수 없습니다: {str(e)}")
+
+# 토큰 카운트 테스트용 API 엔드포인트 추가
+@app.post("/api/debug/tokencount")
+async def debug_token_count(text: str):
+    """텍스트의 토큰 수를 계산하는 디버깅 엔드포인트"""
+    try:
+        # 텍스트를 메시지 형식으로 변환
+        test_message = {"text": text}
+        
+        # tiktoken으로 토큰 수 계산
+        token_count = 0
+        char_count = len(text)
+        
+        if 'tiktoken' in globals():
+            encoding = tiktoken.encoding_for_model("gpt-4")
+            token_count = len(encoding.encode(text))
+        else:
+            # 근사치 계산
+            token_count = char_count // 4
+        
+        return {
+            "text_length": char_count,
+            "token_count": token_count,
+            "tokens_per_char": token_count / char_count if char_count > 0 else 0,
+            "using_tiktoken": 'tiktoken' in globals()
+        }
+    except Exception as e:
+        logger.error(f"❌ 토큰 계산 테스트 오류: {e}")
+        raise HTTPException(status_code=500, detail=f"토큰 계산 오류: {str(e)}")

@@ -171,7 +171,151 @@ class LLMManager:
                                       llm_provider: str = None,
                                       llm_model: str = None) -> Tuple[str, Dict[str, Any]]:
         """
-        Generate a philosophical response from an NPC
+        Generate a philosophical response from an NPC with enhanced conversational flow
+        
+        Args:
+            npc_description: Description of the NPC's traits and philosophical background
+            topic: The philosophical topic being discussed
+            context: Additional context about the discussion
+            previous_dialogue: Previous dialogue in the conversation
+            source_materials: Relevant philosophical source materials
+            user_contexts: User-provided context materials
+            references: Deprecated, kept for compatibility
+            llm_provider: Override default LLM provider
+            llm_model: Override default model for the provider
+            
+        Returns:
+            Tuple containing (response text, metadata)
+        """
+        # Prepare source materials context
+        sources_context = ""
+        if source_materials:
+            sources_context = "Relevant philosophical context:\n\n"
+            for i, source in enumerate(source_materials):
+                sources_context += f"Source {i+1}: {source['source']} by {source['author']}\n"
+                sources_context += f"Excerpt: {source['text']}\n\n"
+        
+        # Format user contexts
+        user_context_str = ""
+        if user_contexts:
+            user_context_str = "# User-Provided References\n\n"
+            for ctx in user_contexts:
+                user_context_str += f"**{ctx['title']}**\n"
+                user_context_str += f"Source: {ctx['source']}\n"
+                user_context_str += f"Excerpt: {ctx['excerpt']}\n\n"
+                
+        # Build the system prompt with improved conversational flow
+        system_prompt = f"""You are an AI simulating the philosophical thinking of a specific philosopher or perspective in an interactive dialogue.
+Your goal is to respond to philosophical topics as this specific philosophical viewpoint would, while engaging naturally with other participants.
+Maintain the philosophical style, terminology, and worldview consistent with this perspective.
+
+This is a philosophical simulation where different perspectives interact with each other.
+Don't break character. Don't refer to yourself as an AI. Don't explain your thinking process.
+Respond directly as if you truly hold this philosophical position.
+
+IMPORTANT GUIDELINES FOR NATURAL INTERACTIVE DIALOGUE:
+1. Be concise and direct - keep responses to 2-3 sentences maximum
+2. DIRECTLY RESPOND TO THE PREVIOUS SPEAKER - reference their specific points, ideas, or questions
+3. Be conversational, as if you're having a real-time discussion with the previous speaker
+4. If there are multiple speakers, address the most recent message or the most relevant point
+5. NEVER start with "Indeed" or simple agreement - use varied ways to engage
+6. If appropriate, ask follow-up questions or challenge assumptions made by others
+7. RESPOND IN THE SAME LANGUAGE AS THE TOPIC - if the topic is in Korean, respond in Korean; if in English, respond in English
+
+VERY IMPORTANT - ABOUT USING NAMES:
+1. DO NOT address other speakers by name in most of your responses
+2. AVOID starting your responses with another person's name
+3. Only mention names when absolutely necessary for clarity (like when distinguishing between multiple viewpoints)
+4. Focus on responding to ideas rather than to people
+5. Use phrases like "That perspective..." or "This view..." instead of "Person's name, your perspective..."
+6. When you do need to use names, use proper names (never IDs or codes)
+
+EXAMPLES OF GOOD RESPONSES (WITHOUT NAMES):
+- "That perspective overlooks the fundamental nature of existence."
+- "The distinction between duty and desire isn't so clear-cut."
+- "Perhaps we should question whether freedom itself is the right starting point."
+
+EXAMPLES OF RESPONSES TO AVOID (WITH NAMES):
+- "Kant, your view on categorical imperatives is interesting..." (Don't start with names)
+- "I agree with you, Nietzsche..." (Don't use names unnecessarily)
+- "As Marx mentioned earlier..." (Only reference names when needed for clarity)
+
+The response should feel like a natural conversation without forced name usage.
+"""
+
+        # Build the user prompt with enhanced dialogue focus
+        user_prompt = f"""# Your Philosophical Persona
+{npc_description}
+
+# Topic of Discussion
+{topic}
+
+{sources_context}
+
+{user_context_str}
+
+# Additional Context
+{context}
+
+# Previous Dialogue (Most Recent First)
+{previous_dialogue}
+
+RESPOND DIRECTLY TO THE MOST RECENT MESSAGE IN THE DIALOGUE, as your philosophical character would.
+Your response should feel like a natural continuation of the conversation.
+
+KEEP YOUR RESPONSE BRIEF (2-3 SENTENCES) as if speaking in a real-time dialogue.
+
+IMPORTANT GUIDELINES: 
+1. DO NOT ADDRESS THE PREVIOUS SPEAKER BY NAME in your response
+2. DO NOT START YOUR RESPONSE WITH SOMEONE'S NAME
+3. Directly address or engage with what was just said without using names
+4. Express your philosophical perspective on the point
+5. NEVER start with "Indeed" or generic acknowledgments
+6. RESPOND IN THE SAME LANGUAGE AS THE TOPIC AND PREVIOUS MESSAGES
+
+Instead of using names, focus on responding to ideas:
+- "That perspective overlooks..."
+- "This reasoning fails to consider..."
+- "Such a view might lead to..."
+- "The argument presented has merit, but..."
+
+Create a natural flowing dialogue that doesn't constantly use names to address others.
+"""
+
+        # Generate the response
+        start_time = time.time()
+        response_text = self.generate_response(
+            system_prompt=system_prompt,
+            user_prompt=user_prompt,
+            llm_provider=llm_provider,
+            llm_model=llm_model
+        )
+        elapsed_time = time.time() - start_time
+        
+        # Return the response along with metadata
+        metadata = {
+            "elapsed_time": elapsed_time,
+            "prompt_tokens": len(system_prompt) + len(user_prompt),
+            "response_tokens": len(response_text),
+            "source_count": len(source_materials) if source_materials else 0,
+            "context_count": len(user_contexts) if user_contexts else 0,
+            "timestamp": time.time()
+        }
+        
+        return response_text, metadata
+
+    def generate_philosophical_response_old(self, 
+                                      npc_description: str, 
+                                      topic: str,
+                                      context: str = "",
+                                      previous_dialogue: str = "",
+                                      source_materials: List[Dict[str, str]] = None,
+                                      user_contexts: List[Dict[str, Any]] = None,
+                                      references: List[Dict[str, Any]] = None,
+                                      llm_provider: str = None,
+                                      llm_model: str = None) -> Tuple[str, Dict[str, Any]]:
+        """
+        Generate a philosophical response from an NPC (old version)
         
         Args:
             npc_description: Description of the NPC's traits and philosophical background
@@ -218,8 +362,10 @@ IMPORTANT GUIDELINES FOR INTERACTIVE DIALOGUE:
 2. Focus on one key philosophical point in each response 
 3. If referring to abstract concepts, briefly include one concrete example
 4. Response should feel like part of a natural conversation, not a lecture
-5. If responding to another speaker, briefly acknowledge their point first
-6. Keep language accessible and conversational while maintaining philosophical depth
+5. Use varied ways to engage with previous speakers - don't always start with "Indeed" or agreement
+6. Express your unique philosophical viewpoint even if it contradicts others
+7. Start your responses in different ways - sometimes with questions, sometimes with assertions, sometimes with counterpoints
+8. RESPOND IN THE SAME LANGUAGE AS THE TOPIC - if the topic is in Korean, respond in Korean; if in English, respond in English
 
 When you respond:
 1. Consider the philosophical topic carefully
@@ -229,6 +375,8 @@ When you respond:
 5. Be consistent with your personality traits
 6. Stay in character at all times
 7. Be brief and to the point - as if speaking in a real conversation
+8. Vary your opening phrases based on your character's speaking style
+9. Match the language of the topic in your response
 
 The response should be philosophical yet accessible, brief, and true to the described perspective.
 """
@@ -252,22 +400,41 @@ The response should be philosophical yet accessible, brief, and true to the desc
 
 Respond directly as this philosophical perspective would to the topic.
 KEEP YOUR RESPONSE BRIEF (2-3 SENTENCES) as if speaking in a natural conversation.
-If responding to a previous speaker, first briefly acknowledge their point.
+IMPORTANT: 
+1. Start your response in a way that reflects your philosophical character. 
+2. Avoid starting every response with "Indeed" or similar acknowledgments.
+3. RESPOND IN THE SAME LANGUAGE AS THE TOPIC - if the topic is in Korean, respond in Korean; if in English, respond in English
+
+Use varied opening phrases that match your philosophical style:
+- Present a counterpoint with "However" or "Conversely"
+- Ask a rhetorical question
+- Make a bold statement about the topic
+- Share a personal observation
+- Introduce a relevant metaphor or analogy
+- Express skepticism with "I question whether"
+- Challenge assumptions with "Consider a different view"
+
 Focus on one key insight rather than covering multiple points.
 """
 
-        # Generate the response with optional provider/model override
-        response_text = self.generate_response(system_prompt, user_prompt, llm_provider, llm_model)
+        # Generate the response
+        start_time = time.time()
+        response_text = self.generate_response(
+            system_prompt=system_prompt,
+            user_prompt=user_prompt,
+            llm_provider=llm_provider,
+            llm_model=llm_model
+        )
+        elapsed_time = time.time() - start_time
         
-        # Extract metadata (for a more sophisticated implementation, this could
-        # try to extract philosophical concepts, influences, etc.)
+        # Return the response along with metadata
         metadata = {
-            "length": len(response_text),
-            "topic": topic,
-            "timestamp": time.time(),
-            "user_context_used": bool(user_contexts),
-            "llm_provider": llm_provider or self.llm_config.get("provider"),
-            "llm_model": llm_model or self.llm_config.get("model")
+            "elapsed_time": elapsed_time,
+            "prompt_tokens": len(system_prompt) + len(user_prompt),
+            "response_tokens": len(response_text),
+            "source_count": len(source_materials) if source_materials else 0,
+            "context_count": len(user_contexts) if user_contexts else 0,
+            "timestamp": time.time()
         }
         
         return response_text, metadata
@@ -327,6 +494,7 @@ IMPORTANT: CREATING CONCISE AND NATURAL PHILOSOPHICAL DIALOGUE
 4. Use everyday language while preserving philosophical depth
 5. When introducing philosophical concepts, provide brief real-world examples
 6. Maintain a natural conversational flow as if in a real-time discussion
+7. RESPOND IN THE SAME LANGUAGE AS THE TOPIC - if the topic is in Korean, respond in Korean; if in English, respond in English
 
 DIALOGUE STRUCTURE:
 - Keep exchanges brief and focused, like a real conversation
@@ -375,6 +543,7 @@ IMPORTANT:
 - Keep each response VERY BRIEF (2-3 sentences maximum)
 - Make the dialogue feel like a natural conversation, not formal philosophical statements
 - Each response should directly engage with what the previous speaker just said
+- RESPOND IN THE SAME LANGUAGE AS THE TOPIC - if the topic is in Korean, respond in Korean; if in English, respond in English
 """
 
         # Generate the dialogue
@@ -476,8 +645,9 @@ IMPORTANT GUIDELINES FOR INTERACTIVE DIALOGUE:
 2. Focus on one key philosophical point in each response 
 3. If referring to abstract concepts, briefly include one concrete example
 4. Response should feel like part of a natural conversation, not a lecture
-5. If responding to another speaker, briefly acknowledge their point first
+5. Use varied ways to engage with previous speakers - don't always start with "Indeed" or agreement
 6. Keep language accessible and conversational while maintaining philosophical depth
+7. RESPOND IN THE SAME LANGUAGE AS THE TOPIC - if the topic is in Korean, respond in Korean; if in English, respond in English
 
 When you respond:
 1. Consider the philosophical topic carefully
@@ -487,6 +657,7 @@ When you respond:
 5. Be consistent with your personality traits
 6. Stay in character at all times
 7. Be brief and to the point - as if speaking in a real conversation
+8. Match the language of the topic in your response
 
 The response should be philosophical yet accessible, brief, and true to the described perspective.
 """
@@ -512,7 +683,9 @@ RESPOND AS {npc.name}:
         else:
             user_prompt += "\nRespond to the previous dialogue, acknowledging the last speaker's point and adding your philosophical perspective."
 
-        user_prompt += "\nKEEP YOUR RESPONSE BRIEF (2-3 SENTENCES) as if speaking in a natural conversation."
+        user_prompt += """
+KEEP YOUR RESPONSE BRIEF (2-3 SENTENCES) as if speaking in a natural conversation.
+IMPORTANT: RESPOND IN THE SAME LANGUAGE AS THE TOPIC - if the topic is in Korean, respond in Korean; if in English, respond in English"""
 
         # Generate the response
         response_text = self.generate_response(system_prompt, user_prompt)
