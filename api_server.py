@@ -619,21 +619,49 @@ async def auto_conversation_loop(room_id: str, npcs: List[str], topic: str, dela
                 # NPC 선택 로직 개선
                 responding_npc_id = None
                 
+                # 최근 참여한 NPC들을 추적하는 변수 추가 (없으면 초기화)
+                if "recent_npcs" not in active_auto_conversations.get(room_id, {}):
+                    active_auto_conversations[room_id]["recent_npcs"] = []
+                
+                recent_npcs = active_auto_conversations[room_id]["recent_npcs"]
+                logger.info(f"🎭 최근 대화에 참여한 NPC들: {recent_npcs}")
+                
                 # 사용자 질문에서 언급된 NPC가 있으면 그 NPC가 응답
                 if mentioned_npc and mentioned_npc in current_npcs:
                     responding_npc_id = mentioned_npc
                     user_question_answered = True  # 질문에 응답 표시
                     logger.info(f"사용자가 언급한 {responding_npc_id}가 응답합니다")
-                # 그렇지 않으면 이전 NPC와 다른 NPC 무작위 선택
+                # 그렇지 않으면 최근에 참여하지 않은 NPC 중에서 선택
                 else:
-                    available_npcs = [npc for npc in current_npcs if npc != prev_npc]
+                    # 최근 참여하지 않은 NPC 목록 생성 (최대 절반까지만 제외)
+                    exclude_count = min(len(current_npcs) // 2, len(recent_npcs))
+                    exclude_npcs = recent_npcs[:exclude_count]
+                    
+                    # 선택 가능한 NPC 목록 생성
+                    available_npcs = [npc for npc in current_npcs if npc not in exclude_npcs]
+                    
+                    # 선택 가능한 NPC가 없으면 모든 NPC 중에서 선택
                     if not available_npcs:
                         available_npcs = current_npcs
+                        logger.info(f"🎭 선택 가능한 NPC가 없어 모든 NPC 중에서 선택합니다")
                     
                     # 무작위로 다음 NPC 선택
                     responding_npc_id = random.choice(available_npcs)
+                    logger.info(f"🎭 선택 가능한 NPC 목록 ({len(available_npcs)}개): {available_npcs}")
                 
-                prev_npc = responding_npc_id
+                # 최근 참여 NPC 목록 업데이트 (맨 앞에 추가, 최대 길이 제한)
+                if responding_npc_id in recent_npcs:
+                    recent_npcs.remove(responding_npc_id)
+                recent_npcs.insert(0, responding_npc_id)
+                
+                # 최근 참여 NPC 목록 길이 제한 (최대 NPC 수의 절반까지만 유지)
+                max_recent = max(len(current_npcs) // 2, 1)
+                active_auto_conversations[room_id]["recent_npcs"] = recent_npcs[:max_recent]
+                
+                logger.info(f"🎭 선택된 NPC: {responding_npc_id}, 업데이트된 최근 참여 NPC 목록: {active_auto_conversations[room_id]['recent_npcs']}")
+                
+                # 이전 prev_npc 코드는 삭제
+                # prev_npc = responding_npc_id
                 
                 logger.debug(f"선택된 NPC ID: {responding_npc_id}")
                 
@@ -652,32 +680,73 @@ async def auto_conversation_loop(room_id: str, npcs: List[str], topic: str, dela
                     await asyncio.sleep(5)
                     continue
                 
-                # NPC 설명 구성 - custom NPC의 경우 추가 특성 포함
-                npc_description = f"{npc_info['name']}: {npc_info.get('description', 'A philosopher with unique perspectives')}"
+                # *** 새 로직: NPC 선택 즉시 소켓 이벤트 발송 ***
+                try:
+                    # npc-selected 이벤트 발송
+                    async with aiohttp.ClientSession() as session:
+                        nextjs_api_url = os.environ.get("NEXTJS_API_URL", "http://localhost:3000")
+                        
+                        # 소켓 이벤트 데이터
+                        npc_selected_data = {
+                            "action": "broadcast",
+                            "room": room_id,
+                            "event": "npc-selected",
+                            "data": {
+                                "npc_id": responding_npc_id,
+                                "npc_name": npc_info.get('name', 'Unknown')
+                            }
+                        }
+                        
+                        logger.info(f"🎯 NPC 선택 이벤트 발송: {responding_npc_id} ({npc_info.get('name', 'Unknown')})")
+                        
+                        # 이벤트 전송
+                        npc_selected_response = await session.post(
+                            f"{nextjs_api_url}/api/socket",
+                            json=npc_selected_data,
+                            headers={"Content-Type": "application/json"}
+                        )
+                        
+                        # 응답 확인
+                        npc_selected_status = npc_selected_response.status
+                        logger.info(f"NPC 선택 이벤트 발송 상태: {npc_selected_status}")
+                        
+                        if npc_selected_status != 200:
+                            logger.warning(f"NPC 선택 이벤트 발송 실패: {npc_selected_status}")
+                except Exception as e:
+                    logger.error(f"NPC 선택 이벤트 발송 중 오류: {str(e)}")
                 
-                # 스타일 정보가 있으면 추가
-                if npc_info.get('style'):
-                    npc_description += f". Style: {npc_info['style']}"
+                # "thinking" 상태 소켓 이벤트 발송 - 기존 코드 삭제 (npc-selected 이벤트로 대체)
                 
-                # Custom NPC인 경우 추가 특성 포함
-                if npc_info.get('is_custom', False):
-                    # 추가 특성이 있으면 설명에 추가
-                    additional_traits = []
+                # "thinking" 상태 소켓 이벤트 발송
+                # npc_description 변수 초기화 - 오류 수정
+                npc_description = npc_info.get('description', f"A philosopher named {npc_info.get('name', responding_npc_id)}")
+                
+                try:
+                    # 스타일 정보가 있으면 추가
+                    if npc_info.get('style'):
+                        npc_description += f". Style: {npc_info['style']}"
                     
-                    if npc_info.get('voice_style'):
-                        additional_traits.append(f"Voice style: {npc_info['voice_style']}")
-                    
-                    if npc_info.get('debate_approach'):
-                        additional_traits.append(f"Debate approach: {npc_info['debate_approach']}")
-                    
-                    if npc_info.get('communication_style'):
-                        additional_traits.append(f"Communication style: {npc_info['communication_style']}")
-                    
-                    # 특성이 있으면 설명에 추가
-                    if additional_traits:
-                        traits_text = "; ".join(additional_traits)
-                        npc_description += f". {traits_text}"
-                        logger.info(f"📣 Custom NPC 추가 특성 포함: {traits_text}")
+                    # Custom NPC인 경우 추가 특성 포함
+                    if npc_info.get('is_custom', False):
+                        # 추가 특성이 있으면 설명에 추가
+                        additional_traits = []
+                        
+                        if npc_info.get('voice_style'):
+                            additional_traits.append(f"Voice style: {npc_info['voice_style']}")
+                            
+                        if npc_info.get('debate_approach'):
+                            additional_traits.append(f"Debate approach: {npc_info['debate_approach']}")
+                        
+                        if npc_info.get('communication_style'):
+                            additional_traits.append(f"Communication style: {npc_info['communication_style']}")
+                        
+                        # 특성이 있으면 설명에 추가
+                        if additional_traits:
+                            traits_text = "; ".join(additional_traits)
+                            npc_description += f". {traits_text}"
+                            logger.info(f"📣 Custom NPC 추가 특성 포함: {traits_text}")
+                except Exception as e:
+                    logger.error(f"NPC 추가 특성 처리 중 오류: {str(e)}")
                 
                 # 메시지 생성 - 대화 기록 반영 및 사용자 질문에 직접 응답하도록 개선
                 logger.info(f"Generating philosophical response for {npc_info['name']} on topic: {current_topic}")
@@ -699,7 +768,7 @@ async def auto_conversation_loop(room_id: str, npcs: List[str], topic: str, dela
                         use_rag = True
                         logger.info(f"🔍 칸트 응답을 위해 RAG 자동 활성화됨")
                     
-                    response_text, _ = llm_manager.generate_philosophical_response(
+                    response_text, metadata = llm_manager.generate_philosophical_response(
                         npc_description=npc_description,
                         topic=current_topic,
                         context=additional_context,
@@ -708,6 +777,14 @@ async def auto_conversation_loop(room_id: str, npcs: List[str], topic: str, dela
                         use_rag=use_rag  # 칸트인 경우에만 RAG 활성화
                     )
                     logger.debug(f"LLM에서 생성된 응답: {response_text[:100]}...")
+                    
+                    # 인용 정보(citations) 추출 및 로깅
+                    citations = metadata.get("citations", [])
+                    if citations:
+                        logger.info(f"📚 {len(citations)}개의 인용 정보가 포함됨")
+                        logger.debug(f"📚 인용 정보: {citations}")
+                    else:
+                        logger.info("📚 인용 정보 없음")
                     
                     # NPC ID를 이름으로 변환하는 후처리 추가
                     try:
@@ -731,6 +808,39 @@ async def auto_conversation_loop(room_id: str, npcs: List[str], topic: str, dela
                     await asyncio.sleep(5)
                     continue
                 
+                # "message-sent" 상태 소켓 이벤트 발송
+                try:
+                    async with aiohttp.ClientSession() as session:
+                        nextjs_api_url = os.environ.get("NEXTJS_API_URL", "http://localhost:3000")
+                        message_sent_data = {
+                            "action": "broadcast",
+                            "room": room_id,
+                            "event": "auto-message-sent",
+                            "data": {}
+                        }
+                        
+                        logger.info(f"자동 대화 message-sent 이벤트 발송")
+                        logger.info(f"Message-sent 이벤트 페이로드: {message_sent_data}")
+                        
+                        message_sent_response = await session.post(
+                            f"{nextjs_api_url}/api/socket",
+                            json=message_sent_data,
+                            headers={"Content-Type": "application/json"}
+                        )
+                        
+                        message_sent_status = message_sent_response.status
+                        message_sent_resp_text = await message_sent_response.text()
+                        logger.info(f"Message-sent 이벤트 발송 상태: {message_sent_status}")
+                        logger.info(f"Message-sent 이벤트 응답: {message_sent_resp_text[:100]}")
+                        
+                        # 실패 시 상세 로그
+                        if message_sent_status != 200:
+                            logger.error(f"❌ Message-sent 이벤트 발송 실패! 상태 코드: {message_sent_status}")
+                            logger.error(f"❌ 실패 응답: {message_sent_resp_text[:200]}")
+                except Exception as message_sent_err:
+                    logger.error(f"Message-sent 이벤트 발송 실패: {str(message_sent_err)}")
+                    logger.exception(message_sent_err)  # 스택 트레이스 출력
+                
                 # 응답 메시지 구성 - 더 많은 NPC 정보 포함
                 message_id = f"auto-{uuid4().hex[:8]}"
                 
@@ -750,6 +860,11 @@ async def auto_conversation_loop(room_id: str, npcs: List[str], topic: str, dela
                     "portrait_url": npc_info.get('portrait_url', None),  # 추가: 프로필 이미지 URL
                     "npc_id": responding_npc_id  # 추가: NPC ID 명시적 포함
                 }
+                
+                # 인용 정보가 있으면 메시지에 추가
+                if citations:
+                    message["citations"] = citations
+                    logger.info(f"📚 메시지에 {len(citations)}개의 인용 정보 추가됨")
                 
                 logger.info(f"📣 최종 메시지 객체: {message}")
                 logger.info(f"Generated message for {npc_name} in room {room_id}")
@@ -1677,6 +1792,38 @@ async def generate_chat_response(request: ChatGenerateRequest):
         # 응답할 철학자(NPC) 선택
         responding_philosopher = select_responding_philosopher(npcs, request.user_message)
         logger.info(f"🎯 응답할 철학자: {responding_philosopher}")
+        
+        # *** 새 로직: NPC 선택 즉시 소켓 이벤트 발송 ***
+        try:
+            # npc-selected 이벤트 발송
+            async with aiohttp.ClientSession() as session:
+                nextjs_api_url = os.environ.get("NEXTJS_API_URL", "http://localhost:3000")
+                
+                # 소켓 이벤트 데이터
+                npc_selected_data = {
+                    "action": "broadcast",
+                    "room": request.room_id,
+                    "event": "npc-selected",
+                    "data": {
+                        "npc_id": responding_philosopher
+                    }
+                }
+                
+                logger.info(f"NPC 선택 이벤트 발송: {responding_philosopher}")
+                
+                # 이벤트 전송
+                npc_selected_response = await session.post(
+                    f"{nextjs_api_url}/api/socket",
+                    json=npc_selected_data,
+                    headers={"Content-Type": "application/json"}
+                )
+                
+                # 응답 확인
+                npc_selected_status = npc_selected_response.status
+                if npc_selected_status != 200:
+                    logger.warning(f"NPC 선택 이벤트 발송 실패: {npc_selected_status}")
+        except Exception as e:
+            logger.error(f"NPC 선택 이벤트 발송 중 오류: {str(e)}")
         
         # 칸트의 경우 자동으로 RAG 활성화
         if responding_philosopher.lower() == 'kant':
