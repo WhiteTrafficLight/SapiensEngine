@@ -1,0 +1,4307 @@
+[
+  {
+    "chunk_id": "kant_chunk_1",
+    "source": "The Critique of Practical Reason",
+    "token_count": 149,
+    "length": 731,
+    "text_preview": "Produced by Matthew Stapleton 1788 THE CRITIQUE OF PRACTICAL REASON by Immanuel Kant translated by T..."
+  },
+  {
+    "chunk_id": "kant_chunk_2",
+    "source": "The Critique of Practical Reason",
+    "token_count": 104,
+    "length": 503,
+    "text_preview": "For if, as pure reason, it is actually practical, it proves its own reality and that of its concepts..."
+  },
+  {
+    "chunk_id": "kant_chunk_3",
+    "source": "The Critique of Practical Reason",
+    "token_count": 170,
+    "length": 824,
+    "text_preview": "Speculative reason could only exhibit this concept (of freedom) problematically as not impossible to..."
+  },
+  {
+    "chunk_id": "kant_chunk_4",
+    "source": "The Critique of Practical Reason",
+    "token_count": 127,
+    "length": 590,
+    "text_preview": "Freedom, however, is the only one of all the ideas of the speculative reason of which we know the po..."
+  },
+  {
+    "chunk_id": "kant_chunk_5",
+    "source": "The Critique of Practical Reason",
+    "token_count": 146,
+    "length": 742,
+    "text_preview": "However they are the conditions of the application of the morally determined will to its object, whi..."
+  },
+  {
+    "chunk_id": "kant_chunk_6",
+    "source": "The Critique of Practical Reason",
+    "token_count": 134,
+    "length": 682,
+    "text_preview": "Nay, there is a subjective necessity (a need of pure reason) to assume them. Nevertheless the theore..."
+  },
+  {
+    "chunk_id": "kant_chunk_7",
+    "source": "The Critique of Practical Reason",
+    "token_count": 122,
+    "length": 598,
+    "text_preview": "{PREFACE ^paragraph 5} * Lest any one should imagine that he finds an inconsistency here when I call..."
+  },
+  {
+    "chunk_id": "kant_chunk_8",
+    "source": "The Critique of Practical Reason",
+    "token_count": 122,
+    "length": 612,
+    "text_preview": "But were there no freedom it would be impossible to trace the moral law in ourselves at all. It woul..."
+  },
+  {
+    "chunk_id": "kant_chunk_9",
+    "source": "The Critique of Practical Reason",
+    "token_count": 122,
+    "length": 566,
+    "text_preview": "Quid statis? Nolint. Atqui licet esse beatis. As they then do not in fact choose to do so, probably ..."
+  },
+  {
+    "chunk_id": "kant_chunk_10",
+    "source": "The Critique of Practical Reason",
+    "token_count": 141,
+    "length": 767,
+    "text_preview": "This must at first seem inconsistent as long as this practical use is only nominally known. But when..."
+  },
+  {
+    "chunk_id": "kant_chunk_11",
+    "source": "The Critique of Practical Reason",
+    "token_count": 122,
+    "length": 625,
+    "text_preview": "For whereas it insisted that the objects of experience as such, including our own subject, have only..."
+  },
+  {
+    "chunk_id": "kant_chunk_12",
+    "source": "The Critique of Practical Reason",
+    "token_count": 154,
+    "length": 785,
+    "text_preview": "By this the strange but certain doctrine of the speculative critical philosophy, that the thinking s..."
+  },
+  {
+    "chunk_id": "kant_chunk_13",
+    "source": "The Critique of Practical Reason",
+    "token_count": 74,
+    "length": 369,
+    "text_preview": "By this also I can understand why the most considerable objections which I have as yet met with agai..."
+  },
+  {
+    "chunk_id": "kant_chunk_14",
+    "source": "The Critique of Practical Reason",
+    "token_count": 74,
+    "length": 340,
+    "text_preview": "regard oneself qua subject of freedom as a noumenon, and at the same time from the point of view of ..."
+  },
+  {
+    "chunk_id": "kant_chunk_15",
+    "source": "The Critique of Practical Reason",
+    "token_count": 47,
+    "length": 247,
+    "text_preview": "alleged phenomenon, and on the other side it seemed doubtful whether it was at all possible to form ..."
+  },
+  {
+    "chunk_id": "kant_chunk_16",
+    "source": "The Critique of Practical Reason",
+    "token_count": 147,
+    "length": 797,
+    "text_preview": "Nothing but a detailed criticism of the practical reason can remove all this misapprehension and set..."
+  },
+  {
+    "chunk_id": "kant_chunk_17",
+    "source": "The Critique of Practical Reason",
+    "token_count": 150,
+    "length": 779,
+    "text_preview": "Such a transition necessitates a comparison of the old and the new usage, in order to distinguish we..."
+  },
+  {
+    "chunk_id": "kant_chunk_18",
+    "source": "The Critique of Practical Reason",
+    "token_count": 127,
+    "length": 659,
+    "text_preview": "This remark applies especially to the concept of freedom, respecting which one cannot but observe wi..."
+  },
+  {
+    "chunk_id": "kant_chunk_19",
+    "source": "The Critique of Practical Reason",
+    "token_count": 140,
+    "length": 686,
+    "text_preview": "The concept of freedom is the stone of stumbling for all empiricists, but at the same time the key t..."
+  },
+  {
+    "chunk_id": "kant_chunk_20",
+    "source": "The Critique of Practical Reason",
+    "token_count": 85,
+    "length": 442,
+    "text_preview": "It presupposes, indeed, the Fundamental Principles of the Metaphysic of Morals, but only in so far a..."
+  },
+  {
+    "chunk_id": "kant_chunk_21",
+    "source": "The Critique of Practical Reason",
+    "token_count": 115,
+    "length": 579,
+    "text_preview": "For it is not possible to define duties specially, as human duties, with a view to their classificat..."
+  },
+  {
+    "chunk_id": "kant_chunk_22",
+    "source": "The Critique of Practical Reason",
+    "token_count": 117,
+    "length": 540,
+    "text_preview": "The classification then belongs to the system of science, not to the system of criticism. {PREFACE ^..."
+  },
+  {
+    "chunk_id": "kant_chunk_23",
+    "source": "The Critique of Practical Reason",
+    "token_count": 125,
+    "length": 596,
+    "text_preview": "But whoever knows of what importance to a mathematician a formula is, which defines accurately what ..."
+  },
+  {
+    "chunk_id": "kant_chunk_24",
+    "source": "The Critique of Practical Reason",
+    "token_count": 122,
+    "length": 496,
+    "text_preview": "*(2) I have also had regard to many of the objections which have reached me from men who show that t..."
+  },
+  {
+    "chunk_id": "kant_chunk_25",
+    "source": "The Critique of Practical Reason",
+    "token_count": 128,
+    "length": 615,
+    "text_preview": "Werke, vol. vii, p. 182.] *(2) It might also have been objected to me that I have not first defined ..."
+  },
+  {
+    "chunk_id": "kant_chunk_26",
+    "source": "The Critique of Practical Reason",
+    "token_count": 146,
+    "length": 678,
+    "text_preview": "It will, therefore, give this definition here in such a manner as it ought to be given, in order to ..."
+  },
+  {
+    "chunk_id": "kant_chunk_27",
+    "source": "The Critique of Practical Reason",
+    "token_count": 124,
+    "length": 690,
+    "text_preview": "I have no further need for the purposes of this critique of notions borrowed from psychology; the cr..."
+  },
+  {
+    "chunk_id": "kant_chunk_28",
+    "source": "The Critique of Practical Reason",
+    "token_count": 128,
+    "length": 662,
+    "text_preview": "It may be observed through the whole course of the critical philosophy (of the theoretical as well a..."
+  },
+  {
+    "chunk_id": "kant_chunk_29",
+    "source": "The Critique of Practical Reason",
+    "token_count": 132,
+    "length": 659,
+    "text_preview": "But there is another thing to be attended to which is of a more philosophical and architectonic char..."
+  },
+  {
+    "chunk_id": "kant_chunk_30",
+    "source": "The Critique of Practical Reason",
+    "token_count": 147,
+    "length": 728,
+    "text_preview": "It is no wonder then if they find inconsistencies everywhere, although the gaps which these indicate..."
+  },
+  {
+    "chunk_id": "kant_chunk_31",
+    "source": "The Critique of Practical Reason",
+    "token_count": 112,
+    "length": 522,
+    "text_preview": "If, therefore, the readers of that work know any more familiar expressions which are as suitable to ..."
+  },
+  {
+    "chunk_id": "kant_chunk_32",
+    "source": "The Critique of Practical Reason",
+    "token_count": 106,
+    "length": 512,
+    "text_preview": "* {PREFACE ^paragraph 25} * I am more afraid in the present treatise of occasional misconception in ..."
+  },
+  {
+    "chunk_id": "kant_chunk_33",
+    "source": "The Critique of Practical Reason",
+    "token_count": 130,
+    "length": 619,
+    "text_preview": "Here, however, the former means what coincides with, or contradicts, a merely possible practical pre..."
+  },
+  {
+    "chunk_id": "kant_chunk_34",
+    "source": "The Critique of Practical Reason",
+    "token_count": 129,
+    "length": 626,
+    "text_preview": "For if anyone chooses to forfeit his reputation as an orator, no one can prevent him. We have here o..."
+  },
+  {
+    "chunk_id": "kant_chunk_35",
+    "source": "The Critique of Practical Reason",
+    "token_count": 147,
+    "length": 728,
+    "text_preview": "(Perhaps the expression virtue, with which also the Stoic made great show, would better mark the cha..."
+  },
+  {
+    "chunk_id": "kant_chunk_36",
+    "source": "The Critique of Practical Reason",
+    "token_count": 91,
+    "length": 456,
+    "text_preview": "This certainty of the postulated possibility then is not at all theoretic, and consequently not apod..."
+  },
+  {
+    "chunk_id": "kant_chunk_37",
+    "source": "The Critique of Practical Reason",
+    "token_count": 126,
+    "length": 595,
+    "text_preview": "In this manner, then, the a priori principles of two faculties of the mind, the faculty of cognition..."
+  },
+  {
+    "chunk_id": "kant_chunk_38",
+    "source": "The Critique of Practical Reason",
+    "token_count": 130,
+    "length": 622,
+    "text_preview": "This would be the same thing as if one sought to prove by reason that there is no reason. For we onl..."
+  },
+  {
+    "chunk_id": "kant_chunk_39",
+    "source": "The Critique of Practical Reason",
+    "token_count": 130,
+    "length": 601,
+    "text_preview": "To substitute subjective necessity, that is, custom, for objective, which exists only in a priori ju..."
+  },
+  {
+    "chunk_id": "kant_chunk_40",
+    "source": "The Critique of Practical Reason",
+    "token_count": 107,
+    "length": 539,
+    "text_preview": "As to attempting to remedy this want of objective and consequently universal validity by saying that..."
+  },
+  {
+    "chunk_id": "kant_chunk_41",
+    "source": "The Critique of Practical Reason",
+    "token_count": 176,
+    "length": 869,
+    "text_preview": "I omit to mention that universal assent does not prove the objective validity of a judgement (i.e., ..."
+  },
+  {
+    "chunk_id": "kant_chunk_42",
+    "source": "The Critique of Practical Reason",
+    "token_count": 102,
+    "length": 482,
+    "text_preview": "But even Hume did not make his empiricism so universal as to include mathematics. He holds the princ..."
+  },
+  {
+    "chunk_id": "kant_chunk_43",
+    "source": "The Critique of Practical Reason",
+    "token_count": 129,
+    "length": 669,
+    "text_preview": "But if we adopt a universal empiricism, then mathematics will be included. Now if this science is in..."
+  },
+  {
+    "chunk_id": "kant_chunk_44",
+    "source": "The Critique of Practical Reason",
+    "token_count": 141,
+    "length": 689,
+    "text_preview": "And thus universal empiricism reveals itself as absolute scepticism. It is erroneous to attribute th..."
+  },
+  {
+    "chunk_id": "kant_chunk_45",
+    "source": "The Critique of Practical Reason",
+    "token_count": 94,
+    "length": 459,
+    "text_preview": "{PREFACE ^paragraph 35} However, as in this philosophical and critical age such empiricism can scarc..."
+  },
+  {
+    "chunk_id": "kant_chunk_46",
+    "source": "The Critique of Practical Reason",
+    "token_count": 98,
+    "length": 516,
+    "text_preview": "INTRODUCTION INTRODUCTION. Of the Idea of a Critique of Practical Reason. The theoretical use of rea..."
+  },
+  {
+    "chunk_id": "kant_chunk_47",
+    "source": "The Critique of Practical Reason",
+    "token_count": 139,
+    "length": 698,
+    "text_preview": "It is quite different with the practical use of reason. In this, reason is concerned with the ground..."
+  },
+  {
+    "chunk_id": "kant_chunk_48",
+    "source": "The Critique of Practical Reason",
+    "token_count": 122,
+    "length": 591,
+    "text_preview": "Now, here there comes in a notion of causality justified by the critique of the pure reason, althoug..."
+  },
+  {
+    "chunk_id": "kant_chunk_49",
+    "source": "The Critique of Practical Reason",
+    "token_count": 133,
+    "length": 698,
+    "text_preview": "For when once pure reason is shown to exist, it needs no critical examination. For reason itself con..."
+  },
+  {
+    "chunk_id": "kant_chunk_50",
+    "source": "The Critique of Practical Reason",
+    "token_count": 137,
+    "length": 684,
+    "text_preview": "This is just the opposite of what might be said of pure reason in its speculative employment. Howeve..."
+  },
+  {
+    "chunk_id": "kant_chunk_51",
+    "source": "The Critique of Practical Reason",
+    "token_count": 146,
+    "length": 686,
+    "text_preview": "For, in the present case, we shall commence with the principles and proceed to the concepts, and onl..."
+  },
+  {
+    "chunk_id": "kant_chunk_52",
+    "source": "The Critique of Practical Reason - Book 1: CHAPTER_1 FIRST PART",
+    "token_count": 114,
+    "length": 511,
+    "text_preview": "We necessarily begin with the law of causality from freedom, that is, with a pure practical principl..."
+  },
+  {
+    "chunk_id": "kant_chunk_53",
+    "source": "The Critique of Practical Reason - Book 1: CHAPTER_1 ^paragraph 10} REMARK",
+    "token_count": 136,
+    "length": 638,
+    "text_preview": "They are subjective, or maxims, when the condition is regarded by the subject as valid only for his ..."
+  },
+  {
+    "chunk_id": "kant_chunk_54",
+    "source": "The Critique of Practical Reason",
+    "token_count": 121,
+    "length": 554,
+    "text_preview": "For example, one may make it his maxim to let no injury pass unrevenged, and yet he may see that thi..."
+  },
+  {
+    "chunk_id": "kant_chunk_55",
+    "source": "The Critique of Practical Reason",
+    "token_count": 94,
+    "length": 465,
+    "text_preview": "In practical philosophy, i.e., that which has to do only with the grounds of determination of the wi..."
+  },
+  {
+    "chunk_id": "kant_chunk_56",
+    "source": "The Critique of Practical Reason",
+    "token_count": 140,
+    "length": 702,
+    "text_preview": "But in the case of a being with whom reason does not of itself determine the will, this rule is an i..."
+  },
+  {
+    "chunk_id": "kant_chunk_57",
+    "source": "The Critique of Practical Reason",
+    "token_count": 95,
+    "length": 452,
+    "text_preview": "The former would be hypothetical imperatives, and contain mere precepts of skill; the latter, on the..."
+  },
+  {
+    "chunk_id": "kant_chunk_58",
+    "source": "The Critique of Practical Reason",
+    "token_count": 124,
+    "length": 593,
+    "text_preview": "Laws must be sufficient to determine the will as will, even before I ask whether I have power suffic..."
+  },
+  {
+    "chunk_id": "kant_chunk_59",
+    "source": "The Critique of Practical Reason",
+    "token_count": 133,
+    "length": 641,
+    "text_preview": "But it is easy to see that in this case the will is directed to something else which it is presuppos..."
+  },
+  {
+    "chunk_id": "kant_chunk_60",
+    "source": "The Critique of Practical Reason",
+    "token_count": 124,
+    "length": 620,
+    "text_preview": "But that reason may give laws it is necessary that it should only need to presuppose itself, because..."
+  },
+  {
+    "chunk_id": "kant_chunk_61",
+    "source": "The Critique of Practical Reason - Book 1: CHAPTER_1 ^paragraph 15} All practical principles which presuppose an object (matter) of the faculty of desire as the ground of determination of the will are empirical and can furnish no practical laws",
+    "token_count": 115,
+    "length": 522,
+    "text_preview": "Thus, practical laws refer to the will only, without considering what is attained by its causality, ..."
+  },
+  {
+    "chunk_id": "kant_chunk_62",
+    "source": "The Critique of Practical Reason",
+    "token_count": 131,
+    "length": 642,
+    "text_preview": "By the matter of the faculty of desire I mean an object the realization of which is desired. Now, if..."
+  },
+  {
+    "chunk_id": "kant_chunk_63",
+    "source": "The Critique of Practical Reason",
+    "token_count": 81,
+    "length": 404,
+    "text_preview": "This, then, must be presupposed as a condition of the possibility of determination of the will. But ..."
+  },
+  {
+    "chunk_id": "kant_chunk_64",
+    "source": "The Critique of Practical Reason - Book 1: CHAPTER_1 ^paragraph 20} III",
+    "token_count": 141,
+    "length": 675,
+    "text_preview": "In the second place, since susceptibility to a pleasure or pain can be known only empirically and ca..."
+  },
+  {
+    "chunk_id": "kant_chunk_65",
+    "source": "The Critique of Practical Reason",
+    "token_count": 122,
+    "length": 583,
+    "text_preview": "Pleasure arising from the idea of the idea of the existence of a thing, in so far as it is to determ..."
+  },
+  {
+    "chunk_id": "kant_chunk_66",
+    "source": "The Critique of Practical Reason - Book 1: CHAPTER_1 ^paragraph 25} COROLLARY",
+    "token_count": 115,
+    "length": 542,
+    "text_preview": "Now, a rational being's consciousness of the pleasantness of life uninterruptedly accompanying his w..."
+  },
+  {
+    "chunk_id": "kant_chunk_67",
+    "source": "The Critique of Practical Reason - Book 1: CHAPTER_1 ^paragraph 25} COROLLARY",
+    "token_count": 165,
+    "length": 769,
+    "text_preview": "{BOOK_1|CHAPTER_1 ^paragraph 25} COROLLARY. All material practical rules place the determining princ..."
+  },
+  {
+    "chunk_id": "kant_chunk_68",
+    "source": "The Critique of Practical Reason",
+    "token_count": 187,
+    "length": 929,
+    "text_preview": "Whether an idea has its seat and source in the understanding or not, if it can only determine the ch..."
+  },
+  {
+    "chunk_id": "kant_chunk_69",
+    "source": "The Critique of Practical Reason",
+    "token_count": 144,
+    "length": 701,
+    "text_preview": "Otherwise, how could we compare in respect of magnitude two principles of determination, the ideas o..."
+  },
+  {
+    "chunk_id": "kant_chunk_70",
+    "source": "The Critique of Practical Reason",
+    "token_count": 81,
+    "length": 363,
+    "text_preview": "If the determination of his will rests on the feeling of the agreeableness or disagreeableness that ..."
+  },
+  {
+    "chunk_id": "kant_chunk_71",
+    "source": "The Critique of Practical Reason",
+    "token_count": 138,
+    "length": 691,
+    "text_preview": "Just as to the man who wants money to spend, it is all the same whether the gold was dug out of the ..."
+  },
+  {
+    "chunk_id": "kant_chunk_72",
+    "source": "The Critique of Practical Reason",
+    "token_count": 99,
+    "length": 491,
+    "text_preview": "Thus, for example, it is observed that we can find pleasure in the mere exercise of power, in the co..."
+  },
+  {
+    "chunk_id": "kant_chunk_73",
+    "source": "The Critique of Practical Reason",
+    "token_count": 140,
+    "length": 699,
+    "text_preview": "But to say on this account that they determine the will in a different way and not through sense, wh..."
+  },
+  {
+    "chunk_id": "kant_chunk_74",
+    "source": "The Critique of Practical Reason",
+    "token_count": 120,
+    "length": 585,
+    "text_preview": "For we have no reason whatever to charge him with holding that the ideas by which this feeling is ex..."
+  },
+  {
+    "chunk_id": "kant_chunk_75",
+    "source": "The Critique of Practical Reason",
+    "token_count": 81,
+    "length": 428,
+    "text_preview": "Consistency is the highest obligation of a philosopher, and yet the most rarely found. The ancient G..."
+  },
+  {
+    "chunk_id": "kant_chunk_76",
+    "source": "The Critique of Practical Reason",
+    "token_count": 112,
+    "length": 577,
+    "text_preview": "The principle of private happiness, however much understanding and reason may be used in it, cannot ..."
+  },
+  {
+    "chunk_id": "kant_chunk_77",
+    "source": "The Critique of Practical Reason",
+    "token_count": 146,
+    "length": 744,
+    "text_preview": "Then only, when reason of itself determines the will (not as the servant of the inclination), it is ..."
+  },
+  {
+    "chunk_id": "kant_chunk_78",
+    "source": "The Critique of Practical Reason - Book 1: CHAPTER_1 ^paragraph 35} To be happy is necessarily the wish of every finite rational being, and this, therefore, is inevitably a determining principle of its faculty of desire",
+    "token_count": 132,
+    "length": 648,
+    "text_preview": "REMARK II. {BOOK_1|CHAPTER_1 ^paragraph 35} To be happy is necessarily the wish of every finite rati..."
+  },
+  {
+    "chunk_id": "kant_chunk_79",
+    "source": "The Critique of Practical Reason",
+    "token_count": 120,
+    "length": 663,
+    "text_preview": "But just because this material principle of determination can only be empirically known by the subje..."
+  },
+  {
+    "chunk_id": "kant_chunk_80",
+    "source": "The Critique of Practical Reason",
+    "token_count": 131,
+    "length": 639,
+    "text_preview": "For it is every man's own special feeling of pleasure and pain that decides in what he is to place h..."
+  },
+  {
+    "chunk_id": "kant_chunk_81",
+    "source": "The Critique of Practical Reason",
+    "token_count": 118,
+    "length": 589,
+    "text_preview": "Principles of self-love may, indeed, contain universal precepts of skill (how to find means to accom..."
+  },
+  {
+    "chunk_id": "kant_chunk_82",
+    "source": "The Critique of Practical Reason - Book 1: CHAPTER_1 ^paragraph 40} Even supposing, however, that all finite rational beings were thoroughly agreed as to what were the objects of their feelings of pleasure and pain, and also as to the means which they must employ to attain the one and avoid the other; still, they could by no means set up the principle of self-love as a practical law, for this unanimity itself would be only contingent",
+    "token_count": 166,
+    "length": 808,
+    "text_preview": "* Propositions which in mathematics or physics are called practical ought properly to be called tech..."
+  },
+  {
+    "chunk_id": "kant_chunk_83",
+    "source": "The Critique of Practical Reason",
+    "token_count": 82,
+    "length": 416,
+    "text_preview": "The principle of determination would still be only subjectively valid and merely empirical, and woul..."
+  },
+  {
+    "chunk_id": "kant_chunk_84",
+    "source": "The Critique of Practical Reason",
+    "token_count": 131,
+    "length": 639,
+    "text_preview": "It would be better to maintain that there are no practical laws at all, but only counsels for the se..."
+  },
+  {
+    "chunk_id": "kant_chunk_85",
+    "source": "The Critique of Practical Reason",
+    "token_count": 124,
+    "length": 642,
+    "text_preview": "But in the case of merely subjective practical principles, it is expressly made a condition that the..."
+  },
+  {
+    "chunk_id": "kant_chunk_86",
+    "source": "The Critique of Practical Reason - Book 1: CHAPTER_1 ^paragraph 45} By the matter of a practical principle I mean the object of the will",
+    "token_count": 121,
+    "length": 546,
+    "text_preview": "{BOOK_1|CHAPTER_1 ^paragraph 45} By the matter of a practical principle I mean the object of the wil..."
+  },
+  {
+    "chunk_id": "kant_chunk_87",
+    "source": "The Critique of Practical Reason",
+    "token_count": 126,
+    "length": 621,
+    "text_preview": "Therefore, either a rational being cannot conceive his subjective practical principles, that is, his..."
+  },
+  {
+    "chunk_id": "kant_chunk_88",
+    "source": "The Critique of Practical Reason",
+    "token_count": 145,
+    "length": 672,
+    "text_preview": "This is just the case for my maxim. I desire then to know whether that maxim can also bold good as a..."
+  },
+  {
+    "chunk_id": "kant_chunk_89",
+    "source": "The Critique of Practical Reason - Book 1: CHAPTER_1 ^paragraph 50} It is, therefore, surprising that intelligent men could have thought of calling the desire of happiness a universal practical law on the ground that the desire is universal, and, therefore, also the maxim by which everyone makes this desire determine his will",
+    "token_count": 137,
+    "length": 628,
+    "text_preview": "Now, if I say that my will is subject to a practical law, I cannot adduce my inclination (e.g., in t..."
+  },
+  {
+    "chunk_id": "kant_chunk_90",
+    "source": "The Critique of Practical Reason",
+    "token_count": 133,
+    "length": 671,
+    "text_preview": "For whereas in other cases a universal law of nature makes everything harmonious; here, on the contr..."
+  },
+  {
+    "chunk_id": "kant_chunk_91",
+    "source": "The Critique of Practical Reason",
+    "token_count": 131,
+    "length": 631,
+    "text_preview": "In this manner, then, results a harmony like that which a certain satirical poem depicts as existing..."
+  },
+  {
+    "chunk_id": "kant_chunk_92",
+    "source": "The Critique of Practical Reason - Book 1: CHAPTER_1 ^paragraph 55} Since the bare form of the law can only be conceived by reason, and is, therefore, not an object of the senses, and consequently does not belong to the class of phenomena, it follows that the idea of it, which determines the will, is distinct from all the principles that determine events in nature according to the law of causality, because in their case the determining principles must themselves be phenomena",
+    "token_count": 160,
+    "length": 764,
+    "text_preview": "To discover a law which would govern them all under this condition, namely, bringing them all into h..."
+  },
+  {
+    "chunk_id": "kant_chunk_93",
+    "source": "The Critique of Practical Reason",
+    "token_count": 120,
+    "length": 573,
+    "text_preview": "Now, if no other determining principle can serve as a law for the will except that universal legisla..."
+  },
+  {
+    "chunk_id": "kant_chunk_94",
+    "source": "The Critique of Practical Reason - Book 1: CHAPTER_1 ^paragraph 60} Since the matter of the practical law, i",
+    "token_count": 137,
+    "length": 636,
+    "text_preview": "{BOOK_1|CHAPTER_1 ^paragraph 60} Since the matter of the practical law, i.e., an object of the maxim..."
+  },
+  {
+    "chunk_id": "kant_chunk_95",
+    "source": "The Critique of Practical Reason",
+    "token_count": 144,
+    "length": 732,
+    "text_preview": "REMARK. Thus freedom and an unconditional practical law reciprocally imply each other. Now I do not ..."
+  },
+  {
+    "chunk_id": "kant_chunk_96",
+    "source": "The Critique of Practical Reason",
+    "token_count": 127,
+    "length": 645,
+    "text_preview": "It is therefore the moral law, of which we become directly conscious (as soon as we trace for oursel..."
+  },
+  {
+    "chunk_id": "kant_chunk_97",
+    "source": "The Critique of Practical Reason",
+    "token_count": 71,
+    "length": 377,
+    "text_preview": "That this is the true subordination of our concepts, and that it is morality that first discovers to..."
+  },
+  {
+    "chunk_id": "kant_chunk_98",
+    "source": "The Critique of Practical Reason",
+    "token_count": 76,
+    "length": 349,
+    "text_preview": "explained by the concept of freedom, but the mechanism of nature must constitute the only clue; more..."
+  },
+  {
+    "chunk_id": "kant_chunk_99",
+    "source": "The Critique of Practical Reason",
+    "token_count": 43,
+    "length": 209,
+    "text_preview": "in the explanation of phenomena, therefore no one would ever have been so rash as to introduce freed..."
+  },
+  {
+    "chunk_id": "kant_chunk_100",
+    "source": "The Critique of Practical Reason",
+    "token_count": 95,
+    "length": 465,
+    "text_preview": "Experience, however, confirms this order of notions. Suppose some one asserts of his lustful appetit..."
+  },
+  {
+    "chunk_id": "kant_chunk_101",
+    "source": "The Critique of Practical Reason",
+    "token_count": 135,
+    "length": 622,
+    "text_preview": "Ask him, however- if his sovereign ordered him, on pain of the same immediate execution, to bear fal..."
+  },
+  {
+    "chunk_id": "kant_chunk_102",
+    "source": "The Critique of Practical Reason - Book 1: CHAPTER_1 ^paragraph 65} VII",
+    "token_count": 144,
+    "length": 641,
+    "text_preview": "{BOOK_1|CHAPTER_1 ^paragraph 65} VII. FUNDAMENTAL LAW OF THE PURE PRACTICAL REASON. Act so that the ..."
+  },
+  {
+    "chunk_id": "kant_chunk_103",
+    "source": "The Critique of Practical Reason",
+    "token_count": 121,
+    "length": 637,
+    "text_preview": "The practical rule is, therefore, unconditional, and hence it is conceived a priori as a categorical..."
+  },
+  {
+    "chunk_id": "kant_chunk_104",
+    "source": "The Critique of Practical Reason",
+    "token_count": 150,
+    "length": 758,
+    "text_preview": "The thing is strange enough, and has no parallel in all the rest of our practical knowledge. For the..."
+  },
+  {
+    "chunk_id": "kant_chunk_105",
+    "source": "The Critique of Practical Reason",
+    "token_count": 168,
+    "length": 792,
+    "text_preview": "We may call the consciousness of this fundamental law a fact of reason, because we cannot reason it ..."
+  },
+  {
+    "chunk_id": "kant_chunk_106",
+    "source": "The Critique of Practical Reason - Book 1: CHAPTER_1 ^paragraph 75} Pure reason is practical of itself alone and gives (to man) a universal law which we call the moral law",
+    "token_count": 136,
+    "length": 574,
+    "text_preview": "COROLLARY. {BOOK_1|CHAPTER_1 ^paragraph 75} Pure reason is practical of itself alone and gives (to m..."
+  },
+  {
+    "chunk_id": "kant_chunk_107",
+    "source": "The Critique of Practical Reason",
+    "token_count": 114,
+    "length": 586,
+    "text_preview": "Now this principle of morality, just on account of the universality of the legislation which makes i..."
+  },
+  {
+    "chunk_id": "kant_chunk_108",
+    "source": "The Critique of Practical Reason",
+    "token_count": 100,
+    "length": 470,
+    "text_preview": "It is, therefore, not limited to men only, but applies to all finite beings that possess reason and ..."
+  },
+  {
+    "chunk_id": "kant_chunk_109",
+    "source": "The Critique of Practical Reason",
+    "token_count": 141,
+    "length": 721,
+    "text_preview": "In their case, therefore, the moral law is an imperative, which commands categorically, because the ..."
+  },
+  {
+    "chunk_id": "kant_chunk_110",
+    "source": "The Critique of Practical Reason",
+    "token_count": 120,
+    "length": 630,
+    "text_preview": "In the supreme intelligence the elective will is rightly conceived as incapable of any maxim which c..."
+  },
+  {
+    "chunk_id": "kant_chunk_111",
+    "source": "The Critique of Practical Reason",
+    "token_count": 145,
+    "length": 689,
+    "text_preview": "The utmost that finite practical reason can effect is to be certain of this indefinite progress of o..."
+  },
+  {
+    "chunk_id": "kant_chunk_112",
+    "source": "The Critique of Practical Reason - Book 1: CHAPTER_1 ^paragraph 85} In fact the sole principle of morality consists in the independence on all matter of the law (namely, a desired object), and in the determination of the elective will by the mere universal legislative form of which its maxim must be capable",
+    "token_count": 138,
+    "length": 672,
+    "text_preview": "{BOOK_1|CHAPTER_1 ^paragraph 85} In fact the sole principle of morality consists in the independence..."
+  },
+  {
+    "chunk_id": "kant_chunk_113",
+    "source": "The Critique of Practical Reason",
+    "token_count": 148,
+    "length": 743,
+    "text_preview": "If therefore the matter of the volition, which can be nothing else than the object of a desire that ..."
+  },
+  {
+    "chunk_id": "kant_chunk_114",
+    "source": "The Critique of Practical Reason",
+    "token_count": 133,
+    "length": 645,
+    "text_preview": "REMARK. Hence a practical precept, which contains a material (and therefore empirical) condition, mu..."
+  },
+  {
+    "chunk_id": "kant_chunk_115",
+    "source": "The Critique of Practical Reason",
+    "token_count": 123,
+    "length": 632,
+    "text_preview": "Now, it is indeed undeniable that every volition must have an object, and therefore a matter; but it..."
+  },
+  {
+    "chunk_id": "kant_chunk_116",
+    "source": "The Critique of Practical Reason",
+    "token_count": 144,
+    "length": 652,
+    "text_preview": "Thus, the happiness of others may be the object of the will of a rational being. But if it were the ..."
+  },
+  {
+    "chunk_id": "kant_chunk_117",
+    "source": "The Critique of Practical Reason",
+    "token_count": 121,
+    "length": 575,
+    "text_preview": "For example, let the matter be my own happiness. This (rule), if I attribute it to everyone (as, in ..."
+  },
+  {
+    "chunk_id": "kant_chunk_118",
+    "source": "The Critique of Practical Reason - Book 1: CHAPTER_1 ^paragraph 90} REMARK II",
+    "token_count": 118,
+    "length": 504,
+    "text_preview": "Therefore it was not the object (the happiness of others) that determined the pure will, but it was ..."
+  },
+  {
+    "chunk_id": "kant_chunk_119",
+    "source": "The Critique of Practical Reason - Book 1: CHAPTER_1 ^paragraph 90} REMARK II",
+    "token_count": 81,
+    "length": 367,
+    "text_preview": "{BOOK_1|CHAPTER_1 ^paragraph 90} REMARK II. The direct opposite of the principle of morality is, whe..."
+  },
+  {
+    "chunk_id": "kant_chunk_120",
+    "source": "The Critique of Practical Reason",
+    "token_count": 115,
+    "length": 577,
+    "text_preview": "This contradiction, however, is not merely logical, like that which would arise between rules empiri..."
+  },
+  {
+    "chunk_id": "kant_chunk_121",
+    "source": "The Critique of Practical Reason",
+    "token_count": 70,
+    "length": 368,
+    "text_preview": "Suppose that an acquaintance whom you otherwise liked were to attempt to justify himself to you for ..."
+  },
+  {
+    "chunk_id": "kant_chunk_122",
+    "source": "The Critique of Practical Reason",
+    "token_count": 72,
+    "length": 320,
+    "text_preview": "to whom he now reveals the secret, only in order that he may be able to deny it at any time; and sup..."
+  },
+  {
+    "chunk_id": "kant_chunk_123",
+    "source": "The Critique of Practical Reason",
+    "token_count": 73,
+    "length": 336,
+    "text_preview": "Or suppose some one recommends you a man as steward, as a man to whom you can blindly trust all your..."
+  },
+  {
+    "chunk_id": "kant_chunk_124",
+    "source": "The Critique of Practical Reason",
+    "token_count": 77,
+    "length": 353,
+    "text_preview": "afraid of finding a vulgar selfishness in him, praises the good taste with which he lives; not seeki..."
+  },
+  {
+    "chunk_id": "kant_chunk_125",
+    "source": "The Critique of Practical Reason",
+    "token_count": 61,
+    "length": 274,
+    "text_preview": "end), he is not particular, and is ready to use other people's money for the purpose as if it were h..."
+  },
+  {
+    "chunk_id": "kant_chunk_126",
+    "source": "The Critique of Practical Reason - Book 1: CHAPTER_1 ^paragraph 95} The principle of happiness may, indeed, furnish maxims, but never such as would be competent to be laws of the will, even if universal happiness were made the object",
+    "token_count": 120,
+    "length": 555,
+    "text_preview": "So sharply and clearly marked are the boundaries of morality and self-love that even the commonest e..."
+  },
+  {
+    "chunk_id": "kant_chunk_127",
+    "source": "The Critique of Practical Reason",
+    "token_count": 140,
+    "length": 683,
+    "text_preview": "For since the knowledge of this rests on mere empirical data, since every man's judgement on it depe..."
+  },
+  {
+    "chunk_id": "kant_chunk_128",
+    "source": "The Critique of Practical Reason",
+    "token_count": 99,
+    "length": 487,
+    "text_preview": "This principle, therefore, does not prescribe the same practical rules to all rational beings, altho..."
+  },
+  {
+    "chunk_id": "kant_chunk_129",
+    "source": "The Critique of Practical Reason",
+    "token_count": 132,
+    "length": 595,
+    "text_preview": "The commonest intelligence can easily and without hesitation see what, on the principle of autonomy ..."
+  },
+  {
+    "chunk_id": "kant_chunk_130",
+    "source": "The Critique of Practical Reason",
+    "token_count": 147,
+    "length": 719,
+    "text_preview": "But the moral law commands the most punctual obedience from everyone; it must, therefore, not be so ..."
+  },
+  {
+    "chunk_id": "kant_chunk_131",
+    "source": "The Critique of Practical Reason",
+    "token_count": 122,
+    "length": 560,
+    "text_preview": "A command that everyone should try to make himself happy would be foolish, for one never commands an..."
+  },
+  {
+    "chunk_id": "kant_chunk_132",
+    "source": "The Critique of Practical Reason - Book 1: CHAPTER_1 ^paragraph 100} Finally, there is something further in the idea of our practical reason, which accompanies the transgression of a moral law- namely, its ill desert",
+    "token_count": 161,
+    "length": 724,
+    "text_preview": "He who has lost at play may be vexed at himself and his folly, but if he is conscious of having chea..."
+  },
+  {
+    "chunk_id": "kant_chunk_133",
+    "source": "The Critique of Practical Reason",
+    "token_count": 132,
+    "length": 640,
+    "text_preview": "Now the notion of punishment, as such, cannot be united with that of becoming a partaker of happines..."
+  },
+  {
+    "chunk_id": "kant_chunk_134",
+    "source": "The Critique of Practical Reason",
+    "token_count": 153,
+    "length": 732,
+    "text_preview": "Benevolence may, indeed, be united with it, but the man who has deserved punishment has not the leas..."
+  },
+  {
+    "chunk_id": "kant_chunk_135",
+    "source": "The Critique of Practical Reason",
+    "token_count": 147,
+    "length": 719,
+    "text_preview": "According to this view, the punishment would be the reason for calling anything a crime, and justice..."
+  },
+  {
+    "chunk_id": "kant_chunk_136",
+    "source": "The Critique of Practical Reason",
+    "token_count": 92,
+    "length": 486,
+    "text_preview": "More refined, though equally false, is the theory of those who suppose a certain special moral sense..."
+  },
+  {
+    "chunk_id": "kant_chunk_137",
+    "source": "The Critique of Practical Reason",
+    "token_count": 110,
+    "length": 556,
+    "text_preview": "Without repeating what has been said above, I will here only remark the fallacy they fall into. In o..."
+  },
+  {
+    "chunk_id": "kant_chunk_138",
+    "source": "The Critique of Practical Reason",
+    "token_count": 116,
+    "length": 596,
+    "text_preview": "A man must first appreciate the importance of what we call duty, the authority of the moral law, and..."
+  },
+  {
+    "chunk_id": "kant_chunk_139",
+    "source": "The Critique of Practical Reason",
+    "token_count": 71,
+    "length": 364,
+    "text_preview": "I do not deny that as the human will is, by virtue of liberty, capable of being immediately determin..."
+  },
+  {
+    "chunk_id": "kant_chunk_140",
+    "source": "The Critique of Practical Reason",
+    "token_count": 72,
+    "length": 325,
+    "text_preview": "the moral feeling; but the notion of duty cannot be derived from it, else we should have to suppose ..."
+  },
+  {
+    "chunk_id": "kant_chunk_141",
+    "source": "The Critique of Practical Reason - Book 1: CHAPTER_1 ^paragraph 105} SUBJECTIVE",
+    "token_count": 137,
+    "length": 694,
+    "text_preview": "If now we compare our formal supreme principle of pure practical reason (that of autonomy of the wil..."
+  },
+  {
+    "chunk_id": "kant_chunk_142",
+    "source": "The Critique of Practical Reason - Book 1: CHAPTER_1 ^paragraph 110} (Montaigne) (Epicurus) The civil Moral feeling Constitution (Hutcheson) (Mandeville) {BOOK_1|CHAPTER_1 ^paragraph 115} OBJECTIVE",
+    "token_count": 160,
+    "length": 671,
+    "text_preview": "EXTERNAL INTERNAL Education Physical feeling {BOOK_1|CHAPTER_1 ^paragraph 110} (Montaigne) (Epicurus..."
+  },
+  {
+    "chunk_id": "kant_chunk_143",
+    "source": "The Critique of Practical Reason",
+    "token_count": 145,
+    "length": 696,
+    "text_preview": "But the former notion, namely, that of perfection, may either be taken in a theoretic signification,..."
+  },
+  {
+    "chunk_id": "kant_chunk_144",
+    "source": "The Critique of Practical Reason",
+    "token_count": 117,
+    "length": 599,
+    "text_preview": "Ends then must first be given, relatively to which only can the notion of perfection (whether intern..."
+  },
+  {
+    "chunk_id": "kant_chunk_145",
+    "source": "The Critique of Practical Reason",
+    "token_count": 197,
+    "length": 1033,
+    "text_preview": "Thus, talents and the improvement of them, because they contribute to the advantages of life; or the..."
+  },
+  {
+    "chunk_id": "kant_chunk_146",
+    "source": "The Critique of Practical Reason - Book 1: CHAPTER_1 ^paragraph 125} This Analytic shows that pure reason can be practical, that is, can of itself determine the will independently of anything empirical; and this it proves by a fact in which pure reason in us proves itself actually practical, namely, the autonomy shown in the fundamental principle of morality, by which reason determines the will to action",
+    "token_count": 92,
+    "length": 449,
+    "text_preview": "I. Of the Deduction of the Fundamental Principles of Pure Practical Reason. {BOOK_1|CHAPTER_1 ^parag..."
+  },
+  {
+    "chunk_id": "kant_chunk_147",
+    "source": "The Critique of Practical Reason",
+    "token_count": 75,
+    "length": 357,
+    "text_preview": "It shows at the same time that this fact is inseparably connected with the consciousness of freedom ..."
+  },
+  {
+    "chunk_id": "kant_chunk_148",
+    "source": "The Critique of Practical Reason",
+    "token_count": 73,
+    "length": 358,
+    "text_preview": "side, namely, as a being in itself, is conscious of existing in and being determined by an intelligi..."
+  },
+  {
+    "chunk_id": "kant_chunk_149",
+    "source": "The Critique of Practical Reason",
+    "token_count": 124,
+    "length": 664,
+    "text_preview": "Now, if we compare with this the analytical part of the critique of pure speculative reason, we shal..."
+  },
+  {
+    "chunk_id": "kant_chunk_150",
+    "source": "The Critique of Practical Reason",
+    "token_count": 127,
+    "length": 643,
+    "text_preview": "Beyond objects of experience, and therefore with regard to things as noumena, all positive knowledge..."
+  },
+  {
+    "chunk_id": "kant_chunk_151",
+    "source": "The Critique of Practical Reason - Book 1: CHAPTER_1 ^paragraph 130} This law (as far as rational beings are concerned) gives to the world of sense, which is a sensible system of nature, the form of a world of the understanding, that is, of a supersensible system of nature, without interfering with its mechanism",
+    "token_count": 140,
+    "length": 622,
+    "text_preview": "On the other hand, the moral law, although it gives no view, yet gives us a fact absolutely inexplic..."
+  },
+  {
+    "chunk_id": "kant_chunk_152",
+    "source": "The Critique of Practical Reason",
+    "token_count": 139,
+    "length": 694,
+    "text_preview": "Now, a system of nature, in the most general sense, is the existence of things under laws. The sensi..."
+  },
+  {
+    "chunk_id": "kant_chunk_153",
+    "source": "The Critique of Practical Reason",
+    "token_count": 114,
+    "length": 508,
+    "text_preview": "Now, the law of this autonomy is the moral law, which, therefore, is the fundamental law of a supers..."
+  },
+  {
+    "chunk_id": "kant_chunk_154",
+    "source": "The Critique of Practical Reason",
+    "token_count": 132,
+    "length": 642,
+    "text_preview": "For the moral law, in fact, transfers us ideally into a system in which pure reason, if it were acco..."
+  },
+  {
+    "chunk_id": "kant_chunk_155",
+    "source": "The Critique of Practical Reason",
+    "token_count": 124,
+    "length": 584,
+    "text_preview": "It is manifest that in this view it would oblige everyone to speak the truth. For it cannot hold as ..."
+  },
+  {
+    "chunk_id": "kant_chunk_156",
+    "source": "The Critique of Practical Reason",
+    "token_count": 146,
+    "length": 709,
+    "text_preview": "And so in all similar cases. Now, in nature, as it actually is an object of experience, the free wil..."
+  },
+  {
+    "chunk_id": "kant_chunk_157",
+    "source": "The Critique of Practical Reason",
+    "token_count": 169,
+    "length": 814,
+    "text_preview": "This law, therefore, must be the idea of a natural system not given in experience, and yet possible ..."
+  },
+  {
+    "chunk_id": "kant_chunk_158",
+    "source": "The Critique of Practical Reason - Book 1: CHAPTER_1 ^paragraph 135} The former, which belongs to the critique of the pure speculative reason, requires a previous explanation, how intuitions without which no object can be given, and, therefore, none known synthetically, are possible a priori; and its solution turns out to be that these are all only sensible and, therefore, do not render possible any speculative knowledge which goes further than possible experience reaches; and that therefore all the principles of that pure speculative reason avail only to make experience possible; either experience of given objects or of those that may be given ad infinitum, but never are completely given",
+    "token_count": 208,
+    "length": 1026,
+    "text_preview": "There are therefore two very distinct problems: how, on the one side, pure reason can cognise object..."
+  },
+  {
+    "chunk_id": "kant_chunk_159",
+    "source": "The Critique of Practical Reason",
+    "token_count": 101,
+    "length": 525,
+    "text_preview": "The latter, which belongs to the critique of practical reason, requires no explanation how the objec..."
+  },
+  {
+    "chunk_id": "kant_chunk_160",
+    "source": "The Critique of Practical Reason",
+    "token_count": 111,
+    "length": 524,
+    "text_preview": "The possibility of such a supersensible system of nature, the conception of which can also be the gr..."
+  },
+  {
+    "chunk_id": "kant_chunk_161",
+    "source": "The Critique of Practical Reason",
+    "token_count": 91,
+    "length": 453,
+    "text_preview": "It is left to the theoretic principles of reason to decide whether the causality of the will suffice..."
+  },
+  {
+    "chunk_id": "kant_chunk_162",
+    "source": "The Critique of Practical Reason",
+    "token_count": 123,
+    "length": 620,
+    "text_preview": "For, provided only that the will conforms to the law of pure reason, then let its power in execution..."
+  },
+  {
+    "chunk_id": "kant_chunk_163",
+    "source": "The Critique of Practical Reason",
+    "token_count": 146,
+    "length": 746,
+    "text_preview": "For this concept has no other meaning, and these laws are only possible in relation to freedom of th..."
+  },
+  {
+    "chunk_id": "kant_chunk_164",
+    "source": "The Critique of Practical Reason",
+    "token_count": 121,
+    "length": 644,
+    "text_preview": "With the deduction, that is, the justification of its objective and universal validity, and the disc..."
+  },
+  {
+    "chunk_id": "kant_chunk_165",
+    "source": "The Critique of Practical Reason",
+    "token_count": 132,
+    "length": 654,
+    "text_preview": "But I could not proceed in this way with the deduction of the moral law. For this does not concern t..."
+  },
+  {
+    "chunk_id": "kant_chunk_166",
+    "source": "The Critique of Practical Reason",
+    "token_count": 149,
+    "length": 726,
+    "text_preview": "Therefore, in the theoretic use of reason, it is experience alone that can justify us in assuming th..."
+  },
+  {
+    "chunk_id": "kant_chunk_167",
+    "source": "The Critique of Practical Reason - Book 1: CHAPTER_1 ^paragraph 140} But instead of this vainly sought deduction of the moral principle, something else is found which was quite unexpected, namely, that this moral principle serves conversely as the principle of the deduction of an inscrutable faculty which no experience could prove, but of which speculative reason was compelled at least to assume the possibility (in order to find amongst its cosmological ideas the unconditioned in the chain of causality, so as not to contradict itself)- I mean the faculty of freedom",
+    "token_count": 175,
+    "length": 858,
+    "text_preview": "Hence, the objective reality of the moral law cannot be proved by any deduction by any efforts of th..."
+  },
+  {
+    "chunk_id": "kant_chunk_168",
+    "source": "The Critique of Practical Reason",
+    "token_count": 138,
+    "length": 697,
+    "text_preview": "The moral law, which itself does not require a justification, proves not merely the possibility of f..."
+  },
+  {
+    "chunk_id": "kant_chunk_169",
+    "source": "The Critique of Practical Reason",
+    "token_count": 128,
+    "length": 639,
+    "text_preview": "This sort of credential of the moral law, viz., that it is set forth as a principle of the deduction..."
+  },
+  {
+    "chunk_id": "kant_chunk_170",
+    "source": "The Critique of Practical Reason",
+    "token_count": 101,
+    "length": 494,
+    "text_preview": "For it adds the notion of a reason that directly determines the will (by imposing on its maxims the ..."
+  },
+  {
+    "chunk_id": "kant_chunk_171",
+    "source": "The Critique of Practical Reason",
+    "token_count": 93,
+    "length": 446,
+    "text_preview": "The determination of the causality of beings in the world of sense, as such, can never be unconditio..."
+  },
+  {
+    "chunk_id": "kant_chunk_172",
+    "source": "The Critique of Practical Reason",
+    "token_count": 150,
+    "length": 764,
+    "text_preview": "But as it is absolutely impossible to find in experience any example in accordance with this idea, b..."
+  },
+  {
+    "chunk_id": "kant_chunk_173",
+    "source": "The Critique of Practical Reason",
+    "token_count": 149,
+    "length": 711,
+    "text_preview": "By this principle I do not indeed learn what the object is to which that sort of causality is attrib..."
+  },
+  {
+    "chunk_id": "kant_chunk_174",
+    "source": "The Critique of Practical Reason",
+    "token_count": 137,
+    "length": 689,
+    "text_preview": "This vacant place is now filled by pure practical reason with a definite law of causality in an inte..."
+  },
+  {
+    "chunk_id": "kant_chunk_175",
+    "source": "The Critique of Practical Reason",
+    "token_count": 127,
+    "length": 616,
+    "text_preview": "For if reason sought to do this, it would have to show how the logical relation of principle and con..."
+  },
+  {
+    "chunk_id": "kant_chunk_176",
+    "source": "The Critique of Practical Reason",
+    "token_count": 127,
+    "length": 679,
+    "text_preview": "It can abstract altogether from the application of this notion to objects with a view to theoretical..."
+  },
+  {
+    "chunk_id": "kant_chunk_177",
+    "source": "The Critique of Practical Reason",
+    "token_count": 136,
+    "length": 678,
+    "text_preview": "But as to the notion which it forms of its own causality as noumenon, it need not determine it theor..."
+  },
+  {
+    "chunk_id": "kant_chunk_178",
+    "source": "The Critique of Practical Reason - Book 1: CHAPTER_1 ^paragraph 145} We have in the moral principle set forth a law of causality, the determining principle of which is set above all the conditions of the sensible world; we have it conceived how the will, as belonging to the intelligible world, is determinable, and therefore have its subject (man) not merely conceived as belonging to a",
+    "token_count": 78,
+    "length": 352,
+    "text_preview": "{BOOK_1|CHAPTER_1 ^paragraph 145} We have in the moral principle set forth a law of causality, the d..."
+  },
+  {
+    "chunk_id": "kant_chunk_179",
+    "source": "The Critique of Practical Reason",
+    "token_count": 74,
+    "length": 379,
+    "text_preview": "world of pure understanding, and in this respect unknown (which the critique of speculative reason e..."
+  },
+  {
+    "chunk_id": "kant_chunk_180",
+    "source": "The Critique of Practical Reason",
+    "token_count": 118,
+    "length": 564,
+    "text_preview": "Now, how is the practical use of pure reason here to be reconciled with the theoretical, as to the d..."
+  },
+  {
+    "chunk_id": "kant_chunk_181",
+    "source": "The Critique of Practical Reason",
+    "token_count": 86,
+    "length": 411,
+    "text_preview": "Now necessity can be attributed to a connection, only in so far as it is known a priori, for experie..."
+  },
+  {
+    "chunk_id": "kant_chunk_182",
+    "source": "The Critique of Practical Reason",
+    "token_count": 142,
+    "length": 680,
+    "text_preview": "Therefore the notion of a cause is fictitious and delusive and, to speak in the mildest way, is an i..."
+  },
+  {
+    "chunk_id": "kant_chunk_183",
+    "source": "The Critique of Practical Reason",
+    "token_count": 121,
+    "length": 637,
+    "text_preview": "In this way was empiricism first introduced as the sole source of principles, as far as all knowledg..."
+  },
+  {
+    "chunk_id": "kant_chunk_184",
+    "source": "The Critique of Practical Reason",
+    "token_count": 121,
+    "length": 576,
+    "text_preview": "Of no event could we say: a certain thing must have preceded it, on which it necessarily followed; t..."
+  },
+  {
+    "chunk_id": "kant_chunk_185",
+    "source": "The Critique of Practical Reason",
+    "token_count": 126,
+    "length": 605,
+    "text_preview": "Mathematics escaped well, so far, because Hume thought that its propositions were analytical; that i..."
+  },
+  {
+    "chunk_id": "kant_chunk_186",
+    "source": "The Critique of Practical Reason",
+    "token_count": 146,
+    "length": 697,
+    "text_preview": "Nevertheless, mathematical science, so highly vaunted for its apodeictic certainty, must at last fal..."
+  },
+  {
+    "chunk_id": "kant_chunk_187",
+    "source": "The Critique of Practical Reason",
+    "token_count": 107,
+    "length": 571,
+    "text_preview": "In this manner Hume's empiricism leads inevitably to scepticism, even with regard to mathematics, an..."
+  },
+  {
+    "chunk_id": "kant_chunk_188",
+    "source": "The Critique of Practical Reason",
+    "token_count": 81,
+    "length": 423,
+    "text_preview": "As regards my own labours in the critical examination of pure reason, which were occasioned by Hume'..."
+  },
+  {
+    "chunk_id": "kant_chunk_189",
+    "source": "The Critique of Practical Reason",
+    "token_count": 150,
+    "length": 757,
+    "text_preview": "If Hume took the objects of experience for things in themselves (as is almost always done), he was q..."
+  },
+  {
+    "chunk_id": "kant_chunk_190",
+    "source": "The Critique of Practical Reason - Book 1: CHAPTER_1 ^paragraph 150} It resulted, however, from my inquiries, that the objects with which we have to do in experience are by no means things in themselves, but merely phenomena; and that although in the case of things in themselves it is impossible to see how, if A is supposed, it should be contradictory that B, which is quite different",
+    "token_count": 78,
+    "length": 351,
+    "text_preview": "{BOOK_1|CHAPTER_1 ^paragraph 150} It resulted, however, from my inquiries, that the objects with whi..."
+  },
+  {
+    "chunk_id": "kant_chunk_191",
+    "source": "The Critique of Practical Reason",
+    "token_count": 78,
+    "length": 364,
+    "text_preview": "from A, should not also be supposed (i.e., to see the necessity of the connection between A as cause..."
+  },
+  {
+    "chunk_id": "kant_chunk_192",
+    "source": "The Critique of Practical Reason",
+    "token_count": 75,
+    "length": 357,
+    "text_preview": "And so it was found to be in fact; so that I was able not only to prove the objective reality of the..."
+  },
+  {
+    "chunk_id": "kant_chunk_193",
+    "source": "The Critique of Practical Reason",
+    "token_count": 73,
+    "length": 388,
+    "text_preview": "and thus, after removing the source of empiricism, I was able also to overthrow the inevitable conse..."
+  },
+  {
+    "chunk_id": "kant_chunk_194",
+    "source": "The Critique of Practical Reason",
+    "token_count": 133,
+    "length": 643,
+    "text_preview": "But how is it with the application of this category of causality (and all the others; for without th..."
+  },
+  {
+    "chunk_id": "kant_chunk_195",
+    "source": "The Critique of Practical Reason",
+    "token_count": 131,
+    "length": 603,
+    "text_preview": "If anything is still wanting, it is that which is the condition of the application of these categori..."
+  },
+  {
+    "chunk_id": "kant_chunk_196",
+    "source": "The Critique of Practical Reason",
+    "token_count": 132,
+    "length": 672,
+    "text_preview": "For that this concept, even in reference to an object, contains nothing impossible, was shown by thi..."
+  },
+  {
+    "chunk_id": "kant_chunk_197",
+    "source": "The Critique of Practical Reason",
+    "token_count": 195,
+    "length": 950,
+    "text_preview": "In order now to discover this condition of the application of the said concept to noumena, we need o..."
+  },
+  {
+    "chunk_id": "kant_chunk_198",
+    "source": "The Critique of Practical Reason",
+    "token_count": 126,
+    "length": 585,
+    "text_preview": "But, besides the relation in which the understanding stands to objects (in theoretical knowledge), i..."
+  },
+  {
+    "chunk_id": "kant_chunk_199",
+    "source": "The Critique of Practical Reason",
+    "token_count": 106,
+    "length": 509,
+    "text_preview": "Now, in the notion of a will the notion of causality is already contained, and hence the notion of a..."
+  },
+  {
+    "chunk_id": "kant_chunk_200",
+    "source": "The Critique of Practical Reason",
+    "token_count": 113,
+    "length": 558,
+    "text_preview": "Now the notion of a being that has free will is the notion of a causa noumenon, and that this notion..."
+  },
+  {
+    "chunk_id": "kant_chunk_201",
+    "source": "The Critique of Practical Reason",
+    "token_count": 120,
+    "length": 547,
+    "text_preview": "But, since this application cannot rest on any intuition (for intuition can only be sensible), there..."
+  },
+  {
+    "chunk_id": "kant_chunk_202",
+    "source": "The Critique of Practical Reason",
+    "token_count": 155,
+    "length": 734,
+    "text_preview": "Now, this right I certainly have by virtue of the pure, not-empirical origin of the notion of cause,..."
+  },
+  {
+    "chunk_id": "kant_chunk_203",
+    "source": "The Critique of Practical Reason",
+    "token_count": 128,
+    "length": 616,
+    "text_preview": "But, as it is, the concept of a causality free from empirical conditions, although empty, i.e., with..."
+  },
+  {
+    "chunk_id": "kant_chunk_204",
+    "source": "The Critique of Practical Reason - Book 1: CHAPTER_1 ^paragraph 155} Now, this objective reality of a pure concept of the understanding in the sphere of the supersensible, once brought in, gives an objective reality also to all the other categories, although only so far as they stand in necessary connexion with the determining principle of the will (the moral law); a reality only of practical application, which has not the least effect in enlarging our theoretical knowledge of these objects, or the discernment of their nature by pure reason",
+    "token_count": 104,
+    "length": 512,
+    "text_preview": "{BOOK_1|CHAPTER_1 ^paragraph 155} Now, this objective reality of a pure concept of the understanding..."
+  },
+  {
+    "chunk_id": "kant_chunk_205",
+    "source": "The Critique of Practical Reason",
+    "token_count": 72,
+    "length": 400,
+    "text_preview": "So we shall find also in the sequel that these categories refer only to beings as intelligences, and..."
+  },
+  {
+    "chunk_id": "kant_chunk_206",
+    "source": "The Critique of Practical Reason",
+    "token_count": 80,
+    "length": 344,
+    "text_preview": "categories, this is not to be reckoned as knowledge, but only as a right (in a practical point of vi..."
+  },
+  {
+    "chunk_id": "kant_chunk_207",
+    "source": "The Critique of Practical Reason - Book 1: CHAPTER_2 CHAPTER II",
+    "token_count": 130,
+    "length": 642,
+    "text_preview": "BOOK_1|CHAPTER_2 CHAPTER II. Of the Concept of an Object of Pure Practical Reason. By a concept of t..."
+  },
+  {
+    "chunk_id": "kant_chunk_208",
+    "source": "The Critique of Practical Reason",
+    "token_count": 174,
+    "length": 858,
+    "text_preview": "If the object be taken as the determining principle of our desire, it must first be known whether it..."
+  },
+  {
+    "chunk_id": "kant_chunk_209",
+    "source": "The Critique of Practical Reason",
+    "token_count": 115,
+    "length": 565,
+    "text_preview": "The only objects of practical reason are therefore those of good and evil. For by the former is mean..."
+  },
+  {
+    "chunk_id": "kant_chunk_210",
+    "source": "The Critique of Practical Reason",
+    "token_count": 100,
+    "length": 517,
+    "text_preview": "Now, since it is impossible to discern a priori what idea will be accompanied with pleasure and what..."
+  },
+  {
+    "chunk_id": "kant_chunk_211",
+    "source": "The Critique of Practical Reason",
+    "token_count": 78,
+    "length": 393,
+    "text_preview": "Since, however, this is opposed even to the usage of language, which distinguishes the pleasant from..."
+  },
+  {
+    "chunk_id": "kant_chunk_212",
+    "source": "The Critique of Practical Reason",
+    "token_count": 74,
+    "length": 371,
+    "text_preview": "pleasure or pain cannot be connected with any idea of an object a priori, the philosopher who though..."
+  },
+  {
+    "chunk_id": "kant_chunk_213",
+    "source": "The Critique of Practical Reason",
+    "token_count": 112,
+    "length": 558,
+    "text_preview": "But, although reason is alone capable of discerning the connexion of means with their ends (so that ..."
+  },
+  {
+    "chunk_id": "kant_chunk_214",
+    "source": "The Critique of Practical Reason",
+    "token_count": 195,
+    "length": 949,
+    "text_preview": "Now if this as a pleasant sensation were to be distinguished from the notion of good, then there wou..."
+  },
+  {
+    "chunk_id": "kant_chunk_215",
+    "source": "The Critique of Practical Reason",
+    "token_count": 130,
+    "length": 572,
+    "text_preview": "* * Besides this, the expression sub ratione boni is also ambiguous. For it may mean: \"We represent ..."
+  },
+  {
+    "chunk_id": "kant_chunk_216",
+    "source": "The Critique of Practical Reason - Book 1: CHAPTER_2 ^paragraph 5} The German language has the good fortune to possess expressions which do not allow this difference to be overlooked",
+    "token_count": 135,
+    "length": 546,
+    "text_preview": "{BOOK_1|CHAPTER_2 ^paragraph 5} The German language has the good fortune to possess expressions whic..."
+  },
+  {
+    "chunk_id": "kant_chunk_217",
+    "source": "The Critique of Practical Reason",
+    "token_count": 144,
+    "length": 667,
+    "text_preview": "Hence it already follows that the above quoted psychological proposition is at least very doubtful i..."
+  },
+  {
+    "chunk_id": "kant_chunk_218",
+    "source": "The Critique of Practical Reason",
+    "token_count": 152,
+    "length": 695,
+    "text_preview": "But good or evil always implies a reference to the will, as determined by the law of reason, to make..."
+  },
+  {
+    "chunk_id": "kant_chunk_219",
+    "source": "The Critique of Practical Reason",
+    "token_count": 109,
+    "length": 435,
+    "text_preview": "However, then, men may laugh at the Stoic, who in the severest paroxysms of gout cried out: \"Pain, h..."
+  },
+  {
+    "chunk_id": "kant_chunk_220",
+    "source": "The Critique of Practical Reason",
+    "token_count": 118,
+    "length": 540,
+    "text_preview": "If he had been conscious of a single lie, it would have lowered his pride, but pain served only to r..."
+  },
+  {
+    "chunk_id": "kant_chunk_221",
+    "source": "The Critique of Practical Reason",
+    "token_count": 156,
+    "length": 751,
+    "text_preview": "But we may call a thing a bad [or ill] thing, which yet everyone must at the same time acknowledge t..."
+  },
+  {
+    "chunk_id": "kant_chunk_222",
+    "source": "The Critique of Practical Reason - Book 1: CHAPTER_2 ^paragraph 10} No doubt our weal and woe are of very great importance in the estimation of our practical reason, and as far as our nature as sensible beings is concerned, our happiness is the only thing of consequence, provided it is estimated as reason especially requires, not by the transitory sensation, but by the influence that this has on our whole existence, and on our satisfaction therewith; but it is not absolutely the only thing of consequence",
+    "token_count": 101,
+    "length": 475,
+    "text_preview": "{BOOK_1|CHAPTER_2 ^paragraph 10} No doubt our weal and woe are of very great importance in the estim..."
+  },
+  {
+    "chunk_id": "kant_chunk_223",
+    "source": "The Critique of Practical Reason",
+    "token_count": 110,
+    "length": 496,
+    "text_preview": "Man is a being who, as belonging to the world of sense, has wants, and so far his reason has an offi..."
+  },
+  {
+    "chunk_id": "kant_chunk_224",
+    "source": "The Critique of Practical Reason",
+    "token_count": 163,
+    "length": 810,
+    "text_preview": "For the possession of reason would not raise his worth above that of the brutes, if it is to serve h..."
+  },
+  {
+    "chunk_id": "kant_chunk_225",
+    "source": "The Critique of Practical Reason",
+    "token_count": 136,
+    "length": 693,
+    "text_preview": "In estimating what is good or evil in itself, as distinguished from what can be so called only relat..."
+  },
+  {
+    "chunk_id": "kant_chunk_226",
+    "source": "The Critique of Practical Reason",
+    "token_count": 102,
+    "length": 504,
+    "text_preview": "Or the maxim of the will is consequent on a determining principle of desire which presupposes an obj..."
+  },
+  {
+    "chunk_id": "kant_chunk_227",
+    "source": "The Critique of Practical Reason",
+    "token_count": 123,
+    "length": 577,
+    "text_preview": "The end itself, the pleasure that we seek, is in the latter case not a good but a welfare; not a con..."
+  },
+  {
+    "chunk_id": "kant_chunk_228",
+    "source": "The Critique of Practical Reason",
+    "token_count": 152,
+    "length": 724,
+    "text_preview": "This is the proper place to explain the paradox of method in a critique of practical reason, namely,..."
+  },
+  {
+    "chunk_id": "kant_chunk_229",
+    "source": "The Critique of Practical Reason",
+    "token_count": 144,
+    "length": 690,
+    "text_preview": "Supposing that we wished to begin with the concept of good, in order to deduce from it the laws of t..."
+  },
+  {
+    "chunk_id": "kant_chunk_230",
+    "source": "The Critique of Practical Reason",
+    "token_count": 143,
+    "length": 712,
+    "text_preview": "Now, as experience alone can decide what conforms to the feeling of pleasure, and by hypothesis the ..."
+  },
+  {
+    "chunk_id": "kant_chunk_231",
+    "source": "The Critique of Practical Reason",
+    "token_count": 133,
+    "length": 665,
+    "text_preview": "Since, however, we laid the foundation of all practical law in an object determined by our conceptio..."
+  },
+  {
+    "chunk_id": "kant_chunk_232",
+    "source": "The Critique of Practical Reason",
+    "token_count": 115,
+    "length": 611,
+    "text_preview": "This remark, which only concerns the method of ultimate ethical inquiries, is of importance. It expl..."
+  },
+  {
+    "chunk_id": "kant_chunk_233",
+    "source": "The Critique of Practical Reason",
+    "token_count": 143,
+    "length": 703,
+    "text_preview": "Now, whether they placed this object of pleasure, which was to supply the supreme conception of good..."
+  },
+  {
+    "chunk_id": "kant_chunk_234",
+    "source": "The Critique of Practical Reason",
+    "token_count": 111,
+    "length": 551,
+    "text_preview": "The ancients avowed this error without concealment by directing all their moral inquiries to the det..."
+  },
+  {
+    "chunk_id": "kant_chunk_235",
+    "source": "The Critique of Practical Reason",
+    "token_count": 80,
+    "length": 380,
+    "text_preview": "The moderns, with whom the question of the summum bonum has gone out of fashion, or at least seems t..."
+  },
+  {
+    "chunk_id": "kant_chunk_236",
+    "source": "The Critique of Practical Reason",
+    "token_count": 76,
+    "length": 363,
+    "text_preview": "Now, since the notions of good and evil, as consequences of the a priori determination of the will, ..."
+  },
+  {
+    "chunk_id": "kant_chunk_237",
+    "source": "The Critique of Practical Reason",
+    "token_count": 75,
+    "length": 359,
+    "text_preview": "concepts of the understanding or categories of reason in its theoretic employment; on the contrary, ..."
+  },
+  {
+    "chunk_id": "kant_chunk_238",
+    "source": "The Critique of Practical Reason",
+    "token_count": 73,
+    "length": 358,
+    "text_preview": "However, as the actions on the one side come under a law which is not a physical law, but a law of f..."
+  },
+  {
+    "chunk_id": "kant_chunk_239",
+    "source": "The Critique of Practical Reason",
+    "token_count": 74,
+    "length": 355,
+    "text_preview": "and, therefore, in accordance with the categories of the understanding; not indeed with a view to an..."
+  },
+  {
+    "chunk_id": "kant_chunk_240",
+    "source": "The Critique of Practical Reason - Book 1: CHAPTER_2 ^paragraph 15} These categories of freedom- for so we choose to call them in contrast to those theoretic categories which are categories of physical nature- have an obvious advantage over the latter, inasmuch as the latter are only forms of thought which designate objects in an indefinite manner by means of universal concept of every possible intuition; the former, on",
+    "token_count": 79,
+    "length": 388,
+    "text_preview": "{BOOK_1|CHAPTER_2 ^paragraph 15} These categories of freedom- for so we choose to call them in contr..."
+  },
+  {
+    "chunk_id": "kant_chunk_241",
+    "source": "The Critique of Practical Reason",
+    "token_count": 72,
+    "length": 365,
+    "text_preview": "the contrary, refer to the determination of a free elective will (to which indeed no exactly corresp..."
+  },
+  {
+    "chunk_id": "kant_chunk_242",
+    "source": "The Critique of Practical Reason",
+    "token_count": 52,
+    "length": 256,
+    "text_preview": "not lie in reason itself, but has to be drawn from another source, namely, the sensibility, these be..."
+  },
+  {
+    "chunk_id": "kant_chunk_243",
+    "source": "The Critique of Practical Reason",
+    "token_count": 112,
+    "length": 572,
+    "text_preview": "From this it happens that as all precepts of pure practical reason have to do only with the determin..."
+  },
+  {
+    "chunk_id": "kant_chunk_244",
+    "source": "The Critique of Practical Reason - Book 1: CHAPTER_2 ^paragraph 20} Subjective, according to maxims (practical opinions of the individual) Objective, according to principles (Precepts) A priori both objective and subjective principles of freedom (laws) {BOOK_1|CHAPTER_2 ^paragraph 25} II",
+    "token_count": 139,
+    "length": 644,
+    "text_preview": "Only we must be careful to observe that these categories only apply to the practical reason; and thu..."
+  },
+  {
+    "chunk_id": "kant_chunk_245",
+    "source": "The Critique of Practical Reason - Book 1: CHAPTER_2 ^paragraph 30} III",
+    "token_count": 111,
+    "length": 423,
+    "text_preview": "QUALITY. Practical rules of action (praeceptivae) Practical rules of omission (prohibitivae) Practic..."
+  },
+  {
+    "chunk_id": "kant_chunk_246",
+    "source": "The Critique of Practical Reason - Book 1: CHAPTER_2 ^paragraph 40} It will at once be observed that in this table freedom is considered as a sort of causality not subject to empirical principles of determination, in regard to actions possible by it, which are phenomena in the world of sense, and that consequently it is referred to the categories which concern its physical possibility, whilst yet each category is taken so universally that the determining principle of that causality can be placed outside the world of sense in freedom as a property of a being in the world of intelligence; and finally the categories of modality introduce the transition from practical principles generally to those of morality, but only problematically",
+    "token_count": 152,
+    "length": 797,
+    "text_preview": "The Permitted and the Forbidden Duty and the contrary to duty. Perfect and imperfect duty. {BOOK_1|C..."
+  },
+  {
+    "chunk_id": "kant_chunk_247",
+    "source": "The Critique of Practical Reason",
+    "token_count": 139,
+    "length": 677,
+    "text_preview": "These can be established dogmatically only by the moral law. I add nothing further here in explanati..."
+  },
+  {
+    "chunk_id": "kant_chunk_248",
+    "source": "The Critique of Practical Reason - Book 1: CHAPTER_2 ^paragraph 45} It is the notions of good and evil that first determine an object of the will",
+    "token_count": 109,
+    "length": 477,
+    "text_preview": "In this way we survey the whole plan of what has to be done, every question of practical philosophy ..."
+  },
+  {
+    "chunk_id": "kant_chunk_249",
+    "source": "The Critique of Practical Reason",
+    "token_count": 70,
+    "length": 367,
+    "text_preview": "But since a practical rule of pure reason in the first place as practical concerns the existence of ..."
+  },
+  {
+    "chunk_id": "kant_chunk_250",
+    "source": "The Critique of Practical Reason",
+    "token_count": 73,
+    "length": 358,
+    "text_preview": "will is to be determined independently on anything empirical (merely by the conception of a law and ..."
+  },
+  {
+    "chunk_id": "kant_chunk_251",
+    "source": "The Critique of Practical Reason",
+    "token_count": 43,
+    "length": 184,
+    "text_preview": "law of nature, yet admits of the application to it of a law of freedom, and to which we can apply th..."
+  },
+  {
+    "chunk_id": "kant_chunk_252",
+    "source": "The Critique of Practical Reason",
+    "token_count": 146,
+    "length": 726,
+    "text_preview": "Thus, the judgement of the pure practical reason is subject to the same difficulties as that of the ..."
+  },
+  {
+    "chunk_id": "kant_chunk_253",
+    "source": "The Critique of Practical Reason",
+    "token_count": 110,
+    "length": 537,
+    "text_preview": "Judgement depending on laws of pure practical reason seems, therefore, to be subject to special diff..."
+  },
+  {
+    "chunk_id": "kant_chunk_254",
+    "source": "The Critique of Practical Reason",
+    "token_count": 156,
+    "length": 781,
+    "text_preview": "This is a matter that belongs to the decision of reason in its theoretic use according to the law of..."
+  },
+  {
+    "chunk_id": "kant_chunk_255",
+    "source": "The Critique of Practical Reason",
+    "token_count": 111,
+    "length": 553,
+    "text_preview": "The physical law being a law to which the objects of sensible intuition, as such, are subject, must ..."
+  },
+  {
+    "chunk_id": "kant_chunk_256",
+    "source": "The Critique of Practical Reason",
+    "token_count": 102,
+    "length": 471,
+    "text_preview": "Consequently the moral law has no faculty but the understanding to aid its application to physical o..."
+  },
+  {
+    "chunk_id": "kant_chunk_257",
+    "source": "The Critique of Practical Reason",
+    "token_count": 86,
+    "length": 406,
+    "text_preview": "We can therefore call this law the type of the moral law. The rule of the judgement according to law..."
+  },
+  {
+    "chunk_id": "kant_chunk_258",
+    "source": "The Critique of Practical Reason",
+    "token_count": 165,
+    "length": 779,
+    "text_preview": "Everyone does, in fact, decide by this rule whether actions are morally good or evil. Thus, people s..."
+  },
+  {
+    "chunk_id": "kant_chunk_259",
+    "source": "The Critique of Practical Reason",
+    "token_count": 149,
+    "length": 692,
+    "text_preview": "Such a law is, nevertheless, a type of the estimation of the maxim on moral principles. If the maxim..."
+  },
+  {
+    "chunk_id": "kant_chunk_260",
+    "source": "The Critique of Practical Reason",
+    "token_count": 110,
+    "length": 517,
+    "text_preview": "It is therefore allowable to use the system of the world of sense as the type of a supersensible sys..."
+  },
+  {
+    "chunk_id": "kant_chunk_261",
+    "source": "The Critique of Practical Reason - Book 1: CHAPTER_2 ^paragraph 50} Further, since of all the supersensible absolutely nothing [is known] except freedom (through the moral law), and this only so far as it is inseparably implied in that law, and moreover all supersensible objects to which reason might lead us, following the guidance of that law, have still no reality for us, except for the purpose",
+    "token_count": 82,
+    "length": 364,
+    "text_preview": "{BOOK_1|CHAPTER_2 ^paragraph 50} Further, since of all the supersensible absolutely nothing [is know..."
+  },
+  {
+    "chunk_id": "kant_chunk_262",
+    "source": "The Critique of Practical Reason",
+    "token_count": 70,
+    "length": 349,
+    "text_preview": "of that law, and for the use of mere practical reason; and as reason is authorized and even compelle..."
+  },
+  {
+    "chunk_id": "kant_chunk_263",
+    "source": "The Critique of Practical Reason",
+    "token_count": 96,
+    "length": 486,
+    "text_preview": "This, namely, as a typic of the judgement, guards against the empiricism of practical reason, which ..."
+  },
+  {
+    "chunk_id": "kant_chunk_264",
+    "source": "The Critique of Practical Reason",
+    "token_count": 146,
+    "length": 703,
+    "text_preview": "The same typic guards also against the mysticism of practical reason, which turns what served only a..."
+  },
+  {
+    "chunk_id": "kant_chunk_265",
+    "source": "The Critique of Practical Reason",
+    "token_count": 224,
+    "length": 1100,
+    "text_preview": "However, the caution against empiricism of practical reason is much more important; for mysticism is..."
+  },
+  {
+    "chunk_id": "kant_chunk_266",
+    "source": "The Critique of Practical Reason - Book 1: CHAPTER_3 CHAPTER III",
+    "token_count": 109,
+    "length": 507,
+    "text_preview": "BOOK_1|CHAPTER_3 CHAPTER III. Of the Motives of Pure Practical Reason. What is essential in the mora..."
+  },
+  {
+    "chunk_id": "kant_chunk_267",
+    "source": "The Critique of Practical Reason",
+    "token_count": 131,
+    "length": 663,
+    "text_preview": "Now, if we understand by motive (elater animi) the subjective ground of determination of the will of..."
+  },
+  {
+    "chunk_id": "kant_chunk_268",
+    "source": "The Critique of Practical Reason",
+    "token_count": 150,
+    "length": 695,
+    "text_preview": "* * We may say of every action that conforms to the law, but is not done for the sake of the law, th..."
+  },
+  {
+    "chunk_id": "kant_chunk_269",
+    "source": "The Critique of Practical Reason",
+    "token_count": 96,
+    "length": 433,
+    "text_preview": "For as to the question how a law can be directly and of itself a determining principle of the will (..."
+  },
+  {
+    "chunk_id": "kant_chunk_270",
+    "source": "The Critique of Practical Reason - Book 1: CHAPTER_3 ^paragraph 5} The essential point in every determination of the will by the moral law is that being a free will it is determined simply by the moral law, not only without the co-operation of sensible impulses, but even to the rejection of all such, and to the checking of all inclinations so far as they might be opposed to that law",
+    "token_count": 110,
+    "length": 473,
+    "text_preview": "{BOOK_1|CHAPTER_3 ^paragraph 5} The essential point in every determination of the will by the moral ..."
+  },
+  {
+    "chunk_id": "kant_chunk_271",
+    "source": "The Critique of Practical Reason",
+    "token_count": 118,
+    "length": 576,
+    "text_preview": "For all inclination and every sensible impulse is founded on feeling, and the negative effect produc..."
+  },
+  {
+    "chunk_id": "kant_chunk_272",
+    "source": "The Critique of Practical Reason",
+    "token_count": 130,
+    "length": 601,
+    "text_preview": "All the inclinations together (which can be reduced to a tolerable system, in which case their satis..."
+  },
+  {
+    "chunk_id": "kant_chunk_273",
+    "source": "The Critique of Practical Reason",
+    "token_count": 115,
+    "length": 564,
+    "text_preview": "But self-conceit reason strikes down altogether, since all claims to self-esteem which precede agree..."
+  },
+  {
+    "chunk_id": "kant_chunk_274",
+    "source": "The Critique of Practical Reason",
+    "token_count": 116,
+    "length": 509,
+    "text_preview": "Therefore the moral law breaks down self-conceit. But as this law is something positive in itself, n..."
+  },
+  {
+    "chunk_id": "kant_chunk_275",
+    "source": "The Critique of Practical Reason",
+    "token_count": 144,
+    "length": 741,
+    "text_preview": "Therefore respect for the moral law is a feeling which is produced by an intellectual cause, and thi..."
+  },
+  {
+    "chunk_id": "kant_chunk_276",
+    "source": "The Critique of Practical Reason",
+    "token_count": 137,
+    "length": 712,
+    "text_preview": "However, we find that our nature as sensible beings is such that the matter of desire (objects of in..."
+  },
+  {
+    "chunk_id": "kant_chunk_277",
+    "source": "The Critique of Practical Reason",
+    "token_count": 130,
+    "length": 642,
+    "text_preview": "Now the moral law, which alone is truly objective (namely, in every respect), entirely excludes the ..."
+  },
+  {
+    "chunk_id": "kant_chunk_278",
+    "source": "The Critique of Practical Reason",
+    "token_count": 143,
+    "length": 748,
+    "text_preview": "Therefore the moral law is even subjectively a cause of respect. Now since everything that enters in..."
+  },
+  {
+    "chunk_id": "kant_chunk_279",
+    "source": "The Critique of Practical Reason",
+    "token_count": 136,
+    "length": 686,
+    "text_preview": "No special kind of feeling need be assumed for this under the name of a practical or moral feeling a..."
+  },
+  {
+    "chunk_id": "kant_chunk_280",
+    "source": "The Critique of Practical Reason",
+    "token_count": 157,
+    "length": 782,
+    "text_preview": "There is indeed no feeling for this law; but inasmuch as it removes the resistance out of the way, t..."
+  },
+  {
+    "chunk_id": "kant_chunk_281",
+    "source": "The Critique of Practical Reason",
+    "token_count": 105,
+    "length": 535,
+    "text_preview": "There is here in the subject no antecedent feeling tending to morality. For this is impossible, sinc..."
+  },
+  {
+    "chunk_id": "kant_chunk_282",
+    "source": "The Critique of Practical Reason",
+    "token_count": 96,
+    "length": 449,
+    "text_preview": "For by the fact that the conception of the moral law deprives self-love of its influence, and self-c..."
+  },
+  {
+    "chunk_id": "kant_chunk_283",
+    "source": "The Critique of Practical Reason",
+    "token_count": 148,
+    "length": 699,
+    "text_preview": "Thus the respect for the law is not a motive to morality, but is morality itself subjectively consid..."
+  },
+  {
+    "chunk_id": "kant_chunk_284",
+    "source": "The Critique of Practical Reason - Book 1: CHAPTER_3 ^paragraph 10} Respect applies always to persons only- not to things",
+    "token_count": 121,
+    "length": 571,
+    "text_preview": "This feeling (which we call the moral feeling) is therefore produced simply by reason. It does not s..."
+  },
+  {
+    "chunk_id": "kant_chunk_285",
+    "source": "The Critique of Practical Reason",
+    "token_count": 138,
+    "length": 576,
+    "text_preview": "The latter may arouse inclination, and if they are animals (e.g., horses, dogs, etc.), even love or ..."
+  },
+  {
+    "chunk_id": "kant_chunk_286",
+    "source": "The Critique of Practical Reason",
+    "token_count": 121,
+    "length": 525,
+    "text_preview": "His jocose humour, his courage and strength, his power from the rank he has amongst others, may insp..."
+  },
+  {
+    "chunk_id": "kant_chunk_287",
+    "source": "The Critique of Practical Reason",
+    "token_count": 129,
+    "length": 567,
+    "text_preview": "Why is this? Because his example exhibits to me a law that humbles my self-conceit when I compare it..."
+  },
+  {
+    "chunk_id": "kant_chunk_288",
+    "source": "The Critique of Practical Reason",
+    "token_count": 129,
+    "length": 629,
+    "text_preview": "Respect is a tribute which we cannot refuse to merit, whether we will or not; we may indeed outwardl..."
+  },
+  {
+    "chunk_id": "kant_chunk_289",
+    "source": "The Critique of Practical Reason",
+    "token_count": 150,
+    "length": 721,
+    "text_preview": "Can it be thought that it is for any other reason that we are so ready to reduce it to the level of ..."
+  },
+  {
+    "chunk_id": "kant_chunk_290",
+    "source": "The Critique of Practical Reason",
+    "token_count": 131,
+    "length": 628,
+    "text_preview": "No doubt great talents and activity proportioned to them may also occasion respect or an analogous f..."
+  },
+  {
+    "chunk_id": "kant_chunk_291",
+    "source": "The Critique of Practical Reason",
+    "token_count": 117,
+    "length": 539,
+    "text_preview": "This respect, then, which we show to such a person (properly speaking, to the law that his example e..."
+  },
+  {
+    "chunk_id": "kant_chunk_292",
+    "source": "The Critique of Practical Reason",
+    "token_count": 122,
+    "length": 589,
+    "text_preview": "Respect for the moral law is, therefore, the only and the undoubted moral motive, and this feeling i..."
+  },
+  {
+    "chunk_id": "kant_chunk_293",
+    "source": "The Critique of Practical Reason",
+    "token_count": 115,
+    "length": 545,
+    "text_preview": "Since it is so far only a negative effect which, arising from the influence of pure practical reason..."
+  },
+  {
+    "chunk_id": "kant_chunk_294",
+    "source": "The Critique of Practical Reason",
+    "token_count": 132,
+    "length": 640,
+    "text_preview": "But since the same law is objectively, that is, in the conception of pure reason, an immediate princ..."
+  },
+  {
+    "chunk_id": "kant_chunk_295",
+    "source": "The Critique of Practical Reason",
+    "token_count": 134,
+    "length": 671,
+    "text_preview": "For whatever diminishes the obstacles to an activity furthers this activity itself. Now the recognit..."
+  },
+  {
+    "chunk_id": "kant_chunk_296",
+    "source": "The Critique of Practical Reason",
+    "token_count": 138,
+    "length": 642,
+    "text_preview": "From the notion of a motive arises that of an interest, which can never be attributed to any being u..."
+  },
+  {
+    "chunk_id": "kant_chunk_297",
+    "source": "The Critique of Practical Reason",
+    "token_count": 182,
+    "length": 927,
+    "text_preview": "For they all suppose a limitation of the nature of the being, in that the subjective character of hi..."
+  },
+  {
+    "chunk_id": "kant_chunk_298",
+    "source": "The Critique of Practical Reason",
+    "token_count": 135,
+    "length": 628,
+    "text_preview": "If this feeling of respect were pathological, and therefore were a feeling of pleasure based on the ..."
+  },
+  {
+    "chunk_id": "kant_chunk_299",
+    "source": "The Critique of Practical Reason",
+    "token_count": 125,
+    "length": 659,
+    "text_preview": "The consciousness of a free submission of the will to the law, yet combined with an inevitable const..."
+  },
+  {
+    "chunk_id": "kant_chunk_300",
+    "source": "The Critique of Practical Reason",
+    "token_count": 101,
+    "length": 476,
+    "text_preview": "The feeling that arises from the consciousness of this obligation is not pathological, as would be a..."
+  },
+  {
+    "chunk_id": "kant_chunk_301",
+    "source": "The Critique of Practical Reason",
+    "token_count": 142,
+    "length": 731,
+    "text_preview": "On the other hand, however, as this constraint is exercised merely by the legislation of our own rea..."
+  },
+  {
+    "chunk_id": "kant_chunk_302",
+    "source": "The Critique of Practical Reason - Book 1: CHAPTER_3 ^paragraph 15} The notion of duty, therefore, requires in the action, objectively, agreement with the law, and, subjectively in its maxim, that respect for the law shall be the sole mode in which the will is determined thereby",
+    "token_count": 143,
+    "length": 638,
+    "text_preview": "{BOOK_1|CHAPTER_3 ^paragraph 15} The notion of duty, therefore, requires in the action, objectively,..."
+  },
+  {
+    "chunk_id": "kant_chunk_303",
+    "source": "The Critique of Practical Reason",
+    "token_count": 111,
+    "length": 536,
+    "text_preview": "* * If we examine accurately the notion of respect for persons as it has been already laid down, we ..."
+  },
+  {
+    "chunk_id": "kant_chunk_304",
+    "source": "The Critique of Practical Reason",
+    "token_count": 113,
+    "length": 563,
+    "text_preview": "It is of the greatest importance to attend with the utmost exactness in all moral judgements to the ..."
+  },
+  {
+    "chunk_id": "kant_chunk_305",
+    "source": "The Critique of Practical Reason",
+    "token_count": 100,
+    "length": 458,
+    "text_preview": "As if indeed we could ever bring it about that without respect for the law, which implies fear, or a..."
+  },
+  {
+    "chunk_id": "kant_chunk_306",
+    "source": "The Critique of Practical Reason - Book 1: CHAPTER_3 ^paragraph 20} The moral law is in fact for the will of a perfect being a law of holiness, but for the will of every finite rational being a law of duty, of moral constraint, and of the determination of its actions by respect for this law and reverence for its duty",
+    "token_count": 121,
+    "length": 538,
+    "text_preview": "{BOOK_1|CHAPTER_3 ^paragraph 20} The moral law is in fact for the will of a perfect being a law of h..."
+  },
+  {
+    "chunk_id": "kant_chunk_307",
+    "source": "The Critique of Practical Reason",
+    "token_count": 103,
+    "length": 475,
+    "text_preview": "It is a very beautiful thing to do good to men from love to them and from sympathetic good will, or ..."
+  },
+  {
+    "chunk_id": "kant_chunk_308",
+    "source": "The Critique of Practical Reason",
+    "token_count": 105,
+    "length": 484,
+    "text_preview": "We stand under a discipline of reason and in all our maxims must not forget our subjection to it, no..."
+  },
+  {
+    "chunk_id": "kant_chunk_309",
+    "source": "The Critique of Practical Reason",
+    "token_count": 123,
+    "length": 595,
+    "text_preview": "Duty and obligation are the only names that we must give to our relation to the moral law. We are in..."
+  },
+  {
+    "chunk_id": "kant_chunk_310",
+    "source": "The Critique of Practical Reason",
+    "token_count": 138,
+    "length": 631,
+    "text_preview": "* For as a command it requires respect for a law which commands love and does not leave it to our ow..."
+  },
+  {
+    "chunk_id": "kant_chunk_311",
+    "source": "The Critique of Practical Reason",
+    "token_count": 112,
+    "length": 538,
+    "text_preview": "But the command that makes this a rule cannot command us to have this disposition in actions conform..."
+  },
+  {
+    "chunk_id": "kant_chunk_312",
+    "source": "The Critique of Practical Reason",
+    "token_count": 166,
+    "length": 813,
+    "text_preview": "That law of all laws, therefore, like all the moral precepts of the Gospel, exhibits the moral dispo..."
+  },
+  {
+    "chunk_id": "kant_chunk_313",
+    "source": "The Critique of Practical Reason",
+    "token_count": 120,
+    "length": 606,
+    "text_preview": "For, being a creature, and therefore always dependent with respect to what he requires for complete ..."
+  },
+  {
+    "chunk_id": "kant_chunk_314",
+    "source": "The Critique of Practical Reason",
+    "token_count": 127,
+    "length": 598,
+    "text_preview": "Nevertheless, this latter, namely, love to the law (which would then cease to be a command, and then..."
+  },
+  {
+    "chunk_id": "kant_chunk_315",
+    "source": "The Critique of Practical Reason - Book 1: CHAPTER_3 ^paragraph 25} This reflection is intended not so much to clear up the evangelical command just cited, in order to prevent religious fanaticism in regard to love of God, but to define accurately the moral disposition with regard directly to our duties towards men, and to check, or if possible prevent, a merely moral fanaticism which infects many persons",
+    "token_count": 124,
+    "length": 607,
+    "text_preview": "* This law is in striking contrast with the principle of private happiness which some make the supre..."
+  },
+  {
+    "chunk_id": "kant_chunk_316",
+    "source": "The Critique of Practical Reason",
+    "token_count": 105,
+    "length": 494,
+    "text_preview": "The stage of morality on which man (and, as far as we can see, every rational creature) stands is re..."
+  },
+  {
+    "chunk_id": "kant_chunk_317",
+    "source": "The Critique of Practical Reason",
+    "token_count": 126,
+    "length": 560,
+    "text_preview": "It is nothing but moral fanaticism and exaggerated self-conceit that is infused into the mind by exh..."
+  },
+  {
+    "chunk_id": "kant_chunk_318",
+    "source": "The Critique of Practical Reason",
+    "token_count": 137,
+    "length": 651,
+    "text_preview": "For not only would they, in imitating such deeds from such a principle, not have fulfilled the spiri..."
+  },
+  {
+    "chunk_id": "kant_chunk_319",
+    "source": "The Critique of Practical Reason",
+    "token_count": 127,
+    "length": 606,
+    "text_preview": "Indeed actions of others which are done with great sacrifice, and merely for the sake of duty, may b..."
+  },
+  {
+    "chunk_id": "kant_chunk_320",
+    "source": "The Critique of Practical Reason",
+    "token_count": 194,
+    "length": 964,
+    "text_preview": "Now if we search we shall find for all actions that are worthy of praise a law of duty which command..."
+  },
+  {
+    "chunk_id": "kant_chunk_321",
+    "source": "The Critique of Practical Reason",
+    "token_count": 73,
+    "length": 348,
+    "text_preview": "If this is so, it is not only writers of romance or sentimental educators (although they may be zeal..."
+  },
+  {
+    "chunk_id": "kant_chunk_322",
+    "source": "The Critique of Practical Reason",
+    "token_count": 75,
+    "length": 349,
+    "text_preview": "that of the former of an insipid, effeminate character; and we may, without hypocrisy, say of the mo..."
+  },
+  {
+    "chunk_id": "kant_chunk_323",
+    "source": "The Critique of Practical Reason",
+    "token_count": 56,
+    "length": 242,
+    "text_preview": "eyes, which does not permit them to indulge in dreams of imaginary moral perfections; and that it al..."
+  },
+  {
+    "chunk_id": "kant_chunk_324",
+    "source": "The Critique of Practical Reason",
+    "token_count": 143,
+    "length": 707,
+    "text_preview": "Duty! Thou sublime and mighty name that dost embrace nothing charming or insinuating, but requirest ..."
+  },
+  {
+    "chunk_id": "kant_chunk_325",
+    "source": "The Critique of Practical Reason - Book 1: CHAPTER_3 ^paragraph 30} It can be nothing less than a power which elevates man above himself (as a part of the world of sense), a power which connects him with an order of things that only the understanding can conceive, with a world which at the same time commands the whole sensible world, and with it the empirically determinable existence of man in time, as well as the sum total of all ends (which totality alone suits such unconditional practical laws as the moral)",
+    "token_count": 105,
+    "length": 481,
+    "text_preview": "{BOOK_1|CHAPTER_3 ^paragraph 30} It can be nothing less than a power which elevates man above himsel..."
+  },
+  {
+    "chunk_id": "kant_chunk_326",
+    "source": "The Critique of Practical Reason",
+    "token_count": 136,
+    "length": 694,
+    "text_preview": "This power is nothing but personality, that is, freedom and independence on the mechanism of nature,..."
+  },
+  {
+    "chunk_id": "kant_chunk_327",
+    "source": "The Critique of Practical Reason",
+    "token_count": 106,
+    "length": 492,
+    "text_preview": "On this origin are founded many expressions which designate the worth of objects according to moral ..."
+  },
+  {
+    "chunk_id": "kant_chunk_328",
+    "source": "The Critique of Practical Reason",
+    "token_count": 135,
+    "length": 657,
+    "text_preview": "Just for this reason every will, even every person's own individual will, in relation to itself, is ..."
+  },
+  {
+    "chunk_id": "kant_chunk_329",
+    "source": "The Critique of Practical Reason",
+    "token_count": 127,
+    "length": 630,
+    "text_preview": "This respect-inspiring idea of personality which sets before our eyes the sublimity of our nature (i..."
+  },
+  {
+    "chunk_id": "kant_chunk_330",
+    "source": "The Critique of Practical Reason",
+    "token_count": 135,
+    "length": 632,
+    "text_preview": "When an upright man is in the greatest distress, which he might have avoided if he could only have d..."
+  },
+  {
+    "chunk_id": "kant_chunk_331",
+    "source": "The Critique of Practical Reason",
+    "token_count": 91,
+    "length": 468,
+    "text_preview": "This inward peace is therefore merely negative as regards what can make life pleasant; it is, in fac..."
+  },
+  {
+    "chunk_id": "kant_chunk_332",
+    "source": "The Critique of Practical Reason",
+    "token_count": 95,
+    "length": 486,
+    "text_preview": "He still lives only because it is his duty, not because he finds anything pleasant in life. Such is ..."
+  },
+  {
+    "chunk_id": "kant_chunk_333",
+    "source": "The Critique of Practical Reason",
+    "token_count": 122,
+    "length": 615,
+    "text_preview": "Now with this motive may be combined so many charms and satisfactions of life that even on this acco..."
+  },
+  {
+    "chunk_id": "kant_chunk_334",
+    "source": "The Critique of Practical Reason - Book 1: CHAPTER_3 ^paragraph 35} Critical Examination of the Analytic of Pure Practical Reason",
+    "token_count": 136,
+    "length": 616,
+    "text_preview": "For that would be just the same as to wish to taint the purity of the moral disposition in its sourc..."
+  },
+  {
+    "chunk_id": "kant_chunk_335",
+    "source": "The Critique of Practical Reason",
+    "token_count": 101,
+    "length": 515,
+    "text_preview": "By the critical examination of a science, or of a portion of it, which constitutes a system by itsel..."
+  },
+  {
+    "chunk_id": "kant_chunk_336",
+    "source": "The Critique of Practical Reason",
+    "token_count": 222,
+    "length": 1113,
+    "text_preview": "The Analytic of pure theoretic reason had to do with the knowledge of such objects as may have been ..."
+  },
+  {
+    "chunk_id": "kant_chunk_337",
+    "source": "The Critique of Practical Reason",
+    "token_count": 141,
+    "length": 702,
+    "text_preview": "Only after that can it proceed to concepts of the objects of a practical reason, namely, those of ab..."
+  },
+  {
+    "chunk_id": "kant_chunk_338",
+    "source": "The Critique of Practical Reason",
+    "token_count": 147,
+    "length": 733,
+    "text_preview": "The Analytic of pure theoretic reason was divided into transcendental Aesthetic and transcendental L..."
+  },
+  {
+    "chunk_id": "kant_chunk_339",
+    "source": "The Critique of Practical Reason",
+    "token_count": 160,
+    "length": 811,
+    "text_preview": "It is also easy to see the reason why this division into two parts with its subdivision was not actu..."
+  },
+  {
+    "chunk_id": "kant_chunk_340",
+    "source": "The Critique of Practical Reason",
+    "token_count": 93,
+    "length": 483,
+    "text_preview": "He who has been able to convince himself of the truth of the positions occurring in the Analytic wil..."
+  },
+  {
+    "chunk_id": "kant_chunk_341",
+    "source": "The Critique of Practical Reason - Book 1: CHAPTER_3 ^paragraph 40} If now we consider also the contents of the knowledge that we can have of a pure practical reason, and by means of it, as shown by the Analytic, we find, along with a remarkable analogy between it and the theoretical, no less remarkable differences",
+    "token_count": 132,
+    "length": 625,
+    "text_preview": "{BOOK_1|CHAPTER_3 ^paragraph 40} If now we consider also the contents of the knowledge that we can h..."
+  },
+  {
+    "chunk_id": "kant_chunk_342",
+    "source": "The Critique of Practical Reason",
+    "token_count": 133,
+    "length": 655,
+    "text_preview": "But, that pure reason without the admixture of any empirical principle is practical of itself, this ..."
+  },
+  {
+    "chunk_id": "kant_chunk_343",
+    "source": "The Critique of Practical Reason",
+    "token_count": 139,
+    "length": 770,
+    "text_preview": "But this circumstance may be readily explained from what has just been said; because practical pure ..."
+  },
+  {
+    "chunk_id": "kant_chunk_344",
+    "source": "The Critique of Practical Reason",
+    "token_count": 73,
+    "length": 376,
+    "text_preview": "The heterogeneity of the determining principles (the empirical and rational) is clearly detected by ..."
+  },
+  {
+    "chunk_id": "kant_chunk_345",
+    "source": "The Critique of Practical Reason",
+    "token_count": 74,
+    "length": 353,
+    "text_preview": "feeling of a respect such as no man has for inclinations of whatever kind but for the law only; and ..."
+  },
+  {
+    "chunk_id": "kant_chunk_346",
+    "source": "The Critique of Practical Reason",
+    "token_count": 128,
+    "length": 644,
+    "text_preview": "The distinction between the doctrine of happiness and the doctrine of morality, in the former of whi..."
+  },
+  {
+    "chunk_id": "kant_chunk_347",
+    "source": "The Critique of Practical Reason",
+    "token_count": 127,
+    "length": 581,
+    "text_preview": "He has, however, this advantage that, like the chemist, he can at any time make an experiment with e..."
+  },
+  {
+    "chunk_id": "kant_chunk_348",
+    "source": "The Critique of Practical Reason",
+    "token_count": 76,
+    "length": 356,
+    "text_preview": "Just in the same way, if to a man who is otherwise honest (or who for this occasion places himself o..."
+  },
+  {
+    "chunk_id": "kant_chunk_349",
+    "source": "The Critique of Practical Reason",
+    "token_count": 76,
+    "length": 371,
+    "text_preview": "maintains in him respect for his own person (truthfulness), and the advantage after it has been sepa..."
+  },
+  {
+    "chunk_id": "kant_chunk_350",
+    "source": "The Critique of Practical Reason",
+    "token_count": 139,
+    "length": 681,
+    "text_preview": "But it does not follow that this distinction between the principle of happiness and that of morality..."
+  },
+  {
+    "chunk_id": "kant_chunk_351",
+    "source": "The Critique of Practical Reason",
+    "token_count": 110,
+    "length": 577,
+    "text_preview": "Now, as all determining principles of the will, except the law of pure practical reason alone (the m..."
+  },
+  {
+    "chunk_id": "kant_chunk_352",
+    "source": "The Critique of Practical Reason",
+    "token_count": 122,
+    "length": 610,
+    "text_preview": "Instead, however, of the deduction of the supreme principle of pure practical reason, that is, the e..."
+  },
+  {
+    "chunk_id": "kant_chunk_353",
+    "source": "The Critique of Practical Reason",
+    "token_count": 146,
+    "length": 732,
+    "text_preview": "But we cannot perceive the possibility of the freedom of an efficient cause, especially in the world..."
+  },
+  {
+    "chunk_id": "kant_chunk_354",
+    "source": "The Critique of Practical Reason",
+    "token_count": 144,
+    "length": 742,
+    "text_preview": "They thus deprive us of the grand revelation which we obtain through practical reason by means of th..."
+  },
+  {
+    "chunk_id": "kant_chunk_355",
+    "source": "The Critique of Practical Reason",
+    "token_count": 128,
+    "length": 643,
+    "text_preview": "Now if we take the attributes of existence of things in time for attributes of things in themselves ..."
+  },
+  {
+    "chunk_id": "kant_chunk_356",
+    "source": "The Critique of Practical Reason",
+    "token_count": 131,
+    "length": 644,
+    "text_preview": "Nay, even if I assume that my whole existence is independent on any foreign cause (for instance, God..."
+  },
+  {
+    "chunk_id": "kant_chunk_357",
+    "source": "The Critique of Practical Reason - Book 1: CHAPTER_3 ^paragraph 45} If, then, we would attribute freedom to a being whose existence is determined in time, we cannot except him from the law of necessity as to all events in his existence and, consequently, as to his actions also; for that would be to hand him over to blind chance",
+    "token_count": 128,
+    "length": 591,
+    "text_preview": "{BOOK_1|CHAPTER_3 ^paragraph 45} If, then, we would attribute freedom to a being whose existence is ..."
+  },
+  {
+    "chunk_id": "kant_chunk_358",
+    "source": "The Critique of Practical Reason",
+    "token_count": 114,
+    "length": 581,
+    "text_preview": "Consequently, if we would still save it, no other way remains but to consider that the existence of ..."
+  },
+  {
+    "chunk_id": "kant_chunk_359",
+    "source": "The Critique of Practical Reason",
+    "token_count": 145,
+    "length": 685,
+    "text_preview": "When I say of a man who commits a theft that, by the law of causality, this deed is a necessary resu..."
+  },
+  {
+    "chunk_id": "kant_chunk_360",
+    "source": "The Critique of Practical Reason",
+    "token_count": 150,
+    "length": 751,
+    "text_preview": "According to this, that is sometimes called a free effect, the determining physical cause of which l..."
+  },
+  {
+    "chunk_id": "kant_chunk_361",
+    "source": "The Critique of Practical Reason",
+    "token_count": 170,
+    "length": 834,
+    "text_preview": "This is a wretched subterfuge with which some persons still let themselves be put off, and so think ..."
+  },
+  {
+    "chunk_id": "kant_chunk_362",
+    "source": "The Critique of Practical Reason",
+    "token_count": 88,
+    "length": 441,
+    "text_preview": "Then it matters not that these are internal; it matters not that they have a psychological and not a..."
+  },
+  {
+    "chunk_id": "kant_chunk_363",
+    "source": "The Critique of Practical Reason",
+    "token_count": 112,
+    "length": 566,
+    "text_preview": "This may imply psychological freedom (if we choose to apply this term to a merely internal chain of ..."
+  },
+  {
+    "chunk_id": "kant_chunk_364",
+    "source": "The Critique of Practical Reason",
+    "token_count": 177,
+    "length": 849,
+    "text_preview": "Just for this reason the necessity of events in time, according to the physical law of causality, ma..."
+  },
+  {
+    "chunk_id": "kant_chunk_365",
+    "source": "The Critique of Practical Reason",
+    "token_count": 76,
+    "length": 365,
+    "text_preview": "Now, in order to remove in the supposed case the apparent contradiction between freedom and the mech..."
+  },
+  {
+    "chunk_id": "kant_chunk_366",
+    "source": "The Critique of Practical Reason",
+    "token_count": 73,
+    "length": 377,
+    "text_preview": "thing that is subject to time-conditions, consequently only to those of the acting subject as a phen..."
+  },
+  {
+    "chunk_id": "kant_chunk_367",
+    "source": "The Critique of Practical Reason",
+    "token_count": 135,
+    "length": 680,
+    "text_preview": "But the very same subject, being on the other side conscious of himself as a thing in himself, consi..."
+  },
+  {
+    "chunk_id": "kant_chunk_368",
+    "source": "The Critique of Practical Reason",
+    "token_count": 116,
+    "length": 605,
+    "text_preview": "In this view now the rational being can justly say of every unlawful action that he performs, that h..."
+  },
+  {
+    "chunk_id": "kant_chunk_369",
+    "source": "The Critique of Practical Reason",
+    "token_count": 71,
+    "length": 337,
+    "text_preview": "A man may use as much art as he likes in order to paint to himself an unlawful act, that he remember..."
+  },
+  {
+    "chunk_id": "kant_chunk_370",
+    "source": "The Critique of Practical Reason",
+    "token_count": 74,
+    "length": 346,
+    "text_preview": "the advocate who speaks in his favour can by no means silence the accuser within, if only he is cons..."
+  },
+  {
+    "chunk_id": "kant_chunk_371",
+    "source": "The Critique of Practical Reason",
+    "token_count": 76,
+    "length": 359,
+    "text_preview": "(Hence Priestley, as a true and consistent fatalist, declares it absurd, and he deserves to be comme..."
+  },
+  {
+    "chunk_id": "kant_chunk_372",
+    "source": "The Critique of Practical Reason",
+    "token_count": 77,
+    "length": 356,
+    "text_preview": "moral imputation.) But the pain is quite legitimate, because when the law of our intelligible [super..."
+  },
+  {
+    "chunk_id": "kant_chunk_373",
+    "source": "The Critique of Practical Reason",
+    "token_count": 82,
+    "length": 407,
+    "text_preview": "For in reference to the supersensible consciousness of its existence (i.e., freedom) the life of sen..."
+  },
+  {
+    "chunk_id": "kant_chunk_374",
+    "source": "The Critique of Practical Reason",
+    "token_count": 86,
+    "length": 434,
+    "text_preview": "It may therefore be admitted that, if it were possible to have so profound an insight into a man's m..."
+  },
+  {
+    "chunk_id": "kant_chunk_375",
+    "source": "The Critique of Practical Reason",
+    "token_count": 130,
+    "length": 660,
+    "text_preview": "In fact, if we were capable of a further glance, namely, an intellectual intuition of the same subje..."
+  },
+  {
+    "chunk_id": "kant_chunk_376",
+    "source": "The Critique of Practical Reason",
+    "token_count": 167,
+    "length": 816,
+    "text_preview": "In this view, which is natural to our reason, though inexplicable, we can also justify some judgemen..."
+  },
+  {
+    "chunk_id": "kant_chunk_377",
+    "source": "The Critique of Practical Reason",
+    "token_count": 114,
+    "length": 594,
+    "text_preview": "This could not happen if we did not suppose that whatever springs from a man's choice (as every acti..."
+  },
+  {
+    "chunk_id": "kant_chunk_378",
+    "source": "The Critique of Practical Reason",
+    "token_count": 172,
+    "length": 899,
+    "text_preview": "There still remains a difficulty in the combination of freedom with the mechanism of nature in a bei..."
+  },
+  {
+    "chunk_id": "kant_chunk_379",
+    "source": "The Critique of Practical Reason",
+    "token_count": 75,
+    "length": 367,
+    "text_preview": "The difficulty is as follows: Even if it is admitted that the supersensible subject can be free with..."
+  },
+  {
+    "chunk_id": "kant_chunk_380",
+    "source": "The Critique of Practical Reason",
+    "token_count": 73,
+    "length": 352,
+    "text_preview": "proposition which can never be given up without at the same time giving up the notion of God as the ..."
+  },
+  {
+    "chunk_id": "kant_chunk_381",
+    "source": "The Critique of Practical Reason",
+    "token_count": 145,
+    "length": 692,
+    "text_preview": "In point of fact, if a man's actions as belonging to his modifications in time were not merely modif..."
+  },
+  {
+    "chunk_id": "kant_chunk_382",
+    "source": "The Critique of Practical Reason",
+    "token_count": 72,
+    "length": 375,
+    "text_preview": "Therefore I do not see how those who still insist on regarding time and space as attributes belongin..."
+  },
+  {
+    "chunk_id": "kant_chunk_383",
+    "source": "The Critique of Practical Reason",
+    "token_count": 74,
+    "length": 359,
+    "text_preview": "Being, I do not see on what ground they can justify such a distinction, or, indeed, how they can avo..."
+  },
+  {
+    "chunk_id": "kant_chunk_384",
+    "source": "The Critique of Practical Reason",
+    "token_count": 95,
+    "length": 493,
+    "text_preview": "His causality must be subject to conditions and even to the condition of time; and this would inevit..."
+  },
+  {
+    "chunk_id": "kant_chunk_385",
+    "source": "The Critique of Practical Reason",
+    "token_count": 106,
+    "length": 509,
+    "text_preview": "Hence, if this ideality of time and space is not adopted, nothing remains but Spinozism, in which sp..."
+  },
+  {
+    "chunk_id": "kant_chunk_386",
+    "source": "The Critique of Practical Reason - Book 1: CHAPTER_3 ^paragraph 50} The above-mentioned difficulty is resolved briefly and clearly as follows: If existence in time is a mere sensible mode of representation belonging to thinking beings in the world and consequently does not apply to them as things in themselves, then the creation of these beings is a creation of things in themselves, since the notion of creation does not belong to the sensible form of representation of existence or to causality, but can only be referred to noumena",
+    "token_count": 172,
+    "length": 827,
+    "text_preview": "Thus, Spinozism, in spite of the absurdity of its fundamental idea, argues more consistently than th..."
+  },
+  {
+    "chunk_id": "kant_chunk_387",
+    "source": "The Critique of Practical Reason",
+    "token_count": 94,
+    "length": 417,
+    "text_preview": "Consequently, when I say of beings in the world of sense that they are created, I so far regard them..."
+  },
+  {
+    "chunk_id": "kant_chunk_388",
+    "source": "The Critique of Practical Reason",
+    "token_count": 123,
+    "length": 686,
+    "text_preview": "If now it is possible to affirm freedom in spite of the natural mechanism of actions as appearances ..."
+  },
+  {
+    "chunk_id": "kant_chunk_389",
+    "source": "The Critique of Practical Reason",
+    "token_count": 136,
+    "length": 669,
+    "text_preview": "Of so great importance is the separation of time (as well as space) from the existence of things in ..."
+  },
+  {
+    "chunk_id": "kant_chunk_390",
+    "source": "The Critique of Practical Reason",
+    "token_count": 107,
+    "length": 543,
+    "text_preview": "If science is to be advanced, all difficulties must be laid open, and we must even search for those ..."
+  },
+  {
+    "chunk_id": "kant_chunk_391",
+    "source": "The Critique of Practical Reason",
+    "token_count": 82,
+    "length": 442,
+    "text_preview": "Since it is, properly speaking, the notion of freedom alone amongst all the ideas of pure speculativ..."
+  },
+  {
+    "chunk_id": "kant_chunk_392",
+    "source": "The Critique of Practical Reason",
+    "token_count": 112,
+    "length": 553,
+    "text_preview": "I presently find that as I cannot think anything without a category, I must first look for a categor..."
+  },
+  {
+    "chunk_id": "kant_chunk_393",
+    "source": "The Critique of Practical Reason",
+    "token_count": 150,
+    "length": 741,
+    "text_preview": "Now, the categories are all divided into two classes- the mathematical, which concern the unity of s..."
+  },
+  {
+    "chunk_id": "kant_chunk_394",
+    "source": "The Critique of Practical Reason",
+    "token_count": 150,
+    "length": 784,
+    "text_preview": "The categories of the second class (those of causality and of the necessity of a thing) did not requ..."
+  },
+  {
+    "chunk_id": "kant_chunk_395",
+    "source": "The Critique of Practical Reason",
+    "token_count": 140,
+    "length": 698,
+    "text_preview": "Hence, it was found in the Dialectic of the Pure Speculative Reason that the two apparently opposite..."
+  },
+  {
+    "chunk_id": "kant_chunk_396",
+    "source": "The Critique of Practical Reason",
+    "token_count": 133,
+    "length": 644,
+    "text_preview": "Now, the only point in question was to change this may be into is; that is, that we should be able t..."
+  },
+  {
+    "chunk_id": "kant_chunk_397",
+    "source": "The Critique of Practical Reason",
+    "token_count": 122,
+    "length": 636,
+    "text_preview": "But things of sense are the only things offered to our perception and observation. Hence, nothing re..."
+  },
+  {
+    "chunk_id": "kant_chunk_398",
+    "source": "The Critique of Practical Reason",
+    "token_count": 128,
+    "length": 651,
+    "text_preview": "Therefore, that unconditioned causality, with the faculty of it, namely, freedom, is no longer merel..."
+  },
+  {
+    "chunk_id": "kant_chunk_399",
+    "source": "The Critique of Practical Reason",
+    "token_count": 115,
+    "length": 531,
+    "text_preview": "We could not, however, make a similar step as regards the second dynamical idea, namely, that of a n..."
+  },
+  {
+    "chunk_id": "kant_chunk_400",
+    "source": "The Critique of Practical Reason",
+    "token_count": 99,
+    "length": 461,
+    "text_preview": "On the other hand, it is now obvious that this connection is quite possible in relation to our own s..."
+  },
+  {
+    "chunk_id": "kant_chunk_401",
+    "source": "The Critique of Practical Reason",
+    "token_count": 120,
+    "length": 601,
+    "text_preview": "For it is our own reason that by means of the supreme and unconditional practical law knows that its..."
+  },
+  {
+    "chunk_id": "kant_chunk_402",
+    "source": "The Critique of Practical Reason",
+    "token_count": 207,
+    "length": 1106,
+    "text_preview": "Let me be permitted on this occasion to make one more remark, namely, that every step that we make w..."
+  },
+  {
+    "chunk_id": "kant_chunk_403",
+    "source": "The Critique of Practical Reason",
+    "token_count": 126,
+    "length": 659,
+    "text_preview": "Frequent observation has convinced me that, when such researches are concluded, that which in one pa..."
+  },
+  {
+    "chunk_id": "kant_chunk_404",
+    "source": "The Critique of Practical Reason - Book 2: CHAPTER_1 BOOK II",
+    "token_count": 80,
+    "length": 372,
+    "text_preview": "BOOK_2|CHAPTER_1 BOOK II. Dialectic of Pure Practical Reason. CHAPTER I. Of a Dialectic of Pure Prac..."
+  },
+  {
+    "chunk_id": "kant_chunk_405",
+    "source": "The Critique of Practical Reason",
+    "token_count": 125,
+    "length": 640,
+    "text_preview": "But as all conceptions of things in themselves must be referred to intuitions, and with us men these..."
+  },
+  {
+    "chunk_id": "kant_chunk_406",
+    "source": "The Critique of Practical Reason",
+    "token_count": 78,
+    "length": 376,
+    "text_preview": "By this, however, reason is compelled to trace this illusion to its source, and search how it can be..."
+  },
+  {
+    "chunk_id": "kant_chunk_407",
+    "source": "The Critique of Practical Reason",
+    "token_count": 75,
+    "length": 346,
+    "text_preview": "at last drives us to search for the key to escape from this labyrinth; and when this key is found, i..."
+  },
+  {
+    "chunk_id": "kant_chunk_408",
+    "source": "The Critique of Practical Reason",
+    "token_count": 133,
+    "length": 638,
+    "text_preview": "It may be seen in detail in the Critique of Pure Reason how in its speculative employment this natur..."
+  },
+  {
+    "chunk_id": "kant_chunk_409",
+    "source": "The Critique of Practical Reason",
+    "token_count": 117,
+    "length": 532,
+    "text_preview": "To define this idea practically, i.e., sufficiently for the maxims of our rational conduct, is the b..."
+  },
+  {
+    "chunk_id": "kant_chunk_410",
+    "source": "The Critique of Practical Reason",
+    "token_count": 102,
+    "length": 518,
+    "text_preview": "For on the one hand the restriction annexed would suit the Greek expression (which signifies the lov..."
+  },
+  {
+    "chunk_id": "kant_chunk_411",
+    "source": "The Critique of Practical Reason",
+    "token_count": 114,
+    "length": 542,
+    "text_preview": "On the other hand, it would be no harm to deter the self-conceit of one who ventures to claim the ti..."
+  },
+  {
+    "chunk_id": "kant_chunk_412",
+    "source": "The Critique of Practical Reason",
+    "token_count": 121,
+    "length": 580,
+    "text_preview": "Thus philosophy as well as wisdom would always remain an ideal, which objectively is presented compl..."
+  },
+  {
+    "chunk_id": "kant_chunk_413",
+    "source": "The Critique of Practical Reason - Book 2: CHAPTER_1 ^paragraph 5} We have another preliminary remark to make respecting the dialectic of the pure practical reason, on the point of the definition of the summum bonum (a successful solution of which dialectic would lead us to expect, as in case of that of the theoretical reason, the most beneficial effects, inasmuch as the self-contradictions of pure practical reason honestly stated, and not concealed, force us to undertake a complete critique of this faculty)",
+    "token_count": 116,
+    "length": 543,
+    "text_preview": "{BOOK_2|CHAPTER_1 ^paragraph 5} We have another preliminary remark to make respecting the dialectic ..."
+  },
+  {
+    "chunk_id": "kant_chunk_414",
+    "source": "The Critique of Practical Reason",
+    "token_count": 120,
+    "length": 572,
+    "text_preview": "The moral law is the sole determining principle of a pure will. But since this is merely formal (viz..."
+  },
+  {
+    "chunk_id": "kant_chunk_415",
+    "source": "The Critique of Practical Reason",
+    "token_count": 87,
+    "length": 441,
+    "text_preview": "This remark is important in so delicate a case as the determination of moral principles, where the s..."
+  },
+  {
+    "chunk_id": "kant_chunk_416",
+    "source": "The Critique of Practical Reason",
+    "token_count": 143,
+    "length": 726,
+    "text_preview": "It is, however, evident that if the notion of the summum bonum includes that of the moral law as its..."
+  },
+  {
+    "chunk_id": "kant_chunk_417",
+    "source": "The Critique of Practical Reason - Book 2: CHAPTER_2 CHAPTER II",
+    "token_count": 124,
+    "length": 527,
+    "text_preview": "BOOK_2|CHAPTER_2 CHAPTER II. Of the Dialectic of Pure Reason in defining the Conception of the \"Summ..."
+  },
+  {
+    "chunk_id": "kant_chunk_418",
+    "source": "The Critique of Practical Reason",
+    "token_count": 114,
+    "length": 560,
+    "text_preview": "It has been shown in the Analytic that virtue (as worthiness to be happy) is the supreme condition o..."
+  },
+  {
+    "chunk_id": "kant_chunk_419",
+    "source": "The Critique of Practical Reason",
+    "token_count": 189,
+    "length": 895,
+    "text_preview": "For to need happiness, to deserve it, and yet at the same time not to participate in it, cannot be c..."
+  },
+  {
+    "chunk_id": "kant_chunk_420",
+    "source": "The Critique of Practical Reason",
+    "token_count": 143,
+    "length": 768,
+    "text_preview": "When two elements are necessarily united in one concept, they must be connected as reason and conseq..."
+  },
+  {
+    "chunk_id": "kant_chunk_421",
+    "source": "The Critique of Practical Reason",
+    "token_count": 90,
+    "length": 435,
+    "text_preview": "The ancient Greek schools were, properly speaking, only two, and in determining the conception of th..."
+  },
+  {
+    "chunk_id": "kant_chunk_422",
+    "source": "The Critique of Practical Reason",
+    "token_count": 123,
+    "length": 602,
+    "text_preview": "The Epicurean said: \"To be conscious that one's maxims lead to happiness is virtue\"; the Stoic said:..."
+  },
+  {
+    "chunk_id": "kant_chunk_423",
+    "source": "The Critique of Practical Reason",
+    "token_count": 123,
+    "length": 662,
+    "text_preview": "But it agrees with the dialectical spirit of their times (and subtle minds are even now sometimes mi..."
+  },
+  {
+    "chunk_id": "kant_chunk_424",
+    "source": "The Critique of Practical Reason - Book 2: CHAPTER_2 ^paragraph 5} While both schools sought to trace out the identity of the practical principles of virtue and happiness, they were not agreed as to the way in which they tried to force this identity, but were separated infinitely from one another, the one placing its principle on the side of sense, the other on that of reason; the one in the consciousness of sensible wants, the other in the independence of practical reason on all sensible grounds of determination",
+    "token_count": 148,
+    "length": 725,
+    "text_preview": "{BOOK_2|CHAPTER_2 ^paragraph 5} While both schools sought to trace out the identity of the practical..."
+  },
+  {
+    "chunk_id": "kant_chunk_425",
+    "source": "The Critique of Practical Reason",
+    "token_count": 127,
+    "length": 623,
+    "text_preview": "Now whatever is contained in another notion is identical with part of the containing notion, but not..."
+  },
+  {
+    "chunk_id": "kant_chunk_426",
+    "source": "The Critique of Practical Reason",
+    "token_count": 104,
+    "length": 522,
+    "text_preview": "Now it is clear from the Analytic that the maxims of virtue and those of private happiness are quite..."
+  },
+  {
+    "chunk_id": "kant_chunk_427",
+    "source": "The Critique of Practical Reason",
+    "token_count": 109,
+    "length": 533,
+    "text_preview": "The Analytic has, however, shown what it is that makes the problem difficult to solve; namely, that ..."
+  },
+  {
+    "chunk_id": "kant_chunk_428",
+    "source": "The Critique of Practical Reason",
+    "token_count": 110,
+    "length": 530,
+    "text_preview": "Now since this combination is recognised as a priori, and therefore as practically necessary, and co..."
+  },
+  {
+    "chunk_id": "kant_chunk_429",
+    "source": "The Critique of Practical Reason - Book 2: CHAPTER_2 ^paragraph 10} In the summum bonum which is practical for us, i",
+    "token_count": 89,
+    "length": 389,
+    "text_preview": "I. The Antinomy of Practical Reason. {BOOK_2|CHAPTER_2 ^paragraph 10} In the summum bonum which is p..."
+  },
+  {
+    "chunk_id": "kant_chunk_430",
+    "source": "The Critique of Practical Reason",
+    "token_count": 142,
+    "length": 694,
+    "text_preview": "Now this combination (like every other) is either analytical or synthetical. It has been shown that ..."
+  },
+  {
+    "chunk_id": "kant_chunk_431",
+    "source": "The Critique of Practical Reason",
+    "token_count": 96,
+    "length": 482,
+    "text_preview": "But the second is also impossible, because the practical connection of causes and effects in the wor..."
+  },
+  {
+    "chunk_id": "kant_chunk_432",
+    "source": "The Critique of Practical Reason",
+    "token_count": 130,
+    "length": 640,
+    "text_preview": "Now, as the promotion of this summum bonum, the conception of which contains this connection, is a p..."
+  },
+  {
+    "chunk_id": "kant_chunk_433",
+    "source": "The Critique of Practical Reason",
+    "token_count": 142,
+    "length": 687,
+    "text_preview": "It was solved by showing that there is no real contradiction when the events and even the world in w..."
+  },
+  {
+    "chunk_id": "kant_chunk_434",
+    "source": "The Critique of Practical Reason - Book 2: CHAPTER_2 ^paragraph 15} It is just the same with the foregoing antinomy of pure practical reason",
+    "token_count": 120,
+    "length": 552,
+    "text_preview": "{BOOK_2|CHAPTER_2 ^paragraph 15} It is just the same with the foregoing antinomy of pure practical r..."
+  },
+  {
+    "chunk_id": "kant_chunk_435",
+    "source": "The Critique of Practical Reason",
+    "token_count": 129,
+    "length": 634,
+    "text_preview": "But as I am not only justified in thinking that I exist also as a noumenon in a world of the underst..."
+  },
+  {
+    "chunk_id": "kant_chunk_436",
+    "source": "The Critique of Practical Reason",
+    "token_count": 112,
+    "length": 591,
+    "text_preview": "Thus, notwithstanding this seeming conflict of practical reason with itself, the summum bonum, which..."
+  },
+  {
+    "chunk_id": "kant_chunk_437",
+    "source": "The Critique of Practical Reason",
+    "token_count": 96,
+    "length": 492,
+    "text_preview": "When we find ourselves obliged to go so far, namely, to the connection with an intelligible world, t..."
+  },
+  {
+    "chunk_id": "kant_chunk_438",
+    "source": "The Critique of Practical Reason",
+    "token_count": 139,
+    "length": 707,
+    "text_preview": "For Epicurus as well as the Stoics extolled above everything the happiness that springs from the con..."
+  },
+  {
+    "chunk_id": "kant_chunk_439",
+    "source": "The Critique of Practical Reason",
+    "token_count": 149,
+    "length": 735,
+    "text_preview": "He differed from the Stoics chiefly in making this pleasure the motive, which they very rightly refu..."
+  },
+  {
+    "chunk_id": "kant_chunk_440",
+    "source": "The Critique of Practical Reason",
+    "token_count": 137,
+    "length": 667,
+    "text_preview": "But the question is: How is such a disposition possible in the first instance, and such a habit of t..."
+  },
+  {
+    "chunk_id": "kant_chunk_441",
+    "source": "The Critique of Practical Reason",
+    "token_count": 155,
+    "length": 814,
+    "text_preview": "On the other hand, however, there is here an occasion of a vitium subreptionis, and as it were of an..."
+  },
+  {
+    "chunk_id": "kant_chunk_442",
+    "source": "The Critique of Practical Reason",
+    "token_count": 137,
+    "length": 733,
+    "text_preview": "Now as this determination has exactly the same effect within in impelling to activity, that a feelin..."
+  },
+  {
+    "chunk_id": "kant_chunk_443",
+    "source": "The Critique of Practical Reason",
+    "token_count": 89,
+    "length": 443,
+    "text_preview": "It is also of great importance to attend to this property of our personality and as much as possible..."
+  },
+  {
+    "chunk_id": "kant_chunk_444",
+    "source": "The Critique of Practical Reason",
+    "token_count": 136,
+    "length": 686,
+    "text_preview": "Respect, not pleasure or enjoyment of happiness, is something for which it is not possible that reas..."
+  },
+  {
+    "chunk_id": "kant_chunk_445",
+    "source": "The Critique of Practical Reason",
+    "token_count": 156,
+    "length": 805,
+    "text_preview": "Have we not, however, a word which does not express enjoyment, as happiness does, but indicates a sa..."
+  },
+  {
+    "chunk_id": "kant_chunk_446",
+    "source": "The Critique of Practical Reason",
+    "token_count": 143,
+    "length": 669,
+    "text_preview": "This may be called intellectual contentment. The sensible contentment (improperly so-called) which r..."
+  },
+  {
+    "chunk_id": "kant_chunk_447",
+    "source": "The Critique of Practical Reason",
+    "token_count": 150,
+    "length": 745,
+    "text_preview": "For in these all must be directed to the conception of the law as a determining principle, if the ac..."
+  },
+  {
+    "chunk_id": "kant_chunk_448",
+    "source": "The Critique of Practical Reason - Book 2: CHAPTER_2 ^paragraph 20} From this we can understand how the consciousness of this faculty of a pure practical reason produces by action (virtue) a consciousness of mastery over one's inclinations, and therefore of independence of them, and consequently also of the discontent that always accompanies them, and thus a negative satisfaction with one's state, i",
+    "token_count": 91,
+    "length": 438,
+    "text_preview": "{BOOK_2|CHAPTER_2 ^paragraph 20} From this we can understand how the consciousness of this faculty o..."
+  },
+  {
+    "chunk_id": "kant_chunk_449",
+    "source": "The Critique of Practical Reason",
+    "token_count": 112,
+    "length": 548,
+    "text_preview": "Freedom itself becomes in this way (namely, indirectly) capable of an enjoyment which cannot be call..."
+  },
+  {
+    "chunk_id": "kant_chunk_450",
+    "source": "The Critique of Practical Reason",
+    "token_count": 128,
+    "length": 684,
+    "text_preview": "From this solution of the antinomy of practical pure reason, it follows that in practical principles..."
+  },
+  {
+    "chunk_id": "kant_chunk_451",
+    "source": "The Critique of Practical Reason",
+    "token_count": 178,
+    "length": 899,
+    "text_preview": "Only with this subordination is the summum bonum the whole object of pure practical reason, which mu..."
+  },
+  {
+    "chunk_id": "kant_chunk_452",
+    "source": "The Critique of Practical Reason - Book 2: CHAPTER_2 ^paragraph 25} By primacy between two or more things connected by reason, I understand the prerogative, belonging to one, of being the first determining principle in the connection with all the rest",
+    "token_count": 141,
+    "length": 644,
+    "text_preview": "III. Of the Primacy of Pure Practical Reason in its Union with the Speculative Reason. {BOOK_2|CHAPT..."
+  },
+  {
+    "chunk_id": "kant_chunk_453",
+    "source": "The Critique of Practical Reason",
+    "token_count": 136,
+    "length": 700,
+    "text_preview": "Reason, as the faculty of principles, determines the interest of all the powers of the mind and is d..."
+  },
+  {
+    "chunk_id": "kant_chunk_454",
+    "source": "The Critique of Practical Reason",
+    "token_count": 75,
+    "length": 414,
+    "text_preview": "But supposing that it had of itself original a priori principles with which certain theoretical posi..."
+  },
+  {
+    "chunk_id": "kant_chunk_455",
+    "source": "The Critique of Practical Reason",
+    "token_count": 74,
+    "length": 381,
+    "text_preview": "nothing of all that the practical offers for its acceptance, should take up these propositions and (..."
+  },
+  {
+    "chunk_id": "kant_chunk_456",
+    "source": "The Critique of Practical Reason",
+    "token_count": 74,
+    "length": 379,
+    "text_preview": "accredit its objective reality by manifest examples to be shown in experience, even though it should..."
+  },
+  {
+    "chunk_id": "kant_chunk_457",
+    "source": "The Critique of Practical Reason",
+    "token_count": 103,
+    "length": 515,
+    "text_preview": "In fact, so far as practical reason is taken as dependent on pathological conditions, that is, as me..."
+  },
+  {
+    "chunk_id": "kant_chunk_458",
+    "source": "The Critique of Practical Reason",
+    "token_count": 72,
+    "length": 353,
+    "text_preview": "But if pure reason of itself can be practical and is actually so, as the consciousness of the moral ..."
+  },
+  {
+    "chunk_id": "kant_chunk_459",
+    "source": "The Critique of Practical Reason",
+    "token_count": 77,
+    "length": 388,
+    "text_preview": "certain propositions positively, which, however, do not contradict it, then, as soon as these propos..."
+  },
+  {
+    "chunk_id": "kant_chunk_460",
+    "source": "The Critique of Practical Reason",
+    "token_count": 99,
+    "length": 510,
+    "text_preview": "It must remember, however, that these are not additions to its insight, but yet are extensions of it..."
+  },
+  {
+    "chunk_id": "kant_chunk_461",
+    "source": "The Critique of Practical Reason - Book 2: CHAPTER_2 ^paragraph 30} IV",
+    "token_count": 129,
+    "length": 661,
+    "text_preview": "For without this subordination there would arise a conflict of reason with itself; since, if they we..."
+  },
+  {
+    "chunk_id": "kant_chunk_462",
+    "source": "The Critique of Practical Reason - Book 2: CHAPTER_2 ^paragraph 30} IV",
+    "token_count": 140,
+    "length": 624,
+    "text_preview": "{BOOK_2|CHAPTER_2 ^paragraph 30} IV. The Immortality of the Soul as a Postulate of Pure Practical Re..."
+  },
+  {
+    "chunk_id": "kant_chunk_463",
+    "source": "The Critique of Practical Reason - Book 2: CHAPTER_2 ^paragraph 35} Now, this endless progress is only possible on the supposition of an endless duration of the existence and personality of the same rational being (which is called the immortality of the soul)",
+    "token_count": 102,
+    "length": 499,
+    "text_preview": "Since, nevertheless, it is required as practically necessary, it can only be found in a progress in ..."
+  },
+  {
+    "chunk_id": "kant_chunk_464",
+    "source": "The Critique of Practical Reason",
+    "token_count": 138,
+    "length": 679,
+    "text_preview": "The summum bonum, then, practically is only possible on the supposition of the immortality of the so..."
+  },
+  {
+    "chunk_id": "kant_chunk_465",
+    "source": "The Critique of Practical Reason",
+    "token_count": 142,
+    "length": 682,
+    "text_preview": "In default of it, either the moral law is quite degraded from its holiness, being made out to be ind..."
+  },
+  {
+    "chunk_id": "kant_chunk_466",
+    "source": "The Critique of Practical Reason",
+    "token_count": 81,
+    "length": 384,
+    "text_preview": "The Infinite Being, to whom the condition of time is nothing, sees in this to us endless succession ..."
+  },
+  {
+    "chunk_id": "kant_chunk_467",
+    "source": "The Critique of Practical Reason",
+    "token_count": 144,
+    "length": 683,
+    "text_preview": "All that can be expected of the creature in respect of the hope of this participation would be the c..."
+  },
+  {
+    "chunk_id": "kant_chunk_468",
+    "source": "The Critique of Practical Reason",
+    "token_count": 72,
+    "length": 368,
+    "text_preview": "But naturally one who is conscious that he has persevered through a long portion of his life up to t..."
+  },
+  {
+    "chunk_id": "kant_chunk_469",
+    "source": "The Critique of Practical Reason",
+    "token_count": 72,
+    "length": 347,
+    "text_preview": "own eyes, nor can ever hope to be so in the increased perfection of his nature, to which he looks fo..."
+  },
+  {
+    "chunk_id": "kant_chunk_470",
+    "source": "The Critique of Practical Reason",
+    "token_count": 53,
+    "length": 272,
+    "text_preview": "the word that reason employs to designate perfect well-being independent of all contingent causes of..."
+  },
+  {
+    "chunk_id": "kant_chunk_471",
+    "source": "The Critique of Practical Reason - Book 2: CHAPTER_2 ^paragraph 40} V",
+    "token_count": 101,
+    "length": 450,
+    "text_preview": "{BOOK_2|CHAPTER_2 ^paragraph 40} V. The Existence of God as a Postulate of Pure Practical Reason. In..."
+  },
+  {
+    "chunk_id": "kant_chunk_472",
+    "source": "The Critique of Practical Reason",
+    "token_count": 123,
+    "length": 604,
+    "text_preview": "The same law must also lead us to affirm the possibility of the second element of the summum bonum, ..."
+  },
+  {
+    "chunk_id": "kant_chunk_473",
+    "source": "The Critique of Practical Reason",
+    "token_count": 114,
+    "length": 595,
+    "text_preview": "We proceed to exhibit this connection in a convincing manner. Happiness is the condition of a ration..."
+  },
+  {
+    "chunk_id": "kant_chunk_474",
+    "source": "The Critique of Practical Reason",
+    "token_count": 102,
+    "length": 500,
+    "text_preview": "But the acting rational being in the world is not the cause of the world and of nature itself. There..."
+  },
+  {
+    "chunk_id": "kant_chunk_475",
+    "source": "The Critique of Practical Reason",
+    "token_count": 91,
+    "length": 443,
+    "text_preview": "Nevertheless, in the practical problem of pure reason, i.e., the necessary pursuit of the summum bon..."
+  },
+  {
+    "chunk_id": "kant_chunk_476",
+    "source": "The Critique of Practical Reason",
+    "token_count": 105,
+    "length": 519,
+    "text_preview": "Now this supreme cause must contain the principle of the harmony of nature, not merely with a law of..."
+  },
+  {
+    "chunk_id": "kant_chunk_477",
+    "source": "The Critique of Practical Reason",
+    "token_count": 126,
+    "length": 594,
+    "text_preview": "Now a being that is capable of acting on the conception of laws is an intelligence (a rational being..."
+  },
+  {
+    "chunk_id": "kant_chunk_478",
+    "source": "The Critique of Practical Reason",
+    "token_count": 146,
+    "length": 679,
+    "text_preview": "Now it was seen to be a duty for us to promote the summum bonum; consequently it is not merely allow..."
+  },
+  {
+    "chunk_id": "kant_chunk_479",
+    "source": "The Critique of Practical Reason",
+    "token_count": 122,
+    "length": 636,
+    "text_preview": "Moreover, it is not meant by this that it is necessary to suppose the existence of God as a basis of..."
+  },
+  {
+    "chunk_id": "kant_chunk_480",
+    "source": "The Critique of Practical Reason",
+    "token_count": 89,
+    "length": 421,
+    "text_preview": "Considered in respect of this alone, as a principle of explanation, it may be called a hypothesis, b..."
+  },
+  {
+    "chunk_id": "kant_chunk_481",
+    "source": "The Critique of Practical Reason - Book 2: CHAPTER_2 ^paragraph 45} From this deduction it is now intelligible why the Greek schools could never attain the solution of their problem of the practical possibility of the summum bonum, because they made the rule of the use which the will of man makes of his freedom the sole and sufficient ground of this possibility, thinking that they had no need for that purpose of the existence of God",
+    "token_count": 144,
+    "length": 712,
+    "text_preview": "{BOOK_2|CHAPTER_2 ^paragraph 45} From this deduction it is now intelligible why the Greek schools co..."
+  },
+  {
+    "chunk_id": "kant_chunk_482",
+    "source": "The Critique of Practical Reason",
+    "token_count": 139,
+    "length": 730,
+    "text_preview": "The Epicureans had indeed assumed as the supreme principle of morality a wholly false one, namely th..."
+  },
+  {
+    "chunk_id": "kant_chunk_483",
+    "source": "The Critique of Practical Reason",
+    "token_count": 74,
+    "length": 369,
+    "text_preview": "The Stoics, on the contrary, had chosen their supreme practical principle quite rightly, making virt..."
+  },
+  {
+    "chunk_id": "kant_chunk_484",
+    "source": "The Critique of Practical Reason",
+    "token_count": 76,
+    "length": 367,
+    "text_preview": "a thing that contradicts all our knowledge of men, but also and principally they would not allow the..."
+  },
+  {
+    "chunk_id": "kant_chunk_485",
+    "source": "The Critique of Practical Reason",
+    "token_count": 114,
+    "length": 558,
+    "text_preview": "They thus, in fact, left out the second element of the summum bonum namely, personal happiness, plac..."
+  },
+  {
+    "chunk_id": "kant_chunk_486",
+    "source": "The Critique of Practical Reason",
+    "token_count": 137,
+    "length": 664,
+    "text_preview": "The moral law is holy (unyielding) and demands holiness of morals, although all the moral perfection..."
+  },
+  {
+    "chunk_id": "kant_chunk_487",
+    "source": "The Critique of Practical Reason",
+    "token_count": 84,
+    "length": 442,
+    "text_preview": "The worth of a character perfectly accordant with the moral law is infinite, since the only restrict..."
+  },
+  {
+    "chunk_id": "kant_chunk_488",
+    "source": "The Critique of Practical Reason",
+    "token_count": 178,
+    "length": 871,
+    "text_preview": "Now Christian morality supplies this defect (of the second indispensable element of the summum bonum..."
+  },
+  {
+    "chunk_id": "kant_chunk_489",
+    "source": "The Critique of Practical Reason",
+    "token_count": 148,
+    "length": 748,
+    "text_preview": "Nevertheless, the Christian principle of morality itself is not theological (so as to be heteronomy)..."
+  },
+  {
+    "chunk_id": "kant_chunk_490",
+    "source": "The Critique of Practical Reason",
+    "token_count": 131,
+    "length": 657,
+    "text_preview": "The Stoic system made the consciousness of strength of mind the pivot on which all moral disposition..."
+  },
+  {
+    "chunk_id": "kant_chunk_491",
+    "source": "The Critique of Practical Reason",
+    "token_count": 133,
+    "length": 665,
+    "text_preview": "All this, however, they could not have done if they had conceived this law in all its purity and str..."
+  },
+  {
+    "chunk_id": "kant_chunk_492",
+    "source": "The Critique of Practical Reason",
+    "token_count": 112,
+    "length": 525,
+    "text_preview": "Now if I consider Christian morals on their philosophical side, then compared with the ideas of the ..."
+  },
+  {
+    "chunk_id": "kant_chunk_493",
+    "source": "The Critique of Practical Reason",
+    "token_count": 112,
+    "length": 480,
+    "text_preview": "Christian morality, because its precept is framed (as a moral precept must be) so pure and unyieldin..."
+  },
+  {
+    "chunk_id": "kant_chunk_494",
+    "source": "The Critique of Practical Reason - Book 2: CHAPTER_2 ^paragraph 50} In this manner, the moral laws lead through the conception of the summum bonum as the object and final end of pure practical reason to religion, that is, to the recognition of all duties as divine commands, not as sanctions, that is to say, arbitrary ordinances of a foreign and contingent in themselves, but as",
+    "token_count": 77,
+    "length": 344,
+    "text_preview": "{BOOK_2|CHAPTER_2 ^paragraph 50} In this manner, the moral laws lead through the conception of the s..."
+  },
+  {
+    "chunk_id": "kant_chunk_495",
+    "source": "The Critique of Practical Reason",
+    "token_count": 77,
+    "length": 358,
+    "text_preview": "essential laws of every free will in itself, which, nevertheless, must be regarded as commands of th..."
+  },
+  {
+    "chunk_id": "kant_chunk_496",
+    "source": "The Critique of Practical Reason",
+    "token_count": 180,
+    "length": 899,
+    "text_preview": "Here again, then, all remains disinterested and founded merely on duty; neither fear nor hope being ..."
+  },
+  {
+    "chunk_id": "kant_chunk_497",
+    "source": "The Critique of Practical Reason",
+    "token_count": 133,
+    "length": 636,
+    "text_preview": "Hence also morality is not properly the doctrine how we should make ourselves happy, but how we shou..."
+  },
+  {
+    "chunk_id": "kant_chunk_498",
+    "source": "The Critique of Practical Reason",
+    "token_count": 165,
+    "length": 799,
+    "text_preview": "Now it follows from this that morality should never be treated as a doctrine of happiness, that is, ..."
+  },
+  {
+    "chunk_id": "kant_chunk_499",
+    "source": "The Critique of Practical Reason",
+    "token_count": 148,
+    "length": 702,
+    "text_preview": "We can also see from this that, when we ask what is God's ultimate end in creating the world, we mus..."
+  },
+  {
+    "chunk_id": "kant_chunk_500",
+    "source": "The Critique of Practical Reason",
+    "token_count": 143,
+    "length": 715,
+    "text_preview": "For we cannot conceive the action of this goodness (in respect of the happiness of rational beings) ..."
+  },
+  {
+    "chunk_id": "kant_chunk_501",
+    "source": "The Critique of Practical Reason - Book 2: CHAPTER_2 ^paragraph 55} * In order to make these characteristics of these conceptions clear, I add the remark that whilst we ascribe to God various attributes, the quality of which we also find applicable to creatures, only that in Him they are raised to the highest degree, e",
+    "token_count": 207,
+    "length": 929,
+    "text_preview": "If the latter (to speak humanly) makes Him worthy of love, by the former He is an object of adoratio..."
+  },
+  {
+    "chunk_id": "kant_chunk_502",
+    "source": "The Critique of Practical Reason",
+    "token_count": 173,
+    "length": 800,
+    "text_preview": "In the order of these attributes He is also the holy lawgiver (and creator), the good governor (and ..."
+  },
+  {
+    "chunk_id": "kant_chunk_503",
+    "source": "The Critique of Practical Reason - Book 2: CHAPTER_2 ^paragraph 60} They all proceed from the principle of morality, which is not a postulate but a law, by which reason determines the will directly, which will, because it is so determined as a pure will, requires these necessary conditions of obedience to its precept",
+    "token_count": 114,
+    "length": 521,
+    "text_preview": "For this moral law is founded on the autonomy of his will, as a free will which by its universal law..."
+  },
+  {
+    "chunk_id": "kant_chunk_504",
+    "source": "The Critique of Practical Reason",
+    "token_count": 108,
+    "length": 551,
+    "text_preview": "These postulates are not theoretical dogmas but, suppositions practically necessary; while then they..."
+  },
+  {
+    "chunk_id": "kant_chunk_505",
+    "source": "The Critique of Practical Reason",
+    "token_count": 101,
+    "length": 510,
+    "text_preview": "The first results from the practically necessary condition of a duration adequate to the complete fu..."
+  },
+  {
+    "chunk_id": "kant_chunk_506",
+    "source": "The Critique of Practical Reason",
+    "token_count": 179,
+    "length": 881,
+    "text_preview": "Thus the fact that respect for the moral law necessarily makes the summum bonum an object of our end..."
+  },
+  {
+    "chunk_id": "kant_chunk_507",
+    "source": "The Critique of Practical Reason",
+    "token_count": 117,
+    "length": 573,
+    "text_preview": "2. It leads to that of which speculative reason contained nothing but antinomy, the solution of whic..."
+  },
+  {
+    "chunk_id": "kant_chunk_508",
+    "source": "The Critique of Practical Reason",
+    "token_count": 128,
+    "length": 631,
+    "text_preview": "3. What speculative reason was able to think, but was obliged to leave undetermined as a mere transc..."
+  },
+  {
+    "chunk_id": "kant_chunk_509",
+    "source": "The Critique of Practical Reason",
+    "token_count": 106,
+    "length": 481,
+    "text_preview": "Certainly, but only in a practical point of view. For we do not thereby take knowledge of the nature..."
+  },
+  {
+    "chunk_id": "kant_chunk_510",
+    "source": "The Critique of Practical Reason - Book 2: CHAPTER_2 ^paragraph 65} VII",
+    "token_count": 143,
+    "length": 647,
+    "text_preview": "But how freedom is possible, and how we are to conceive this kind of causality theoretically and pos..."
+  },
+  {
+    "chunk_id": "kant_chunk_511",
+    "source": "The Critique of Practical Reason - Book 2: CHAPTER_2 ^paragraph 70} In order not to be too abstract, we will answer this question at once in its application to the present case",
+    "token_count": 103,
+    "length": 483,
+    "text_preview": "{BOOK_2|CHAPTER_2 ^paragraph 70} In order not to be too abstract, we will answer this question at on..."
+  },
+  {
+    "chunk_id": "kant_chunk_512",
+    "source": "The Critique of Practical Reason",
+    "token_count": 99,
+    "length": 523,
+    "text_preview": "This, however, is not possible without presupposing three theoretical conceptions (for which, becaus..."
+  },
+  {
+    "chunk_id": "kant_chunk_513",
+    "source": "The Critique of Practical Reason",
+    "token_count": 123,
+    "length": 646,
+    "text_preview": "By this the theoretical knowledge of pure reason does indeed obtain an accession; but it consists on..."
+  },
+  {
+    "chunk_id": "kant_chunk_514",
+    "source": "The Critique of Practical Reason",
+    "token_count": 131,
+    "length": 694,
+    "text_preview": "For as nothing is accomplished in this by practical reason, further than that these concepts are rea..."
+  },
+  {
+    "chunk_id": "kant_chunk_515",
+    "source": "The Critique of Practical Reason",
+    "token_count": 117,
+    "length": 584,
+    "text_preview": "Now, by help of an apodeictic practical law, being necessary conditions of that which it commands to..."
+  },
+  {
+    "chunk_id": "kant_chunk_516",
+    "source": "The Critique of Practical Reason",
+    "token_count": 136,
+    "length": 713,
+    "text_preview": "Nevertheless, the theoretical knowledge, not indeed of these objects, but of reason generally, is so..."
+  },
+  {
+    "chunk_id": "kant_chunk_517",
+    "source": "The Critique of Practical Reason",
+    "token_count": 105,
+    "length": 551,
+    "text_preview": "For this accession, then, pure theoretical reason, for which all those ideas are transcendent and wi..."
+  },
+  {
+    "chunk_id": "kant_chunk_518",
+    "source": "The Critique of Practical Reason",
+    "token_count": 105,
+    "length": 519,
+    "text_preview": "But when once reason is in possession of this accession, it will go to work with these ideas as spec..."
+  },
+  {
+    "chunk_id": "kant_chunk_519",
+    "source": "The Critique of Practical Reason",
+    "token_count": 135,
+    "length": 701,
+    "text_preview": "All these are hindrances to the practical use of pure reason, so that the removal of them may certai..."
+  },
+  {
+    "chunk_id": "kant_chunk_520",
+    "source": "The Critique of Practical Reason",
+    "token_count": 88,
+    "length": 448,
+    "text_preview": "Now here what have to be thought by means of the categories in order to be known are ideas of reason..."
+  },
+  {
+    "chunk_id": "kant_chunk_521",
+    "source": "The Critique of Practical Reason",
+    "token_count": 187,
+    "length": 966,
+    "text_preview": "This, as we have elsewhere clearly shown, can be done well enough without needing any intuition (eit..."
+  },
+  {
+    "chunk_id": "kant_chunk_522",
+    "source": "The Critique of Practical Reason",
+    "token_count": 110,
+    "length": 544,
+    "text_preview": "When these ideas of God, of an intelligible world (the kingdom of God), and of immortality are furth..."
+  },
+  {
+    "chunk_id": "kant_chunk_523",
+    "source": "The Critique of Practical Reason",
+    "token_count": 129,
+    "length": 643,
+    "text_preview": "As to all the rest that belongs to these conceptions psychologically, that is, so far as we observe ..."
+  },
+  {
+    "chunk_id": "kant_chunk_524",
+    "source": "The Critique of Practical Reason",
+    "token_count": 106,
+    "length": 511,
+    "text_preview": "There is then a knowledge of God indeed, but only for practical purposes, and, if we attempt to exte..."
+  },
+  {
+    "chunk_id": "kant_chunk_525",
+    "source": "The Critique of Practical Reason - Book 2: CHAPTER_2 ^paragraph 75} This last is so obvious, and can be proved so clearly by fact, that we may confidently challenge all pretended natural theologians (a singular name) * to specify (over and above the merely ontological predicates) one single attribute, whether of the understanding or of the will, determining this object of theirs, of which we could not show incontrovertibly that, if we abstract from it everything anthropomorphic, nothing would remain to us but the mere word, without our being able to connect with it the smallest notion by which we could hope for an extension of theoretical knowledge",
+    "token_count": 201,
+    "length": 987,
+    "text_preview": "Now these are all attributes of which we can form no conception that would help to the knowledge of ..."
+  },
+  {
+    "chunk_id": "kant_chunk_526",
+    "source": "The Critique of Practical Reason",
+    "token_count": 120,
+    "length": 604,
+    "text_preview": "But as to the practical, there still remains to us of the attributes of understanding and will the c..."
+  },
+  {
+    "chunk_id": "kant_chunk_527",
+    "source": "The Critique of Practical Reason",
+    "token_count": 131,
+    "length": 664,
+    "text_preview": "* Learning is properly only the whole content of the historical sciences. Consequently it is only th..."
+  },
+  {
+    "chunk_id": "kant_chunk_528",
+    "source": "The Critique of Practical Reason",
+    "token_count": 140,
+    "length": 692,
+    "text_preview": "According to these remarks it is now easy to find the answer to the weighty question whether the not..."
+  },
+  {
+    "chunk_id": "kant_chunk_529",
+    "source": "The Critique of Practical Reason",
+    "token_count": 107,
+    "length": 509,
+    "text_preview": "Metaphysics, however, cannot enable us to attain by certain inference from the knowledge of this wor..."
+  },
+  {
+    "chunk_id": "kant_chunk_530",
+    "source": "The Critique of Practical Reason",
+    "token_count": 103,
+    "length": 540,
+    "text_preview": "It is absolutely impossible, however, to know the existence of this Being from mere concepts, becaus..."
+  },
+  {
+    "chunk_id": "kant_chunk_531",
+    "source": "The Critique of Practical Reason",
+    "token_count": 135,
+    "length": 706,
+    "text_preview": "There remains, therefore, only one single process possible for reason to attain this knowledge, name..."
+  },
+  {
+    "chunk_id": "kant_chunk_532",
+    "source": "The Critique of Practical Reason",
+    "token_count": 187,
+    "length": 892,
+    "text_preview": "As we can know only a small part of this world, and can still less compare it with all possible worl..."
+  },
+  {
+    "chunk_id": "kant_chunk_533",
+    "source": "The Critique of Practical Reason - Book 2: CHAPTER_2 ^paragraph 80} When I now try to test this conception by reference to the object of practical reason, I find that the moral principle admits as possible only the conception of an Author of the world possessed of the highest perfection",
+    "token_count": 110,
+    "length": 553,
+    "text_preview": "On the path of empirical inquiry then (physics), the conception of God remains always a conception o..."
+  },
+  {
+    "chunk_id": "kant_chunk_534",
+    "source": "The Critique of Practical Reason",
+    "token_count": 125,
+    "length": 577,
+    "text_preview": "He must be omniscient, in order to know my conduct up to the inmost root of my mental state in all p..."
+  },
+  {
+    "chunk_id": "kant_chunk_535",
+    "source": "The Critique of Practical Reason",
+    "token_count": 116,
+    "length": 570,
+    "text_preview": "The conception of God, then, is one that belongs originally not to physics, i.e., to speculative rea..."
+  },
+  {
+    "chunk_id": "kant_chunk_536",
+    "source": "The Critique of Practical Reason",
+    "token_count": 123,
+    "length": 648,
+    "text_preview": "What could have been easier, what more natural, than the thought which of itself occurs to everyone,..."
+  },
+  {
+    "chunk_id": "kant_chunk_537",
+    "source": "The Critique of Practical Reason",
+    "token_count": 142,
+    "length": 745,
+    "text_preview": "But when this acute people had advanced so far in their investigations of nature as to treat even mo..."
+  },
+  {
+    "chunk_id": "kant_chunk_538",
+    "source": "The Critique of Practical Reason",
+    "token_count": 156,
+    "length": 752,
+    "text_preview": "From these remarks, the reader of the Critique of Pure Speculative Reason will be thoroughly convinc..."
+  },
+  {
+    "chunk_id": "kant_chunk_539",
+    "source": "The Critique of Practical Reason",
+    "token_count": 122,
+    "length": 638,
+    "text_preview": "But now that the Critique has shown by that deduction, first, that they are not of empirical origin,..."
+  },
+  {
+    "chunk_id": "kant_chunk_540",
+    "source": "The Critique of Practical Reason - Book 2: CHAPTER_2 ^paragraph 85} VIII",
+    "token_count": 115,
+    "length": 533,
+    "text_preview": "The speculative restriction of pure reason and its practical extension bring it into that relation o..."
+  },
+  {
+    "chunk_id": "kant_chunk_541",
+    "source": "The Critique of Practical Reason",
+    "token_count": 98,
+    "length": 463,
+    "text_preview": "Of Belief from a Requirement of Pure Reason. A want or requirement of pure reason in its speculative..."
+  },
+  {
+    "chunk_id": "kant_chunk_542",
+    "source": "The Critique of Practical Reason",
+    "token_count": 103,
+    "length": 505,
+    "text_preview": "Thus I see before me order and design in nature, and need not resort to speculation to assure myself..."
+  },
+  {
+    "chunk_id": "kant_chunk_543",
+    "source": "The Critique of Practical Reason",
+    "token_count": 90,
+    "length": 416,
+    "text_preview": "* On the other hand, a requirement of pure practical reason is based on a duty, that of making somet..."
+  },
+  {
+    "chunk_id": "kant_chunk_544",
+    "source": "The Critique of Practical Reason",
+    "token_count": 87,
+    "length": 424,
+    "text_preview": "This duty is founded on something that is indeed quite independent of these suppositions and is of i..."
+  },
+  {
+    "chunk_id": "kant_chunk_545",
+    "source": "The Critique of Practical Reason",
+    "token_count": 214,
+    "length": 1044,
+    "text_preview": "But the subjective effect of this law, namely, the mental disposition conformed to it and made neces..."
+  },
+  {
+    "chunk_id": "kant_chunk_546",
+    "source": "The Critique of Practical Reason",
+    "token_count": 77,
+    "length": 340,
+    "text_preview": "This, then, is an absolutely necessary requirement, and what it pre-supposes is not merely justified..."
+  },
+  {
+    "chunk_id": "kant_chunk_547",
+    "source": "The Critique of Practical Reason",
+    "token_count": 74,
+    "length": 359,
+    "text_preview": "that my existence in this world be also an existence outside the chain of physical causes and in a p..."
+  },
+  {
+    "chunk_id": "kant_chunk_548",
+    "source": "The Critique of Practical Reason",
+    "token_count": 143,
+    "length": 701,
+    "text_preview": "*(2) * But even here we should not be able to allege a requirement of reason, if we had not before o..."
+  },
+  {
+    "chunk_id": "kant_chunk_549",
+    "source": "The Critique of Practical Reason - Book 2: CHAPTER_2 ^paragraph 90} *(2) In the Deutsches Museum, February, 1787, there is a dissertation by a very subtle and clear-headed man, the late Wizenmann, whose early death is to be lamented, in which he disputes the right to argue from a want to the objective reality of its object, and illustrates the point by the example of a man in love, who having fooled himself into an idea of beauty, which is merely a chimera of his own brain, would fain conclude that such an object really exists somewhere",
+    "token_count": 122,
+    "length": 508,
+    "text_preview": "{BOOK_2|CHAPTER_2 ^paragraph 90} *(2) In the Deutsches Museum, February, 1787, there is a dissertati..."
+  },
+  {
+    "chunk_id": "kant_chunk_550",
+    "source": "The Critique of Practical Reason",
+    "token_count": 129,
+    "length": 650,
+    "text_preview": "I quite agree with him in this, in all cases where the want is founded on inclination, which cannot ..."
+  },
+  {
+    "chunk_id": "kant_chunk_551",
+    "source": "The Critique of Practical Reason",
+    "token_count": 130,
+    "length": 632,
+    "text_preview": "It is a duty to realize the summum bonum to the utmost of our power, therefore it must be possible, ..."
+  },
+  {
+    "chunk_id": "kant_chunk_552",
+    "source": "The Critique of Practical Reason",
+    "token_count": 113,
+    "length": 587,
+    "text_preview": "But a faith that is commanded is nonsense. Let the preceding analysis, however, be remembered of wha..."
+  },
+  {
+    "chunk_id": "kant_chunk_553",
+    "source": "The Critique of Practical Reason",
+    "token_count": 163,
+    "length": 802,
+    "text_preview": "Now in respect of the first element of the summum bonum, namely, that which concerns morality, the m..."
+  },
+  {
+    "chunk_id": "kant_chunk_554",
+    "source": "The Critique of Practical Reason",
+    "token_count": 100,
+    "length": 523,
+    "text_preview": "I had said above that in a mere course of nature in the world an accurate correspondence between hap..."
+  },
+  {
+    "chunk_id": "kant_chunk_555",
+    "source": "The Critique of Practical Reason",
+    "token_count": 125,
+    "length": 638,
+    "text_preview": "The fact is that the impossibility referred to is merely subjective, that is, our reason finds it im..."
+  },
+  {
+    "chunk_id": "kant_chunk_556",
+    "source": "The Critique of Practical Reason",
+    "token_count": 87,
+    "length": 455,
+    "text_preview": "The command to promote the summum bonum is established on an objective basis (in practical reason); ..."
+  },
+  {
+    "chunk_id": "kant_chunk_557",
+    "source": "The Critique of Practical Reason",
+    "token_count": 211,
+    "length": 1037,
+    "text_preview": "Now here there comes in a subjective condition of reason, the only way theoretically possible for it..."
+  },
+  {
+    "chunk_id": "kant_chunk_558",
+    "source": "The Critique of Practical Reason - Book 2: CHAPTER_2 ^paragraph 95} IX",
+    "token_count": 121,
+    "length": 561,
+    "text_preview": "This, then, is not commanded, but being a voluntary determination of our judgement, conducive to the..."
+  },
+  {
+    "chunk_id": "kant_chunk_559",
+    "source": "The Critique of Practical Reason",
+    "token_count": 145,
+    "length": 720,
+    "text_preview": "Of the Wise Adaptation of Man's Cognitive Faculties to his Practical Destination. If human nature is..."
+  },
+  {
+    "chunk_id": "kant_chunk_560",
+    "source": "The Critique of Practical Reason - Book 2: CHAPTER_2 ^paragraph 100} Suppose, now, that in this matter nature had conformed to our wish and had given us that capacity of discernment or that enlightenment which we would gladly possess, or which some imagine they actually possess, what would in all probability be the consequence?",
+    "token_count": 87,
+    "length": 408,
+    "text_preview": "Nature then seems here to have provided us only in a step-motherly fashion with the faculty required..."
+  },
+  {
+    "chunk_id": "kant_chunk_561",
+    "source": "The Critique of Practical Reason",
+    "token_count": 87,
+    "length": 446,
+    "text_preview": "Unless our whole nature were at the same time changed, our inclinations, which always have the first..."
+  },
+  {
+    "chunk_id": "kant_chunk_562",
+    "source": "The Critique of Practical Reason",
+    "token_count": 227,
+    "length": 1067,
+    "text_preview": "But instead of the conflict that the moral disposition has now to carry on with the inclinations, in..."
+  },
+  {
+    "chunk_id": "kant_chunk_563",
+    "source": "The Critique of Practical Reason",
+    "token_count": 74,
+    "length": 344,
+    "text_preview": "Now, when it is quite otherwise with us, when with all the effort of our reason we have only a very ..."
+  },
+  {
+    "chunk_id": "kant_chunk_564",
+    "source": "The Critique of Practical Reason",
+    "token_count": 75,
+    "length": 373,
+    "text_preview": "threatening anything with certainty, demands of us disinterested respect; and only when this respect..."
+  },
+  {
+    "chunk_id": "kant_chunk_565",
+    "source": "The Critique of Practical Reason - Part 2: METHODOLOGY SECOND PART",
+    "token_count": 152,
+    "length": 779,
+    "text_preview": "Thus what the study of nature and of man teaches us sufficiently elsewhere may well be true here als..."
+  },
+  {
+    "chunk_id": "kant_chunk_566",
+    "source": "The Critique of Practical Reason",
+    "token_count": 122,
+    "length": 630,
+    "text_preview": "On the contrary, by this methodology is understood the mode in which we can give the laws of pure pr..."
+  },
+  {
+    "chunk_id": "kant_chunk_567",
+    "source": "The Critique of Practical Reason",
+    "token_count": 145,
+    "length": 739,
+    "text_preview": "But it is not so clear; on the contrary, it must at first sight seem to every one very improbable th..."
+  },
+  {
+    "chunk_id": "kant_chunk_568",
+    "source": "The Critique of Practical Reason",
+    "token_count": 151,
+    "length": 744,
+    "text_preview": "All would be simple hypocrisy; the law would be hated, or at least despised, while it was followed f..."
+  },
+  {
+    "chunk_id": "kant_chunk_569",
+    "source": "The Critique of Practical Reason",
+    "token_count": 74,
+    "length": 354,
+    "text_preview": "It cannot indeed be denied that in order to bring an uncultivated or degraded mind into the track of..."
+  },
+  {
+    "chunk_id": "kant_chunk_570",
+    "source": "The Critique of Practical Reason",
+    "token_count": 75,
+    "length": 361,
+    "text_preview": "the pure moral motive, which, not only because it is the only one that can be the foundation of a ch..."
+  },
+  {
+    "chunk_id": "kant_chunk_571",
+    "source": "The Critique of Practical Reason",
+    "token_count": 82,
+    "length": 399,
+    "text_preview": "We will therefore show, by such observations as every one can make, that this property of our minds,..."
+  },
+  {
+    "chunk_id": "kant_chunk_572",
+    "source": "The Critique of Practical Reason",
+    "token_count": 133,
+    "length": 670,
+    "text_preview": "It must, however, be remembered that if these observations only prove the reality of such a feeling,..."
+  },
+  {
+    "chunk_id": "kant_chunk_573",
+    "source": "The Critique of Practical Reason - Part 2: METHODOLOGY ^paragraph 5} When we attend to the course of conversation in mixed companies, consisting not merely of learned persons and subtle reasoners, but also of men of business or of women, we observe that, besides story-telling and jesting, another kind of entertainment finds a place in them, namely, argument; for stories, if they are to have novelty and interest, are soon exhausted, and jesting is likely to become insipid",
+    "token_count": 99,
+    "length": 441,
+    "text_preview": "{PART_2|METHODOLOGY ^paragraph 5} When we attend to the course of conversation in mixed companies, c..."
+  },
+  {
+    "chunk_id": "kant_chunk_574",
+    "source": "The Critique of Practical Reason",
+    "token_count": 154,
+    "length": 750,
+    "text_preview": "Now of all argument there is none in which persons are more ready to join who find any other subtle ..."
+  },
+  {
+    "chunk_id": "kant_chunk_575",
+    "source": "The Critique of Practical Reason",
+    "token_count": 98,
+    "length": 526,
+    "text_preview": "In these criticisms, persons who are passing judgement on others often reveal their own character: s..."
+  },
+  {
+    "chunk_id": "kant_chunk_576",
+    "source": "The Critique of Practical Reason",
+    "token_count": 101,
+    "length": 499,
+    "text_preview": "We cannot always, however, attribute to these latter the intention of arguing away virtue altogether..."
+  },
+  {
+    "chunk_id": "kant_chunk_577",
+    "source": "The Critique of Practical Reason",
+    "token_count": 95,
+    "length": 454,
+    "text_preview": "Nevertheless, we can for the most part observe, in those who defend the purity of purpose in giving ..."
+  },
+  {
+    "chunk_id": "kant_chunk_578",
+    "source": "The Critique of Practical Reason",
+    "token_count": 113,
+    "length": 616,
+    "text_preview": "I do not know why the educators of youth have not long since made use of this propensity of reason t..."
+  },
+  {
+    "chunk_id": "kant_chunk_579",
+    "source": "The Critique of Practical Reason",
+    "token_count": 75,
+    "length": 383,
+    "text_preview": "This is a thing in which they would find that even early youth, which is still unripe for speculatio..."
+  },
+  {
+    "chunk_id": "kant_chunk_580",
+    "source": "The Critique of Practical Reason",
+    "token_count": 73,
+    "length": 354,
+    "text_preview": "on the other hand of remarking with regret or contempt the least deviation from it, although it may ..."
+  },
+  {
+    "chunk_id": "kant_chunk_581",
+    "source": "The Critique of Practical Reason",
+    "token_count": 124,
+    "length": 628,
+    "text_preview": "Only I wish they would spare them the example of so-called noble (super-meritorious) actions, in whi..."
+  },
+  {
+    "chunk_id": "kant_chunk_582",
+    "source": "The Critique of Practical Reason",
+    "token_count": 88,
+    "length": 397,
+    "text_preview": "* * It is quite proper to extol actions that display a great, unselfish, sympathizing mind or humani..."
+  },
+  {
+    "chunk_id": "kant_chunk_583",
+    "source": "The Critique of Practical Reason - Part 2: METHODOLOGY ^paragraph 10} But if it is asked: \"What, then, is really pure morality, by which as a touchstone we must test the moral significance of every action,\" then I must admit that it is only philosophers that can make the decision of this question doubtful, for to common sense it has been decided long ago, not indeed by abstract general formulae, but by habitual use, like the distinction between the right and left hand",
+    "token_count": 175,
+    "length": 815,
+    "text_preview": "One need only reflect a little and he will always find a debt that he has by some means incurred tow..."
+  },
+  {
+    "chunk_id": "kant_chunk_584",
+    "source": "The Critique of Practical Reason",
+    "token_count": 127,
+    "length": 577,
+    "text_preview": "We will then point out the criterion of pure virtue in an example first, and, imagining that it is s..."
+  },
+  {
+    "chunk_id": "kant_chunk_585",
+    "source": "The Critique of Practical Reason",
+    "token_count": 94,
+    "length": 415,
+    "text_preview": "This will excite mere approbation and applause in the mind of the hearer. Now begins the threatening..."
+  },
+  {
+    "chunk_id": "kant_chunk_586",
+    "source": "The Critique of Practical Reason",
+    "token_count": 73,
+    "length": 359,
+    "text_preview": "Then to fill the measure of suffering, and that he may feel the pain that only the morally good hear..."
+  },
+  {
+    "chunk_id": "kant_chunk_587",
+    "source": "The Critique of Practical Reason",
+    "token_count": 77,
+    "length": 363,
+    "text_preview": "at the moment when he wishes that he had never lived to see the day that exposed him to such unutter..."
+  },
+  {
+    "chunk_id": "kant_chunk_588",
+    "source": "The Critique of Practical Reason",
+    "token_count": 89,
+    "length": 440,
+    "text_preview": "Yet virtue is here worth so much only because it costs so much, not because it brings any profit. Al..."
+  },
+  {
+    "chunk_id": "kant_chunk_589",
+    "source": "The Critique of Practical Reason",
+    "token_count": 114,
+    "length": 540,
+    "text_preview": "Whence it follows that, if the law of morality and the image of holiness and virtue are to exercise ..."
+  },
+  {
+    "chunk_id": "kant_chunk_590",
+    "source": "The Critique of Practical Reason",
+    "token_count": 103,
+    "length": 490,
+    "text_preview": "I affirm further that even in that admired action, if the motive from which it was done was a high r..."
+  },
+  {
+    "chunk_id": "kant_chunk_591",
+    "source": "The Critique of Practical Reason",
+    "token_count": 120,
+    "length": 563,
+    "text_preview": "It is more necessary than ever to direct attention to this method in our times, when men hope to pro..."
+  },
+  {
+    "chunk_id": "kant_chunk_592",
+    "source": "The Critique of Practical Reason",
+    "token_count": 85,
+    "length": 387,
+    "text_preview": "For as they are still so backward in the observance of the commonest duty, and even in the correct e..."
+  },
+  {
+    "chunk_id": "kant_chunk_593",
+    "source": "The Critique of Practical Reason",
+    "token_count": 135,
+    "length": 644,
+    "text_preview": "All feelings, especially those that are to produce unwonted exertions, must accomplish their effect ..."
+  },
+  {
+    "chunk_id": "kant_chunk_594",
+    "source": "The Critique of Practical Reason",
+    "token_count": 135,
+    "length": 656,
+    "text_preview": "Now if these conceptions are to become subjectively practical, we must not rest satisfied with admir..."
+  },
+  {
+    "chunk_id": "kant_chunk_595",
+    "source": "The Critique of Practical Reason",
+    "token_count": 161,
+    "length": 712,
+    "text_preview": "In a word, the moral law demands obedience, from duty not from predilection, which cannot and ought ..."
+  },
+  {
+    "chunk_id": "kant_chunk_596",
+    "source": "The Critique of Practical Reason",
+    "token_count": 196,
+    "length": 957,
+    "text_preview": "More decisive is the magnanimous sacrifice of life for the safety of one's country; and yet there st..."
+  },
+  {
+    "chunk_id": "kant_chunk_597",
+    "source": "The Critique of Practical Reason - Part 2: METHODOLOGY ^paragraph 15} Esto bonus miles, tutor bonus, arbiter idem Integer; ambiguae si quando citabere testis Incertaeque rei, Phalaris licet imperet ut sis Falsus, et admoto dictet periuria tauro, Summum crede nefas animam praeferre pudori, {PART_2|METHODOLOGY ^paragraph 20} Et propter vitam vivendi perdere causas",
+    "token_count": 142,
+    "length": 488,
+    "text_preview": "Juvenal describes such an example in a climax which makes the reader feel vividly the force of the s..."
+  },
+  {
+    "chunk_id": "kant_chunk_598",
+    "source": "The Critique of Practical Reason",
+    "token_count": 133,
+    "length": 589,
+    "text_preview": "* * [Juvenal, Satirae, \"Be you a good soldier, a faithful tutor, an uncorrupted umpire also; if you ..."
+  },
+  {
+    "chunk_id": "kant_chunk_599",
+    "source": "The Critique of Practical Reason",
+    "token_count": 140,
+    "length": 663,
+    "text_preview": "But to postpone everything to the holiness of duty alone, and to be conscious that we can because ou..."
+  },
+  {
+    "chunk_id": "kant_chunk_600",
+    "source": "The Critique of Practical Reason",
+    "token_count": 72,
+    "length": 359,
+    "text_preview": "At first we are only concerned to make the judging of actions by moral laws a natural employment acc..."
+  },
+  {
+    "chunk_id": "kant_chunk_601",
+    "source": "The Critique of Practical Reason",
+    "token_count": 77,
+    "length": 371,
+    "text_preview": "law that merely furnishes a principle of obligation from that which is really obligatory (leges obli..."
+  },
+  {
+    "chunk_id": "kant_chunk_602",
+    "source": "The Critique of Practical Reason",
+    "token_count": 104,
+    "length": 505,
+    "text_preview": "The other point to which attention must be directed is the question whether the action was also (sub..."
+  },
+  {
+    "chunk_id": "kant_chunk_603",
+    "source": "The Critique of Practical Reason",
+    "token_count": 119,
+    "length": 603,
+    "text_preview": "For we ultimately take a liking for a thing, the contemplation of which makes us feel that the use o..."
+  },
+  {
+    "chunk_id": "kant_chunk_604",
+    "source": "The Critique of Practical Reason",
+    "token_count": 215,
+    "length": 1091,
+    "text_preview": "So Leibnitz spared an insect that he had carefully examined with the microscope, and replaced it on ..."
+  },
+  {
+    "chunk_id": "kant_chunk_605",
+    "source": "The Critique of Practical Reason",
+    "token_count": 143,
+    "length": 746,
+    "text_preview": "Now, however, the second exercise comes in, the living exhibition of morality of character by exampl..."
+  },
+  {
+    "chunk_id": "kant_chunk_606",
+    "source": "The Critique of Practical Reason",
+    "token_count": 89,
+    "length": 432,
+    "text_preview": "The heart is freed and lightened of a burden that always secretly presses on it, when instances of p..."
+  },
+  {
+    "chunk_id": "kant_chunk_607",
+    "source": "The Critique of Practical Reason",
+    "token_count": 143,
+    "length": 728,
+    "text_preview": "Suppose a case where I alone know that the wrong is on my side, and although a free confession of it..."
+  },
+  {
+    "chunk_id": "kant_chunk_608",
+    "source": "The Critique of Practical Reason",
+    "token_count": 141,
+    "length": 665,
+    "text_preview": "When this is well established, when a man dreads nothing more than to find himself, on self-examinat..."
+  },
+  {
+    "chunk_id": "kant_chunk_609",
+    "source": "The Critique of Practical Reason - Part 2: CONCLUSION CONCLUSION",
+    "token_count": 143,
+    "length": 709,
+    "text_preview": "PART_2|CONCLUSION CONCLUSION. Two things fill the mind with ever new and increasing admiration and a..."
+  },
+  {
+    "chunk_id": "kant_chunk_610",
+    "source": "The Critique of Practical Reason",
+    "token_count": 130,
+    "length": 629,
+    "text_preview": "The second begins from my invisible self, my personality, and exhibits me in a world which has true ..."
+  },
+  {
+    "chunk_id": "kant_chunk_611",
+    "source": "The Critique of Practical Reason",
+    "token_count": 126,
+    "length": 608,
+    "text_preview": "The second, on the contrary, infinitely elevates my worth as an intelligence by my personality, in w..."
+  },
+  {
+    "chunk_id": "kant_chunk_612",
+    "source": "The Critique of Practical Reason",
+    "token_count": 144,
+    "length": 727,
+    "text_preview": "Examples may serve in this as a warning and also for imitation. The contemplation of the world began..."
+  },
+  {
+    "chunk_id": "kant_chunk_613",
+    "source": "The Critique of Practical Reason",
+    "token_count": 142,
+    "length": 716,
+    "text_preview": "But after the maxim had come into vogue, though late, to examine carefully beforehand all the steps ..."
+  },
+  {
+    "chunk_id": "kant_chunk_614",
+    "source": "The Critique of Practical Reason",
+    "token_count": 182,
+    "length": 900,
+    "text_preview": "This example may suggest to us to enter on the same path in treating of the moral capacities of our ..."
+  },
+  {
+    "chunk_id": "kant_chunk_615",
+    "source": "The Critique of Practical Reason",
+    "token_count": 120,
+    "length": 620,
+    "text_preview": "In one word, science (critically undertaken and methodically directed) is the narrow gate that leads..."
+  }
+]

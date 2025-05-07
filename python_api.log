@@ -1,11 +1,35 @@
 Using OpenAI with API key: sk-pr...4svYA
-INFO:     127.0.0.1:59135 - "GET /api/philosophers HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59157 - "GET /api/npc/get?id=kant HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59158 - "GET /api/npc/get?id=marx HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59157 - "GET /api/npc/get?id=marx HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59157 - "GET /api/npc/get?id=kant HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59157 - "GET /api/npc/get?id=marx HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59157 - "GET /api/npc/get?id=kant HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62079 - "GET /api/philosophers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62115 - "GET /api/npc/get?id=socrates HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62116 - "GET /api/npc/get?id=camus HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62117 - "GET /api/npc/get?id=marx HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62118 - "GET /api/npc/get?id=kant HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62115 - "GET /api/npc/get?id=marx HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62116 - "GET /api/npc/get?id=kant HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62115 - "GET /api/npc/get?id=socrates HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62115 - "GET /api/npc/get?id=kant HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62116 - "GET /api/npc/get?id=marx HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62115 - "GET /api/npc/get?id=camus HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62115 - "GET /api/npc/get?id=socrates HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62115 - "GET /api/npc/get?id=camus HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62123 - "GET /api/auto-conversation/status?room_id=9 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62125 - "POST /api/chat/generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62130 - "GET /api/npc/get?id=kant HTTP/1.1" 200 OK
 Using OpenAI with API key: sk-pr...4svYA
-INFO:     127.0.0.1:59282 - "GET /api/auto-conversation/status?room_id=5 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59285 - "POST /api/chat/generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62397 - "GET /api/auto-conversation/status?room_id=9 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62399 - "POST /api/chat/generate HTTP/1.1" 500 Internal Server Error
+INFO:     127.0.0.1:62403 - "GET /api/npc/get?id=kant HTTP/1.1" 200 OK
+Using OpenAI with API key: sk-pr...4svYA
+INFO:     127.0.0.1:62531 - "GET /api/auto-conversation/status?room_id=9 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62533 - "POST /api/chat/generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62540 - "GET /api/npc/get?id=camus HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62542 - "GET /api/auto-conversation/status?room_id=9 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62544 - "POST /api/chat/generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62556 - "GET /api/npc/get?id=kant HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62574 - "GET /api/auto-conversation/status?room_id=9 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62576 - "POST /api/chat/generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62589 - "GET /api/npc/get?id=kant HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62628 - "OPTIONS /api/auto-conversation HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62628 - "POST /api/auto-conversation HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62679 - "GET /api/npc/get?id=kant HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62679 - "GET /api/npc/get?id=kant HTTP/1.1" 200 OK

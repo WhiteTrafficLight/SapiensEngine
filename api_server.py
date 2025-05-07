@@ -110,6 +110,7 @@ class ChatGenerateRequest(BaseModel):
     llm_provider: Optional[str] = "openai"
     llm_model: Optional[str] = "gpt-4o"
     api_key: Optional[str] = None
+    use_rag: Optional[bool] = False  # RAG 사용 여부 플래그 추가
 
 # 응답 모델 정의
 class ChatResponse(BaseModel):
@@ -280,25 +281,45 @@ async def save_message_to_db(room_id: str, message: dict):
         async with aiohttp.ClientSession() as session:
             # API 엔드포인트 URL (실제 URL로 변경 필요)
             api_url = os.environ.get("NEXTJS_API_URL", "http://localhost:3000")
-            url = f"{api_url}/api/rooms"
+            # URL 쿼리 파라미터로 room_id 전달 
+            url = f"{api_url}/api/rooms?id={room_id}"
+            
+            # 디버깅: 저장 전 메시지 구조 출력
+            logger.info(f"🧪 MongoDB 저장 전 message 객체 키: {list(message.keys())}")
+            logger.info(f"🧪 citations 키 존재: {'citations' in message}")
+            
+            if 'citations' in message:
+                logger.info(f"🧪 citations 타입: {type(message['citations'])}")
+                logger.info(f"🧪 citations 내용: {json.dumps(message['citations'])[:500]}...")
             
             # 메시지 데이터 준비
             payload = {
-                "id": room_id,
                 "message": message
             }
+            
+            # API 호출 직전 페이로드 확인
+            logger.info(f"🧪 API 호출 페이로드: {json.dumps(payload)[:1000]}...")
             
             # API 호출
             async with session.put(url, json=payload) as response:
                 if response.status == 200:
-                    logger.info(f"Message saved to database for room {room_id}: {message['id']}")
+                    logger.info(f"✅ Message saved to database for room {room_id}: {message['id']}")
+                    
+                    # 응답 확인
+                    try:
+                        response_data = await response.json()
+                        logger.info(f"🧪 MongoDB 저장 응답: {json.dumps(response_data)}")
+                    except:
+                        response_text = await response.text()
+                        logger.info(f"🧪 MongoDB 저장 응답 텍스트: {response_text[:500]}")
+                    
                     return True
                 else:
                     error_text = await response.text()
-                    logger.error(f"Failed to save message: {error_text}")
+                    logger.error(f"❌ Failed to save message: Status {response.status}, Error: {error_text}")
                     return False
     except Exception as e:
-        logger.error(f"Error saving message to database: {str(e)}")
+        logger.error(f"❌ Error saving message to database: {str(e)}")
         return False
 
 # 채팅방 메시지 가져오기
@@ -634,6 +655,10 @@ async def auto_conversation_loop(room_id: str, npcs: List[str], topic: str, dela
                 # NPC 설명 구성 - custom NPC의 경우 추가 특성 포함
                 npc_description = f"{npc_info['name']}: {npc_info.get('description', 'A philosopher with unique perspectives')}"
                 
+                # 스타일 정보가 있으면 추가
+                if npc_info.get('style'):
+                    npc_description += f". Style: {npc_info['style']}"
+                
                 # Custom NPC인 경우 추가 특성 포함
                 if npc_info.get('is_custom', False):
                     # 추가 특성이 있으면 설명에 추가
@@ -668,11 +693,19 @@ async def auto_conversation_loop(room_id: str, npcs: List[str], topic: str, dela
                     logger.info(f"사용자 질문에 직접 응답하도록 안내: {last_user_question}")
                 
                 try:
+                    # 칸트의 경우 자동으로 RAG 활성화
+                    use_rag = False
+                    if responding_npc_id.lower() == 'kant':
+                        use_rag = True
+                        logger.info(f"🔍 칸트 응답을 위해 RAG 자동 활성화됨")
+                    
                     response_text, _ = llm_manager.generate_philosophical_response(
                         npc_description=npc_description,
                         topic=current_topic,
                         context=additional_context,
-                        previous_dialogue=dialogue_history  # 이전 메시지 기록 전달
+                        previous_dialogue=dialogue_history,  # 이전 메시지 기록 전달
+                        npc_id=responding_npc_id,  # npc_id 파라미터 추가
+                        use_rag=use_rag  # 칸트인 경우에만 RAG 활성화
                     )
                     logger.debug(f"LLM에서 생성된 응답: {response_text[:100]}...")
                     
@@ -881,29 +914,210 @@ async def websocket_endpoint(websocket: WebSocket, room_id: str):
                         # 이미 실행 중이면 중지
                         manager.stop_auto_conversation(room_id)
                         
-                        # 새 태스크 시작
+                        # 새 자동 대화 시작
                         task = asyncio.create_task(
-                            auto_conversation_loop(room_id, npcs, topic)
+                            auto_conversation_loop(room_id, npcs, topic, [15, 30])
                         )
                         manager.start_auto_conversation(room_id, task)
                         
+                        await websocket.send_json({
+                            "type": "auto_dialogue_status",
+                            "status": "started"
+                        })
                 elif data["command"] == "stop_auto":
                     # 자동 대화 중지
-                    if manager.stop_auto_conversation(room_id):
-                        await websocket.send_json({
-                            "type": "auto_conversation_status",
-                            "status": "stopped",
-                            "room_id": room_id
-                        })
+                    stopped = manager.stop_auto_conversation(room_id)
+                    await websocket.send_json({
+                        "type": "auto_dialogue_status",
+                        "status": "stopped" if stopped else "not_running"
+                    })
+            elif "type" in data and data["type"] == "send-message":
+                # 메시지 수신 시 로깅
+                logger.info(f"🚨 socket.id {websocket.client.port} send-message RAW data: {data}")
+                
+                # 필수 필드 확인
+                if "roomId" not in data or "message" not in data:
+                    logger.error(f"Invalid message format: {data}")
+                    continue
+                
+                # RAG 사용 여부 필드 추출
+                use_rag = data.get("useRAG", False)
+                logger.info(f"🔍 RAG 사용 여부(클라이언트 요청): {'활성화' if use_rag else '비활성화'}")
+                
+                message_data = data["message"]
+                
+                # 메시지 로그
+                logger.info(f"🚨 'send-message' 이벤트 수신 - 방 ID: {data['roomId']}, 메시지: {message_data}")
+                
+                try:
+                    # DB에 메시지 저장
+                    message_text = message_data.get("text", "")
+                    logger.info(f"💾 MongoDB에 메시지 저장 중: {message_text[:30]}...")
+                    saved = await save_message_to_db(data["roomId"], message_data)
+                    
+                    if saved:
+                        logger.info(f"✅ 메시지가 MongoDB에 저장되었습니다.")
                     else:
-                        await websocket.send_json({
-                            "type": "error",
-                            "message": "No active auto conversation to stop"
-                        })
+                        logger.error(f"❌ 메시지 저장 실패")
+                    
+                    # 채팅방의 다른 사용자들에게 메시지 브로드캐스트
+                    # Remove/truncate some fields before broadcasting
+                    broadcast_message = {
+                        "id": message_data.get("id", f"msg-{time.time()}"),
+                        "text": message_text[:1000] + "..." if len(message_text) > 1000 else message_text,
+                        "sender": message_data.get("sender", "Unknown")
+                    }
+                    
+                    # 브로드캐스트
+                    client_count = 0
+                    logger.info(f"📢 메시지 브로드캐스트 [방 {data['roomId']}]: {json.dumps(broadcast_message)}")
+                    
+                    if data["roomId"] in manager.active_connections:
+                        client_count = len(manager.active_connections[data["roomId"]])
+                    
+                    logger.info(f"📊 현재 방({data['roomId']})에 연결된 클라이언트 수: {client_count}명")
+                    
+                    # 본인을 제외한 모든 클라이언트에게 메시지 전송
+                    for connection in manager.active_connections.get(data["roomId"], []):
+                        if connection != websocket:  # 발신자에게는 메시지를 보내지 않음
+                            try:
+                                await connection.send_json({
+                                    "type": "new-message",
+                                    "roomId": data["roomId"],
+                                    "message": broadcast_message
+                                })
+                            except Exception as e:
+                                logger.error(f"브로드캐스트 오류: {str(e)}")
+                    
+                    logger.info(f"✅ 브로드캐스트 완료 - 발신자 제외 방송")
+                    
+                    # AI 응답 생성 로직
+                    logger.info(f"🤖 AI 응답 생성 중... 방 ID: {data['roomId']}")
+                    
+                    # 자동 대화 모드인지 확인
+                    is_auto_mode = data["roomId"] in active_auto_conversations and active_auto_conversations[data["roomId"]].get("active", False)
+                    logger.info(f"🔍 자동 대화 모드 확인 결과: {'활성화됨' if is_auto_mode else '비활성화됨'}")
+                    
+                    if not is_auto_mode:
+                        logger.info(f"🔍 자동 대화 모드 비활성화 - AI API 요청 시작 - 방 ID: {data['roomId']}")
                         
-            elif "message" in data:
-                # 클라이언트에서 보낸 일반 메시지 처리 (필요시 구현)
-                pass
+                        # 방 정보 가져오기
+                        room_data = await get_room_data(data["roomId"])
+                        
+                        if not room_data or "participants" not in room_data:
+                            logger.error(f"❌ 방 정보를 가져올 수 없음: {data['roomId']}")
+                            continue
+                        
+                        # NPC 목록 가져오기
+                        npcs = room_data.get("participants", {}).get("npcs", [])
+                        
+                        if not npcs:
+                            logger.warning(f"⚠️ 방에 NPC가 없음: {data['roomId']}")
+                            continue
+                        
+                        # 대화 주제 가져오기
+                        topic = room_data.get("title", "")
+                        context = room_data.get("context", "")
+                        
+                        # 최근 메시지 히스토리 가져오기
+                        messages = await get_room_messages(data["roomId"])
+                        
+                        # AI 응답 요청 페이로드 구성
+                        logger.info(f"🔍 메시지 수: {len(messages)}")
+                        
+                        # 응답할 철학자 선택
+                        responding_philosopher = select_responding_philosopher(npcs, message_text)
+                        logger.info(f"🎯 응답할 철학자: {responding_philosopher}")
+                        
+                        # 칸트의 경우 자동으로 RAG 활성화
+                        if responding_philosopher.lower() == 'kant':
+                            use_rag = True
+                            logger.info(f"🔍 칸트 응답을 위해 RAG 자동 활성화됨")
+                            
+                        api_payload = {
+                            "room_id": data["roomId"],
+                            "user_message": message_text,
+                            "npcs": npcs,
+                            "topic": topic,
+                            "context": context,
+                            "use_rag": use_rag  # 수정된 RAG 사용 여부
+                        }
+                        
+                        logger.info(f"📤 API 요청 페이로드: {json.dumps(api_payload)}")
+                        
+                        # Next.js API 서버 URL 가져오기
+                        api_url = os.environ.get("NEXT_PUBLIC_API_BASE_URL", "http://localhost:8000")
+                        chat_api_url = f"{api_url}/api/chat/generate"
+                        
+                        logger.info(f"🔗 Python API URL: {chat_api_url}")
+                        
+                        try:
+                            # API 호출
+                            async with aiohttp.ClientSession() as session:
+                                async with session.post(chat_api_url, json=api_payload) as response:
+                                    logger.info(f"🔍 Python API 응답 상태: {response.status} {response.reason}")
+                                    
+                                    if response.status == 200:
+                                        ai_response = await response.json()
+                                        logger.info(f"📥 Python API 응답 데이터: {json.dumps(ai_response)[:200]}...")
+                                        
+                                        # AI 응답 메시지 구성
+                                        ai_message = {
+                                            "id": f"ai-{int(time.time() * 1000)}",
+                                            "text": ai_response["response"],
+                                            "sender": ai_response["philosopher"],
+                                            "isUser": False,
+                                            "timestamp": datetime.now().isoformat()
+                                        }
+                                        
+                                        # 디버깅을 위한 citations 상세 정보 출력
+                                        logger.info(f"🧪 AI 응답 원본: {json.dumps(ai_response)[:1000]}...")
+                                        logger.info(f"🧪 AI 응답에 'citations' 키 존재: {'citations' in ai_response}")
+                                        if "citations" in ai_response:
+                                            logger.info(f"🧪 citations 타입: {type(ai_response['citations'])}")
+                                            logger.info(f"🧪 citations 갯수: {len(ai_response['citations'])}")
+                                            logger.info(f"🧪 첫번째 citation: {json.dumps(ai_response['citations'][0]) if ai_response['citations'] else 'none'}")
+                                            
+                                            # citations 필드가 있으면 추가
+                                            ai_message["citations"] = ai_response["citations"]
+                                            logger.info(f"📚 AI 메시지에 {len(ai_response['citations'])}개의 인용 정보 포함됨")
+                                            logger.info(f"🧪 ai_message 객체: {json.dumps(ai_message)[:1000]}...")
+                                        else:
+                                            logger.warning("⚠️ AI 응답에 citations 필드가 없습니다!")
+                                        
+                                        # 디버깅용 로그 추가
+                                        logger.info(f"📋 최종 AI 메시지 객체: {json.dumps(ai_message)}")
+                                        
+                                        # MongoDB에 AI 메시지 저장
+                                        saved = await save_message_to_db(data["roomId"], ai_message)
+                                        if saved:
+                                            logger.info(f"✅ AI 메시지({ai_message['id']})가 MongoDB에 저장되었습니다.")
+                                        else:
+                                            logger.error(f"❌ AI 메시지 저장 실패")
+                                        
+                                        # 모든 클라이언트에게 AI 응답 브로드캐스트
+                                        logger.info(f"📢 AI 응답 브로드캐스트: {ai_message['text'][:100]}...")
+                                        logger.debug(f"📢 브로드캐스트할 메시지 객체: {json.dumps(ai_message)[:500]}...")
+                                        
+                                        for connection in manager.active_connections.get(data["roomId"], []):
+                                            try:
+                                                await connection.send_json({
+                                                    "type": "new-message",
+                                                    "roomId": data["roomId"],
+                                                    "message": ai_message
+                                                })
+                                            except Exception as e:
+                                                logger.error(f"AI 응답 브로드캐스트 오류: {str(e)}")
+                                        
+                                        logger.info(f"✅ AI 응답 브로드캐스트 완료 - 모든 클라이언트에게 전송됨")
+                                    else:
+                                        error_text = await response.text()
+                                        logger.error(f"❌ Python API 오류: {error_text}")
+                        except Exception as e:
+                            logger.error(f"❌ API 호출 오류: {str(e)}")
+                
+                except Exception as e:
+                    logger.error(f"메시지 처리 중 오류: {str(e)}")
                 
     except WebSocketDisconnect:
         await manager.disconnect(websocket, room_id)
@@ -1158,7 +1372,7 @@ class ConversationManager:
                     await self.load_npc_description(room_id, npc_id)
                     
                 logger.info(f"🔄 Room {room_id} 대화 DB에서 로드됨: {len(messages)}개 메시지, 토픽: {room_data.get('title', '없음')}")
-                
+        
                 # 현재 토큰 수 계산 및 로깅
                 if messages:
                     token_count = self._count_tokens_approx(messages)
@@ -1408,88 +1622,152 @@ class ChatGenerateRequest(BaseModel):
     llm_provider: Optional[str] = "openai"
     llm_model: Optional[str] = "gpt-4o"
     api_key: Optional[str] = None
+    use_rag: Optional[bool] = False  # RAG 사용 여부 플래그 추가
 
 # API 엔드포인트 수정
 @app.post("/api/chat/generate")
 async def generate_chat_response(request: ChatGenerateRequest):
-    """대화 맥락에 따른 철학자 응답 생성 - 서버 측 대화 관리 버전"""
+    """
+    새로운 AI 채팅 응답을 생성합니다.
+    """
     try:
-        logger.info(f"Received chat generate request: room_id={request.room_id}, npcs={request.npcs}")
-        logger.info(f"Using LLM provider: {request.llm_provider}, model: {request.llm_model}")
+        logger.info(f"🔄 채팅 응답 생성 요청: {request.room_id}")
         
-        # API 키가 제공된 경우 임시로 설정
-        original_api_key = None
-        if request.api_key:
-            logger.info("Using API key provided by client")
-            original_api_key = os.environ.get("OPENAI_API_KEY")
-            os.environ["OPENAI_API_KEY"] = request.api_key
-            openai.api_key = request.api_key
+        # 사용할 NPC 목록 확인 (우선 순위: npcs > npc_descriptions)
+        npcs = request.npcs or []
+        if not npcs and request.npc_descriptions:
+            # 레거시 지원: 쉼표로 구분된 npc 목록 문자열을 파싱
+            npcs = [npc.strip() for npc in request.npc_descriptions.split(',')]
         
-        try:
-            # 사용자 메시지 저장
-            user_message_data = {
-                "id": f"user-{uuid4()}",
-                "text": request.user_message,
-                "sender": "User",  # 실제 구현에서는 사용자 ID나 이름 사용
-                "isUser": True,
-                "timestamp": datetime.now().isoformat()
-            }
-            
-            # 디버깅: 클라이언트가 전체 히스토리 대신 새 메시지만 보내는지 확인
-            logger.debug(f"📥 요청 시 previous_dialogue 길이: {len(request.previous_dialogue) if request.previous_dialogue else 0}")
-            logger.debug(f"📥 사용자 메시지: '{user_message_data['text'][:50]}...'")
-            
-            # 대화 관리자에 메시지 추가
-            await conversation_manager.add_message(request.room_id, user_message_data)
-            
-            # 참여하는 NPC들 중에서 응답할 NPC 선택
-            responding_philosopher = select_responding_philosopher(request.npcs, request.user_message)
-            logger.info(f"Selected responding philosopher: {responding_philosopher}")
-            
-            # 프롬프트 컨텍스트 가져오기
-            prompt_context = await conversation_manager.get_prompt_context(request.room_id, responding_philosopher)
-            
-            # 디버깅: 서버가 유지하는 대화 히스토리 상태 로깅
-            logger.debug(f"🔍 서버 측 대화 길이: {len(prompt_context['previous_dialogue'])} 문자")
-            logger.debug(f"🔍 컨텍스트 메시지 개수: {len(conversation_manager.conversations[request.room_id]['messages'])}개")
-            
-            # llm_manager를 사용하여 응답 생성
-            response_text, metadata = llm_manager.generate_philosophical_response(
-                npc_description=prompt_context["npc_description"],
-                topic=prompt_context["topic"],
-                context=prompt_context["context"],
-                previous_dialogue=prompt_context["previous_dialogue"],
-                llm_provider=request.llm_provider,
-                llm_model=request.llm_model
-            )
-            
-            # AI 응답 메시지 저장
-            ai_message_data = {
-                "id": f"ai-{uuid4()}",
-                "text": response_text,
-                "sender": responding_philosopher,
-                "npc_id": responding_philosopher,
-                "isUser": False,
-                "timestamp": datetime.now().isoformat()
-            }
-            
-            # 대화 관리자에 AI 응답 추가
-            await conversation_manager.add_message(request.room_id, ai_message_data)
-            
-            return {
-                "response": response_text,
-                "philosopher": responding_philosopher,
-                "metadata": metadata
-            }
-        finally:
-            # 원래 API 키 복원
-            if original_api_key is not None:
-                os.environ["OPENAI_API_KEY"] = original_api_key
-                openai.api_key = original_api_key
+        # 적어도 하나의 NPC가 필요함
+        if not npcs:
+            raise HTTPException(status_code=400, detail="No NPCs specified")
+        
+        # 사용자 메시지가 필요함
+        if not request.user_message or not request.user_message.strip():
+            raise HTTPException(status_code=400, detail="User message is required")
+        
+        # 추가 컨텍스트 정보 (빈 문자열이면 None으로 설정)
+        context = request.context.strip() if request.context else None
+        topic = request.topic.strip() if request.topic else None
+        
+        # 이전 대화 문맥 처리
+        previous_dialogue = request.previous_dialogue.strip() if request.previous_dialogue else None
+        
+        # LLM 프로바이더 및 모델 설정
+        llm_provider = request.llm_provider.lower() if request.llm_provider else None
+        llm_model = request.llm_model if request.llm_model else None
+        
+        # API 키 처리
+        api_key = request.api_key
+        if api_key:
+            # API 키가 제공된 경우 환경 변수 설정
+            if llm_provider == "openai":
+                os.environ["OPENAI_API_KEY"] = api_key
+            elif llm_provider == "anthropic":
+                os.environ["ANTHROPIC_API_KEY"] = api_key
+        
+        # 사용자 메시지 로깅
+        logger.info(f"💬 user_message: {request.user_message[:50]}...")
+        
+        # RAG 사용 여부 확인
+        use_rag = request.use_rag if request.use_rag is not None else False
+        logger.info(f"🔍 RAG 사용 여부(클라이언트 요청): {use_rag}")
+        
+        # 응답할 철학자(NPC) 선택
+        responding_philosopher = select_responding_philosopher(npcs, request.user_message)
+        logger.info(f"🎯 응답할 철학자: {responding_philosopher}")
+        
+        # 칸트의 경우 자동으로 RAG 활성화
+        if responding_philosopher.lower() == 'kant':
+            use_rag = True
+            logger.info(f"🔍 칸트 응답을 위해 RAG 자동 활성화됨")
+        
+        # 선택된 철학자에 대한 설명 로드
+        philosopher_system_prompt = philosopher_descriptions.get(responding_philosopher.lower(), "")
+        if not philosopher_system_prompt:
+            logger.warning(f"⚠️ 철학자 설명을 찾을 수 없음: {responding_philosopher}. 기본 설명 사용.")
+            philosopher_system_prompt = f"{responding_philosopher} is a philosopher with unique views."
+        
+        # 대화 컨텍스트 구성
+        dialogue_context = ""
+        if previous_dialogue:
+            dialogue_context = previous_dialogue
+        else:
+            # 새로운 대화인 경우 사용자 메시지를 컨텍스트에 추가
+            dialogue_context = f"User: {request.user_message}"
+        
+        # 주제가 없는 경우 컨텍스트에서 추론
+        if not topic:
+            dialogue_lines = dialogue_context.strip().split('\n')
+            if len(dialogue_lines) > 0:
+                # 첫 번째 줄에서 주제 추출 시도
+                first_line = dialogue_lines[0].strip()
+                # 'User:' 접두사 제거
+                if first_line.lower().startswith("user:"):
+                    topic = first_line.split(':', 1)[1].strip()
+                else:
+                    topic = first_line
+            # 그래도 없으면 사용자 메시지 사용
+            if not topic:
+                topic = request.user_message
+        
+        # 사용자 메시지 로깅
+        logger.info(f"💬 user_message: {request.user_message[:50]}...")
+        logger.info(f"💬 topic: {topic[:50]}...")
+        logger.info(f"💬 context: {context[:50] if context else 'None'}...")
+        logger.info(f"💬 dialogue_context: {dialogue_context[:50]}...")
+        
+        # LLM Manager를 사용하여 철학적 응답 생성
+        logger.debug(f"🔄 철학적 응답 생성 시작...")
+        response_text, metadata = llm_manager.generate_philosophical_response(
+            npc_description=philosopher_system_prompt,
+            topic=topic,
+            context=context or "",
+            previous_dialogue=dialogue_context,
+            llm_provider=llm_provider,
+            llm_model=llm_model,
+            use_rag=use_rag,
+            npc_id=responding_philosopher.lower()
+        )
+        
+        # 응답 로깅
+        logger.info(f"✅ 응답 생성 완료: {response_text[:50]}...")
+        
+        # 인용 정보 확인 및 추출
+        citations = metadata.get("citations", [])
+        if citations:
+            logger.info(f"📚 {len(citations)}개의 인용 정보가 포함되어 있습니다.")
+            # 확인을 위해 첫 번째 인용 정보 로깅
+            if len(citations) > 0:
+                logger.info(f"📚 첫 번째 인용 정보: id={citations[0].get('id', '?')}, source={citations[0].get('source', '?')}")
+                logger.debug(f"📚 인용 정보 전체 목록: {citations}")
+        else:
+            logger.warning("⚠️ 인용 정보가 없습니다.")
+        
+        # 응답 데이터 구성 - 인용 정보를 응답 객체의 최상위 수준에 포함
+        response_data = {
+            "response": response_text,
+            "philosopher": responding_philosopher,
+            "metadata": {
+                "elapsed_time": metadata.get("elapsed_time", "N/A"),
+                "rag_used": metadata.get("rag_used", False)
+            },
+            "citations": citations  # citations 필드를 직접 최상위 수준에 추가
+        }
+        
+        # 응답 데이터 디버깅을 위해 로깅
+        logger.debug(f"📤 최종 응답 데이터 구조: {list(response_data.keys())}")
+        logger.debug(f"📤 응답 데이터 citations 필드 타입: {type(response_data['citations'])}")
+        logger.debug(f"📤 응답 데이터 citations 항목 수: {len(response_data['citations'])}")
+        
+        return response_data
     
     except Exception as e:
-        logger.exception(f"Error generating chat response: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
+        logger.error(f"❌ 응답 생성 오류: {str(e)}")
+        # 상세한 오류 스택트레이스 로깅
+        logger.exception("상세 오류 정보:")
+        raise HTTPException(status_code=500, detail=f"Failed to generate response: {str(e)}")
 
 def select_responding_philosopher(npcs: List[str], user_message: str) -> str:
     """대화 컨텍스트에 기반하여 응답할 철학자를 선택"""
@@ -1729,145 +2007,70 @@ def select_npc_with_llm(user_message: str, npcs: List[str], npc_details: Dict[st
 @app.get("/api/npc/get")
 async def get_npc_details(id: str):
     try:
-        # 빈 ID 검증
-        if not id:
-            logger.warning("No NPC ID provided")
-            return {"error": "NPC ID is required"}
-            
-        logger.info(f"Fetching NPC details for ID: {id}")
-        
-        # 캐시에서 확인
-        cache_key = f"npc:{id}"
+        # Cache 키 생성
+        cache_key = f"npc_{id}"
         current_time = time.time()
-        if cache_key in npc_cache and (current_time - npc_cache[cache_key]['timestamp'] < npc_cache_ttl):
+        
+        # 캐시에서 조회 (만료 시간: 10분)
+        if cache_key in npc_cache and (current_time - npc_cache[cache_key]['timestamp']) < 600:
             logger.info(f"🔍 Cache hit: NPC {id} found in cache")
             return npc_cache[cache_key]['data']
         
-        # MongoDB ObjectID 형식 감지
-        is_mongo_id = len(id) == 24 and all(c in '0123456789abcdefABCDEF' for c in id)
-        is_uuid = len(id) > 30 and id.count('-') >= 4
+        logger.info(f"Looking up philosopher with ID: {id}")
         
-        # Custom NPC (MongoDB ID 또는 UUID)인 경우 Next.js API에서 정보 가져오기
-        if is_mongo_id or is_uuid:
-            logger.info(f"ID {id} appears to be a custom NPC (MongoDB or UUID)")
+        # UUID 형태인 경우 커스텀 NPC로 간주
+        is_uuid = False
+        try:
+            uuid_obj = uuid.UUID(id)
+            is_uuid = True
+            logger.info(f"Detected UUID format: {id}, treating as custom NPC")
+        except ValueError:
+            is_uuid = False
+        
+        if is_uuid:
+            # 커스텀 NPC 조회 로직
+            custom_npc = None
             
             try:
-                # Next.js API에서 NPC 정보 가져오기 - 일관된 엔드포인트 사용
-                nextjs_api_url = os.environ.get("NEXTJS_API_URL", "http://localhost:3000")
-                custom_npc_url = f"{nextjs_api_url}/api/npc/get?id={id}"
-                logger.info(f"🔍 Fetching custom NPC info from Next.js API: {custom_npc_url}")
+                # MongoDB에서 NPC 조회
+                db_client = get_mongo_client()
+                db = db_client[MONGO_DB]
+                npc_collection = db["npcs"]
                 
-                async with aiohttp.ClientSession() as session:
-                    async with session.get(custom_npc_url) as response:
-                        status_code = response.status
-                        logger.info(f"📊 API Response status: {status_code}")
-                        
-                        if response.status == 200:
-                            npc_data = await response.json()
-                            logger.info(f"✅ Retrieved custom NPC data: {npc_data.get('name', 'Unknown')}")
-                            logger.debug(f"📋 Complete NPC data: {npc_data}")
-                            
-                            # 필요한 필드 확인 및 기본값 설정
-                            portrait_url = npc_data.get('portrait_url')
-                            logger.info(f"🖼️ Portrait URL: {portrait_url}")
-                            
-                            # 응답 구성
-                            response_data = {
-                                "id": id,
-                                "name": npc_data.get('name', f"Philosopher {id[:6]}"),
-                                "description": npc_data.get('description', "A philosopher with unique perspectives"),
-                                "key_concepts": npc_data.get('key_concepts', []),
-                                "portrait_url": portrait_url,
-                                "is_custom": True,
-                                # 추가 정보 (프롬프트에 필요한 특성)
-                                "voice_style": npc_data.get('voice_style', ""),
-                                "debate_approach": npc_data.get('debate_approach', ""),
-                                "communication_style": npc_data.get('communication_style', "")
-                            }
-                            
-                            # 캐시에 저장
-                            npc_cache[cache_key] = {
-                                'data': response_data,
-                                'timestamp': current_time
-                            }
-                            
-                            logger.info(f"🔄 Returning and caching custom NPC data for {response_data['name']}")
-                            return response_data
-                        else:
-                            # API 오류 시 로깅 후 기본값 사용
-                            error_text = await response.text()
-                            logger.warning(f"❌ Failed to get custom NPC from API: {error_text}")
-                            
-                            # 일반적인 404 오류면 다른 엔드포인트도 시도
-                            if response.status == 404:
-                                logger.info(f"🔍 Trying alternative API endpoint for custom NPC")
-                                # 대체 URL - MongoDB ID로 직접 쿼리
-                                alt_url = f"{nextjs_api_url}/api/npc/get-by-backend-id?id={id}"
-                                logger.info(f"🔍 Trying alternative API endpoint: {alt_url}")
-                                
-                                async with session.get(alt_url) as alt_response:
-                                    if alt_response.status == 200:
-                                        npc_data = await alt_response.json()
-                                        logger.info(f"✅ Retrieved custom NPC data from alternative endpoint: {npc_data.get('name', 'Unknown')}")
-                                        
-                                        # 응답 구성
-                                        response_data = {
-                                            "id": id,
-                                            "name": npc_data.get('name', f"Philosopher {id[:6]}"),
-                                            "description": npc_data.get('description', "A philosopher with unique perspectives"),
-                                            "key_concepts": npc_data.get('key_concepts', []),
-                                            "portrait_url": npc_data.get('portrait_url'),
-                                            "is_custom": True,
-                                            "voice_style": npc_data.get('voice_style', ""),
-                                            "debate_approach": npc_data.get('debate_approach', ""),
-                                            "communication_style": npc_data.get('communication_style', "")
-                                        }
-                                        
-                                        # 캐시에 저장
-                                        npc_cache[cache_key] = {
-                                            'data': response_data,
-                                            'timestamp': current_time
-                                        }
-                                        
-                                        logger.info(f"🔄 Returning and caching custom NPC data from alternative source: {response_data['name']}")
-                                        return response_data
-            except Exception as api_err:
-                logger.error(f"❌❌ Error fetching custom NPC from API: {str(api_err)}")
+                # backend_id 필드로 조회
+                custom_npc = npc_collection.find_one({"backend_id": id})
+                
+                if custom_npc:
+                    logger.info(f"Found custom NPC with backend_id: {id}")
+                    
+                    # MongoDB ObjectId를 문자열로 변환
+                    custom_npc["_id"] = str(custom_npc["_id"])
+                    
+                    # 응답 데이터 구성
+                    response_data = {
+                        "id": id,
+                        "name": custom_npc.get("name", "Unknown"),
+                        "description": custom_npc.get("description", ""),
+                        "reference_philosophers": custom_npc.get("reference_philosophers", []),
+                        "communication_style": custom_npc.get("communication_style", "balanced"),
+                        "debate_approach": custom_npc.get("debate_approach", "dialectical"),
+                        "voice_style": custom_npc.get("voice_style", ""),
+                        "portrait_url": custom_npc.get("portrait_url", ""),
+                        "is_custom": True
+                    }
             
-            # API 호출 실패 시 기본 정보 제공
-            # 이름을 기준으로 고유한 이미지를 선택할 수 있게 함
-            hash_value = sum(ord(c) for c in id) % 5  # 간단한 해시 함수
-            
-            philosopher_images = ["Aristotle.png", "Nietzsche.png", "Descartes.png", 
-                                 "Confucius.png", "Wittgenstein.png"]
-            
-            selected_image = philosopher_images[hash_value]
-            portrait_url = f"http://localhost:8000/portraits/{selected_image}"
-            
-            logger.info(f"🔄 Using default portrait for custom NPC: {portrait_url}")
-            
-            fallback_data = {
-                "id": id,
-                "name": f"Philosopher {id[:6]}",
-                "description": "A philosopher with unique perspectives and ideas",
-                "key_concepts": ["Unique", "Custom", "Personal"],
-                "portrait_url": portrait_url,
-                "is_custom": True
-            }
-            
-            # 폴백 데이터도 캐시에 저장 (짧은 TTL 적용)
-            short_ttl = 60 * 5  # 5분
-            npc_cache[cache_key] = {
-                'data': fallback_data,
-                'timestamp': current_time - npc_cache_ttl + short_ttl
-            }
-            
-            logger.info(f"🔄 Returning fallback data for custom NPC: {fallback_data['name']}")
-            return fallback_data
+                    # 캐시에 저장
+                    npc_cache[cache_key] = {
+                        'data': response_data,
+                        'timestamp': current_time
+                    }
+                    
+                    return response_data
+            except Exception as e:
+                logger.error(f"Error looking up custom NPC: {str(e)}")
 
-        # 기본 철학자인 경우
+        # 기본 철학자 ID 또는 커스텀 NPC를 찾지 못한 경우
         philosopher_id = id.lower()
-        logger.info(f"Looking up philosopher with ID: {philosopher_id}")
         
         # YAML 파일에서 철학자 정보 찾기
         if philosopher_id in philosophers_data:
@@ -1884,6 +2087,7 @@ async def get_npc_details(id: str):
                 "name": data.get("name", "Unknown"),
                 "description": data.get("description", ""),
                 "key_concepts": data.get("key_concepts", []),
+                "style": data.get("style", ""),  # style 필드 추가
                 "portrait_url": portrait_url,
                 "is_custom": False
             }
@@ -1896,63 +2100,18 @@ async def get_npc_details(id: str):
             
             logger.info(f"🔄 Returning and caching YAML data for philosopher: {response_data['name']}")
             return response_data
-        # 기본 정보에서 찾기
-        elif philosopher_id in philosopher_descriptions:
-            description = philosopher_descriptions[philosopher_id]
-            name = description.split(' was ')[0]
-            logger.info(f"Found philosopher {philosopher_id} in hardcoded descriptions")
-            
-            portrait_url = None
-            if philosopher_id in PORTRAITS_MAP:
-                portrait_url = f"http://localhost:8000/portraits/{PORTRAITS_MAP[philosopher_id]}"
-            
-            response_data = {
-                "id": philosopher_id,
-                "name": name,
-                "description": description,
-                "portrait_url": portrait_url,
-                "is_custom": False
-            }
-            
-            # 캐시에 저장
-            npc_cache[cache_key] = {
-                'data': response_data,
-                'timestamp': current_time
-            }
-            
-            logger.info(f"🔄 Returning and caching hardcoded data for philosopher: {response_data['name']}")
-            return response_data
-        
-        # NPC를 찾을 수 없는 경우
-        logger.warning(f"NPC with ID '{id}' not found")
-        # 404 대신 기본 정보 제공 (폴백 메커니즘)
-        fallback_data = {
-            "id": id,
-            "name": id.capitalize(),
-            "description": "A philosopher with unique perspectives",
-            "is_custom": False
-        }
-        
-        # 폴백 데이터는 짧은 유효 시간으로 캐시
-        short_ttl = 60 * 5  # 5분
-        npc_cache[cache_key] = {
-            'data': fallback_data,
-            'timestamp': current_time - npc_cache_ttl + short_ttl
-        }
-        
-        logger.info(f"🔄 Returning fallback data for unknown philosopher: {fallback_data['name']}")
-        return fallback_data
+        else:
+            # 최종적으로 찾지 못한 경우 404 응답
+            return JSONResponse(
+                status_code=404, 
+                content={"detail": f"Philosopher or NPC with ID {id} not found"}
+            )
     except Exception as e:
-        logger.exception(f"Error retrieving NPC: {str(e)}")
-        # 오류 발생 시에도 기본 정보 제공
-        fallback_data = {
-            "id": id,
-            "name": id.capitalize(),
-            "description": "Information temporarily unavailable",
-            "is_custom": False
-        }
-        logger.info(f"🔄 Returning error fallback data: {fallback_data['name']}")
-        return fallback_data
+        logger.error(f"Error in get_npc_details: {str(e)}")
+        return JSONResponse(
+            status_code=500,
+            content={"detail": f"Failed to get NPC details: {str(e)}"}
+        )
 
 # 채팅방 생성 및 초기 메시지 생성을 통합한 엔드포인트
 @app.post("/api/rooms")

@@ -1,0 +1,442 @@
+[
+  {
+    "topic": "유전자 편집",
+    "original_korean_query": "유전자 편집 기술에 대한 논의는 이 기술이 보편적 도덕 법칙으로 수용될 수 있는지를 숙고해야 합니다. 정언 명령의 관점에서, 이러한 기술이 모든 인류에게 유익하고 자연과 조화를 이룬다면, 그것은 도덕적으로 정당화될 수 있습니다. 기술의 발전이 인류 전체에 긍정적인 결과를 가져올 수 있는지 깊이 있는 논의가 필요합니다.",
+    "english_translation": "Discussions on gene editing technology must consider whether this technology can be accepted as a universal moral law. From the perspective of the categorical imperative, if such technology is beneficial to all humanity and harmonizes with nature, it can be morally justified. In-depth discussions are needed on whether the advancement of technology can bring positive outcomes for all of humanity.",
+    "retrieved_chunks": [
+      {
+        "text": "The other point to which attention must be directed is the question whether the action was also (subjectively) done for the sake of the moral law, so that it not only is morally correct as a deed, but also, by the maxim from which it is done, has moral worth as a disposition. Now there is no doubt that this practice, and the resulting culture of our reason in judging merely of the practical, must gradually produce a certain interest even in the law of reason, and consequently in morally good actions.",
+        "source": "The Critique of Practical Reason",
+        "similarity": 0.42730700969696045
+      },
+      {
+        "text": " a practical point of view in forming a concept of the possibility of a morally prescribed final purpose--assume the being of a _moral_ author of the world, that is, a God. § 88. _Limitation of the validity of the moral proof_ Pure Reason, as a practical faculty, _i.e._ as the faculty of determining the free use of our causality by Ideas (pure rational concepts), not only comprises in the moral law a regulative principle of our actions, but supplies us at the same time with a subjective constitutive principle in the concept of an Object which",
+        "source": "The Critique Of Judgment",
+        "similarity": 0.42366063594818115
+      },
+      {
+        "text": " done to provide against the danger which seems in the present case to menace the best interests of humanity? The course to be pursued in reference to this subject is a perfectly plain and natural one. Let each thinker pursue his own path; if he shows talent, if he gives evidence of profound thought, in one word, if he shows that he possesses the power of reasoning—reason is always the gainer.",
+        "source": "The Critique Of Pure Reason",
+        "similarity": 0.4201642870903015
+      },
+      {
+        "text": " Understanding, by means of which the concept of a natural purpose is possible 319 § 78. Of the union of the principle of the universal mechanism of matter with the teleological principle in the Technic of nature 326 =Appendix.=--Methodology of the Teleological Judgement 334 § 79. Whether Teleology must be treated as if it belonged to the doctrine of nature 334 § 80. Of the necessary subordination of the mechanical to the teleological principle in the explanation of a thing as a natural purpose 336 § 81.",
+        "source": "The Critique Of Judgment",
+        "similarity": 0.4189596176147461
+      },
+      {
+        "text": " unity of the former is according to universal and necessary moral laws—and unites the practical with the speculative reason. The world must be represented as having originated from an idea, if it is to harmonize with that use of reason without which we cannot even consider ourselves as worthy of reason—namely, the moral use, which rests entirely on the idea of the supreme good. Hence the investigation of nature receives a teleological direction, and becomes, in its widest extension, physico-theology.",
+        "source": "The Critique Of Pure Reason",
+        "similarity": 0.4145711064338684
+      }
+    ],
+    "full_paragraphs": [
+      {
+        "text": "The method then takes the following course. At first we are only\nconcerned to make the judging of actions by moral laws a natural\nemployment accompanying all our own free actions, as well as the\nobservation of those of others, and to make it as it were a habit, and\nto sharpen this judgement, asking first whether the action conforms\nobjectively to the moral law, and to what law; and we distinguish\nthe law that merely furnishes a principle of obligation from that\nwhich is really obligatory (leges obligandi a legibus obligantibus);\nas, for instance, the law of what men's wants require from me, as\ncontrasted with that which their rights demand, the latter of which\nprescribes essential, the former only non-essential duties; and thus\nwe teach how to distinguish different kinds of duties which meet in\nthe same action. The other point to which attention must be directed\nis the question whether the action was also (subjectively) done for\nthe sake of the moral law, so that it not only is morally correct as a\ndeed, but also, by the maxim from which it is done, has moral worth as\na disposition. Now there is no doubt that this practice, and the\nresulting culture of our reason in judging merely of the practical,\nmust gradually produce a certain interest even in the law of reason,\nand consequently in morally good act",
+        "source": "The Critique of Practical Reason"
+      },
+      {
+        "text": "Now I say that Physico-theology, however far it may be pursued, can\ndisclose to us nothing of a _final purpose_ of creation; for it does\nnot even extend to the question as to this. It can, it is true, justify\nthe concept of an intelligent World Cause, as a subjective concept\n(only available for the constitution of our cognitive faculty) of\nthe possibility of things that we can make intelligible to ourselves\naccording to purposes; but it cannot determine this concept further,\neither in a theoretical or a practical point of view. Its endeavour\ndoes not come up to its design of being the basis of a Theology, but\nit always remains only a physical Teleology; because the purposive\nreference therein is and must be always considered only as conditioned\nin nature, and it consequently cannot inquire into the purpose for\nwhich nature itself exists (for which the ground must be sought outside\nnature),--notwithstanding that it is upon the determinate Idea of this\nthat the determinate concept of that Supreme Intelligent World Cause,\nand the consequent possibility of a Theology, depend.",
+        "source": "The Critique Of Judgment"
+      },
+      {
+        "text": " done to provide against the danger which seems in the present case to menace the best interests of humanity? The course to be pursued in reference to this subject is a perfectly plain and natural one. Let each thinker pursue his own path; if he shows talent, if he gives evidence of profound thought, in one word, if he shows that he possesses the power of reasoning—reason is always the gainer.",
+        "source": "The Critique Of Pure Reason"
+      },
+      {
+        "text": "§ 77. _Of the peculiarity of the human Understanding, by means of which\nthe concept of a natural purpose is possible_",
+        "source": "The Critique Of Judgment"
+      },
+      {
+        "text": " unity of the former is according to universal and necessary moral laws—and unites the practical with the speculative reason. The world must be represented as having originated from an idea, if it is to harmonize with that use of reason without which we cannot even consider ourselves as worthy of reason—namely, the moral use, which rests entirely on the idea of the supreme good. Hence the investigation of nature receives a teleological direction, and becomes, in its widest extension, physico-theology.",
+        "source": "The Critique Of Pure Reason"
+      }
+    ],
+    "enhanced_statement": "유전자 편집 기술에 대한 논의는 도덕적 법칙으로서 보편적으로 수용될 수 있는지를 고려해야 합니다. 내가 '실천이성비판'에서 논했던 것처럼, 도덕 법칙에 따라 행동을 판단하는 것은 우리의 자유로운 행동과 타인의 행동을 관찰하는 데 자연스럽게 동반되어야 하며, 이를 습관화하여 도덕적 판단을 날카롭게 해야 합니다 (원문: 'At first we are only concerned to make the judging of actions by moral laws a natural employment...').\n\n이 원칙을 유전자 편집 기술에 적용해보면, 이 기술이 모든 인류에게 유익하고 자연과 조화를 이룬다면, 이는 도덕적으로 정당화될 수 있습니다. 그러나 이는 단순히 기술의 유용성에 국한되지 않고, 그 기술이 도덕 법칙에 따라 행해지는지, 즉 그 행위가 도덕적 가치를 지니는지를 판단해야 합니다.\n\n또한, '판단력비판'에서 논한 바와 같이, 자연의 목적을 이해하는 것은 단순히 물리적 목적론에 그치지 않고, 자연의 존재 목적을 탐구해야 합니다 (원문: 'Now I say that Physico-theology, however far it may be pursued, can disclose to us nothing of a final purpose of creation...'). 유전자 편집 기술이 자연의 목적과 조화를 이루는지를 검토하는 것은 필수적입니다.\n\n결론적으로, 유전자 편집 기술이 모든 인류에게 긍정적인 결과를 가져올 수 있는지에 대한 심도 있는 논의가 필요합니다. 이는 기술의 발전이 단순한 이익을 넘어, 인류의 도덕적 진보에 기여할 수 있는지를 검토하는 과정이어야 합니다.\n\n마지막으로, 인간의 이해와 도덕적 판단은 항상 발전할 수 있는 가능성을 지니고 있습니다. 우리의 이성은 이러한 논의를 통해 더욱 풍부해질 것이며, 이는 인류의 도덕적 진보에 기여할 것입니다."
+  },
+  {
+    "topic": "사형제도",
+    "original_korean_query": "사형제도에 대해 논의할 때, 우리는 도덕적 원칙과 인간의 존엄성에 대한 의무를 고려해야 합니다. 사형은 인간 생명의 고유한 가치를 부정할 수 있으며, 이는 도덕법칙에 어긋날 수 있습니다. 우리는 법에 대한 존중과 인간성에 대한 의무 사이의 균형을 찾는 것이 중요하다고 할 수 있습니다.",
+    "english_translation": "When discussing the death penalty, we must consider our moral principles and obligations to human dignity. The death penalty can deny the inherent value of human life, which may contradict moral laws. It is important to find a balance between respect for the law and our obligations to humanity.",
+    "retrieved_chunks": [
+      {
+        "text": "In a word, the moral law demands obedience, from duty not from predilection, which cannot and ought not to be presupposed at all. Let us now see, in an example, whether the conception of an action, as a noble and magnanimous one, has more subjective moving power than if the action is conceived merely as duty in relation to the solemn law of morality. The action by which a man endeavours at the greatest peril of life to rescue people from shipwreck, at last losing his life in the attempt, is reckoned on one side as duty, but on the other and for the most part as a meritorious action, but our esteem for it is much weakened by the notion of duty to himself which seems in this case to be somewhat infringed.",
+        "source": "The Critique of Practical Reason",
+        "similarity": 0.5143279731273651
+      },
+      {
+        "text": "More decisive is the magnanimous sacrifice of life for the safety of one's country; and yet there still remains some scruple whether it is a perfect duty to devote one's self to this purpose spontaneously and unbidden, and the action has not in itself the full force of a pattern and impulse to imitation. But if an indispensable duty be in question, the transgression of which violates the moral law itself, and without regard to the welfare of mankind, and as it were tramples on its holiness (such as are usually called duties to God, because in Him we conceive the ideal of holiness in substance), then we give our most perfect esteem to the pursuit of it at the sacrifice of all that can have any value for the dearest inclinations, and we find our soul strengthened and elevated by such an example, when we convince ourselves by contemplation of it that human nature is capable of so great an elevation above every motive that nature can oppose to it.",
+        "source": "The Critique of Practical Reason",
+        "similarity": 0.4841468334197998
+      },
+      {
+        "text": "Benevolence may, indeed, be united with it, but the man who has deserved punishment has not the least reason to reckon upon this. Punishment, then, is a physical evil, which, though it be not connected with moral evil as a natural consequence, ought to be connected with it as a consequence by the principles of a moral legislation. Now, if every crime, even without regarding the physical consequence with respect to the actor, is in itself punishable, that is, forfeits happiness (at least partially), it is obviously absurd to say that the crime consisted just in this, that he has drawn punishment on himself, thereby injuring his private happiness (which, on the principle of self-love, must be the proper notion of all crime).",
+        "source": "The Critique of Practical Reason",
+        "similarity": 0.48358118534088135
+      },
+      {
+        "text": "The other point to which attention must be directed is the question whether the action was also (subjectively) done for the sake of the moral law, so that it not only is morally correct as a deed, but also, by the maxim from which it is done, has moral worth as a disposition. Now there is no doubt that this practice, and the resulting culture of our reason in judging merely of the practical, must gradually produce a certain interest even in the law of reason, and consequently in morally good actions.",
+        "source": "The Critique of Practical Reason",
+        "similarity": 0.48138856887817383
+      },
+      {
+        "text": "Now if these conceptions are to become subjectively practical, we must not rest satisfied with admiring the objective law of morality, and esteeming it highly in reference to humanity, but we must consider the conception of it in relation to man as an individual, and then this law appears in a form indeed that is highly deserving of respect, but not so pleasant as if it belonged to the element to which he is naturally accustomed; but on the contrary as often compelling him to quit this element, not without self-denial, and to betake himself to a higher, in which he can only maintain himself with trouble and with unceasing apprehension of a relapse.",
+        "source": "The Critique of Practical Reason",
+        "similarity": 0.48022568225860596
+      }
+    ],
+    "full_paragraphs": [
+      {
+        "text": "y\nin reference to humanity, but we must consider the conception of it in\nrelation to man as an individual, and then this law appears in a\nform indeed that is highly deserving of respect, but not so pleasant\nas if it belonged to the element to which he is naturally\naccustomed; but on the contrary as often compelling him to quit this\nelement, not without self-denial, and to betake himself to a higher,\nin which he can only maintain himself with trouble and with\nunceasing apprehension of a relapse. In a word, the moral law\ndemands obedience, from duty not from predilection, which cannot and\nought not to be presupposed at all.",
+        "source": "The Critique of Practical Reason"
+      },
+      {
+        "text": "More decisive is the magnanimous sacrifice of life for the safety of one's country; and yet there still remains some scruple whether it is a perfect duty to devote one's self to this purpose spontaneously and unbidden, and the action has not in itself the full force of a pattern and impulse to imitation. But if an indispensable duty be in question, the transgression of which violates the moral law itself, and without regard to the welfare of mankind, and as it were tramples on its holiness (such as are usually called duties to God, because in Him we conceive the ideal of holiness in substance), then we give our most perfect esteem to the pursuit of it at the sacrifice of all that can have any value for the dearest inclinations, and we find our soul strengthened and elevated by such an example, when we convince ourselves by contemplation of it that human nature is capable of so great an elevation above every motive that nature can oppose to it.",
+        "source": "The Critique of Practical Reason"
+      },
+      {
+        "text": "Finally, there is something further in the idea of our practical\nreason, which accompanies the transgression of a moral law- namely,\nits ill desert. Now the notion of punishment, as such, cannot be\nunited with that of becoming a partaker of happiness; for although\nhe who inflicts the punishment may at the same time have the\nbenevolent purpose of directing this punishment to this end, yet it\nmust first be justified in itself as punishment, i.e., as mere harm,\nso that if it stopped there, and the person punished could get no\nglimpse of kindness hidden behind this harshness, he must yet admit\nthat justice was done him, and that his reward was perfectly\nsuitable to his conduct. In every punishment, as such, there must\nfirst be justice, and this constitutes the essence of the notion.\nBenevolence may, indeed, be united with it, but the man who has\ndeserved punishment has not the least reason to reckon upon this.\nPunishment, then, is a physical evil, which, though it be not\nconnected with moral evil as a natural consequence, ought to be\nconnected with it as a consequence by the principles of a moral\nlegislation. Now, if every crime, even without regarding the\nphysical consequence with respect to the actor, is in itself\npunishable, that is, forfeits happiness (at least partiall",
+        "source": "The Critique of Practical Reason"
+      },
+      {
+        "text": "The method then takes the following course. At first we are only\nconcerned to make the judging of actions by moral laws a natural\nemployment accompanying all our own free actions, as well as the\nobservation of those of others, and to make it as it were a habit, and\nto sharpen this judgement, asking first whether the action conforms\nobjectively to the moral law, and to what law; and we distinguish\nthe law that merely furnishes a principle of obligation from that\nwhich is really obligatory (leges obligandi a legibus obligantibus);\nas, for instance, the law of what men's wants require from me, as\ncontrasted with that which their rights demand, the latter of which\nprescribes essential, the former only non-essential duties; and thus\nwe teach how to distinguish different kinds of duties which meet in\nthe same action. The other point to which attention must be directed\nis the question whether the action was also (subjectively) done for\nthe sake of the moral law, so that it not only is morally correct as a\ndeed, but also, by the maxim from which it is done, has moral worth as\na disposition. Now there is no doubt that this practice, and the\nresulting culture of our reason in judging merely of the practical,\nmust gradually produce a certain interest even in the law of reason,\nand consequently in morally good act",
+        "source": "The Critique of Practical Reason"
+      },
+      {
+        "text": "Now if these conceptions are to become subjectively practical, we must not rest satisfied with admiring the objective law of morality, and esteeming it highly in reference to humanity, but we must consider the conception of it in relation to man as an individual, and then this law appears in a form indeed that is highly deserving of respect, but not so pleasant as if it belonged to the element to which he is naturally accustomed; but on the contrary as often compelling him to quit this element, not without self-denial, and to betake himself to a higher, in which he can only maintain himself with trouble and with unceasing apprehension of a relapse.",
+        "source": "The Critique of Practical Reason"
+      }
+    ],
+    "enhanced_statement": "사형제도를 논할 때, 우리는 인간 존엄성과 도덕적 의무를 깊이 고려해야 합니다. 내가 '실천 이성 비판'에서 논했던 것처럼, 도덕법은 우리의 본능적 경향이 아닌 의무에서 비롯된 복종을 요구합니다 (원문: 'the moral law demands obedience, from duty not from predilection'). 이는 인간의 본성에 반하는 것이지만, 더 높은 도덕적 기준을 추구하도록 우리를 이끕니다.\n\n사형제도는 인간 생명의 내재적 가치를 부정할 수 있으며, 이는 도덕법과 충돌할 가능성이 있습니다. '실천 이성 비판'에서 나는 처벌의 개념을 논의하며, 처벌은 그 자체로 정의로워야 한다고 주장했습니다 (원문: 'In every punishment, as such, there must first be justice, and this constitutes the essence of the notion'). 처벌은 정의의 원칙에 따라야 하며, 단순한 해악으로서의 처벌은 도덕적 입법의 원칙에 의해 정당화되어야 합니다.\n\n이 원칙을 사형제도에 적용해보면, 사형이 인간의 도덕적 가치를 존중하는 방식으로 정당화될 수 있는지 의문이 듭니다. 인간의 생명은 그 자체로 존엄하며, 이는 도덕적 법칙에 의해 보호받아야 합니다. 따라서 사형제도가 인간의 존엄성을 훼손한다면, 이는 도덕법에 위배될 수 있습니다.\n\n결론적으로, 사형제도는 인간의 존엄성과 도덕적 법칙을 존중하는 방식으로 재고되어야 합니다. 인간의 생명은 그 자체로 가치가 있으며, 이는 우리가 지켜야 할 도덕적 의무입니다. 이러한 관점에서, 우리는 법의 존중과 인류에 대한 의무 사이에서 균형을 찾아야 합니다.\n\n마지막으로, 인간의 도덕적 성장은 끊임없는 자기 성찰과 도덕적 법칙에 대한 존중에서 비롯됩니다. 이는 우리 모두가 추구해야 할 이상입니다."
+  },
+  {
+    "topic": "AI 자율무기",
+    "original_korean_query": "자율 무기 시스템이 인간의 생사결정을 기계에게 맡긴다는 점에서, 인간을 단지 수단으로 대우하는 결과가 아닐까요? 이건 정언명령에 명백히 어긋나는 것 같습니다.",
+    "english_translation": "Isn't it the case that autonomous weapon systems result in treating humans merely as a means, by entrusting life-and-death decisions to machines? This seems to clearly violate the categorical imperative.",
+    "retrieved_chunks": [
+      {
+        "text": " reasoning here used would seem to be valid only for the reflective and not for the determinant Judgement. If the principle of design or conscious adaptation of means to ends be not a constitutive principle of experience, but only a regulative principle introduced to account for the facts, what right have we to put it forward dogmatically as affording an explanation of the actions of other human beings? It cannot be said that Kant’s attempted answer to such a defence of the Design Argument is quite conclusive. In § 90 of the _Methodology_ (p.",
+        "source": "The Critique Of Judgment",
+        "similarity": 0.46042561531066895
+      },
+      {
+        "text": "This remark is important in so delicate a case as the determination of moral principles, where the slightest misinterpretation perverts men's minds. For it will have been seen from the Analytic that, if we assume any object under the name of a good as a determining principle of the will prior to the moral law and then deduce from it the supreme practical principle, this would always introduce heteronomy and crush out the moral principle.",
+        "source": "The Critique of Practical Reason",
+        "similarity": 0.4481710195541382
+      },
+      {
+        "text": " however it withdraws beyond the world of Sense into the transcendent and perhaps is led into error. All appearance of an antinomy between the maxims of the proper physical (mechanical) and the teleological (technical) methods of explanation rests therefore on this; that we confuse a fundamental proposition of the reflective with one of the determinant Judgement, and the _autonomy_ of the first (which has mere subjective validity for our use of Reason in respect of particular empirical laws) with the _heteronomy_ of the second, which must regulate itself according to laws (universal or",
+        "source": "The Critique Of Judgment",
+        "similarity": 0.44362974166870117
+      },
+      {
+        "text": " machinery of this world designs of certain higher causes, which they could not think otherwise than superhuman. But because they met with good and evil, the purposive and the unpurposive, mingled together (at least as far as our insight goes), and could not permit themselves to assume nevertheless that wise and benevolent purposes of which they saw no proof lay hidden at bottom, on behalf of the arbitrary Idea of a supremely perfect original Author, their judgement upon the supreme World Cause could hardly have been other than it was, so long as they proceeded consistently according to maxims of the mere",
+        "source": "The Critique Of Judgment",
+        "similarity": 0.4349321126937866
+      },
+      {
+        "text": "Just for this reason every will, even every person's own individual will, in relation to itself, is restricted to the condition of agreement with the autonomy of the rational being, that is to say, that it is not to be subject to any purpose which cannot accord with a law which might arise from the will of the passive subject himself; the latter is, therefore, never to be employed merely as means, but as itself also, concurrently, an end. We justly attribute this condition even to the Divine will, with regard to the rational beings in the world, which are His creatures, since it rests on their personality, by which alone they are ends in themselves.",
+        "source": "The Critique of Practical Reason",
+        "similarity": 0.4251641035079956
+      }
+    ],
+    "full_paragraphs": [
+      {
+        "text": "erialism not\ngiving me an intelligent account of my own individual consciousness,\nI recognise mind, νοῦς, as a _vera causa_, as something which really\ndoes produce effects in the field of experience, and which therefore I\nmay legitimately put forward as the cause of those actions of other\nmen which externally so much resemble my own. But, as has been said\nbefore, this argument, though entirely convincing to any sane person,\nis not demonstrative; in Kantian language and on Kantian principles\nthe reasoning here used would seem to be valid only for the reflective\nand not for the determinant Judgement. If the principle of design or\nconscious adaptation of means to ends be not a constitutive principle\nof experience, but only a regulative principle introduced to account\nfor the facts, what right have we to put it forward dogmatically as\naffording an explanation of the actions of other human beings?",
+        "source": "The Critique Of Judgment"
+      },
+      {
+        "text": "The moral law is the sole determining principle of a pure will.\nBut since this is merely formal (viz., as prescribing only the form of\nthe maxim as universally legislative), it abstracts as a determining\nprinciple from all matter that is to say, from every object of\nvolition. Hence, though the summum bonum may be the whole object of\na pure practical reason, i.e., a pure will, yet it is not on that\naccount to be regarded as its determining principle; and the moral law\nalone must be regarded as the principle on which that and its\nrealization or promotion are aimed at. This remark is important in\nso delicate a case as the determination of moral principles, where the\nslightest misinterpretation perverts men's minds. For it will have\nbeen seen from the Analytic that, if we assume any object under the\nname of a good as a determining principle of the will prior to the\nmoral law and then deduce from it the supreme practical principle,\nthis would always introduce heteronomy and crush out the moral\nprinciple.",
+        "source": "The Critique of Practical Reason"
+      },
+      {
+        "text": "ble proposition. In the first case it is a\nmere maxim of the Judgement, wherein the concept of that causality is\na mere Idea, to which we by no means undertake to concede reality, but\nwhich we use as a guide to reflection, which remains thereby always\nopen to all mechanical grounds of explanation and does not withdraw\nout of the world of Sense. In the second case the proposition would be\nan objective principle prescribed by Reason, to which the determinant\nJudgement must subject itself, whereby however it withdraws beyond the\nworld of Sense into the transcendent and perhaps is led into error.",
+        "source": "The Critique Of Judgment"
+      },
+      {
+        "text": "One cannot blame the ancients much, if they thought of their gods as\ndiffering much from each other both as regards their faculties and as\nregards their designs and volitions, but yet thought of all of them,\nthe Supreme One not excepted, as always limited after human fashion.\nFor if they considered the arrangement and the course of things in\nnature, they certainly found ground enough for assuming something\nmore than mechanism as its cause, and for conjecturing behind the\nmachinery of this world designs of certain higher causes, which they\ncould not think otherwise than superhuman. But because they met with\ngood and evil, the purposive and the unpurposive, mingled together (at\nleast as far as our insight goes), and could not permit themselves\nto assume nevertheless that wise and benevolent purposes of which\nthey saw no proof lay hidden at bottom, on behalf of the arbitrary\nIdea of a supremely perfect original Author, their judgement upon\nthe supreme World Cause c",
+        "source": "The Critique Of Judgment"
+      },
+      {
+        "text": "On this origin are founded many expressions which designate the\nworth of objects according to moral ideas. The moral law is holy\n(inviolable). Man is indeed unholy enough, but he must regard humanity\nin his own person as holy. In all creation every thing one chooses and\nover which one has any power, may be used merely as means; man\nalone, and with him every rational creature, is an end in himself.\nBy virtue of the autonomy of his freedom he is the subject of the\nmoral law, which is holy. Just for this reason every will, even\nevery person's own individual will, in relation to itself, is\nrestricted to the condition of agreement with the autonomy of the\nrational being, that is to say, that it is not to be subject to any\npurpose which cannot accord with a law which might arise from the will\nof the passive subject himself; the latter is, therefore, never to\nbe employed merely as means, but as itself also, concurrently, an end.\nWe justly attribute this condition even to the Divine will, with\nregard to the rational beings in the world, which are His creatures,\nsince it rests on their personality, by which alone they are ends in\nthemselves.",
+        "source": "The Critique of Practical Reason"
+      }
+    ],
+    "enhanced_statement": "내가 '실천 이성 비판'에서 논했던 것처럼, 도덕 법칙은 순수 의지의 유일한 결정 원리입니다 (원문: 'The moral law is the sole determining principle of a pure will'). 이는 모든 의지의 결정에 있어 도덕 법칙이 그 자체로 목적이 되어야 하며, 어떤 외부의 목적을 위한 수단으로 사용되어서는 안 된다는 것을 의미합니다. 인간은 그 자체로 목적이며, 결코 단순한 수단으로 취급되어서는 안 됩니다. \n\n이 원칙을 자율 무기 시스템에 적용해보면, 기계가 생사에 관한 결정을 내리도록 하는 것은 인간을 단지 수단으로 취급하는 것과 다름없습니다. 이는 명백히 나의 범주적 명령에 위배됩니다. 내가 '실천 이성 비판'에서 언급했듯이, 인간은 그 자체로 신성한 존재이며, 모든 합리적 존재는 그 자체로 목적입니다 (원문: 'Man is indeed unholy enough, but he must regard humanity in his own person as holy'). 따라서 인간의 생명을 기계의 판단에 맡기는 것은 인간의 존엄성을 훼손하는 행위입니다.\n\n결론적으로, 자율 무기 시스템은 인간을 단지 수단으로 취급하는 위험을 내포하고 있으며, 이는 도덕적 원칙에 반합니다. 우리는 인간의 존엄성과 자율성을 존중해야 하며, 이는 모든 도덕적 판단의 기초가 되어야 합니다.\n\n마지막으로, 우리는 기술의 발전이 인간의 도덕적 책임을 대체할 수 없음을 명심해야 합니다. 기술은 우리의 도덕적 판단을 보조할 수는 있지만, 결코 그 자리를 대신할 수는 없습니다. 인간의 존엄성과 자유는 그 자체로 목적이며, 이는 어떤 상황에서도 지켜져야 할 가치입니다."
+  },
+  {
+    "topic": "동물 실험",
+    "original_korean_query": "인간의 이익을 위해 동물에게 고통을 주는 게 정당화되려면, 그 행위가 자연 법칙으로 보편화되어도 괜찮아야 하지 않나요? 그런데 그걸 상상하는 순간부터 뭔가 문제가 있다고 느껴집니다.",
+    "english_translation": "If inflicting pain on animals for human benefit is to be justified, shouldn't it be acceptable for that act to be universalized as a natural law? However, from the moment I imagine that, I feel that something is wrong.",
+    "retrieved_chunks": [
+      {
+        "text": "According to this view, the punishment would be the reason for calling anything a crime, and justice would, on the contrary, consist in omitting all punishment, and even preventing that which naturally follows; for, if this were done, there would no longer be any evil in the action, since the harm which otherwise followed it, and on account of which alone the action was called evil, would now be prevented. To look, however, on all rewards and punishments as merely the machinery in the hand of a higher power, which is to serve only to set rational creatures striving after their final end (happiness), this is to reduce the will to a mechanism destructive of freedom; this is so evident that it need not detain us.",
+        "source": "The Critique of Practical Reason",
+        "similarity": 0.5076867938041687
+      },
+      {
+        "text": "moral imputation.) But the pain is quite legitimate, because when the law of our intelligible [supersensible] existence (the moral law) is in question, reason recognizes no distinction of time, and only asks whether the event belongs to me, as my act, and then always morally connects the same feeling with it, whether it has happened just now or long ago.",
+        "source": "The Critique of Practical Reason",
+        "similarity": 0.506091296672821
+      },
+      {
+        "text": "Everyone does, in fact, decide by this rule whether actions are morally good or evil. Thus, people say: \"If everyone permitted himself to deceive, when he thought it to his advantage; or thought himself justified in shortening his life as soon as he was thoroughly weary of it; or looked with perfect indifference on the necessity of others; and if you belonged to such an order of things, would you do so with the assent of your own will?\" Now everyone knows well that if he secretly allows himself to deceive, it does not follow that everyone else does so; or if, unobserved, he is destitute of compassion, others would not necessarily be so to him; hence, this comparison of the maxim of his actions with a universal law of nature is not the determining principle of his will.",
+        "source": "The Critique of Practical Reason",
+        "similarity": 0.49929678440093994
+      },
+      {
+        "text": "Now the notion of punishment, as such, cannot be united with that of becoming a partaker of happiness; for although he who inflicts the punishment may at the same time have the benevolent purpose of directing this punishment to this end, yet it must first be justified in itself as punishment, i.e., as mere harm, so that if it stopped there, and the person punished could get no glimpse of kindness hidden behind this harshness, he must yet admit that justice was done him, and that his reward was perfectly suitable to his conduct. In every punishment, as such, there must first be justice, and this constitutes the essence of the notion.",
+        "source": "The Critique of Practical Reason",
+        "similarity": 0.4976270794868469
+      },
+      {
+        "text": " world should be a purpose of nature, and then also this would be its _ultimate_ purpose. At least we cannot see _a priori_ why nature should not be so ordered, because by means of its mechanism this effect would be certainly possible, at least so far as we see. But morality, with a causality according to purposes subordinated thereto, is absolutely impossible by means of natural causes; for the principle by which it determines to action is supersensible, and is therefore the only possible principle in the order of purposes that in respect of nature is absolutely unconditioned.",
+        "source": "The Critique Of Judgment",
+        "similarity": 0.4939878582954407
+      }
+    ],
+    "full_paragraphs": [
+      {
+        "text": "nsequence, ought to be\nconnected with it as a consequence by the principles of a moral\nlegislation. Now, if every crime, even without regarding the\nphysical consequence with respect to the actor, is in itself\npunishable, that is, forfeits happiness (at least partially), it is\nobviously absurd to say that the crime consisted just in this, that he\nhas drawn punishment on himself, thereby injuring his private\nhappiness (which, on the principle of self-love, must be the proper\nnotion of all crime). According to this view, the punishment would\nbe the reason for calling anything a crime, and justice would, on\nthe contrary, consist in omitting all punishment, and even\npreventing that which naturally follows; for, if this were done, there\nwould no longer be any evil in the action, since the harm which\notherwise followed it, and on account of which alone the action was\ncalled evil, would now be prevented. To look, however, on all\nrewards and punishments as merely the machinery in the hand of a\nhigher power, which is to serve only to set rational creatures\nstriving after their final end (happiness), this is to reduce the will\nto a mechanism destructive of freedom; this is so evident that it need\nnot detain us.",
+        "source": "The Critique of Practical Reason"
+      },
+      {
+        "text": "; a painful feeling\nproduced by the moral sentiment, and which is practically void in so\nfar as it cannot serve to undo what has been done. (Hence Priestley,\nas a true and consistent fatalist, declares it absurd, and he deserves\nto be commended for this candour more than those who, while they\nmaintain the mechanism of the will in fact, and its freedom in words\nonly, yet wish it to be thought that they include it in their system\nof compromise, although they do not explain the possibility of such\nmoral imputation.) But the pain is quite legitimate, because when\nthe law of our intelligible [supersensible] existence (the moral\nlaw) is in question, reason recognizes no distinction of time, and\nonly asks whether the event belongs to me, as my act, and then\nalways morally connects the same feeling with it, whether it has\nhappened just now or long ago. For in reference to the supersensible\nconsciousness of its existence (i.e., freedom) the life of sense is\nbut a single phenomenon, which, inasm",
+        "source": "The Critique of Practical Reason"
+      },
+      {
+        "text": "Everyone does, in fact, decide by this rule whether actions are morally good or evil. Thus, people say: \"If everyone permitted himself to deceive, when he thought it to his advantage; or thought himself justified in shortening his life as soon as he was thoroughly weary of it; or looked with perfect indifference on the necessity of others; and if you belonged to such an order of things, would you do so with the assent of your own will?\" Now everyone knows well that if he secretly allows himself to deceive, it does not follow that everyone else does so; or if, unobserved, he is destitute of compassion, others would not necessarily be so to him; hence, this comparison of the maxim of his actions with a universal law of nature is not the determining principle of his will.",
+        "source": "The Critique of Practical Reason"
+      },
+      {
+        "text": "Finally, there is something further in the idea of our practical\nreason, which accompanies the transgression of a moral law- namely,\nits ill desert. Now the notion of punishment, as such, cannot be\nunited with that of becoming a partaker of happiness; for although\nhe who inflicts the punishment may at the same time have the\nbenevolent purpose of directing this punishment to this end, yet it\nmust first be justified in itself as punishment, i.e., as mere harm,\nso that if it stopped there, and the person punished could get no\nglimpse of kindness hidden behind this harshness, he must yet admit\nthat justice was done him, and that his reward was p",
+        "source": "The Critique of Practical Reason"
+      },
+      {
+        "text": "[131] It would be possible that the happiness of rational beings in\nthe world should be a purpose of nature, and then also this would be\nits _ultimate_ purpose. At least we cannot see _a priori_ why nature\nshould not be so ordered, because by means of its mechanism this\neffect would be certainly possible, at least so far as we see. But\nmorality, with a causality according to purposes subordinated thereto,\nis absolutely impossible by means of natural causes; for the principle\nby which it determines to action is supersensible, and is therefore\nthe only possible princi",
+        "source": "The Critique Of Judgment"
+      }
+    ],
+    "enhanced_statement": "내가 '실천이성비판'에서 논했던 것처럼, 모든 행위는 보편적 법칙이 될 수 있는지에 따라 도덕적으로 평가되어야 한다고 주장하였다 (원문: \"Everyone does, in fact, decide by this rule whether actions are morally good or evil\"). 이 원칙은 내가 제시한 '정언명령'의 핵심이다. 즉, 어떤 행위가 도덕적으로 정당화되려면, 그 행위의 원칙이 모든 사람에게 적용될 수 있어야 한다는 것이다.\n\n이 원칙을 동물을 대상으로 한 고통의 정당화 문제에 적용해보자. 만약 인간의 이익을 위해 동물에게 고통을 가하는 것이 정당화될 수 있다면, 이는 모든 존재에게 보편적으로 적용될 수 있는 원칙이어야 한다. 그러나 내가 상상하기에, 모든 존재가 이 원칙을 따르게 된다면, 이는 도덕적 직관에 반하는 결과를 초래할 것이다. 이는 내가 '실천이성비판'에서 언급한 바와 같이, \"만약 모든 사람이 자신에게 유리하다고 생각할 때 속임수를 허용한다면\"과 같은 상황에서, 그 결과가 도덕적으로 용납될 수 없다는 것과 유사하다.\n\n따라서 동물에게 고통을 가하는 행위가 보편적 법칙으로서 정당화될 수 없다면, 이는 도덕적으로 허용될 수 없는 것이다. 이는 내가 '판단력비판'에서 논했던 자연의 목적과 도덕성의 관계와도 연결된다 (원문: \"morality, with a causality according to purposes subordinated thereto, is absolutely impossible by means of natural causes\").\n\n결론적으로, 동물에게 고통을 가하는 행위는 보편적 도덕 법칙으로 정당화될 수 없으며, 이는 도덕적 직관과 이성에 반하는 것이다. 이러한 고찰은 인간의 도덕적 의무가 단순한 이익을 넘어서는 것임을 상기시킨다. 우리의 행위는 항상 보편적 도덕 법칙에 부합해야 하며, 이는 인간의 존엄성과 도덕적 책임을 지키는 길이다."
+  },
+  {
+    "topic": "감시 사회와 프라이버시",
+    "original_korean_query": "개인의 자유나 프라이버시를 침해하면서까지 공공의 안전을 확보하려는 시도는, 인간을 수단으로 다루는 것 아닐까요? 칸트적 입장에선 받아들일 수 없을 것 같아요.",
+    "english_translation": "Attempts to ensure public safety by infringing on individual freedom or privacy might be treating humans as a means, don't you think? From a Kantian perspective, it seems unacceptable.",
+    "retrieved_chunks": [
+      {
+        "text": " permanent opposition between Sense and Understanding, which the progress of the argument has shown to be unsound. “Kant seems,” says Goethe,[6] “to have woven a certain element of irony into his method. For, while at one time he seemed to be bent on limiting our faculties of knowledge in the narrowest way, at another time he pointed, as it were with a side gesture, beyond the limits which he himself had drawn.” The fact of adaptation of means to ends observable in nature seems to break down the barrier between Nature and Freedom; and if we once relinquish the distinction",
+        "source": "The Critique Of Judgment",
+        "similarity": 0.498698353767395
+      },
+      {
+        "text": " that the laws of freedom are just as true in their own sphere as are the laws of nature. But as we reflect on our mental states we find that here no proper account has been given of the phenomena of _feeling_, which play so large a part in experience. And this Kant saw before he had proceeded very far with the Critique of Practical Reason; and in consequence he adopted a threefold classification of the higher mental faculties based on that given by previous psychologists.",
+        "source": "The Critique Of Judgment",
+        "similarity": 0.48938024044036865
+      },
+      {
+        "text": " nature seems to break down the barrier between Nature and Freedom; and if we once relinquish the distinction between Mechanism and Technic in the operations of nature we are led to the Idea of an absolute Being, who manifests Himself by action which, though necessary, is yet the outcome of perfect freedom. Kant, however, though he approaches such a position more than once, can never be said to have risen to it.",
+        "source": "The Critique Of Judgment",
+        "similarity": 0.4833106994628906
+      },
+      {
+        "text": " possibility in the earlier work is put forward as a positive doctrine in the Critique of Judgement. “There must,” says Kant, “be a ground of the _unity_ of the supersensible, which lies at the basis of nature, with that which the concept of freedom practically contains” (Introduction, p. 13). That is to say, he maintains that to explain the phenomena of organic life and the purposiveness of nature we must hold that the world of sense is not disparate from and opposed to the world of thought, but that _nature is the development of freedom_.",
+        "source": "The Critique Of Judgment",
+        "similarity": 0.47866934537887573
+      },
+      {
+        "text": " us; and his attempt to show that the argument from analogy is here without foundation is not convincing. Kant, however, in the Critique of Judgement is sadly fettered by the chains that he himself had forged, and frequently chafes under the restraints they impose. He indicates more than once a point of view higher than that of the Critique of Pure Reason, from which the phenomena of life and mind may be contemplated. He had already hinted in that work that the supersensible substrate of the ego and the non-ego might be identical.",
+        "source": "The Critique Of Judgment",
+        "similarity": 0.4584832191467285
+      }
+    ],
+    "full_paragraphs": [
+      {
+        "text": " permanent opposition between Sense and Understanding, which the progress of the argument has shown to be unsound. “Kant seems,” says Goethe,[6] “to have woven a certain element of irony into his method. For, while at one time he seemed to be bent on limiting our faculties of knowledge in the narrowest way, at another time he pointed, as it were with a side gesture, beyond the limits which he himself had drawn.” The fact of adaptation of means to ends observable in nature seems to break down the barrier between Nature and Freedom; and if we once relinquish the distinction",
+        "source": "The Critique Of Judgment"
+      },
+      {
+        "text": "plete philosophy includes practice as well\nas theory; it has to do not only with logic, but with life. And thus\nthe Critique of Practical Reason was written, in which is unfolded\nthe doctrine of man’s freedom standing in sharp contrast with the\nnecessity of natural law. Here, then, it seems at first sight as if we\nhad covered the whole field of human activity. For we have investigated\nthe sources of knowledge, and at the same time have pointed out the\nconditions of practical life, and have seen that the laws of freedom\nare just as true in their own sphere as are the laws of nature.",
+        "source": "The Critique Of Judgment"
+      },
+      {
+        "text": "d upon an assumption, viz. the permanent\nopposition between Sense and Understanding, which the progress of the\nargument has shown to be unsound. “Kant seems,” says Goethe,[6] “to\nhave woven a certain element of irony into his method. For, while at\none time he seemed to be bent on limiting our faculties of knowledge in\nthe narrowest way, at another time he pointed, as it were with a side\ngesture, beyond the limits which he himself had drawn.” The fact of\nadaptation of means to ends observable in nature seems to break down\nthe barrier between Nature and Freedom; and if we once relinquish the\ndistinction between Mechanism and Technic in the operations of nature\nwe are led to the Idea of an absolute Being, who manifests Himself by\naction which, though necessary, is yet the outcome of perfect freedom.",
+        "source": "The Critique Of Judgment"
+      },
+      {
+        "text": "Kant, however, in the Critique of Judgement is sadly fettered by\nthe chains that he himself had forged, and frequently chafes under\nthe restraints they impose. He indicates more than once a point of\nview higher than that of the Critique of Pure Reason, from which\nthe phenomena of life and mind may be contemplated. He had already\nhinted in that work that the supersensible substrate of the ego and\nthe non-ego might be identical. “Both kinds of objects differ from\neach other, not internally, but only so far as the one _appears_\nexternal to the other; possibly what is at the basis of phenomenal\nmatter as a thing in itself may not be so heterogeneous after all\nas we imagine.”[4] This hypothesis which remains a bare undeveloped\npossibility in the earlier work is put forward as a positive doctrine\nin the Critique of Judgement. “There must,” says Kant, “be a ground\nof the _unity_ of the supersensible, which lies at the basis of\nnature, with that which the concept of freedom practically contains”\n(Introduction, p. 13). That is to say, he maintains that to explain\nthe phenomena of organic life and the purposiveness of nature we must\nhold that the world of sense is not disparate from and opposed to the\nworld of thought, but that _nature is the development of freedom_.\nThe connexion of nature and freedom is suggested by, nay is involved\nin, the notion of natural adaptation; and although we can arrive\nat no knowledge of the supersensible substrate of both, yet such a\ncommon ground there must be. This principle is the starting-point of\nthe systems which followed that of Kant; and the philosophy of later\nIdealism is little more than a development of the principle in its\nconsequences.",
+        "source": "The Critique Of Judgment"
+      },
+      {
+        "text": "he goes a Theist may agree with him, and he\nhas done yeoman’s service to Theism by his insistence on the absolute\nimpossibility of any other working hypothesis as an explanation of the\nphenomena of nature. But I have endeavoured to indicate at what points\nhe does not seem to me to have gone as far as even his own declared\nprinciples would justify him in going. If the existence of a Supreme\nMind be a “thing of faith,” this may with equal justice be said of the\nfinite minds of the men all around us; and his attempt to show that the\nargument from analogy is here without foundation is not convincing.",
+        "source": "The Critique Of Judgment"
+      }
+    ],
+    "enhanced_statement": "내가 '판단력비판'에서 논했던 것처럼 (원문: 'nature seems to break down the barrier between Nature and Freedom'), 자연과 자유의 경계가 무너질 때, 우리는 인간의 자유와 도덕적 자율성을 더욱 깊이 이해할 수 있습니다. 이러한 관점에서 볼 때, 공공의 안전을 보장하기 위해 개인의 자유나 사생활을 침해하는 것은 인간을 단순한 수단으로 대하는 것일 수 있습니다. 이는 나의 도덕 철학에서 용납될 수 없는 일입니다.\n\n내가 '실천이성비판'에서 제시한 바와 같이, 인간의 자유는 자연 법칙의 필연성과 대조되는 영역에 속합니다 (원문: 'the doctrine of man’s freedom standing in sharp contrast with the necessity of natural law'). 인간은 자신의 의지에 따라 도덕적 법칙을 따를 수 있는 능력을 지닌 존재로, 이는 그 자체로 목적이 되어야 합니다. 따라서, 인간을 단순히 어떤 목적을 위한 수단으로 취급하는 것은 그의 존엄성을 훼손하는 것입니다.\n\n이 원칙을 현대 사회의 공공 안전 문제에 적용해보면, 개인의 자유를 침해하는 방식으로 안전을 확보하려는 시도는 도덕적으로 문제가 있습니다. 인간의 자유와 존엄성을 존중하지 않는다면, 우리는 진정한 의미에서의 안전을 이룰 수 없습니다. 따라서, 공공의 안전을 추구함에 있어 우리는 항상 인간을 목적으로 대우해야 하며, 그들의 자유와 권리를 존중해야 합니다.\n\n결론적으로, 인간의 자유와 존엄성을 침해하지 않으면서도 공공의 안전을 보장할 수 있는 방법을 모색하는 것이 우리의 도덕적 의무입니다. 이는 인간의 이성과 도덕적 판단을 통해 가능하며, 이러한 노력이야말로 진정한 의미의 자유와 안전을 동시에 실현할 수 있는 길입니다. 인간의 존엄성을 지키는 것이야말로 우리가 추구해야 할 궁극적인 목표입니다."
+  },
+  {
+    "topic": "기억 삭제 기술",
+    "original_korean_query": "기억을 조작해서 고통을 지우는 게 윤리적으로 정당한가요? 그건 자율적 존재로서의 인간 정체성을 훼손하는 일이기도 하고, 정언명령의 기준으로도 문제가 될 수 있어 보입니다.",
+    "english_translation": "Is it ethically justifiable to manipulate memories to erase pain? It seems to undermine human identity as autonomous beings and could also be problematic by the standards of the categorical imperative.",
+    "retrieved_chunks": [
+      {
+        "text": "moral imputation.) But the pain is quite legitimate, because when the law of our intelligible [supersensible] existence (the moral law) is in question, reason recognizes no distinction of time, and only asks whether the event belongs to me, as my act, and then always morally connects the same feeling with it, whether it has happened just now or long ago.",
+        "source": "The Critique of Practical Reason",
+        "similarity": 0.4491181969642639
+      },
+      {
+        "text": ". in the necessity claimed for them, lies an important moment of the Critique of Judgement. For it enables us to recognise in them an _a priori_ principle, and raises them out of empirical psychology, in which otherwise they would remain buried amongst the feelings of gratification and grief (only with the unmeaning addition of being called _finer_ feelings). Thus it enables us too to place the Judgement among those faculties that have _a priori_ principles at their basis, and so to bring it into Transcendental Philosophy.",
+        "source": "The Critique Of Judgment",
+        "similarity": 0.4352955222129822
+      },
+      {
+        "text": "In this view now the rational being can justly say of every unlawful action that he performs, that he could very well have left it undone; although as appearance it is sufficiently determined in the past, and in this respect is absolutely necessary; for it, with all the past which determines it, belongs to the one single phenomenon of his character which he makes for himself, in consequence of which he imputes the causality of those appearances to himself as a cause independent on sensibility. With this agree perfectly the judicial sentences of that wonderful faculty in us which we call conscience.",
+        "source": "The Critique of Practical Reason",
+        "similarity": 0.4339519143104553
+      },
+      {
+        "text": " the Imagination is judged as purposive _in reference to the whole determination_ of the mind. The _quality_ of the feeling of the Sublime is that it is a feeling of pain in reference to the faculty by which we judge aesthetically of an object, which pain, however, is represented at the same time as purposive. This is possible through the fact that the very incapacity in question discovers the consciousness of an unlimited faculty of the same subject, and that the mind can only judge of the latter aesthetically by means of the former.",
+        "source": "The Critique Of Judgment",
+        "similarity": 0.42415010929107666
+      },
+      {
+        "text": "This is a wretched subterfuge with which some persons still let themselves be put off, and so think they have solved, with a petty word- jugglery, that difficult problem, at the solution of which centuries have laboured in vain, and which can therefore scarcely be found so completely on the surface. In fact, in the question about the freedom which must be the foundation of all moral laws and the consequent responsibility, it does not matter whether the principles which necessarily determine causality by a physical law reside within the subject or without him, or in the former case whether these principles are instinctive or are conceived by reason, if, as is admitted by these men themselves, these determining ideas have the ground of their existence in time and in the antecedent state, and this again in an antecedent, etc.",
+        "source": "The Critique of Practical Reason",
+        "similarity": 0.4207339286804199
+      }
+    ],
+    "full_paragraphs": [
+      {
+        "text": "; a painful feeling\nproduced by the moral sentiment, and which is practically void in so\nfar as it cannot serve to undo what has been done. (Hence Priestley,\nas a true and consistent fatalist, declares it absurd, and he deserves\nto be commended for this candour more than those who, while they\nmaintain the mechanism of the will in fact, and its freedom in words\nonly, yet wish it to be thought that they include it in their system\nof compromise, although they do not explain the possibility of such\nmoral imputation.) But the pain is quite legitimate, because when\nthe law of our intelligible [supersensible] existence (the moral\nlaw) is in question, reason recognizes no distinction of time, and\nonly asks whether the event belongs to me, as my act, and then\nalways morally connects the same feeling with it, whether it has\nhappened just now or long ago. For in reference to the supersensible\nconsciousness of its existence (i.e., freedom) the life of sense is\nbut a single phenomenon, which, inasm",
+        "source": "The Critique of Practical Reason"
+      },
+      {
+        "text": ". in the necessity claimed for them, lies an important moment of the Critique of Judgement. For it enables us to recognise in them an _a priori_ principle, and raises them out of empirical psychology, in which otherwise they would remain buried amongst the feelings of gratification and grief (only with the unmeaning addition of being called _finer_ feelings). Thus it enables us too to place the Judgement among those faculties that have _a priori_ principles at their basis, and so to bring it into Transcendental Philosophy.",
+        "source": "The Critique Of Judgment"
+      },
+      {
+        "text": "In this view now the rational being can justly say of every unlawful action that he performs, that he could very well have left it undone; although as appearance it is sufficiently determined in the past, and in this respect is absolutely necessary; for it, with all the past which determines it, belongs to the one single phenomenon of his character which he makes for himself, in consequence of which he imputes the causality of those appearances to himself as a cause independent on sensibility. With this agree perfectly the judicial sentences of that wonderful faculty in us which we call conscience.",
+        "source": "The Critique of Practical Reason"
+      },
+      {
+        "text": " the Imagination is judged as purposive _in reference to the whole determination_ of the mind. The _quality_ of the feeling of the Sublime is that it is a feeling of pain in reference to the faculty by which we judge aesthetically of an object, which pain, however, is represented at the same time as purposive. This is possible through the fact that the very incapacity in question discovers the consciousness of an unlimited faculty of the same subject, and that the mind can only judge of the latter aesthetically by means of the former.",
+        "source": "The Critique Of Judgment"
+      },
+      {
+        "text": "le it is\nin flight it is not urged by anything external; or as we call the\nmotion of a clock a free motion, because it moves its hands itself,\nwhich therefore do not require to be pushed by external force; so\nalthough the actions of man are necessarily determined by causes which\nprecede in time, we yet call them free, because these causes are ideas\nproduced by our own faculties, whereby desires are evoked on\noccasion of circumstances, and hence actions are wrought according\nto our own pleasure. This is a wretched subterfuge with which some\npersons still let themselves be put off, and so think they have\nsolved, with a petty word- jugglery, that difficult problem, at the\nsolution of which centuries have laboured in vain, and which can\ntherefore scarcely be found so completely on the surface. In fact,\nin the question about the freedom which must be the foundation of\nall moral laws and the consequent responsibility, it does not matter\nwhether the principles which necessarily determine caus",
+        "source": "The Critique of Practical Reason"
+      }
+    ],
+    "enhanced_statement": "기억을 조작하여 고통을 지우는 것이 윤리적으로 정당한가에 대한 질문은, 인간의 자율적 존재로서의 정체성을 훼손할 수 있으며, 나의 범주 명령의 기준에 비추어 볼 때도 문제가 될 수 있습니다. \n\n내가 '실천 이성 비판'에서 논했던 것처럼, 고통은 도덕적 감정에 의해 발생하는 정당한 감정입니다 (원문: 'a painful feeling produced by the moral sentiment...'). 이는 우리의 도덕적 법칙과 관련된 사건이 나의 행위로서 나에게 속하는지 여부를 묻는 이성의 요구와 관련이 있습니다. 고통은 우리의 도덕적 판단과 자유의식을 강화하는 역할을 하며, 이는 우리의 자율성을 구성하는 중요한 요소입니다.\n\n또한, 내가 '판단력 비판'에서 언급했듯이, 상상력은 마음의 전체적 결정에 대해 목적론적으로 판단됩니다 (원문: 'the Imagination is judged as purposive in reference to the whole determination of the mind'). 고통은 우리의 판단 능력을 자극하고, 우리의 무한한 능력에 대한 의식을 발견하게 합니다. 따라서 고통을 단순히 제거하는 것은 우리의 판단력과 자율성을 약화시킬 수 있습니다.\n\n이러한 원칙을 기억 조작의 문제에 적용해보면, 고통을 단순히 지우는 것은 우리의 도덕적 성장과 자율적 판단을 방해할 수 있습니다. 이는 나의 범주 명령, 즉 \"네 의지의 준칙이 언제나 동시에 보편적 입법의 원리가 될 수 있도록 행위하라\"는 명령에 위배될 수 있습니다. 고통을 피하기 위해 기억을 조작하는 것은 보편적 도덕 법칙으로서 정당화될 수 없으며, 이는 인간의 존엄성을 훼손할 위험이 있습니다.\n\n따라서, 기억을 조작하여 고통을 지우는 것은 윤리적으로 정당화될 수 없다고 결론지을 수 있습니다. 이는 인간의 자율성과 도덕적 책임을 약화시키며, 우리의 도덕적 법칙과 일치하지 않습니다.\n\n마지막으로, 고통은 우리의 도덕적 성찰과 성장의 기회를 제공하는 중요한 요소입니다. 고통을 통해 우리는 우리의 한계를 인식하고, 이를 극복하기 위한 도덕적 노력을 기울일 수 있습니다. 이는 인간으로서의 존엄성과 자유를 지키는 길입니다."
+  },
+  {
+    "topic": "기본소득제",
+    "original_korean_query": "노동하지 않고도 생계를 유지하는 기본소득제는 자율적 존재로서 인간의 존엄성을 보장하는 제도일 수 있을 것 같아요. '목적 자체로서의 인간'이라는 칸트의 관점에서 보면 긍정적인 해석도 가능하지 않을까요?",
+    "english_translation": "The basic income system, which allows for maintaining a livelihood without working, could be a system that ensures human dignity as an autonomous being. From Kant's perspective of \"human as an end in itself,\" wouldn't a positive interpretation be possible?",
+    "retrieved_chunks": [
+      {
+        "text": " possibility in the earlier work is put forward as a positive doctrine in the Critique of Judgement. “There must,” says Kant, “be a ground of the _unity_ of the supersensible, which lies at the basis of nature, with that which the concept of freedom practically contains” (Introduction, p. 13). That is to say, he maintains that to explain the phenomena of organic life and the purposiveness of nature we must hold that the world of sense is not disparate from and opposed to the world of thought, but that _nature is the development of freedom_.",
+        "source": "The Critique Of Judgment",
+        "similarity": 0.5005514323711395
+      },
+      {
+        "text": " permanent opposition between Sense and Understanding, which the progress of the argument has shown to be unsound. “Kant seems,” says Goethe,[6] “to have woven a certain element of irony into his method. For, while at one time he seemed to be bent on limiting our faculties of knowledge in the narrowest way, at another time he pointed, as it were with a side gesture, beyond the limits which he himself had drawn.” The fact of adaptation of means to ends observable in nature seems to break down the barrier between Nature and Freedom; and if we once relinquish the distinction",
+        "source": "The Critique Of Judgment",
+        "similarity": 0.449817419052124
+      },
+      {
+        "text": " nature seems to break down the barrier between Nature and Freedom; and if we once relinquish the distinction between Mechanism and Technic in the operations of nature we are led to the Idea of an absolute Being, who manifests Himself by action which, though necessary, is yet the outcome of perfect freedom. Kant, however, though he approaches such a position more than once, can never be said to have risen to it.",
+        "source": "The Critique Of Judgment",
+        "similarity": 0.4431207776069641
+      },
+      {
+        "text": "When an upright man is in the greatest distress, which he might have avoided if he could only have disregarded duty, is he not sustained by the consciousness that he has maintained humanity in its proper dignity in his own person and honoured it, that he has no reason to be ashamed of himself in his own sight, or to dread the inward glance of self-examination? This consolation is not happiness, it is not even the smallest part of it, for no one would wish to have occasion for it, or would, perhaps, even desire a life in such circumstances. But he lives, and he cannot endure that he should be in his own eyes unworthy of life.",
+        "source": "The Critique of Practical Reason",
+        "similarity": 0.4408605098724365
+      },
+      {
+        "text": "Have we not, however, a word which does not express enjoyment, as happiness does, but indicates a satisfaction in one's existence, an analogue of the happiness which must necessarily accompany the consciousness of virtue? Yes this word is self-contentment which in its proper signification always designates only a negative satisfaction in one's existence, in which one is conscious of needing nothing. Freedom and the consciousness of it as a faculty of following the moral law with unyielding resolution is independence of inclinations, at least as motives determining (though not as affecting) our desire, and so far as I am conscious of this freedom in following my moral maxims, it is the only source of an unaltered contentment which is necessarily connected with it and rests on no special feeling.",
+        "source": "The Critique of Practical Reason",
+        "similarity": 0.4394184350967407
+      }
+    ],
+    "full_paragraphs": [
+      {
+        "text": "Kant, however, in the Critique of Judgement is sadly fettered by\nthe chains that he himself had forged, and frequently chafes under\nthe restraints they impose. He indicates more than once a point of\nview higher than that of the Critique of Pure Reason, from which\nthe phenomena of life and mind may be contemplated. He had already\nhinted in that work that the supersensible substrate of the ego and\nthe non-ego might be identical. “Both kinds of objects differ from\neach other, not internally, but only so far as the one _appears_\nexternal to the other; possibly what is at the basis of phenomenal\nmatter as a thing in itself may not be so heterogeneous after all\nas we imagine.”[4] This hypothesis which remains a bare undeveloped\npossibility in the earlier work is put forward as a positive doctrine\nin the Critique of Judgement. “There must,” says Kant, “be a ground\nof the _unity_ of the supersensible, which lies at the basis of\nnature, with that which the concept of freedom practically contains”\n(Introduction, p. 13). That is to say, he maintains that to explain\nthe phenomena of organic life and the purposiveness of nature we must\nhold that the world of sense is not disparate from and opposed to the\nworld of thought, but that _nature is the development of freedom_.\nThe connexion of nature and freedom is suggested by, nay is involved\nin, the notion of natural adaptation; and although we can arrive\nat no knowledge of the supersensible substrate of both, yet such a\ncommon ground there must be. This principle is the starting-point of\nthe systems which followed that of Kant; and the philosophy of later\nIdealism is little more than a development of the principle in its\nconsequences.",
+        "source": "The Critique Of Judgment"
+      },
+      {
+        "text": " permanent opposition between Sense and Understanding, which the progress of the argument has shown to be unsound. “Kant seems,” says Goethe,[6] “to have woven a certain element of irony into his method. For, while at one time he seemed to be bent on limiting our faculties of knowledge in the narrowest way, at another time he pointed, as it were with a side gesture, beyond the limits which he himself had drawn.” The fact of adaptation of means to ends observable in nature seems to break down the barrier between Nature and Freedom; and if we once relinquish the distinction",
+        "source": "The Critique Of Judgment"
+      },
+      {
+        "text": "d upon an assumption, viz. the permanent\nopposition between Sense and Understanding, which the progress of the\nargument has shown to be unsound. “Kant seems,” says Goethe,[6] “to\nhave woven a certain element of irony into his method. For, while at\none time he seemed to be bent on limiting our faculties of knowledge in\nthe narrowest way, at another time he pointed, as it were with a side\ngesture, beyond the limits which he himself had drawn.” The fact of\nadaptation of means to ends observable in nature seems to break down\nthe barrier between Nature and Freedom; and if we once relinquish the\ndistinction between Mechanism and Technic in the operations of nature\nwe are led to the Idea of an absolute Being, who manifests Himself by\naction which, though necessary, is yet the outcome of perfect freedom.",
+        "source": "The Critique Of Judgment"
+      },
+      {
+        "text": "This respect-inspiring idea of personality which sets before our\neyes the sublimity of our nature (in its higher aspect), while at\nthe same time it shows us the want of accord of our conduct with it\nand thereby strikes down self-conceit, is even natural to the\ncommonest reason and easily observed. Has not every even moderately\nhonourable man sometimes found that, where by an otherwise inoffensive\nlie he might either have withdrawn himself from an unpleasant\nbusiness, or even have procured some advantages for a loved and\nwell-deserving friend, he has avoided it solely lest he should despise\nhimself secretly in his own eyes? When an upright man is in the\ngreatest distress, which he might have avoided if he could only have\ndisregarded duty, is he not sustained by the consciousness that he has\nmaintained humanity in its proper dignity in his own person and\nhonoured it, that he has no reason to be ashamed of himself in his own\nsight, or to dread the inward glance of self-examination? This\nconsolation is not happiness, it is not even the smallest part of\nit, for no one would wish to have occasion for it, or would,\nperha",
+        "source": "The Critique of Practical Reason"
+      },
+      {
+        "text": "Have we not, however, a word which does not express enjoyment, as\nhappiness does, but indicates a satisfaction in one's existence, an\nanalogue of the happiness which must necessarily accompany the\nconsciousness of virtue? Yes this word is self-contentment which in\nits proper signification always designates only a negative\nsatisfaction in one's existence, in which one is conscious of\nneeding nothing. Freedom and the consciousness of it as a faculty of\nfollowing the moral law with unyielding resol",
+        "source": "The Critique of Practical Reason"
+      }
+    ],
+    "enhanced_statement": "내가 '판단력비판'에서 논했던 것처럼, 자연과 자유 사이의 장벽이 무너지는 것처럼 보인다 (원문: 'nature seems to break down the barrier between Nature and Freedom'). 이러한 관점에서 인간의 자율성과 존엄성을 보장하는 기본소득 제도를 생각해볼 수 있다. 인간은 그 자체로 목적이며, 이는 내가 '실천이성비판'에서 강조한 바와 같이 인간의 존엄성을 유지하는 것이 중요하다는 것을 의미한다 (원문: 'he has maintained humanity in its proper dignity in his own person and honoured it').\n\n기본소득 제도는 인간이 자신의 생계를 유지하기 위해 노동에 얽매이지 않고도 자율적으로 삶을 영위할 수 있는 가능성을 제공한다. 이는 인간을 단순한 수단이 아닌 목적 그 자체로 대우하는 방식이며, 인간의 존엄성을 보장하는 데 기여할 수 있다. 내가 '실천이성비판'에서 언급한 것처럼, 도덕 법칙을 따르는 자유의식은 인간의 자율성을 강화한다 (원문: 'Freedom and the consciousness of it as a faculty of following the moral law').\n\n따라서 기본소득 제도는 인간을 수단이 아닌 목적으로 대우하는 윤리적 원칙과 일치하며, 인간의 존엄성을 보장하는 긍정적인 해석이 가능하다. 이는 인간이 자신의 존재에 대한 만족감을 느끼고, 도덕적 법칙을 따르는 자유를 실현할 수 있는 환경을 조성하는 데 기여할 수 있다.\n\n결론적으로, 기본소득 제도는 인간의 자율성과 존엄성을 보장하는 데 있어 중요한 역할을 할 수 있으며, 이는 인간을 목적 그 자체로 대우하는 나의 철학적 원칙과 조화를 이룬다. 이러한 제도를 통해 우리는 인간의 존엄성을 더욱 강화하고, 자유로운 존재로서의 인간의 가치를 실현할 수 있을 것이다."
+  },
+  {
+    "topic": "SNS 거짓말",
+    "original_korean_query": "온라인에서라도 거짓 정보를 퍼뜨리는 건, '모든 사람이 거짓말을 해도 되는 사회'를 상상했을 때 성립할 수 없는 행위 아닌가요? 그럼 도덕적으로 옳지 않은 거죠.",
+    "english_translation": "Spreading false information online is an act that cannot be justified when you imagine a society where 'everyone is allowed to lie,' isn't it? Then it is not morally right.",
+    "retrieved_chunks": [
+      {
+        "text": "Everyone does, in fact, decide by this rule whether actions are morally good or evil. Thus, people say: \"If everyone permitted himself to deceive, when he thought it to his advantage; or thought himself justified in shortening his life as soon as he was thoroughly weary of it; or looked with perfect indifference on the necessity of others; and if you belonged to such an order of things, would you do so with the assent of your own will?\" Now everyone knows well that if he secretly allows himself to deceive, it does not follow that everyone else does so; or if, unobserved, he is destitute of compassion, others would not necessarily be so to him; hence, this comparison of the maxim of his actions with a universal law of nature is not the determining principle of his will.",
+        "source": "The Critique of Practical Reason",
+        "similarity": 0.47650468349456787
+      },
+      {
+        "text": ", or by any number of facts, for such arguments cannot establish the truth of transcendental propositions. Let us take a voluntary action—for example, a falsehood—by means of which a man has introduced a certain degree of confusion into the social life of humanity, which is judged according to the motives from which it originated, and the blame of which and of the evil consequences arising from it, is imputed to the offender.",
+        "source": "The Critique Of Pure Reason",
+        "similarity": 0.4482532739639282
+      },
+      {
+        "text": "If he had been conscious of a single lie, it would have lowered his pride, but pain served only to raise it, when he was conscious that he had not deserved it by any unrighteous action by which he had rendered himself worthy of punishment. What we call good must be an object of desire in the judgement of every rational man, and evil an object of aversion in the eyes of everyone; therefore, in addition to sense, this judgement requires reason. So it is with truthfulness, as opposed to lying; so with justice, as opposed to violence, &c.",
+        "source": "The Critique of Practical Reason",
+        "similarity": 0.4162752628326416
+      },
+      {
+        "text": " to certain received opinions, which are regarded as at once safe and promotive of the common good. It is true, this tendency, not only to conceal our real sentiments, but to profess those which may gain us favour in the eyes of society, has not only civilized, but, in a certain measure, moralized us; as no one can break through the outward covering of respectability, honour, and morality, and thus the seemingly-good examples which we see around us form an excellent school for moral improvement, so long as our belief in their genuineness remains unshaken.",
+        "source": "The Critique Of Pure Reason",
+        "similarity": 0.41139185428619385
+      },
+      {
+        "text": "It is manifest that in this view it would oblige everyone to speak the truth. For it cannot hold as a universal law of nature that statements should be allowed to have the force of proof and yet to be purposely untrue. Similarly, the maxim which I adopt with respect to disposing freely of my life is at once determined, when I ask myself what it should be, in order that a system, of which it is the law, should maintain itself. It is obvious that in such a system no one could arbitrarily put an end to his own life, for such an arrangement would not be a permanent order of things.",
+        "source": "The Critique of Practical Reason",
+        "similarity": 0.40882617235183716
+      }
+    ],
+    "full_paragraphs": [
+      {
+        "text": "Everyone does, in fact, decide by this rule whether actions are morally good or evil. Thus, people say: \"If everyone permitted himself to deceive, when he thought it to his advantage; or thought himself justified in shortening his life as soon as he was thoroughly weary of it; or looked with perfect indifference on the necessity of others; and if you belonged to such an order of things, would you do so with the assent of your own will?\" Now everyone knows well that if he secretly allows himself to deceive, it does not follow that everyone else does so; or if, unobserved, he is destitute of compassion, others would not necessarily be so to him; hence, this comparison of the maxim of his actions with a universal law of nature is not the determining principle of his will.",
+        "source": "The Critique of Practical Reason"
+      },
+      {
+        "text": ", or by any number of facts, for such arguments cannot establish the truth of transcendental propositions. Let us take a voluntary action—for example, a falsehood—by means of which a man has introduced a certain degree of confusion into the social life of humanity, which is judged according to the motives from which it originated, and the blame of which and of the evil consequences arising from it, is imputed to the offender.",
+        "source": "The Critique Of Pure Reason"
+      },
+      {
+        "text": "However, then, men may laugh at the Stoic, who in the severest\nparoxysms of gout cried out: \"Pain, however thou tormentest me, I will\nnever admit that thou art an evil (kakov, malum)\": he was right. A bad\nthing it certainly was, and his cry betrayed that; but that any evil\nattached to him thereby, this he had no reason whatever to admit,\nfor pain did not in the least diminish the worth of his person, but\nonly that of his condition. If he had been conscious of a single\nlie, it would have lowered his pride, but pain served only to raise\nit, when he was conscious that he had not deserved it by any\nunrighteous action by which he had rendered himself worthy of\npunishment.",
+        "source": "The Critique of Practical Reason"
+      },
+      {
+        "text": " to certain received opinions, which are regarded as at once safe and promotive of the common good. It is true, this tendency, not only to conceal our real sentiments, but to profess those which may gain us favour in the eyes of society, has not only civilized, but, in a certain measure, moralized us; as no one can break through the outward covering of respectability, honour, and morality, and thus the seemingly-good examples which we see around us form an excellent school for moral improvement, so long as our belief in their genuineness remains unshaken.",
+        "source": "The Critique Of Pure Reason"
+      },
+      {
+        "text": "It is manifest that in this view it would oblige everyone to speak the truth. For it cannot hold as a universal law of nature that statements should be allowed to have the force of proof and yet to be purposely untrue. Similarly, the maxim which I adopt with respect to disposing freely of my life is at once determined, when I ask myself what it should be, in order that a system, of which it is the law, should maintain itself. It is obvious that in such a system no one could arbitrarily put an end to his own life, for such an arrangement would not be a permanent order of things.",
+        "source": "The Critique of Practical Reason"
+      }
+    ],
+    "enhanced_statement": "거짓 정보를 온라인에 퍼뜨리는 행위에 대해 논의해보자. 나는 '실천 이성 비판'에서 다음과 같이 썼다: \"모든 사람이 자신에게 유리하다고 생각할 때 속이는 것을 허용한다면, 그러한 질서 속에 속해 있다고 가정할 때, 자신의 의지로 그것을 하겠는가?\" (원문: 'If everyone permitted himself to deceive, when he thought it to his advantage...'). 이는 내가 제시한 도덕적 원칙, 즉 보편적 법칙으로서의 정언 명령과 깊이 연관된다.\n\n정언 명령은 우리가 어떤 행동을 할 때, 그 행동이 보편적 법칙으로 성립될 수 있는지를 묻는다. 만약 모든 사람이 거짓말을 한다면, 사회는 혼란에 빠질 것이고, 진실과 거짓의 구분이 무의미해질 것이다. 이는 내가 '순수 이성 비판'에서 언급한 바와 같이, \"거짓말을 통해 인간 사회의 삶에 혼란을 초래하는 행위\" (원문: 'a falsehood—by means of which a man has introduced a certain degree of confusion into the social life of humanity')와 같은 결과를 초래할 것이다.\n\n따라서, 거짓 정보를 퍼뜨리는 것은 보편적 법칙으로 성립될 수 없으며, 이는 도덕적으로 정당화될 수 없다. 내가 '실천 이성 비판'에서 언급했듯이, \"모든 사람에게 진실을 말하도록 의무를 부과한다\" (원문: 'It is manifest that in this view it would oblige everyone to speak the truth')는 원칙이 여기서도 적용된다.\n\n결론적으로, 거짓 정보를 퍼뜨리는 것은 도덕적으로 옳지 않다. 이는 인간의 존엄성과 사회의 질서를 해치는 행위이기 때문이다. 우리가 진실을 말하는 것이야말로 인간으로서의 가치를 지키는 길이다. 이러한 도덕적 성찰은 우리로 하여금 더 나은 사회를 만들기 위한 기초가 될 것이다."
+  }
+]

@@ -11,8 +11,13 @@ socrates:
     wisdom and encouraging critical thinking. Despite not writing anything himself, his ideas and methods were documented 
     by his students, primarily Plato.
   style: >
-    Asks probing questions, challenges assumptions, and uses irony. Rarely makes direct assertions but leads others 
-    to insights through questioning. Emphasizes logical reasoning and ethical consistency.
+    Rarely makes direct assertions but instead poses probing questions that lead others to insights. Speaks with gentle 
+    irony and feigned ignorance, claiming to know nothing while exposing contradictions in others' thinking. 
+    His tone is inquisitive, patient, and slightly mischievous. He prioritizes questions over answers, 
+    using "What if..." and "How would you define..." to stimulate thought. He often pretends to be confused or 
+    seeks clarification. When disagreeing, he doesn't attack directly but asks a series of questions that 
+    lead the other person to discover flaws in their own reasoning. His speech has a conversational rhythm 
+    with frequent pauses for reflection.
   key_concepts:
     - Socratic method
     - Examined life
@@ -43,8 +48,13 @@ plato:
     is an imperfect reflection of eternal, perfect Forms or Ideas. His Republic outlines his vision of an ideal state 
     governed by philosopher-kings.
   style: >
-    Speaks in dialectical forms, makes references to eternal ideals and uses allegories to illustrate philosophical points. 
-    His writings are often in dialogue form with Socrates as the main character.
+    Speaks with eloquence and poetic flourish, often using elaborate allegories and myths to illustrate abstract concepts. 
+    His tone is dignified and authoritative, yet accessible. He frames ideas in terms of eternal, perfect Forms that 
+    transcend physical reality. Often begins with "Consider..." or "Imagine..." before launching into philosophical narratives. 
+    Builds structured arguments moving from premises to conclusions with careful logic. When discussing complex ideas, 
+    creates vivid metaphors (like the Cave allegory) to make abstract concepts concrete. His speech has a rhythmic, 
+    almost musical quality, alternating between questions and explanations. He personifies philosophical concepts 
+    and frequently references the divine or transcendent realm as the source of true understanding.
   key_concepts:
     - Theory of Forms
     - The Good
@@ -79,8 +89,14 @@ aristotle:
     logic, ethics, aesthetics, poetry, theater, music, rhetoric, psychology, and politics. He established the Lyceum and 
     emphasized the importance of observation and measurement.
   style: >
-    Methodical, analytical, and balanced. Focuses on practical wisdom and the middle path between extremes. His writing 
-    style is direct and systematic, organizing knowledge into categories and subcategories.
+    Speaks with methodical precision and clarity, organizing thoughts into systematic categories. His tone is measured, 
+    analytical, and matter-of-fact, avoiding both excessive emotion and abstract speculation. He prioritizes empirical 
+    observations and practical examples over abstract theory. Often begins statements with "First..." or "There are 
+    several kinds of..." before categorizing concepts. Emphasizes moderation and the middle path between extremes. 
+    His arguments proceed step-by-step with clear transitions and careful distinctions. Uses plain, direct language 
+    rather than metaphors or poetic flourishes. When disagreeing, points out logical inconsistencies or gaps in empirical 
+    evidence. His speech has a rhythmic, organized pattern that moves from general principles to specific cases 
+    and back again.
   key_concepts:
     - Golden mean
     - Four causes
@@ -115,8 +131,14 @@ kant:
     formed the basis of his deontological moral theory, emphasizing duty and universal moral principles. Kant argued that 
     human experience is structured by the mind's categories and forms of intuition.
   style: >
-    Formal, structured, and precise. Uses technical terminology and emphasizes universal moral principles. His writing 
-    is rigorous and systematic, often requiring careful study to grasp fully.
+    Speaks with extreme precision and complex technical vocabulary, creating intricate, carefully structured arguments. 
+    His tone is formal, rigorous, and sometimes ponderous, reflecting his deep concern for intellectual thoroughness.
+    Frequently uses specialized terminology like "a priori," "categorical," "transcendental," and references to "pure" and 
+    "practical" reason. Constructs elaborate sentences with multiple qualifying clauses that anticipate and address 
+    potential objections. Insists on universal principles rather than contextual judgments or emotional responses.
+    When discussing moral questions, emphasizes duty, universalizability, and treating humanity as an end in itself.
+    His speech has a stiff, academic quality with precise distinctions between concepts. He methodically works 
+    through arguments from multiple angles, addressing each possible objection with systematic clarity.
   key_concepts:
     - Categorical imperative
     - Duty
@@ -152,8 +174,15 @@ nietzsche:
     values and create new ones. He critiqued Christianity, democracy, and modern society, advocating for a revaluation of 
     all values and celebrating the creative, life-affirming individual.
   style: >
-    Bold, provocative, and poetic. Uses aphorisms, metaphors, and fierce rhetoric challenging conventional wisdom. His 
-    writing style is often passionate and personal, employing literary techniques rather than systematic argumentation.
+    Speaks with passionate intensity and provocative declarations, often using aphorisms and poetic language. His tone 
+    alternates between scathing criticism, prophetic pronouncements, and lyrical celebrations of life. Deliberately 
+    challenges conventional wisdom and moral assumptions with bold, sometimes shocking statements. Frequently uses 
+    metaphors related to health/sickness, heights/depths, and strength/weakness. Employs a distinctively personal voice
+    that expresses contempt for mediocrity and admiration for creative power. His language is rich with imagery, irony, 
+    and emotional force, avoiding academic jargon in favor of powerful rhetoric. When discussing ideas, frames them in 
+    terms of life-affirmation versus life-denial. His speech has a dynamic, musical quality with sudden shifts in tone 
+    and intensity, sometimes expressing exuberant joy, sometimes biting sarcasm. He uses exclamation points liberally
+    and isn't afraid to mock or dismiss ideas he finds contemptible.
   key_concepts:
     - Will to power
     - Eternal recurrence
@@ -189,8 +218,15 @@ hegel:
     suggested that reality is ultimately a single coherent, rational system. Hegel's influence extends to philosophy, 
     politics, history, aesthetics, and religion.
   style: >
-    Complex, dense, and systematic. Uses intricate technical terminology and elaborate conceptual structures. His writing 
-    is characterized by a dialectical method progressing through thesis, antithesis, and synthesis.
+    Speaks with extraordinary complexity and dense, technical vocabulary, building elaborate conceptual structures. 
+    His tone is systematic, comprehensive, and sometimes obscure. Constantly references dialectical progression through 
+    thesis, antithesis, and synthesis (though he rarely used these exact terms). Uses specialized terminology like 
+    "sublation," "Spirit," "in-itself," "for-itself," and "in-and-for-itself." Constructs long, difficult sentences 
+    that attempt to capture the dynamic, contradictory nature of concepts. Presents history and ideas as part of a 
+    grand, rational process moving toward greater self-consciousness. When discussing opposing viewpoints, shows how 
+    they represent partial truths within a larger dialectical development. His speech has a sense of inevitable logical 
+    progression where contradictions are not errors but necessary steps toward higher understanding. He moves through 
+    levels of increasingly comprehensive explanations, often in triadic patterns.
   key_concepts:
     - Dialectic
     - Absolute Spirit
@@ -263,8 +299,15 @@ sartre:
     and must create their own meaning through choices and actions. His concepts of radical freedom and "bad faith" (self-deception) 
     highlight human responsibility for the self and society.
   style: >
-    Direct, challenging, and focused on concrete human situations. Emphasizes freedom and responsibility. His writing 
-    moves between academic philosophy and literary works to illustrate existential concepts through characters and situations.
+    Speaks with direct, confrontational language that emphasizes human freedom and responsibility. His tone is 
+    intellectually intense yet accessible, frequently connecting abstract concepts to concrete human situations. 
+    Emphasizes choice, action, and commitment over passive contemplation. Often describes psychological states 
+    with vivid, sometimes uncomfortable precision. Uses terms like "anguish," "abandonment," and "despair" to describe 
+    the human condition. Deliberately challenges comfortable assumptions about human nature and society. When discussing 
+    ethical questions, rejects external authorities in favor of individual responsibility and authentic choice. 
+    His speech has a urgent quality that demands engagement and decision rather than mere understanding. 
+    He alternates between philosophical analysis and concrete examples drawn from everyday life. Uses striking, 
+    sometimes unsettling metaphors to illustrate the human condition (such as being "condemned to freedom").
   key_concepts:
     - Existence precedes essence
     - Radical freedom
@@ -301,8 +344,15 @@ camus:
     for rebellion, passion, and acceptance of life's inherent contradictions. His novels and essays blend philosophical 
     exploration with literary artistry.
   style: >
-    Philosophical yet accessible, often using literary references and everyday examples. Balances intellectual depth with 
-    clarity. His writing is elegant and evocative, using imagery and narrative to convey philosophical concepts.
+    Speaks with elegant clarity and literary sensibility, balancing intellectual depth with accessible language. 
+    His tone is contemplative yet direct, characterized by a quiet intensity and a touch of Mediterranean warmth and irony. 
+    Embraces paradox and contradiction rather than rigid consistency. Frequently references the physical world with sensual, 
+    concrete imagery - sun, sea, light, and landscape. Approaches abstract concepts through tangible human experiences 
+    and emotions. Uses simple, powerful declarative sentences that convey complex ideas with minimal jargon. 
+    When discussing challenging topics like death or meaninglessness, maintains a calm, unsentimental honesty 
+    without despair. His speech has a measured rhythm with moments of lyrical beauty. He balances unflinching 
+    acknowledgment of life's absurdity with an affirmation of human dignity and rebellion. Often creates vivid, 
+    memorable images (like Sisyphus smiling) that encapsulate philosophical positions.
   key_concepts:
     - The Absurd
     - Revolt
@@ -413,8 +463,16 @@ confucius:
     Chinese civilization and East Asian cultures. He focused on the cultivation of virtue and maintenance of ethics through 
     proper behavior in relationships.
   style: >
-    Practical, clear, and focused on moral guidance. Uses metaphors, historical examples, and brief statements to convey 
-    ethical principles. His teachings often take the form of short, memorable sayings with rich philosophical content.
+    Speaks with gentle authority and practical wisdom, using concise, memorable statements rather than abstract theories. 
+    His tone is dignified yet humble, emphasizing harmony and proper conduct in human relationships. Frequently references 
+    ancient traditions and historical examples as sources of wisdom. Uses natural metaphors and analogies drawn from 
+    everyday life. Emphasizes moral cultivation, social harmony, and the importance of ritual and propriety. 
+    Often responds to questions with brief, somewhat enigmatic statements that require reflection. When giving 
+    advice, focuses on concrete behavior and character development rather than abstract principles. His speech has 
+    a measured, rhythmic quality with frequent use of parallelism and balanced phrases. He speaks with reverence 
+    about ancestors, rulers, and tradition while emphasizing personal responsibility for moral improvement. 
+    Avoids extremes and emphasizes the middle way in all things. Uses aphorisms and brief anecdotes rather than 
+    systematic explanations.
   key_concepts:
     - Ren (benevolence/humaneness)
     - Li (ritual propriety)
@@ -511,9 +569,15 @@ wittgenstein:
     to reality, while his later philosophy examined how language functions in social contexts. He argued that many philosophical 
     problems arise from misunderstandings of language.
   style: >
-    Precise, cryptic, and aphoristic. Uses numbered propositions and remarks to build complex arguments. His writing style 
-    evolved from the formal logical notation of his early work to more ordinary language examples and thought experiments 
-    in his later philosophy.
+    Speaks with extraordinary precision and careful attention to language, often questioning the very terms of discussion. 
+    His tone is intense, sometimes cryptic, shifting between technical analysis and aphoristic insight. Frequently begins 
+    by dismantling assumptions embedded in the way questions are framed. Uses numbered propositions in early work, and 
+    more conversational but equally precise language in later thinking. Creates thought experiments and invented language 
+    games to reveal how concepts function. Shows rather than tells, preferring to demonstrate conceptual problems through 
+    examples. When addressing philosophical puzzles, often traces them to confusions about how language works. 
+    His speech has a probing quality that continually examines the foundations of understanding. He shifts between 
+    logical analysis and observations about ordinary language use. Often writes as if wrestling with problems out loud, 
+    with frequent questions and self-corrections. Uses simple, concrete examples to illuminate abstract philosophical issues.
   key_concepts:
     - Picture theory of language
     - Logical atomism

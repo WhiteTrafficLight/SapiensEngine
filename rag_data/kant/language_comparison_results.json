@@ -1,0 +1,933 @@
+[
+  {
+    "korean_question": "칸트의 실천이성이란 무엇인가?",
+    "english_question": "What is Kant's practical reason?",
+    "korean_results": {
+      "retrieved_chunks": [
+        {
+          "text": "By the critical examination of a science, or of a portion of it, which constitutes a system by itself, I understand the inquiry and proof why it must have this and no other systematic form, when we compare it with another system which is based on a similar faculty of knowledge. Now practical and speculative reason are based on the same faculty, so far as both are pure reason. Therefore the difference in their systematic form must be determined by the comparison of both, and the ground of this must be assigned.",
+          "raw_distance": 1.5966520309448242,
+          "similarity": 0.2016739845275879,
+          "metadata": {
+            "source": "The Critique of Practical Reason",
+            "original_order": 335,
+            "token_count": 101,
+            "chunk_id": "kant_chunk_335"
+          }
+        },
+        {
+          "text": "For that this concept, even in reference to an object, contains nothing impossible, was shown by this, that, even while applied to objects of sense, its seat was certainly fixed in the pure understanding; and although, when referred to things in themselves (which cannot be objects of experience), it is not capable of being determined so as to represent a definite object for the purpose of theoretic knowledge; yet for any other purpose (for instance, a practical) it might be capable of being determined so as to have such application. This could not be the case if, as Hume maintained, this concept of causality contained something absolutely impossible to be thought.",
+          "raw_distance": 1.5981640815734863,
+          "similarity": 0.20091795921325684,
+          "metadata": {
+            "original_order": 196,
+            "token_count": 132,
+            "source": "The Critique of Practical Reason",
+            "chunk_id": "kant_chunk_196"
+          }
+        },
+        {
+          "text": "As regards my own labours in the critical examination of pure reason, which were occasioned by Hume's sceptical teaching, but went much further and embraced the whole field of pure theoretical reason in its synthetic use and, consequently, the field of what is called metaphysics in general; I proceeded in the following manner with respect to the doubts raised by the Scottish philosopher touching the notion of causality.",
+          "raw_distance": 1.600995659828186,
+          "similarity": 0.19950217008590698,
+          "metadata": {
+            "chunk_id": "kant_chunk_188",
+            "original_order": 188,
+            "source": "The Critique of Practical Reason",
+            "token_count": 81
+          }
+        },
+        {
+          "text": "In order now to discover this condition of the application of the said concept to noumena, we need only recall why we are not content with its application to objects of experience, but desire also to apply it to things in themselves. It will appear, then, that it is not a theoretic but a practical purpose that makes this a necessity. In speculation, even if we were successful in it, we should not really gain anything in the knowledge of nature, or generally with regard to such objects as are given, but we should make a wide step from the sensibly conditioned (in which we have already enough to do to maintain ourselves, and to follow carefully the chain of causes) to the supersensible, in order to complete our knowledge of principles and to fix its limits; whereas there always remains an infinite chasm unfilled between those limits and what we know; and we should have hearkened to a vain curiosity rather than a solid-desire of knowledge.",
+          "raw_distance": 1.6117546558380127,
+          "similarity": 0.19412267208099365,
+          "metadata": {
+            "token_count": 195,
+            "original_order": 197,
+            "source": "The Critique of Practical Reason",
+            "chunk_id": "kant_chunk_197"
+          }
+        },
+        {
+          "text": "He has, however, this advantage that, like the chemist, he can at any time make an experiment with every man's practical reason for the purpose of distinguishing the moral (pure) principle of determination from the empirical; namely, by adding the moral law (as a determining principle) to the empirically affected will (e.g., that of the man who would be ready to lie because he can gain something thereby). It is as if the analyst added alkali to a solution of lime in hydrochloric acid, the acid at once forsakes the lime, combines with the alkali, and the lime is precipitated.",
+          "raw_distance": 1.6286077499389648,
+          "similarity": 0.18569612503051758,
+          "metadata": {
+            "original_order": 347,
+            "source": "The Critique of Practical Reason",
+            "chunk_id": "kant_chunk_347",
+            "token_count": 127
+          }
+        }
+      ],
+      "response": "실천이성은 내가 '실천이성비판'에서 탐구한 주요 개념 중 하나로, 이는 이성의 실천적 사용을 통해 도덕적 법칙을 수립하고 그에 따라 행동하는 능력을 의미합니다. 실천이성은 인간이 도덕적 의무를 이해하고 그것에 따라 행동하도록 이끄는 역할을 하며, 이는 정언 명령의 형식으로 구체화됩니다. 정언 명령은 \"너 자신의 의지의 준칙이 언제나 동시에 보편적 입법의 원리가 될 수 있도록 행위하라\"는 명령으로 표현됩니다.\n\n현대적 맥락에서 실천이성의 개념은 다양한 윤리적 딜레마에 적용될 수 있습니다. 예를 들어, 기업의 경영자가 환경 문제에 직면했을 때, 그는 단지 이익을 극대화하는 것이 아니라, 장기적으로 지속 가능한 환경을 위한 책임 있는 결정을 내려야 합니다. 이는 단순히 경험적 이해에 기반한 것이 아니라 도덕적 법칙에 따라 결정된 것입니다. 즉, 실천이성은 단순히 결과에 기반한 것이 아니라 의무와 보편적 도덕 원칙에 의해 지도됩니다.\n\n실천이성의 적용은 또한 개인의 삶에서도 중요합니다. 예를 들어, 만약 어떤 사람이 거짓말을 통해 단기적인 이득을 얻을 수 있는 상황에 처한다면, 실천이성은 그에게 도덕적 법칙을 상기시키며, 거짓말이 보편적 법칙이 될 수 없는 행위임을 인식하게 합니다. 이는 텍스트 5에서 언급된 바와 같이, 실천이성을 통해 우리는 경험적 동기를 초월하여 도덕적 원칙에 따라 행동할 수 있습니다.\n\n궁극적으로, 실천이성은 인간의 자율성과 이성의 역할을 강조하며, 우리가 윤리적 결정을 내릴 때 경험적 조건에 얽매이지 않고 보편적 도덕 원칙에 따라 행동하도록 요구합니다. 이는 현대 사회에서도 여전히 매우 관련성이 높으며, 개인과 사회가 직면하는 다양한 윤리적 문제를 해결하는 데 중요한 지침이 될 수 있습니다.",
+      "avg_similarity": 0.1963825821876526,
+      "max_similarity": 0.2016739845275879
+    },
+    "english_results": {
+      "retrieved_chunks": [
+        {
+          "text": "Produced by Matthew Stapleton 1788 THE CRITIQUE OF PRACTICAL REASON by Immanuel Kant translated by Thomas Kingsmill Abbott PREFACE. This work is called the Critique of Practical Reason, not of the pure practical reason, although its parallelism with the speculative critique would seem to require the latter term. The reason of this appears sufficiently from the treatise itself. Its business is to show that there is pure practical reason, and for this purpose it criticizes the entire practical faculty of reason. If it succeeds in this, it has no need to criticize the pure faculty itself in order to see whether reason in making such a claim does not presumptuously overstep itself (as is the case with the speculative reason).",
+          "raw_distance": 0.673500120639801,
+          "similarity": 0.6632499396800995,
+          "metadata": {
+            "chunk_id": "kant_chunk_1",
+            "token_count": 149,
+            "original_order": 1,
+            "source": "The Critique of Practical Reason"
+          }
+        },
+        {
+          "text": "For it is our own reason that by means of the supreme and unconditional practical law knows that itself and the being that is conscious of this law (our own person) belong to the pure world of understanding, and moreover defines the manner in which, as such, it can be active. In this way it can be understood why in the whole faculty of reason it is the practical reason only that can help us to pass beyond the world of sense and give us knowledge of a supersensible order and connection, which, however, for this very reason cannot be extended further than is necessary for pure practical purposes.",
+          "raw_distance": 0.7257580161094666,
+          "similarity": 0.6371209919452667,
+          "metadata": {
+            "chunk_id": "kant_chunk_401",
+            "original_order": 401,
+            "source": "The Critique of Practical Reason",
+            "token_count": 120
+          }
+        },
+        {
+          "text": "For when once pure reason is shown to exist, it needs no critical examination. For reason itself contains the standard for the critical examination of every use of it. The critique, then, of practical reason generally is bound to prevent the empirically conditioned reason from claiming exclusively to furnish the ground of determination of the will. If it is proved that there is a [practical] reason, its employment is alone immanent; the empirically conditioned use, which claims supremacy, is on the contrary transcendent and expresses itself in demands and precepts which go quite beyond its sphere. This is just the opposite of what might be said of pure reason in its speculative employment.",
+          "raw_distance": 0.730389416217804,
+          "similarity": 0.634805291891098,
+          "metadata": {
+            "source": "The Critique of Practical Reason",
+            "chunk_id": "kant_chunk_49",
+            "original_order": 49,
+            "token_count": 133
+          }
+        },
+        {
+          "text": "The Analytic of pure theoretic reason had to do with the knowledge of such objects as may have been given to the understanding, and was obliged therefore to begin from intuition and consequently (as this is always sensible) from sensibility; and only after that could advance to concepts (of the objects of this intuition), and could only end with principles after both these had preceded. On the contrary, since practical reason has not to do with objects so as to know them, but with its own faculty of realizing them (in accordance with the knowledge of them), that is, with a will which is a causality, inasmuch as reason contains its determining principle; since, consequently, it has not to furnish an object of intuition, but as practical reason has to furnish only a law (because the notion of causality always implies the reference to a law which determines the existence of the many in relation to one another); hence a critical examination of the Analytic of reason, if this is to be practical reason (and this is properly the problem), must begin with the possibility of practical principles a priori.",
+          "raw_distance": 0.7470418214797974,
+          "similarity": 0.6264790892601013,
+          "metadata": {
+            "chunk_id": "kant_chunk_336",
+            "token_count": 222,
+            "original_order": 336,
+            "source": "The Critique of Practical Reason"
+          }
+        },
+        {
+          "text": "The only objects of practical reason are therefore those of good and evil. For by the former is meant an object necessarily desired according to a principle of reason; by the latter one necessarily shunned, also according to a principle of reason. If the notion of good is not to be derived from an antecedent practical law, but, on the contrary, is to serve as its foundation, it can only be the notion of something whose existence promises pleasure, and thus determines the causality of the subject to produce it, that is to say, determines the faculty of desire.",
+          "raw_distance": 0.7563996315002441,
+          "similarity": 0.6218001842498779,
+          "metadata": {
+            "source": "The Critique of Practical Reason",
+            "original_order": 209,
+            "chunk_id": "kant_chunk_209",
+            "token_count": 115
+          }
+        }
+      ],
+      "response": "실천이성이란, 나의 철학적 체계에서 이성이 정언적인 법칙을 통해 인간의 의지를 규정하는 능력을 말합니다. 실천이성은 그 자체로서 순수하며, 경험에 의존하지 않고 인간이 도덕적 의무를 인식하고 이를 따를 수 있도록 합니다. 실천이성은 우리의 이성적 본성이 우리에게 지시하는 바에 따라 '무엇을 해야 하는가'라는 질문에 답하고, 이를 통해 윤리적 행위를 이끌어냅니다.\n\n실천이성의 주요 원칙은 정언명령입니다. 이는 '너의 의지의 준칙이 언제나 동시에 보편적 입법의 원리가 되도록 행위하라'라는 명령으로서, 모든 인간이 따를 수 있는 보편적 도덕 법칙을 제시합니다. 예를 들어, 거짓말을 하지 말라는 도덕적 원칙은 특정 상황에 국한되지 않고, 모든 상황에서의 행위의 기준이 될 수 있습니다.\n\n현대적 맥락에서 실천이성의 개념은 여전히 중요하게 적용될 수 있습니다. 예를 들어, 인공지능의 윤리적 사용에 대한 논의에서 실천이성은 기술 사용의 보편적 원칙을 설정하는 데 기여할 수 있습니다. 즉, AI 기술이 인간의 자유와 존엄성을 침해하지 않고, 모든 인류에게 이익이 되는 방향으로 사용되도록 하는 도덕적 가이드라인을 설정하는 데 실천이성이 필요합니다.\n\n따라서, 실천이성은 인간의 도덕적 판단과 행위를 이끄는 기준을 제공하며, 이를 통해 우리는 이성적이고 자율적인 존재로서의 역할을 수행할 수 있습니다. 이러한 원칙은 현대 사회에서의 복잡한 윤리적 도전에 대응하는 데에도 적용될 수 있습니다.",
+      "avg_similarity": 0.6366910994052887,
+      "max_similarity": 0.6632499396800995
+    },
+    "comparison": {
+      "avg_similarity_diff": 0.4403085172176361,
+      "max_similarity_diff": 0.4615759551525116,
+      "better_language": "english"
+    }
+  },
+  {
+    "korean_question": "칸트가 말하는 도덕법칙의 원칙은 무엇인가?",
+    "english_question": "What are the principles of moral law according to Kant?",
+    "korean_results": {
+      "retrieved_chunks": [
+        {
+          "text": "This is a wretched subterfuge with which some persons still let themselves be put off, and so think they have solved, with a petty word- jugglery, that difficult problem, at the solution of which centuries have laboured in vain, and which can therefore scarcely be found so completely on the surface. In fact, in the question about the freedom which must be the foundation of all moral laws and the consequent responsibility, it does not matter whether the principles which necessarily determine causality by a physical law reside within the subject or without him, or in the former case whether these principles are instinctive or are conceived by reason, if, as is admitted by these men themselves, these determining ideas have the ground of their existence in time and in the antecedent state, and this again in an antecedent, etc.",
+          "raw_distance": 1.3343076705932617,
+          "similarity": 0.33284616470336914,
+          "metadata": {
+            "chunk_id": "kant_chunk_361",
+            "token_count": 170,
+            "source": "The Critique of Practical Reason",
+            "original_order": 361
+          }
+        },
+        {
+          "text": "Everyone does, in fact, decide by this rule whether actions are morally good or evil. Thus, people say: \"If everyone permitted himself to deceive, when he thought it to his advantage; or thought himself justified in shortening his life as soon as he was thoroughly weary of it; or looked with perfect indifference on the necessity of others; and if you belonged to such an order of things, would you do so with the assent of your own will?\" Now everyone knows well that if he secretly allows himself to deceive, it does not follow that everyone else does so; or if, unobserved, he is destitute of compassion, others would not necessarily be so to him; hence, this comparison of the maxim of his actions with a universal law of nature is not the determining principle of his will.",
+          "raw_distance": 1.336132526397705,
+          "similarity": 0.33193373680114746,
+          "metadata": {
+            "source": "The Critique of Practical Reason",
+            "chunk_id": "kant_chunk_258",
+            "original_order": 258,
+            "token_count": 165
+          }
+        },
+        {
+          "text": "But that reason may give laws it is necessary that it should only need to presuppose itself, because rules are objectively and universally valid only when they hold without any contingent subjective conditions, which distinguish one rational being from another. Now tell a man that he should never make a deceitful promise, this is a rule which only concerns his will, whether the purposes he may have can be attained thereby or not; it is the volition only which is to be determined a priori by that rule. If now it is found that this rule is practically right, then it is a law, because it is a categorical imperative.",
+          "raw_distance": 1.349948525428772,
+          "similarity": 0.325025737285614,
+          "metadata": {
+            "original_order": 60,
+            "source": "The Critique of Practical Reason",
+            "token_count": 124,
+            "chunk_id": "kant_chunk_60"
+          }
+        },
+        {
+          "text": "REMARK. Hence a practical precept, which contains a material (and therefore empirical) condition, must never be reckoned a practical law. For the law of the pure will, which is free, brings the will into a sphere quite different from the empirical; and as the necessity involved in the law is not a physical necessity, it can only consist in the formal conditions of the possibility of a law in general. All the matter of practical rules rests on subjective conditions, which give them only a conditional universality (in case I desire this or that, what I must do in order to obtain it), and they all turn on the principle of private happiness.",
+          "raw_distance": 1.3544386625289917,
+          "similarity": 0.32278066873550415,
+          "metadata": {
+            "source": "The Critique of Practical Reason",
+            "token_count": 133,
+            "original_order": 114,
+            "chunk_id": "kant_chunk_114"
+          }
+        },
+        {
+          "text": "To discover a law which would govern them all under this condition, namely, bringing them all into harmony, is quite impossible. V. PROBLEM I. Supposing that the mere legislative form of maxims is alone the sufficient determining principle of a will, to find the nature of the will which can be determined by it alone. {BOOK_1|CHAPTER_1 ^paragraph 55} Since the bare form of the law can only be conceived by reason, and is, therefore, not an object of the senses, and consequently does not belong to the class of phenomena, it follows that the idea of it, which determines the will, is distinct from all the principles that determine events in nature according to the law of causality, because in their case the determining principles must themselves be phenomena.",
+          "raw_distance": 1.3621184825897217,
+          "similarity": 0.31894075870513916,
+          "metadata": {
+            "chunk_id": "kant_chunk_92",
+            "token_count": 160,
+            "source": "The Critique of Practical Reason - Book 1: CHAPTER_1 ^paragraph 55} Since the bare form of the law can only be conceived by reason, and is, therefore, not an object of the senses, and consequently does not belong to the class of phenomena, it follows that the idea of it, which determines the will, is distinct from all the principles that determine events in nature according to the law of causality, because in their case the determining principles must themselves be phenomena",
+            "original_order": 92
+          }
+        }
+      ],
+      "response": "칸트로서, 도덕법칙의 원칙은 \"정언명령\" (categorical imperative)에 의해 규정됩니다. 이는 조건부가 아닌 무조건적인 명령으로, 모든 이성적 존재에게 보편적으로 적용되어야 하는 원칙입니다. 텍스트 3에서 언급된 바와 같이, 정언명령은 사전적(a priori)으로 의지를 결정하는 규칙입니다. 즉, 이 규칙은 경험적 조건에서 독립적으로 의지를 규제합니다.\n\n정언명령의 핵심 원칙 중 하나는 \"네 행위의 격률이 보편적 입법의 원칙이 될 수 있도록 행동하라\"는 것입니다. 이는 자신의 행위가 모든 사람에게 보편적으로 적용될 수 있는지를 살피고, 그러한 보편적 법칙이 되었을 때에도 받아들일 수 있는지를 자문하는 방식입니다.\n\n예를 들어, 만약 어떤 사람이 거짓말을 하려 한다면, 그는 자신에게 다음과 같은 질문을 던져야 합니다: \"모든 사람이 거짓말을 하는 것이 보편적 법칙이 된다면, 나는 그 사회에서 살고 싶을 것인가?\" 만약 그 결과가 부정적이라면, 거짓말은 도덕적으로 허용될 수 없습니다.\n\n현대적 맥락에서 이를 적용해 보겠습니다. 가령, 환경 문제를 고려할 때, 우리가 사용하는 자원이 모두에게 보편적으로 적용될 수 있는지를 숙고해야 합니다. 만약 모든 사람이 무분별하게 자원을 소비한다면, 이는 지속 가능하지 않으며, 따라서 도덕적으로 허용될 수 없습니다. 이와 같은 방식으로, 우리는 우리의 행동이 보편적 법칙이 되었을 때에도 그 결과가 수용 가능한지를 항상 숙고해야 합니다.\n\n이를 통해 우리는 개인의 행복이나 이익보다는 보편적 도덕 원칙에 입각하여 행동할 수 있으며, 이는 인간의 자율성과 이성의 역할을 강조하는 것입니다. 이러한 접근은 현대 사회의 다양한 윤리적 딜레마에서 여전히 유효하며, 인간이 이성적 존재로서의 책임을 다하도록 이끕니다.",
+      "avg_similarity": 0.3263054132461548,
+      "max_similarity": 0.33284616470336914
+    },
+    "english_results": {
+      "retrieved_chunks": [
+        {
+          "text": "The moral law is the sole determining principle of a pure will. But since this is merely formal (viz., as prescribing only the form of the maxim as universally legislative), it abstracts as a determining principle from all matter that is to say, from every object of volition. Hence, though the summum bonum may be the whole object of a pure practical reason, i.e., a pure will, yet it is not on that account to be regarded as its determining principle; and the moral law alone must be regarded as the principle on which that and its realization or promotion are aimed at.",
+          "raw_distance": 0.7258471250534058,
+          "similarity": 0.6370764374732971,
+          "metadata": {
+            "chunk_id": "kant_chunk_414",
+            "original_order": 414,
+            "source": "The Critique of Practical Reason",
+            "token_count": 120
+          }
+        },
+        {
+          "text": "Now this principle of morality, just on account of the universality of the legislation which makes it the formal supreme determining principle of the will, without regard to any subjective differences, is declared by the reason to be a law for all rational beings, in so far as they have a will, that is, a power to determine their causality by the conception of rules; and, therefore, so far as they are capable of acting according to principles, and consequently also according to practical a priori principles (for these alone have the necessity that reason requires in a principle).",
+          "raw_distance": 0.7607409954071045,
+          "similarity": 0.6196295022964478,
+          "metadata": {
+            "chunk_id": "kant_chunk_107",
+            "token_count": 114,
+            "source": "The Critique of Practical Reason",
+            "original_order": 107
+          }
+        },
+        {
+          "text": "We can therefore call this law the type of the moral law. The rule of the judgement according to laws of pure practical reason is this: ask yourself whether, if the action you propose were to take place by a law of the system of nature of which you were yourself a part, you could regard it as possible by your own will. Everyone does, in fact, decide by this rule whether actions are morally good or evil.",
+          "raw_distance": 0.7675979733467102,
+          "similarity": 0.6162010133266449,
+          "metadata": {
+            "token_count": 86,
+            "original_order": 257,
+            "source": "The Critique of Practical Reason",
+            "chunk_id": "kant_chunk_257"
+          }
+        },
+        {
+          "text": "For this moral law is founded on the autonomy of his will, as a free will which by its universal laws must necessarily be able to agree with that to which it is to submit itself. VI. Of the Postulates of Pure Practical Reason Generally. {BOOK_2|CHAPTER_2 ^paragraph 60} They all proceed from the principle of morality, which is not a postulate but a law, by which reason determines the will directly, which will, because it is so determined as a pure will, requires these necessary conditions of obedience to its precept.",
+          "raw_distance": 0.7683312892913818,
+          "similarity": 0.6158343553543091,
+          "metadata": {
+            "original_order": 503,
+            "chunk_id": "kant_chunk_503",
+            "token_count": 114,
+            "source": "The Critique of Practical Reason - Book 2: CHAPTER_2 ^paragraph 60} They all proceed from the principle of morality, which is not a postulate but a law, by which reason determines the will directly, which will, because it is so determined as a pure will, requires these necessary conditions of obedience to its precept"
+          }
+        },
+        {
+          "text": "Thus, talents and the improvement of them, because they contribute to the advantages of life; or the will of God, if agreement with it be taken as the object of the will, without any antecedent independent practical principle, can be motives only by reason of the happiness expected therefrom. Hence it follows, first, that all the principles here stated are material; secondly, that they include all possible material principles; and, finally, the conclusion, that since material principles are quite incapable of furnishing the supreme moral law (as has been shown), the formal practical principle of the pure reason (according to which the mere form of a universal legislation must constitute the supreme and immediate determining principle of the will) is the only one possible which is adequate to furnish categorical imperatives, that is, practical laws (which make actions a duty), and in general to serve as the principle of morality, both in criticizing conduct and also in its application to the human will to determine it.",
+          "raw_distance": 0.7824265956878662,
+          "similarity": 0.6087867021560669,
+          "metadata": {
+            "source": "The Critique of Practical Reason",
+            "token_count": 197,
+            "original_order": 145,
+            "chunk_id": "kant_chunk_145"
+          }
+        }
+      ],
+      "response": "칸트, 즉 나의 철학적 관점에서 도덕 법칙은 순수한 의지의 유일한 결정 원칙입니다. 이는 단지 형식적인 것으로, 최대가 보편적 입법의 형식을 가지도록 요구할 뿐이며, 의지의 모든 대상, 즉 모든 물질적 고려로부터 추상합니다. 따라서 순수 실천 이성의 전체 대상인 최고 선(summum bonum)은 그 자체로 결정 원칙으로 여겨질 수 없으며, 오로지 도덕 법칙만이 그것과 그 실현 또는 촉진을 목표로 하는 원칙으로 간주되어야 합니다.\n\n여기서 도덕성의 원칙은 보편적 입법의 보편성 때문에 의지의 형식적 최고 결정 원칙으로 선언되며, 이는 모든 이성적 존재에게 법이 됩니다. 이들은 원칙에 따라, 그리고 따라서 실천적 선험적 원칙에 따라 행동할 수 있는 능력을 가지고 있습니다. 이러한 원칙들만이 이성이 원칙에서 요구하는 필연성을 가집니다.\n\n예를 들어, 거짓말을 하는 상황을 고려해 봅시다. 내가 거짓말을 할 수 있는지를 판단하기 위해, 내가 제안한 행동이 내가 속한 자연의 체계의 법칙으로 일어날 수 있는지를 자문해야 합니다. 만약 모든 사람이 거짓말을 한다면 신뢰라는 개념은 무너지고, 의사소통의 기본 구조가 붕괴됩니다. 따라서 정언 명령에 따라 거짓말은 도덕적으로 허용될 수 없습니다.\n\n현대적 맥락에서 이 개념은 다양한 상황에 적용될 수 있습니다. 예컨대, 환경 문제를 고려해 봅시다. 만약 모든 사람들이 환경 보호를 무시하고 자신의 편의를 위해 자원을 남용한다면, 미래 세대는 지속 가능한 환경에서 살 수 없게 됩니다. 따라서, 도덕 법칙에 따르면 우리는 우리의 행동이 보편적 법칙으로 작용할 수 있는지를 항상 자문해야 하며, 이를 통해 인간의 자율성과 이성을 활용하여 도덕적 행동을 결정해야 합니다.\n\n이처럼 나는 보편적 도덕 원칙에 따라 행동하는 것이 우리의 의무이며, 그것이 우리의 자유 의지와 이성을 통해 실현될 수 있다는 것을 강조합니다. 이를 통해 우리는 인간으로서의 존엄성과 자율성을 유지하는 동시에, 더 나은 사회를 창조할 수 있습니다.",
+      "avg_similarity": 0.6195056021213532,
+      "max_similarity": 0.6370764374732971
+    },
+    "comparison": {
+      "avg_similarity_diff": 0.2932001888751984,
+      "max_similarity_diff": 0.304230272769928,
+      "better_language": "english"
+    }
+  },
+  {
+    "korean_question": "정언명령이란 무엇이며 왜 중요한가?",
+    "english_question": "What is the categorical imperative and why is it important?",
+    "korean_results": {
+      "retrieved_chunks": [
+        {
+          "text": "Duty! Thou sublime and mighty name that dost embrace nothing charming or insinuating, but requirest submission, and yet seekest not to move the will by threatening aught that would arouse natural aversion or terror, but merely holdest forth a law which of itself finds entrance into the mind, and yet gains reluctant reverence (though not always obedience), a law before which all inclinations are dumb, even though they secretly counter-work it; what origin is there worthy of thee, and where is to be found the root of thy noble descent which proudly rejects all kindred with the inclinations; a root to be derived from which is the indispensable condition of the only worth which men can give themselves?",
+          "raw_distance": 1.4464606046676636,
+          "similarity": 0.2767696976661682,
+          "metadata": {
+            "source": "The Critique of Practical Reason",
+            "chunk_id": "kant_chunk_324",
+            "original_order": 324,
+            "token_count": 143
+          }
+        },
+        {
+          "text": "He still lives only because it is his duty, not because he finds anything pleasant in life. Such is the nature of the true motive of pure practical reason; it is no other than the pure moral law itself, inasmuch as it makes us conscious of the sublimity of our own supersensible existence and subjectively produces respect for their higher nature in men who are also conscious of their sensible existence and of the consequent dependence of their pathologically very susceptible nature.",
+          "raw_distance": 1.4876062870025635,
+          "similarity": 0.25619685649871826,
+          "metadata": {
+            "original_order": 332,
+            "chunk_id": "kant_chunk_332",
+            "token_count": 95,
+            "source": "The Critique of Practical Reason"
+          }
+        },
+        {
+          "text": "Can it be thought that it is for any other reason that we are so ready to reduce it to the level of our familiar inclination, or that it is for any other reason that we all take such trouble to make it out to be the chosen precept of our own interest well understood, but that we want to be free from the deterrent respect which shows us our own unworthiness with such severity? Nevertheless, on the other hand, so little is there pain in it that if once one has laid aside self-conceit and allowed practical influence to that respect, he can never be satisfied with contemplating the majesty of this law, and the soul believes itself elevated in proportion as it sees the holy law elevated above it and its frail nature.",
+          "raw_distance": 1.4902520179748535,
+          "similarity": 0.25487399101257324,
+          "metadata": {
+            "chunk_id": "kant_chunk_289",
+            "token_count": 150,
+            "source": "The Critique of Practical Reason",
+            "original_order": 289
+          }
+        },
+        {
+          "text": "A man must first appreciate the importance of what we call duty, the authority of the moral law, and the immediate dignity which the following of it gives to the person in his own eyes, in order to feel that satisfaction in the consciousness of his conformity to it and the bitter remorse that accompanies the consciousness of its transgression. It is, therefore, impossible to feel this satisfaction or dissatisfaction prior to the knowledge of obligation, or to make it the basis of the latter. A man must be at least half honest in order even to be able to form a conception of these feelings.",
+          "raw_distance": 1.4909443855285645,
+          "similarity": 0.2545278072357178,
+          "metadata": {
+            "chunk_id": "kant_chunk_138",
+            "original_order": 138,
+            "token_count": 116,
+            "source": "The Critique of Practical Reason"
+          }
+        },
+        {
+          "text": "But in the case of a being with whom reason does not of itself determine the will, this rule is an imperative, i.e., a rule characterized by \"shall,\" which expresses the objective necessitation of the action and signifies that, if reason completely determined the will, the action would inevitably take place according to this rule. Imperatives, therefore, are objectively valid, and are quite distinct from maxims, which are subjective principles. The former either determine the conditions of the causality of the rational being as an efficient cause, i.e., merely in reference to the effect and the means of attaining it; or they determine the will only, whether it is adequate to the effect or not.",
+          "raw_distance": 1.4937784671783447,
+          "similarity": 0.25311076641082764,
+          "metadata": {
+            "original_order": 56,
+            "token_count": 140,
+            "chunk_id": "kant_chunk_56",
+            "source": "The Critique of Practical Reason"
+          }
+        }
+      ],
+      "response": "정언명령은 나, 임마누엘 칸트가 제시한 도덕 철학의 핵심 개념으로, 이는 행동의 도덕적 정당성을 판단하는 기준을 제공하는 보편적 법칙입니다. 텍스트 1에서 언급했듯이, 정언명령은 의무의 숭고함과 강력함을 내포하고 있으며, 우리의 자연적 성향을 초월하여 자율적 이성에 의해 수용됩니다. 이 명령은 감정이나 개인적 이익에 의해 좌우되지 않으며, 오직 보편적 도덕 법칙으로서의 가치를 지닙니다.\n\n정언명령의 중요성은 그것이 도덕적 행동의 보편적 기준을 제공한다는 점에 있습니다. 이는 모든 이성적 존재가 동일하게 적용할 수 있는 법칙으로서, 개인적 이익이나 상황에 따라 변하지 않습니다. 텍스트 5에서 설명하였듯이, 정언명령은 주관적 원칙인 격률과는 달리 객관적인 타당성을 지니며, 우리가 이성에 의해 완전히 의지를 결정할 수 있을 때 행동이 반드시 이 법칙에 따라 이루어질 것임을 나타냅니다.\n\n현대적 맥락에서 정언명령의 적용을 예로 들어 설명하겠습니다. 예를 들어, 우리는 인공지능(AI) 기술의 발전과 윤리적 문제에 직면해 있습니다. AI가 자율적으로 결정을 내리는 상황에서, 정언명령은 AI의 행동을 평가하는 기준으로 사용될 수 있습니다. 즉, AI가 내리는 결정이 모든 인간에게 보편적으로 받아들여질 수 있는가, 그리고 그 결정이 인간의 존엄성과 자율성을 존중하는가를 평가해야 할 것입니다.\n\n또한, 정언명령은 환경 문제와 관련된 윤리적 결정에서도 중요한 역할을 할 수 있습니다. 환경 보호를 위한 행동이 단순히 개인의 이익이나 특정 국가의 이익을 넘어, 인류 전체의 미래와 자연의 존속을 위한 보편적 법칙으로서 채택되어야 합니다. 이는 개인의 이익을 초월하여 인류의 공동선을 고려하는 도덕적 의무로서, 모든 이성적 존재가 따를 수 있는 법칙으로 자리 잡아야 합니다.\n\n결론적으로, 정언명령은 우리의 도덕적 행동을 평가하는 기준으로서, 이성적 존재로서의 인간이 자율적으로 따를 수 있는 보편적 법칙을 제공합니다. 이는 현대의 복잡한 윤리적 문제를 해결하는 데에도 유용한 지침을 제공할 수 있습니다.",
+      "avg_similarity": 0.259095823764801,
+      "max_similarity": 0.2767696976661682
+    },
+    "english_results": {
+      "retrieved_chunks": [
+        {
+          "text": "In their case, therefore, the moral law is an imperative, which commands categorically, because the law is unconditioned; the relation of such a will to this law is dependence under the name of obligation, which implies a constraint to an action, though only by reason and its objective law; and this action is called duty, because an elective will, subject to pathological affections (though not determined by them, and, therefore, still free), implies a wish that arises from subjective causes and, therefore, may often be opposed to the pure objective determining principle; whence it requires the moral constraint of a resistance of the practical reason, which may be called an internal, but intellectual, compulsion.",
+          "raw_distance": 0.9970097541809082,
+          "similarity": 0.5014951229095459,
+          "metadata": {
+            "original_order": 109,
+            "chunk_id": "kant_chunk_109",
+            "token_count": 141,
+            "source": "The Critique of Practical Reason"
+          }
+        },
+        {
+          "text": "It is of the greatest importance to attend with the utmost exactness in all moral judgements to the subjective principle of all maxims, that all the morality of actions may be placed in the necessity of acting from duty and from respect for the law, not from love and inclination for that which the actions are to produce. For men and all created rational beings moral necessity is constraint, that is obligation, and every action based on it is to be conceived as a duty, not as a proceeding previously pleasing, or likely to be pleasing to us of our own accord.",
+          "raw_distance": 0.9999240636825562,
+          "similarity": 0.5000379681587219,
+          "metadata": {
+            "original_order": 304,
+            "token_count": 113,
+            "source": "The Critique of Practical Reason",
+            "chunk_id": "kant_chunk_304"
+          }
+        },
+        {
+          "text": "But in the case of a being with whom reason does not of itself determine the will, this rule is an imperative, i.e., a rule characterized by \"shall,\" which expresses the objective necessitation of the action and signifies that, if reason completely determined the will, the action would inevitably take place according to this rule. Imperatives, therefore, are objectively valid, and are quite distinct from maxims, which are subjective principles. The former either determine the conditions of the causality of the rational being as an efficient cause, i.e., merely in reference to the effect and the means of attaining it; or they determine the will only, whether it is adequate to the effect or not.",
+          "raw_distance": 1.0135471820831299,
+          "similarity": 0.49322640895843506,
+          "metadata": {
+            "source": "The Critique of Practical Reason",
+            "original_order": 56,
+            "chunk_id": "kant_chunk_56",
+            "token_count": 140
+          }
+        },
+        {
+          "text": "But the moral law commands the most punctual obedience from everyone; it must, therefore, not be so difficult to judge what it requires to be done, that the commonest unpractised understanding, even without worldly prudence, should fail to apply it rightly. It is always in everyone's power to satisfy the categorical command of morality; whereas it is seldom possible, and by no means so to everyone, to satisfy the empirically conditioned precept of happiness, even with regard to a single purpose. The reason is that in the former case there is question only of the maxim, which must be genuine and pure; but in the latter case there is question also of one's capacity and physical power to realize a desired object.",
+          "raw_distance": 1.0175117254257202,
+          "similarity": 0.4912441372871399,
+          "metadata": {
+            "original_order": 130,
+            "source": "The Critique of Practical Reason",
+            "token_count": 147,
+            "chunk_id": "kant_chunk_130"
+          }
+        },
+        {
+          "text": "But that reason may give laws it is necessary that it should only need to presuppose itself, because rules are objectively and universally valid only when they hold without any contingent subjective conditions, which distinguish one rational being from another. Now tell a man that he should never make a deceitful promise, this is a rule which only concerns his will, whether the purposes he may have can be attained thereby or not; it is the volition only which is to be determined a priori by that rule. If now it is found that this rule is practically right, then it is a law, because it is a categorical imperative.",
+          "raw_distance": 1.0306757688522339,
+          "similarity": 0.48466211557388306,
+          "metadata": {
+            "source": "The Critique of Practical Reason",
+            "chunk_id": "kant_chunk_60",
+            "original_order": 60,
+            "token_count": 124
+          }
+        }
+      ],
+      "response": "귀하의 질문에 답하기 위해, 칸트로서 저는 '정언 명령'(categorical imperative)의 본질과 중요성을 설명하겠습니다. 정언 명령은, 조건 없이 모든 상황에서 보편적으로 적용되는 도덕적 법칙입니다. 이는 우리가 마땅히 따라야 할 의무를 명시하며, 우리의 행동이 특정한 결과나 개인적 이익에 의존하지 않고, 단지 이성적 법칙에 의해 결정되어야 함을 의미합니다.\n\n정언 명령의 핵심은 그것이 모든 합리적 존재에게 일반적으로 적용되는 법칙을 제공한다는 점입니다. 이는 '네가 원칙으로 삼고자 하는 행동이 보편적 법칙이 될 수 있도록 행동하라'는 명령으로 요약할 수 있습니다. 예를 들어, 거짓말을 하는 것이 옳은지에 대한 판단을 내릴 때, 우리는 '만약 모든 사람이 거짓말을 한다면 어떤 세상이 될 것인가?'를 자문해 보아야 합니다. 만약 그것이 보편적 법칙이 된다면 사회적 신뢰가 파괴되어 결국 서로의 약속이 무의미해질 것입니다. 따라서 거짓말을 하지 않는 것이 도덕적 의무로 자리잡게 됩니다.\n\n현대적 맥락에서도 이러한 개념은 여전히 적용될 수 있습니다. 예를 들어, 환경 문제를 고려할 때, 우리는 '내가 하는 선택이 모두가 따르는 보편적 법칙이 될 수 있는가?'를 자문해야 합니다. 만약 모든 사람이 무분별하게 자원을 낭비한다면, 지속 가능한 환경은 불가능해질 것입니다. 따라서 우리는 책임 있는 소비와 자원 보존을 도덕적 의무로 삼아야 합니다.\n\n정언 명령은 인간의 자율성을 강조합니다. 이는 개인이 외부의 영향이나 개인적 욕구에 의해 휘둘리지 않고, 이성에 기반하여 스스로의 도덕적 법칙을 수립할 수 있는 능력을 의미합니다. 따라서 모든 인간은 스스로의 행동을 도덕적 법칙에 따라 평가하고 결정할 책임이 있습니다. 이러한 원칙은 오늘날의 윤리적 딜레마와 사회적 문제에 대한 해답을 제공할 수 있는 강력한 도구가 될 것입니다.",
+      "avg_similarity": 0.49413315057754514,
+      "max_similarity": 0.5014951229095459
+    },
+    "comparison": {
+      "avg_similarity_diff": 0.23503732681274414,
+      "max_similarity_diff": 0.22472542524337769,
+      "better_language": "english"
+    }
+  },
+  {
+    "korean_question": "의무와 경향성의 차이는 무엇인가?",
+    "english_question": "What is the difference between duty and inclination?",
+    "korean_results": {
+      "retrieved_chunks": [
+        {
+          "text": "Nevertheless, mathematical science, so highly vaunted for its apodeictic certainty, must at last fall under this empiricism for the same reason for which Hume put custom in the place of objective necessity in the notion of cause and, in spite of all its pride, must consent to lower its bold pretension of claiming assent a priori and depend for assent to the universality of its propositions on the kindness of observers, who, when called as witnesses, would surely not hesitate to admit that what the geometer propounds as a theorem they have always perceived to be the fact, and, consequently, although it be not necessarily true, yet they would permit us to expect it to be true in the future.",
+          "raw_distance": 1.5031275749206543,
+          "similarity": 0.24843621253967285,
+          "metadata": {
+            "original_order": 186,
+            "token_count": 146,
+            "source": "The Critique of Practical Reason",
+            "chunk_id": "kant_chunk_186"
+          }
+        },
+        {
+          "text": "Such a transition necessitates a comparison of the old and the new usage, in order to distinguish well the new path from the old one and, at the same time, to allow their connection to be observed. Accordingly considerations of this kind, including those which are once more directed to the concept of freedom in the practical use of the pure reason, must not be regarded as an interpolation serving only to fill up the gaps in the critical system of speculative reason (for this is for its own purpose complete), or like the props and buttresses which in a hastily constructed building are often added afterwards; but as true members which make the connexion of the system plain, and show us concepts, here presented as real, which there could only be presented problematically.",
+          "raw_distance": 1.507124900817871,
+          "similarity": 0.24643754959106445,
+          "metadata": {
+            "source": "The Critique of Practical Reason",
+            "token_count": 150,
+            "chunk_id": "kant_chunk_17",
+            "original_order": 17
+          }
+        },
+        {
+          "text": "Mathematics escaped well, so far, because Hume thought that its propositions were analytical; that is, proceeded from one property to another, by virtue of identity and, consequently, according to the principle of contradiction. This, however, is not the case, since, on the contrary, they are synthetical; and although geometry, for example, has not to do with the existence of things, but only with their a priori properties in a possible intuition, yet it proceeds just as in the case of the causal notion, from one property (A) to another wholly distinct (B), as necessarily connected with the former.",
+          "raw_distance": 1.5164215564727783,
+          "similarity": 0.24178922176361084,
+          "metadata": {
+            "token_count": 126,
+            "chunk_id": "kant_chunk_185",
+            "source": "The Critique of Practical Reason",
+            "original_order": 185
+          }
+        },
+        {
+          "text": "More refined, though equally false, is the theory of those who suppose a certain special moral sense, which sense and not reason determines the moral law, and in consequence of which the consciousness of virtue is supposed to be directly connected with contentment and pleasure; that of vice, with mental dissatisfaction and pain; thus reducing the whole to the desire of private happiness. Without repeating what has been said above, I will here only remark the fallacy they fall into.",
+          "raw_distance": 1.5190731287002563,
+          "similarity": 0.24046343564987183,
+          "metadata": {
+            "source": "The Critique of Practical Reason",
+            "token_count": 92,
+            "chunk_id": "kant_chunk_136",
+            "original_order": 136
+          }
+        },
+        {
+          "text": "Whether an idea has its seat and source in the understanding or not, if it can only determine the choice by presupposing a feeling of pleasure in the subject, it follows that its capability of determining the choice depends altogether on the nature of the inner sense, namely, that this can be agreeably affected by it. However dissimilar ideas of objects may be, though they be ideas of the understanding, or even of the reason in contrast to ideas of sense, yet the feeling of pleasure, by means of which they constitute the determining principle of the will (the expected satisfaction which impels the activity to the production of the object), is of one and the same kind, not only inasmuch as it can only be known empirically, but also inasmuch as it affects one and the same vital force which manifests itself in the faculty of desire, and in this respect can only differ in degree from every other ground of determination.",
+          "raw_distance": 1.5306596755981445,
+          "similarity": 0.23467016220092773,
+          "metadata": {
+            "token_count": 187,
+            "source": "The Critique of Practical Reason",
+            "chunk_id": "kant_chunk_68",
+            "original_order": 68
+          }
+        }
+      ],
+      "response": "의무와 경향성의 차이는 실천이성의 영역에서 중요한 구분이며, 이는 도덕적 판단의 기초가 됩니다. '의무'는 우리가 이성적으로 정립한 보편적 도덕 법칙에 따라 행동해야 하는 필연적 요구를 의미합니다. 이러한 의무는 정언 명령(Kategorischer Imperativ)을 통해 표현되며, 이는 \"네 의지의 준칙이 언제나 동시에 보편적 법칙의 수립 원칙이 될 수 있도록 행위하라\"는 명령으로 요약할 수 있습니다.\n\n한편, '경향성'은 우리의 자연적 욕구나 감정에 기반한 행동을 설명합니다. 경향성에 따라 행동하는 것은 우리의 욕구를 만족시키기 위한 것이며, 이는 필연적으로 경험적이고 개별적입니다.\n\n구체적인 예를 들어 설명하겠습니다. 예를 들어, 학교에서 부정행위를 하지 않는 것이 의무라고 할 때, 이는 단순히 부정행위를 하지 않는 것이 아니라, '정직함'이라는 보편적 도덕 원칙을 준수하는 것입니다. 반면, 경향성에 따라 행동한다면, 그 이유는 벌을 피하기 위해서거나 다른 사람의 인정을 받기 위해서일 수 있습니다.\n\n현대적 맥락에서 이러한 구분은 윤리적 딜레마를 해결하는 데 도움을 줍니다. 기업의 경영자가 환경 보호를 위해 비용이 드는 조치를 취할 때, 이는 단순히 법적 제재를 피하기 위한 것인지, 아니면 환경 보호라는 보편적 도덕 원칙에 따르는 것인지를 스스로 점검할 수 있습니다. 이러한 점검은 기업의 행동이 단순한 경향성에 따른 것인지, 아니면 진정한 도덕적 의무에 따른 것인지를 판단하는 기준이 됩니다.\n\n결국, 의무는 이성적 판단을 통해 도출된 도덕 법칙에 따라 행동하는 것이며, 이는 보편성과 필연성을 갖습니다. 경향성은 우리의 주관적이고 경험적인 욕구에 의해 좌우되며, 이는 도덕적 판단의 기초가 될 수 없습니다. 이러한 구분은 우리가 스스로의 도덕적 자율성을 유지하고, 참된 도덕적 행동을 할 수 있게 해줍니다.",
+      "avg_similarity": 0.24235931634902955,
+      "max_similarity": 0.24843621253967285
+    },
+    "english_results": {
+      "retrieved_chunks": [
+        {
+          "text": "{BOOK_1|CHAPTER_3 ^paragraph 15} The notion of duty, therefore, requires in the action, objectively, agreement with the law, and, subjectively in its maxim, that respect for the law shall be the sole mode in which the will is determined thereby. And on this rests the distinction between the consciousness of having acted according to duty and from duty, that is, from respect for the law. The former (legality) is possible even if inclinations have been the determining principles of the will; but the latter (morality), moral worth, can be placed only in this, that the action is done from duty, that is, simply for the sake of the law.",
+          "raw_distance": 1.088949203491211,
+          "similarity": 0.45552539825439453,
+          "metadata": {
+            "original_order": 302,
+            "token_count": 143,
+            "source": "The Critique of Practical Reason - Book 1: CHAPTER_3 ^paragraph 15} The notion of duty, therefore, requires in the action, objectively, agreement with the law, and, subjectively in its maxim, that respect for the law shall be the sole mode in which the will is determined thereby",
+            "chunk_id": "kant_chunk_302"
+          }
+        },
+        {
+          "text": "For in these all must be directed to the conception of the law as a determining principle, if the action is to contain morality and not merely legality. Inclination is blind and slavish, whether it be of a good sort or not, and, when morality is in question, reason must not play the part merely of guardian to inclination, but disregarding it altogether must attend simply to its own interest as pure practical reason. This very feeling of compassion and tender sympathy, if it precedes the deliberation on the question of duty and becomes a determining principle, is even annoying to right thinking persons, brings their deliberate maxims into confusion, and makes them wish to be delivered from it and to be subject to lawgiving reason alone.",
+          "raw_distance": 1.0989910364151,
+          "similarity": 0.45050448179244995,
+          "metadata": {
+            "chunk_id": "kant_chunk_447",
+            "token_count": 150,
+            "original_order": 447,
+            "source": "The Critique of Practical Reason"
+          }
+        },
+        {
+          "text": "The consciousness of a free submission of the will to the law, yet combined with an inevitable constraint put upon all inclinations, though only by our own reason, is respect for the law. The law that demands this respect and inspires it is clearly no other than the moral (for no other precludes all inclinations from exercising any direct influence on the will). An action which is objectively practical according to this law, to the exclusion of every determining principle of inclination, is duty, and this by reason of that exclusion includes in its concept practical obligation, that is, a determination to actions, however reluctantly they may be done.",
+          "raw_distance": 1.118680477142334,
+          "similarity": 0.440659761428833,
+          "metadata": {
+            "source": "The Critique of Practical Reason",
+            "original_order": 299,
+            "chunk_id": "kant_chunk_299",
+            "token_count": 125
+          }
+        },
+        {
+          "text": "Duty! Thou sublime and mighty name that dost embrace nothing charming or insinuating, but requirest submission, and yet seekest not to move the will by threatening aught that would arouse natural aversion or terror, but merely holdest forth a law which of itself finds entrance into the mind, and yet gains reluctant reverence (though not always obedience), a law before which all inclinations are dumb, even though they secretly counter-work it; what origin is there worthy of thee, and where is to be found the root of thy noble descent which proudly rejects all kindred with the inclinations; a root to be derived from which is the indispensable condition of the only worth which men can give themselves?",
+          "raw_distance": 1.1237313747406006,
+          "similarity": 0.4381343126296997,
+          "metadata": {
+            "chunk_id": "kant_chunk_324",
+            "original_order": 324,
+            "source": "The Critique of Practical Reason",
+            "token_count": 143
+          }
+        },
+        {
+          "text": "The Permitted and the Forbidden Duty and the contrary to duty. Perfect and imperfect duty. {BOOK_1|CHAPTER_2 ^paragraph 40} It will at once be observed that in this table freedom is considered as a sort of causality not subject to empirical principles of determination, in regard to actions possible by it, which are phenomena in the world of sense, and that consequently it is referred to the categories which concern its physical possibility, whilst yet each category is taken so universally that the determining principle of that causality can be placed outside the world of sense in freedom as a property of a being in the world of intelligence; and finally the categories of modality introduce the transition from practical principles generally to those of morality, but only problematically.",
+          "raw_distance": 1.1364691257476807,
+          "similarity": 0.43176543712615967,
+          "metadata": {
+            "original_order": 246,
+            "source": "The Critique of Practical Reason - Book 1: CHAPTER_2 ^paragraph 40} It will at once be observed that in this table freedom is considered as a sort of causality not subject to empirical principles of determination, in regard to actions possible by it, which are phenomena in the world of sense, and that consequently it is referred to the categories which concern its physical possibility, whilst yet each category is taken so universally that the determining principle of that causality can be placed outside the world of sense in freedom as a property of a being in the world of intelligence; and finally the categories of modality introduce the transition from practical principles generally to those of morality, but only problematically",
+            "token_count": 152,
+            "chunk_id": "kant_chunk_246"
+          }
+        }
+      ],
+      "response": "임마누엘 칸트로서, 나는 의무와 경향성 사이의 차이를 명확히 하고자 합니다. 이 두 개념은 실천이성의 영역에서 중요하며, 이를 이해하는 것은 도덕적 판단의 근간을 형성합니다.\n\n의무(duty)는 법칙과의 객관적인 일치, 그리고 그 법칙에 대한 존경심에서 비롯된 주관적인 의도의 일치에 기반합니다. 이는 경향성(inclination)과 구별되며, 경향성은 감정이나 개인적 욕구에 따라 행동을 결정하는 경향을 말합니다. 의무는 법칙에 대한 존경심에서 오는 것이며, 경향성은 이성적 판단보다 감정에 의해 좌우됩니다. 나의 실천이성비판에서 강조하듯이, 도덕적 가치를 지닌 행동은 경향성을 배제하고 법칙에 대한 존경심에서 비롯되어야 합니다.\n\n이를 현대적 사례에 적용해 봅시다. 예를 들어, 자선 활동을 고려해 봅시다. 어떤 사람이 단순히 타인의 칭찬을 받기 위해 자선 활동을 한다면, 이는 경향성에서 비롯된 행동이 될 것입니다. 그러나 순전히 인간의 존엄성과 법칙에 대한 존경심으로, 즉 도움을 필요로 하는 사람에 대한 책임감에서 자선 활동을 한다면, 이는 의무에서 비롯된 도덕적 가치가 있는 행동이라 할 수 있습니다.\n\n또한, 현대 사회에서 공정성을 지키는 문제를 들 수 있습니다. 예를 들어, 기업의 인사 담당자가 친구나 친척을 채용할 때, 개인적인 경향성을 따를 것이 아니라, 공정하고 객관적인 절차를 따르는 것이 의무입니다. 이는 법과 규칙에 대한 존경심에 기반한 결정이어야 하며, 이는 진정한 도덕적 가치를 지니게 됩니다.\n\n결론적으로, 의무는 경향성과 구별되는 것으로, 이는 법칙에 대한 존경심과 이성에 기반하여 행동을 결정하는 것을 의미합니다. 현대적 맥락에서도 이러한 개념은 여전히 적용 가능하며, 공정성과 도덕적 판단을 통해 사회적 문제를 해결하는 데 중요한 역할을 합니다.",
+      "avg_similarity": 0.44331787824630736,
+      "max_similarity": 0.45552539825439453
+    },
+    "comparison": {
+      "avg_similarity_diff": 0.20095856189727782,
+      "max_similarity_diff": 0.20708918571472168,
+      "better_language": "english"
+    }
+  },
+  {
+    "korean_question": "자유와 도덕법칙의 관계는 어떠한가?",
+    "english_question": "What is the relationship between freedom and moral law?",
+    "korean_results": {
+      "retrieved_chunks": [
+        {
+          "text": "We stand under a discipline of reason and in all our maxims must not forget our subjection to it, nor withdraw anything therefrom, or by an egotistic presumption diminish aught of the authority of the law (although our own reason gives it) so as to set the determining principle of our will, even though the law be conformed to, anywhere else but in the law itself and in respect for this law. Duty and obligation are the only names that we must give to our relation to the moral law.",
+          "raw_distance": 1.262861728668213,
+          "similarity": 0.36856913566589355,
+          "metadata": {
+            "token_count": 105,
+            "source": "The Critique of Practical Reason",
+            "original_order": 308,
+            "chunk_id": "kant_chunk_308"
+          }
+        },
+        {
+          "text": "{BOOK_1|CHAPTER_1 ^paragraph 85} In fact the sole principle of morality consists in the independence on all matter of the law (namely, a desired object), and in the determination of the elective will by the mere universal legislative form of which its maxim must be capable. Now this independence is freedom in the negative sense, and this self-legislation of the pure, and therefore practical, reason is freedom in the positive sense. Thus the moral law expresses nothing else than the autonomy of the pure practical reason; that is, freedom; and this is itself the formal condition of all maxims, and on this condition only can they agree with the supreme practical law.",
+          "raw_distance": 1.2660763263702393,
+          "similarity": 0.36696183681488037,
+          "metadata": {
+            "token_count": 138,
+            "original_order": 112,
+            "source": "The Critique of Practical Reason - Book 1: CHAPTER_1 ^paragraph 85} In fact the sole principle of morality consists in the independence on all matter of the law (namely, a desired object), and in the determination of the elective will by the mere universal legislative form of which its maxim must be capable",
+            "chunk_id": "kant_chunk_112"
+          }
+        },
+        {
+          "text": "law that merely furnishes a principle of obligation from that which is really obligatory (leges obligandi a legibus obligantibus); as, for instance, the law of what men's wants require from me, as contrasted with that which their rights demand, the latter of which prescribes essential, the former only non-essential duties; and thus we teach how to distinguish different",
+          "raw_distance": 1.2663646936416626,
+          "similarity": 0.3668176531791687,
+          "metadata": {
+            "token_count": 77,
+            "source": "The Critique of Practical Reason",
+            "original_order": 601,
+            "chunk_id": "kant_chunk_601"
+          }
+        },
+        {
+          "text": "Duty and obligation are the only names that we must give to our relation to the moral law. We are indeed legislative members of a moral kingdom rendered possible by freedom, and presented to us by reason as an object of respect; but yet we are subjects in it, not the sovereign, and to mistake our inferior position as creatures, and presumptuously to reject the authority of the moral law, is already to revolt from it in spirit, even though the letter of it is fulfilled. With this agrees very well the possibility of such a command as: Love God above everything, and thy neighbour as thyself.",
+          "raw_distance": 1.287869930267334,
+          "similarity": 0.356065034866333,
+          "metadata": {
+            "chunk_id": "kant_chunk_309",
+            "token_count": 123,
+            "source": "The Critique of Practical Reason",
+            "original_order": 309
+          }
+        },
+        {
+          "text": "The moral law, which itself does not require a justification, proves not merely the possibility of freedom, but that it really belongs to beings who recognize this law as binding on themselves. The moral law is in fact a law of the causality of free agents and, therefore, of the possibility of a supersensible system of nature, just as the metaphysical law of events in the world of sense was a law of causality of the sensible system of nature; and it therefore determines what speculative philosophy was compelled to leave undetermined, namely, the law for a causality, the concept of which in the latter was only negative; and therefore for the first time gives this concept objective reality.",
+          "raw_distance": 1.2956066131591797,
+          "similarity": 0.35219669342041016,
+          "metadata": {
+            "token_count": 138,
+            "chunk_id": "kant_chunk_168",
+            "original_order": 168,
+            "source": "The Critique of Practical Reason"
+          }
+        }
+      ],
+      "response": "자유와 도덕법칙의 관계에 대한 질문은 나의 철학에서 매우 중요한 주제입니다. '실천이성비판'에서 나는 자유를 도덕법칙과 밀접하게 연관지었습니다. 자유는 도덕법칙의 전제 조건이며, 도덕법칙은 자유를 통해 그 실현 가능성을 갖습니다.\n\n첫째로, 도덕법칙은 자율적 이성에 의해 주어진 것으로, 이는 우리가 우리의 의지를 독립적으로 결정할 수 있는 자유를 의미합니다. 이는 텍스트 2에서 언급된 것처럼, 도덕의 유일한 원칙은 법의 물질적 대상에서 독립하여 우리의 선택적 의지를 보편적 입법 형태로 결정하는 것입니다. 이 독립성은 부정적 의미에서의 자유이며, 순수하고 실천적인 이성의 자기 입법은 긍정적 의미에서의 자유입니다.\n\n현대적 맥락에서 볼 때, 이러한 개념은 개인의 자율성과 의사 결정에 중요한 시사점을 줍니다. 예를 들어, 현대 사회에서 우리는 종종 개인적 욕망이나 사회적 기대에 의해 결정되는 선택의 갈림길에 서게 됩니다. 그러나 진정한 도덕적 행위는 외부의 영향에서 벗어나 순수한 이성에 따라 자율적으로 결정된 것이어야 합니다. 이는 개인이 자신의 행동을 정당화할 때, 외적인 욕망이 아닌, 내적 도덕법칙에 따라 행동해야 함을 의미합니다.\n\n둘째로, 자유는 도덕법칙을 실현하는 수단이며, 도덕법칙은 자유의 본질을 드러냅니다. 이는 텍스트 5에서 언급된 것처럼, 도덕법칙은 자유로운 존재자들에게 실제로 속하는 것을 증명하며, 이는 초감각적 자연 체계의 가능성을 제시합니다. 따라서 도덕법칙은 자유로운 행위자들의 인과성을 규정하여, 실천적 이성이 명령하는 대로 행동할 수 있도록 합니다.\n\n실질적인 예로, 직장에서의 윤리적 결정이 있을 수 있습니다. 직원이 회사의 이익을 위해 비윤리적 행위를 요구받는 상황에서, 그는 외적 압박에 굴복하지 않고, 자신의 내적 도덕법칙에 따라 행동할 자유가 있습니다. 이는 자신의 행동이 보편적 도덕 원칙에 의해 입법될 수 있는가를 스스로에게 묻고, 그에 따라 행동하는 것을 의미합니다. 이러한 방식으로 현대 사회에서도 자유와 도덕법칙은 긴밀히 연결되어 있으며, 이는 개인의 윤리적 선택에 지침을 제공합니다.",
+      "avg_similarity": 0.36212207078933717,
+      "max_similarity": 0.36856913566589355
+    },
+    "english_results": {
+      "retrieved_chunks": [
+        {
+          "text": "Respect for the moral law is, therefore, the only and the undoubted moral motive, and this feeling is directed to no object, except on the ground of this law. The moral law first determines the will objectively and directly in the judgement of reason; and freedom, whose causality can be determined only by the law, consists just in this, that it restricts all inclinations, and consequently self-esteem, by the condition of obedience to its pure law. This restriction now has an effect on feeling, and produces the impression of displeasure which can be known a priori from the moral law.",
+          "raw_distance": 0.6738331913948059,
+          "similarity": 0.663083404302597,
+          "metadata": {
+            "token_count": 122,
+            "chunk_id": "kant_chunk_292",
+            "source": "The Critique of Practical Reason",
+            "original_order": 292
+          }
+        },
+        {
+          "text": "It is therefore the moral law, of which we become directly conscious (as soon as we trace for ourselves maxims of the will), that first presents itself to us, and leads directly to the concept of freedom, inasmuch as reason presents it as a principle of determination not to be outweighed by any sensible conditions, nay, wholly independent of them. But how is the consciousness, of that moral law possible? We can become conscious of pure practical laws just as we are conscious of pure theoretical principles, by attending to the necessity with which reason prescribes them and to the elimination of all empirical conditions, which it directs.",
+          "raw_distance": 0.7073279023170471,
+          "similarity": 0.6463360488414764,
+          "metadata": {
+            "token_count": 127,
+            "chunk_id": "kant_chunk_96",
+            "original_order": 96,
+            "source": "The Critique of Practical Reason"
+          }
+        },
+        {
+          "text": "The moral law, which itself does not require a justification, proves not merely the possibility of freedom, but that it really belongs to beings who recognize this law as binding on themselves. The moral law is in fact a law of the causality of free agents and, therefore, of the possibility of a supersensible system of nature, just as the metaphysical law of events in the world of sense was a law of causality of the sensible system of nature; and it therefore determines what speculative philosophy was compelled to leave undetermined, namely, the law for a causality, the concept of which in the latter was only negative; and therefore for the first time gives this concept objective reality.",
+          "raw_distance": 0.7186331152915955,
+          "similarity": 0.6406834423542023,
+          "metadata": {
+            "chunk_id": "kant_chunk_168",
+            "original_order": 168,
+            "source": "The Critique of Practical Reason",
+            "token_count": 138
+          }
+        },
+        {
+          "text": "{BOOK_1|CHAPTER_1 ^paragraph 85} In fact the sole principle of morality consists in the independence on all matter of the law (namely, a desired object), and in the determination of the elective will by the mere universal legislative form of which its maxim must be capable. Now this independence is freedom in the negative sense, and this self-legislation of the pure, and therefore practical, reason is freedom in the positive sense. Thus the moral law expresses nothing else than the autonomy of the pure practical reason; that is, freedom; and this is itself the formal condition of all maxims, and on this condition only can they agree with the supreme practical law.",
+          "raw_distance": 0.7227286696434021,
+          "similarity": 0.638635665178299,
+          "metadata": {
+            "token_count": 138,
+            "original_order": 112,
+            "source": "The Critique of Practical Reason - Book 1: CHAPTER_1 ^paragraph 85} In fact the sole principle of morality consists in the independence on all matter of the law (namely, a desired object), and in the determination of the elective will by the mere universal legislative form of which its maxim must be capable",
+            "chunk_id": "kant_chunk_112"
+          }
+        },
+        {
+          "text": "For this concept has no other meaning, and these laws are only possible in relation to freedom of the will; but freedom being supposed, they are necessary; or conversely freedom is necessary because those laws are necessary, being practical postulates. It cannot be further explained how this consciousness of the moral law, or, what is the same thing, of freedom, is possible; but that it is admissible is well established in the theoretical critique. The exposition of the supreme principle of practical reason is now finished; that is to say, it has been shown first, what it contains, that it subsists for itself quite a priori and independent of empirical principles; and next in what it is distinguished from all other practical principles.",
+          "raw_distance": 0.7708826065063477,
+          "similarity": 0.6145586967468262,
+          "metadata": {
+            "chunk_id": "kant_chunk_163",
+            "token_count": 146,
+            "original_order": 163,
+            "source": "The Critique of Practical Reason"
+          }
+        }
+      ],
+      "response": "내 철학적 관점에서 자유와 도덕법의 관계는 실천이성의 근본적인 이해를 통해 설명될 수 있습니다. 도덕법은 인간의 의지를 객관적으로 정하는 원칙이며, 이는 이성의 판단에 의해 직접적으로 이루어집니다. 자유는 이러한 도덕법에 의해 결정될 수 있는 인과성을 가지며, 이는 곧 모든 경향성과 자존심을 순수한 법칙에 대한 복종의 조건으로 제한하는 것을 의미합니다. 따라서 도덕법에 대한 존경심은 자유의 본질적인 표현이 됩니다.\n\n구체적인 예로, 만약 한 개인이 어떤 상황에서 거짓말을 할 유혹을 느낀다면, 도덕법은 그 유혹을 넘어서야 한다고 요구합니다. 이때 그 개인의 자유는 그 유혹을 넘어서는 결정, 즉 정직함을 선택하는 데 있습니다. 이는 경향이나 개인적 이익에 굴복하지 않고, 보편적 도덕 원칙에 따라 행동하는 자유로운 의지의 표현입니다.\n\n현대적 맥락에서 이러한 개념은 윤리적 딜레마에서 자주 나타납니다. 예를 들어, 기업의 경영자가 단기적인 이익을 위해 환경 규제를 무시하고자 하는 유혹을 받을 수 있습니다. 그러나 도덕법은 장기적이고 보편적인 이익을 위해 환경을 보호해야 한다고 명령할 수 있습니다. 이 경우, 경영자의 자유는 법과 윤리적 원칙을 따르는 선택을 함으로써 진정으로 발휘됩니다.\n\n따라서 도덕법은 자유의 제한이 아니라, 오히려 자유의 본질적 조건을 제공합니다. 인간의 자율성과 이성은 도덕법을 통해 최상의 상태로 발현되며, 이는 현대 사회에서도 개인과 집단이 윤리적 결정을 내리는 데 있어 중요한 역할을 합니다. 이와 같은 방식으로, 자유와 도덕법의 관계는 오늘날의 다양한 윤리적, 사회적 문제들에 적용될 수 있습니다.",
+      "avg_similarity": 0.6406594514846802,
+      "max_similarity": 0.663083404302597
+    },
+    "comparison": {
+      "avg_similarity_diff": 0.278537380695343,
+      "max_similarity_diff": 0.2945142686367035,
+      "better_language": "english"
+    }
+  },
+  {
+    "korean_question": "최고선은 무엇이며 어떻게 달성할 수 있는가?",
+    "english_question": "What is the highest good and how can it be achieved?",
+    "korean_results": {
+      "retrieved_chunks": [
+        {
+          "text": "BOOK_2|CHAPTER_2 CHAPTER II. Of the Dialectic of Pure Reason in defining the Conception of the \"Summum Bonum\". The conception of the summum itself contains an ambiguity which might occasion needless disputes if we did not attend to it. The summum may mean either the supreme (supremum) or the perfect (consummatum). The former is that condition which is itself unconditioned, i.e., is not subordinate to any other (originarium); the second is that whole which is not a part of a greater whole of the same kind (perfectissimum).",
+          "raw_distance": 1.6142516136169434,
+          "similarity": 0.19287419319152832,
+          "metadata": {
+            "original_order": 417,
+            "chunk_id": "kant_chunk_417",
+            "source": "The Critique of Practical Reason - Book 2: CHAPTER_2 CHAPTER II",
+            "token_count": 124
+          }
+        },
+        {
+          "text": "Only with this subordination is the summum bonum the whole object of pure practical reason, which must necessarily conceive it as possible, since it commands us to contribute to the utmost of our power to its realization. But since the possibility of such connection of the conditioned with its condition belongs wholly to the supersensual relation of things and cannot be given according to the laws of the world of sense, although the practical consequences of the idea belong to the world of sense, namely, the actions that aim at realizing the summum bonum; we will therefore endeavour to set forth the grounds of that possibility, first, in respect of what is immediately in our power, and then, secondly, in that which is not in our power, but which reason presents to us as the supplement of our impotence, for the realization of the summum bonum (which by practical principles is necessary).",
+          "raw_distance": 1.6280471086502075,
+          "similarity": 0.18597644567489624,
+          "metadata": {
+            "source": "The Critique of Practical Reason",
+            "original_order": 451,
+            "token_count": 178,
+            "chunk_id": "kant_chunk_451"
+          }
+        },
+        {
+          "text": "The summum bonum, then, practically is only possible on the supposition of the immortality of the soul; consequently this immortality, being inseparably connected with the moral law, is a postulate of pure practical reason (by which I mean a theoretical proposition, not demonstrable as such, but which is an inseparable result of an unconditional a priori practical law. This principle of the moral destination of our nature, namely, that it is only in an endless progress that we can attain perfect accordance with the moral law, is of the greatest use, not merely for the present purpose of supplementing the impotence of speculative reason, but also with respect to religion.",
+          "raw_distance": 1.636549472808838,
+          "similarity": 0.18172526359558105,
+          "metadata": {
+            "original_order": 464,
+            "token_count": 138,
+            "chunk_id": "kant_chunk_464",
+            "source": "The Critique of Practical Reason"
+          }
+        },
+        {
+          "text": "We can also see from this that, when we ask what is God's ultimate end in creating the world, we must not name the happiness of the rational beings in it, but the summum bonum, which adds a further condition to that wish of such beings, namely, the condition of being worthy of happiness, that is, the morality of these same rational beings, a condition which alone contains the rule by which only they can hope to share in the former at the hand of a wise Author. For as wisdom, theoretically considered, signifies the knowledge of the summum bonum and, practically, the accordance of the will with the summum bonum, we cannot attribute to a supreme independent wisdom an end based merely on goodness.",
+          "raw_distance": 1.6454055309295654,
+          "similarity": 0.17729723453521729,
+          "metadata": {
+            "original_order": 499,
+            "token_count": 148,
+            "source": "The Critique of Practical Reason",
+            "chunk_id": "kant_chunk_499"
+          }
+        },
+        {
+          "text": "The command to promote the summum bonum is established on an objective basis (in practical reason); the possibility of the same in general is likewise established on an objective basis (in theoretical reason, which has nothing to say against it). But reason cannot decide objectively in what way we are to conceive this possibility; whether by universal laws of nature without a wise Author presiding over nature, or only on supposition of such an Author.",
+          "raw_distance": 1.6545644998550415,
+          "similarity": 0.17271775007247925,
+          "metadata": {
+            "chunk_id": "kant_chunk_556",
+            "token_count": 87,
+            "original_order": 556,
+            "source": "The Critique of Practical Reason"
+          }
+        }
+      ],
+      "response": "칸트로서, 나는 '최고선(Summum Bonum)'이라는 개념을 도덕 철학의 중요한 지점으로 여깁니다. 최고선은 궁극적으로 선과 행복의 조화로운 결합을 의미합니다. 이는 도덕적 가치와 행복이 결합된 상태로, 인간이 도덕 법칙에 따라 행동하고 그에 합당한 행복을 누리는 상태를 지향합니다.\n\n우리가 최고선을 달성하기 위해서는 먼저 도덕 법칙에 대한 무조건적 의무를 이해하고 실천해야 합니다. 이는 '정언 명령'에 의해 규정되며, 우리의 행동이 보편적 법칙과 일치해야 함을 의미합니다. 예를 들어, 다른 사람을 단지 수단이 아닌 목적으로 대우하는 것은 모든 인간의 존엄성을 인정하는 보편적 법칙에 부합합니다.\n\n현대적 맥락에서 최고선의 개념은 지속 가능한 발전과도 연관될 수 있습니다. 예를 들어, 환경 보호를 위한 행동은 단지 인간의 현재 행복을 넘어, 미래 세대의 행복과 연결됩니다. 이때 도덕적 의무는 현재와 미래의 인류 모두를 포함하여 모든 이성적 존재의 복지를 고려하는 것입니다.\n\n최고선의 달성은 또한 인간의 자율성과 이성을 중시합니다. 우리는 이성을 통해 도덕 법칙을 이해하고, 자율성을 통해 그것을 실천할 수 있습니다. 그러나 이는 단순히 개인의 노력만으로는 충분하지 않으며, 사회 전체가 도덕적 가치와 합리적인 법칙을 지향해야 합니다.\n\n마지막으로, 최고선의 완전한 실현은 인간의 한계를 넘어서는 것이며, 이로 인해 나는 영혼의 불멸과 신의 존재를 도덕적 필연성으로서 주장하였습니다. 이는 우리가 도덕적 이상을 무한히 추구하도록 격려하며, 우리의 한계를 극복하는 데 도움을 줍니다.\n\n따라서, 최고선을 달성하기 위한 우리의 노력은 도덕적 행동을 통해 이루어지며, 이는 개인의 자율적 판단과 사회적 책임의 조화를 요구합니다.",
+      "avg_similarity": 0.18211817741394043,
+      "max_similarity": 0.19287419319152832
+    },
+    "english_results": {
+      "retrieved_chunks": [
+        {
+          "text": "It has been shown in the Analytic that virtue (as worthiness to be happy) is the supreme condition of all that can appear to us desirable, and consequently of all our pursuit of happiness, and is therefore the supreme good. But it does not follow that it is the whole and perfect good as the object of the desires of rational finite beings; for this requires happiness also, and that not merely in the partial eyes of the person who makes himself an end, but even in the judgement of an impartial reason, which regards persons in general as ends in themselves.",
+          "raw_distance": 0.8929107785224915,
+          "similarity": 0.5535446107387543,
+          "metadata": {
+            "token_count": 114,
+            "source": "The Critique of Practical Reason",
+            "original_order": 418,
+            "chunk_id": "kant_chunk_418"
+          }
+        },
+        {
+          "text": "We can also see from this that, when we ask what is God's ultimate end in creating the world, we must not name the happiness of the rational beings in it, but the summum bonum, which adds a further condition to that wish of such beings, namely, the condition of being worthy of happiness, that is, the morality of these same rational beings, a condition which alone contains the rule by which only they can hope to share in the former at the hand of a wise Author. For as wisdom, theoretically considered, signifies the knowledge of the summum bonum and, practically, the accordance of the will with the summum bonum, we cannot attribute to a supreme independent wisdom an end based merely on goodness.",
+          "raw_distance": 0.9164373874664307,
+          "similarity": 0.5417813062667847,
+          "metadata": {
+            "chunk_id": "kant_chunk_499",
+            "source": "The Critique of Practical Reason",
+            "token_count": 148,
+            "original_order": 499
+          }
+        },
+        {
+          "text": "Now it is clear from the Analytic that the maxims of virtue and those of private happiness are quite heterogeneous as to their supreme practical principle, and, although they belong to one summum bonum which together they make possible, yet they are so far from coinciding that they restrict and check one another very much in the same subject. Thus the question: \"How is the summum bonum practically possible?\" still remains an unsolved problem, notwithstanding all the attempts at coalition that have hitherto been made.",
+          "raw_distance": 0.94355309009552,
+          "similarity": 0.52822345495224,
+          "metadata": {
+            "source": "The Critique of Practical Reason",
+            "original_order": 426,
+            "chunk_id": "kant_chunk_426",
+            "token_count": 104
+          }
+        },
+        {
+          "text": "The command to promote the summum bonum is established on an objective basis (in practical reason); the possibility of the same in general is likewise established on an objective basis (in theoretical reason, which has nothing to say against it). But reason cannot decide objectively in what way we are to conceive this possibility; whether by universal laws of nature without a wise Author presiding over nature, or only on supposition of such an Author.",
+          "raw_distance": 0.9593685269355774,
+          "similarity": 0.5203157365322113,
+          "metadata": {
+            "original_order": 556,
+            "chunk_id": "kant_chunk_556",
+            "source": "The Critique of Practical Reason",
+            "token_count": 87
+          }
+        },
+        {
+          "text": "Here again, then, all remains disinterested and founded merely on duty; neither fear nor hope being made the fundamental springs, which if taken as principles would destroy the whole moral worth of actions. The moral law commands me to make the highest possible good in a world the ultimate object of all my conduct. But I cannot hope to effect this otherwise than by the harmony of my will with that of a holy and good Author of the world; and although the conception of the summum bonum as a whole, in which the greatest happiness is conceived as combined in the most exact proportion with the highest degree of moral perfection (possible in creatures), includes my own happiness, yet it is not this that is the determining principle of the will which is enjoined to promote the summum bonum, but the moral law, which, on the contrary, limits by strict conditions my unbounded desire of happiness.",
+          "raw_distance": 0.9666764736175537,
+          "similarity": 0.5166617631912231,
+          "metadata": {
+            "token_count": 180,
+            "chunk_id": "kant_chunk_496",
+            "original_order": 496,
+            "source": "The Critique of Practical Reason"
+          }
+        }
+      ],
+      "response": "내 철학적 관점에서 '최고선'(summum bonum)이란 도덕적 완전성과 행복의 조화를 의미합니다. 이는 단순히 개인적 행복을 추구하는 것이 아니라, 그 행복을 누릴 자격을 갖춘 도덕적 존재로서의 상태를 포함합니다. '실천이성비판'에서 논의된 바와 같이, 도덕적 가치(덕)는 행복을 추구하는 데 있어 최고의 조건으로 작용하며, 따라서 최고선의 핵심 요소가 됩니다.\n\n첫째, 최고선은 도덕적으로 완전한 상태, 즉 덕을 통해 얻을 수 있습니다. 덕은 우리가 도덕적 법칙에 따라 행동할 때 성취되는 것으로, 이는 '정언 명령'을 따르는 것을 의미합니다. 예를 들어, \"네가 원칙으로 삼고자 하는 바가 보편적 법칙이 될 수 있도록 행동하라\"는 명령은 모든 도덕적 판단의 기초가 됩니다.\n\n둘째, 이러한 도덕적 완전성은 개인의 행복과 결합되어야 합니다. 그러나 이 행복은 단순히 개인적 쾌락이나 욕구 충족에 의해 결정되는 것이 아닙니다. 오히려, 이성적 존재로서의 자격을 갖춘 행복, 즉 도덕적 법칙을 준수하는 상태에서의 행복이어야 합니다. 현대적 맥락에서 생각해본다면, 윤리적 경영을 통해 기업이 사회적 책임을 다하고 동시에 경제적 이익을 추구하는 것이 이런 조화의 한 예시가 될 수 있습니다.\n\n결론적으로, 최고선을 달성하기 위해서는 개인의 도덕적 행동이 필수적이며, 이는 인간의 자율성과 이성에 의해 지지됩니다. 우리는 항상 도덕적 법칙에 따라 행동하며, 이러한 법칙이 우리 행동의 최종 목적이 되어야 합니다. 동시에, 이러한 도덕적 행동은 우리의 행복과 조화롭게 결합되어야 하며, 이는 개인뿐만 아니라 전체 공동체의 복지를 고려하는 방식으로 나타나야 합니다.",
+      "avg_similarity": 0.5321053743362427,
+      "max_similarity": 0.5535446107387543
+    },
+    "comparison": {
+      "avg_similarity_diff": 0.3499871969223023,
+      "max_similarity_diff": 0.36067041754722595,
+      "better_language": "english"
+    }
+  },
+  {
+    "korean_question": "유전자 편집 기술에 칸트의 윤리학을 적용한다면 어떤 결론이 나올까?",
+    "english_question": "What conclusions would result from applying Kant's ethics to gene editing technology?",
+    "korean_results": {
+      "retrieved_chunks": [
+        {
+          "text": "According to this view, the punishment would be the reason for calling anything a crime, and justice would, on the contrary, consist in omitting all punishment, and even preventing that which naturally follows; for, if this were done, there would no longer be any evil in the action, since the harm which otherwise followed it, and on account of which alone the action was called evil, would now be prevented. To look, however, on all rewards and punishments as merely the machinery in the hand of a higher power, which is to serve only to set rational creatures striving after their final end (happiness), this is to reduce the will to a mechanism destructive of freedom; this is so evident that it need not detain us.",
+          "raw_distance": 1.4803109169006348,
+          "similarity": 0.2598445415496826,
+          "metadata": {
+            "source": "The Critique of Practical Reason",
+            "chunk_id": "kant_chunk_135",
+            "token_count": 147,
+            "original_order": 135
+          }
+        },
+        {
+          "text": "When I say of a man who commits a theft that, by the law of causality, this deed is a necessary result of the determining causes in preceding time, then it was impossible that it could not have happened; how then can the judgement, according to the moral law, make any change, and suppose that it could have been omitted, because the law says that it ought to have been omitted; that is, how can a man be called quite free at the same moment, and with respect to the same action in which he is subject to an inevitable physical necessity? Some try to evade this by saying that the causes that determine his causality are of such a kind as to agree with a comparative notion of freedom.",
+          "raw_distance": 1.5006078481674194,
+          "similarity": 0.24969607591629028,
+          "metadata": {
+            "token_count": 145,
+            "source": "The Critique of Practical Reason",
+            "original_order": 359,
+            "chunk_id": "kant_chunk_359"
+          }
+        },
+        {
+          "text": "This is just the case for my maxim. I desire then to know whether that maxim can also bold good as a universal practical law. I apply it, therefore, to the present case, and ask whether it could take the form of a law, and consequently whether I can by my maxim at the same time give such a law as this, that everyone may deny a deposit of which no one can produce a proof. I at once become aware that such a principle, viewed as a law, would annihilate itself, because the result would be that there would be no deposits. A practical law which I recognise as such must be qualified for universal legislation; this is an identical proposition and, therefore, self-evident.",
+          "raw_distance": 1.5130200386047363,
+          "similarity": 0.24348998069763184,
+          "metadata": {
+            "chunk_id": "kant_chunk_88",
+            "original_order": 88,
+            "token_count": 145,
+            "source": "The Critique of Practical Reason"
+          }
+        },
+        {
+          "text": "The classification then belongs to the system of science, not to the system of criticism. {PREFACE ^paragraph 15} * A reviewer who wanted to find some fault with this work has hit the truth better, perhaps, than he thought, when he says that no new principle of morality is set forth in it, but only a new formula. But who would think of introducing a new principle of all morality and making himself as it were the first discoverer of it, just as if all the world before him were ignorant what duty was or had been in thorough-going error?",
+          "raw_distance": 1.5363481044769287,
+          "similarity": 0.23182594776153564,
+          "metadata": {
+            "chunk_id": "kant_chunk_22",
+            "original_order": 22,
+            "token_count": 117,
+            "source": "The Critique of Practical Reason"
+          }
+        },
+        {
+          "text": "For, provided only that the will conforms to the law of pure reason, then let its power in execution be what it may, whether according to these maxims of legislation of a possible system of nature any such system really results or not, this is no concern of the critique, which only inquires whether, and in what way, pure reason can be practical, that is directly determine the will. In this inquiry criticism may and must begin with pure practical laws and their reality. But instead of intuition it takes as their foundation the conception of their existence in the intelligible world, namely, the concept of freedom.",
+          "raw_distance": 1.5456252098083496,
+          "similarity": 0.2271873950958252,
+          "metadata": {
+            "token_count": 123,
+            "chunk_id": "kant_chunk_162",
+            "original_order": 162,
+            "source": "The Critique of Practical Reason"
+          }
+        }
+      ],
+      "response": "유전자 편집 기술에 칸트의 윤리학을 적용함에 있어, 우리는 도덕적 판단의 기준으로서 '정언 명령'을 고려해야 합니다. 정언 명령은 우리가 행동할 때, 그 행동이 보편적 법칙으로 성립할 수 있는지를 묻는 것입니다. 이는 한 개인의 행위가 모든 사람에게 동일하게 적용될 수 있는지를 판단하는 기준입니다.\n\n유전자 편집 기술이란 것이 인간의 본성을 변화시키고, 결과적으로 인간의 자율성과 자유에 직접적인 영향을 미칠 수 있기 때문에, 우리는 이 기술이 보편적 법칙으로서의 정당성을 가질 수 있는지를 깊이 검토해야 합니다. 만약 모든 사람이 특정 방식으로 유전자를 편집하는 것이 정당화된다면, 이는 인간의 자연적 상태를 근본적으로 변화시킬 것입니다. 따라서 우리는 이러한 기술이 인간의 내재적 가치와 존엄성을 침해하지 않는지를 우선적으로 고려해야 합니다.\n\n구체적인 예로, 유전자 편집을 통해 특정 질병을 예방한다는 목표는 인류의 복지에 기여할 수 있습니다. 그러나 그러한 편집이 인간의 선택과 자율성을 침해하게 되면, 이는 도덕적 문제를 야기할 수 있습니다. 예를 들어, 특정 유전적 특성을 가진 사람들이 사회에서 차별을 받지 않도록 보장할 필요성이 생깁니다. 그렇지 않다면, 이는 인간의 평등한 존엄성을 부정하는 결과를 초래할 수 있습니다.\n\n현대적 맥락에서, 유전자 편집 기술의 활용은 엄격한 윤리적 기준과 법적 규제를 통해 이루어져야 합니다. 이는 인간의 자율성을 보장하고, 기술의 남용을 방지하기 위해 필수적입니다. 따라서 칸트로서, 나는 유전자 편집 기술이 인간의 의무와 존엄성을 존중하는 방식으로만 사용되어야 한다고 주장할 것입니다. 이는 우리의 행동이 보편적 도덕 원칙에 부합하는지를 항상 검토해야 한다는 실천이성의 요구에 부합합니다.",
+      "avg_similarity": 0.24240878820419312,
+      "max_similarity": 0.2598445415496826
+    },
+    "english_results": {
+      "retrieved_chunks": [
+        {
+          "text": "This is the proper place to explain the paradox of method in a critique of practical reason, namely, that the concept of good and evil must not be determined before the moral law (of which it seems as if it must be the foundation), but only after it and by means of it. In fact, even if we did not know that the principle of morality is a pure a priori law determining the will, yet, that we may not assume principles quite gratuitously, we must, at least at first, leave it undecided, whether the will has merely empirical principles of determination, or whether it has not also pure a priori principles; for it is contrary to all rules of philosophical method to assume as decided that which is the very point in question.",
+          "raw_distance": 1.1891767978668213,
+          "similarity": 0.40541160106658936,
+          "metadata": {
+            "token_count": 152,
+            "original_order": 228,
+            "source": "The Critique of Practical Reason",
+            "chunk_id": "kant_chunk_228"
+          }
+        },
+        {
+          "text": "However they are the conditions of the application of the morally determined will to its object, which is given to it a priori, viz., the summum bonum. Consequently in this practical point of view their possibility must be assumed, although we cannot theoretically know and understand it. To justify this assumption it is sufficient, in a practical point of view, that they contain no intrinsic impossibility (contradiction). Here we have what, as far as speculative reason is concerned, is a merely subjective principle of assent, which, however, is objectively valid for a reason equally pure but practical, and this principle, by means of the concept of freedom, assures objective reality and authority to the ideas of God and immortality.",
+          "raw_distance": 1.219517707824707,
+          "similarity": 0.3902411460876465,
+          "metadata": {
+            "original_order": 5,
+            "source": "The Critique of Practical Reason",
+            "token_count": 146,
+            "chunk_id": "kant_chunk_5"
+          }
+        },
+        {
+          "text": "This remark is important in so delicate a case as the determination of moral principles, where the slightest misinterpretation perverts men's minds. For it will have been seen from the Analytic that, if we assume any object under the name of a good as a determining principle of the will prior to the moral law and then deduce from it the supreme practical principle, this would always introduce heteronomy and crush out the moral principle.",
+          "raw_distance": 1.2269015312194824,
+          "similarity": 0.3865492343902588,
+          "metadata": {
+            "token_count": 87,
+            "source": "The Critique of Practical Reason",
+            "chunk_id": "kant_chunk_415",
+            "original_order": 415
+          }
+        },
+        {
+          "text": "This example may suggest to us to enter on the same path in treating of the moral capacities of our nature, and may give us hope of a like good result. We have at hand the instances of the moral judgement of reason. By analysing these into their elementary conceptions, and in default of mathematics adopting a process similar to that of chemistry, the separation of the empirical from the rational elements that may be found in them, by repeated experiments on common sense, we may exhibit both pure, and learn with certainty what each part can accomplish of itself, so as to prevent on the one hand the errors of a still crude untrained judgement, and on the other hand (what is far more necessary) the extravagances of genius, by which, as by the adepts of the philosopher's stone, without any methodical study or knowledge of nature, visionary treasures are promised and the true are thrown away.",
+          "raw_distance": 1.254486083984375,
+          "similarity": 0.3727569580078125,
+          "metadata": {
+            "token_count": 182,
+            "source": "The Critique of Practical Reason",
+            "original_order": 614,
+            "chunk_id": "kant_chunk_614"
+          }
+        },
+        {
+          "text": "This, namely, as a typic of the judgement, guards against the empiricism of practical reason, which founds the practical notions of good and evil merely on experienced consequences (so-called happiness). No doubt happiness and the infinite advantages which would result from a will determined by self-love, if this will at the same time erected itself into a universal law of nature, may certainly serve as a perfectly suitable type of the morally good, but it is not identical with it.",
+          "raw_distance": 1.2545279264450073,
+          "similarity": 0.37273603677749634,
+          "metadata": {
+            "chunk_id": "kant_chunk_263",
+            "original_order": 263,
+            "source": "The Critique of Practical Reason",
+            "token_count": 96
+          }
+        }
+      ],
+      "response": "임마누엘 칸트로서, 나는 실천이성의 관점에서 유전자 편집 기술에 관한 윤리적 고찰을 제시할 수 있습니다. 유전자 편집 기술은 인간의 본질을 근본적으로 변화시킬 잠재력을 지니고 있으며, 이는 도덕적 숙고가 필요한 중대한 사안이라 할 수 있습니다.\n\n먼저, '정언 명령'에 비추어 보았을 때, 우리의 행위는 보편적으로 적용 가능한 법칙의 형태여야 합니다. 유전자 편집 기술을 사용할 때, 우리는 그것이 모든 사람에게 보편적으로 적용될 수 있는지를 숙고해야 합니다. 예를 들어, 특정 유전자를 편집하여 질병을 예방하는 것이 도덕적으로 정당화될 수 있을지라도, 이러한 행위가 모든 사람에게 보편적으로 적용될 수 있는지를 고려해야 합니다. 만약 특정 유전형질의 편집이 특정 개인이나 집단에게만 혜택을 주는 방식으로 사용된다면, 이는 도덕적 원칙과 배치될 것입니다.\n\n또한, '실천이성'의 개념에 따라 우리는 우리의 행위가 자율적인 이성에 의해 결정되어야 한다고 주장합니다. 유전자 편집 기술의 사용은 인간의 자율성을 침해할 가능성이 있습니다. 기술을 통해 태어난 개인이 자신의 유전적 특성에 대해 선택할 권리를 갖지 못하게 된다면, 이는 그 개인의 자율성을 침해하는 것입니다. 따라서, 유전자 편집 기술의 사용은 개인의 자율성을 보장하는 방식으로 이루어져야 합니다.\n\n현대적 맥락에서, 유전자 편집 기술의 적용은 공공의 복지와 개인의 권리 사이의 균형을 찾아야 하는 복잡성을 제시합니다. 예를 들어, 공공의 건강을 증진시키기 위해 질병 유전자를 제거하는 것이 가능하지만, 이는 개인의 유전적 다양성과 선택권을 제한할 수 있습니다. 따라서, 우리는 윤리적 결정을 내릴 때 이성적 숙고와 함께 이러한 복잡성을 충분히 고려해야 합니다.\n\n결론적으로, 유전자 편집 기술에 대한 윤리적 판단은 보편적 도덕 원칙에 의해 인도되어야 하며, 이는 모든 개인의 자율성과 이성을 존중하는 방식으로 이루어져야 합니다.",
+      "avg_similarity": 0.3855389952659607,
+      "max_similarity": 0.40541160106658936
+    },
+    "comparison": {
+      "avg_similarity_diff": 0.14313020706176757,
+      "max_similarity_diff": 0.14556705951690674,
+      "better_language": "english"
+    }
+  }
+]

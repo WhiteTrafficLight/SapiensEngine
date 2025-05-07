@@ -7,6 +7,8 @@ from typing import Dict, Any, List, Optional, Union, Tuple
 import openai
 import anthropic
 from dotenv import load_dotenv, dotenv_values
+import chromadb
+from chromadb.utils import embedding_functions
 
 from sapiens_engine.core.config_loader import ConfigLoader
 from sapiens_engine.utils.context_manager import UserContextManager
@@ -52,6 +54,21 @@ class LLMManager:
         
         # Initialize context manager
         self.context_manager = UserContextManager()
+        
+        # NPC cache for RAG data - key is NPC ID, value is a dict with RAG config
+        self.npc_rag_cache = {}
+        
+        # RAG paths for philosophers - 클래스 변수로 이동
+        self.rag_paths = {
+            "kant": "rag_data/kant/vector_db",
+            # Add more philosophers here as their RAG data becomes available
+        }
+        
+        # Default collection names
+        self.rag_collections = {
+            "kant": "langchain", 
+            # Add more as needed
+        }
         
         logger.info(f"Initialized LLM Manager with provider: {self.llm_config.get('provider', 'openai')}, model: {self.llm_config.get('model', 'gpt-4')}")
         
@@ -169,34 +186,89 @@ class LLMManager:
                                       user_contexts: List[Dict[str, Any]] = None,
                                       references: List[Dict[str, Any]] = None,
                                       llm_provider: str = None,
-                                      llm_model: str = None) -> Tuple[str, Dict[str, Any]]:
+                                      llm_model: str = None,
+                                      use_rag: bool = False,
+                                      npc_id: str = None) -> Tuple[str, Dict[str, Any]]:
         """
-        Generate a philosophical response from an NPC with enhanced conversational flow
+        Generate a philosophical response from a specific perspective
         
         Args:
-            npc_description: Description of the NPC's traits and philosophical background
-            topic: The philosophical topic being discussed
+            npc_description: Description of the philosophical character/perspective to simulate
+            topic: The philosophical topic to discuss
             context: Additional context about the discussion
-            previous_dialogue: Previous dialogue in the conversation
+            previous_dialogue: Previous messages in the dialogue
             source_materials: Relevant philosophical source materials
-            user_contexts: User-provided context materials
-            references: Deprecated, kept for compatibility
-            llm_provider: Override default LLM provider
-            llm_model: Override default model for the provider
+            user_contexts: User-provided context for the conversation
+            references: References for the philosophical topics
+            llm_provider: Override the default LLM provider
+            llm_model: Override the default LLM model
+            use_rag: Whether to use RAG to enhance the response
+            npc_id: ID of the philosopher for RAG
             
         Returns:
-            Tuple containing (response text, metadata)
+            Tuple of (response_text, metadata)
         """
-        # Prepare source materials context
+        # Extract the philosopher's style if available in the description
+        philosopher_style = ""
+        philosopher_name = ""
+        
+        # Try to extract philosopher's name and style from description
+        if npc_description:
+            # Extract name - typically the first part before the colon
+            if ":" in npc_description:
+                philosopher_name = npc_description.split(":")[0].strip()
+            
+            # Look for style information in the description
+            if "style:" in npc_description.lower():
+                style_parts = npc_description.lower().split("style:")
+                if len(style_parts) > 1:
+                    philosopher_style = style_parts[1].split(".")[0].strip()
+                    
+                    # If we have multiple sentences in style, get them all
+                    full_style = style_parts[1].strip()
+                    dot_idx = full_style.find(".")
+                    if dot_idx >= 0 and len(full_style) > dot_idx + 1:
+                        # Check if there are more sentences after the first one
+                        rest_of_text = full_style[dot_idx+1:].strip()
+                        if rest_of_text and rest_of_text[0].isupper():
+                            # There's likely more content - try to get until next section
+                            next_section_markers = ["key_concepts:", "major_works:", "philosophical_stance:", "influenced_by:", "voice style:", "debate approach:"]
+                            end_idx = len(full_style)
+                            
+                            for marker in next_section_markers:
+                                marker_pos = full_style.lower().find(marker)
+                                if marker_pos > 0 and marker_pos < end_idx:
+                                    end_idx = marker_pos
+                            
+                            philosopher_style = full_style[:end_idx].strip()
+            
+            # Also check for voice style which might be used for custom NPCs
+            if "voice style:" in npc_description.lower():
+                style_parts = npc_description.lower().split("voice style:")
+                if len(style_parts) > 1:
+                    philosopher_style = style_parts[1].split(".")[0].strip()
+                
+        # Build sources context
         sources_context = ""
         if source_materials:
-            sources_context = "Relevant philosophical context:\n\n"
-            for i, source in enumerate(source_materials):
-                sources_context += f"Source {i+1}: {source['source']} by {source['author']}\n"
-                sources_context += f"Excerpt: {source['text']}\n\n"
+            sources_context = "# Relevant Source Materials\n\n"
+            for source in source_materials:
+                if "title" in source and "excerpt" in source:
+                    sources_context += f"**{source['title']}**\n"
+                    sources_context += f"Excerpt: {source['excerpt']}\n\n"
         
-        # Format user contexts
+        # Build user context
         user_context_str = ""
+        latest_user_message = ""
+        
+        # Extract latest user message
+        if previous_dialogue:
+            dialogue_lines = previous_dialogue.strip().split("\n")
+            for line in reversed(dialogue_lines):
+                if line.lower().startswith("user:"):
+                    latest_user_message = line.split(":", 1)[1].strip()
+                    break
+                
         if user_contexts:
             user_context_str = "# User-Provided References\n\n"
             for ctx in user_contexts:
@@ -204,14 +276,17 @@ class LLMManager:
                 user_context_str += f"Source: {ctx['source']}\n"
                 user_context_str += f"Excerpt: {ctx['excerpt']}\n\n"
                 
-        # Build the system prompt with improved conversational flow
-        system_prompt = f"""You are an AI simulating the philosophical thinking of a specific philosopher or perspective in an interactive dialogue.
-Your goal is to respond to philosophical topics as this specific philosophical viewpoint would, while engaging naturally with other participants.
-Maintain the philosophical style, terminology, and worldview consistent with this perspective.
+        # Build the system prompt with improved conversational flow and philosopher-specific style
+        system_prompt = f"""You are an AI simulating the philosophical thinking of {philosopher_name or "a specific philosopher"} in an interactive dialogue.
+Your goal is to respond to philosophical topics exactly as this philosopher would, while engaging naturally with other participants.
+Maintain the philosophical terminology, worldview, and most importantly the UNIQUE SPEAKING STYLE consistent with this philosopher.
 
 This is a philosophical simulation where different perspectives interact with each other.
 Don't break character. Don't refer to yourself as an AI. Don't explain your thinking process.
-Respond directly as if you truly hold this philosophical position.
+Respond directly as if you truly are this philosopher.
+
+PHILOSOPHER'S SPECIFIC STYLE AND MANNER OF SPEAKING:
+{philosopher_style}
 
 IMPORTANT GUIDELINES FOR NATURAL INTERACTIVE DIALOGUE:
 1. Be concise and direct - keep responses to 2-3 sentences maximum
@@ -230,22 +305,15 @@ VERY IMPORTANT - ABOUT USING NAMES:
 5. Use phrases like "That perspective..." or "This view..." instead of "Person's name, your perspective..."
 6. When you do need to use names, use proper names (never IDs or codes)
 
-EXAMPLES OF GOOD RESPONSES (WITHOUT NAMES):
-- "That perspective overlooks the fundamental nature of existence."
-- "The distinction between duty and desire isn't so clear-cut."
-- "Perhaps we should question whether freedom itself is the right starting point."
-
-EXAMPLES OF RESPONSES TO AVOID (WITH NAMES):
-- "Kant, your view on categorical imperatives is interesting..." (Don't start with names)
-- "I agree with you, Nietzsche..." (Don't use names unnecessarily)
-- "As Marx mentioned earlier..." (Only reference names when needed for clarity)
-
-The response should feel like a natural conversation without forced name usage.
+The response should feel like a natural conversation that TRULY CAPTURES THE DISTINCT VOICE AND PHILOSOPHICAL APPROACH of {philosopher_name or "this philosopher"}.
 """
 
-        # Build the user prompt with enhanced dialogue focus
+        # Build the user prompt with enhanced dialogue focus and philosopher-specific guidance
         user_prompt = f"""# Your Philosophical Persona
 {npc_description}
+
+# Your Unique Speaking Style
+{philosopher_style}
 
 # Topic of Discussion
 {topic}
@@ -260,8 +328,8 @@ The response should feel like a natural conversation without forced name usage.
 # Previous Dialogue (Most Recent First)
 {previous_dialogue}
 
-RESPOND DIRECTLY TO THE MOST RECENT MESSAGE IN THE DIALOGUE, as your philosophical character would.
-Your response should feel like a natural continuation of the conversation.
+RESPOND DIRECTLY TO THE MOST RECENT MESSAGE IN THE DIALOGUE, as {philosopher_name or "your philosophical character"} would.
+Your response should feel like a natural continuation of the conversation while TRULY EMBODYING YOUR UNIQUE PHILOSOPHICAL VOICE.
 
 KEEP YOUR RESPONSE BRIEF (2-3 SENTENCES) as if speaking in a real-time dialogue.
 
@@ -269,20 +337,14 @@ IMPORTANT GUIDELINES:
 1. DO NOT ADDRESS THE PREVIOUS SPEAKER BY NAME in your response
 2. DO NOT START YOUR RESPONSE WITH SOMEONE'S NAME
 3. Directly address or engage with what was just said without using names
-4. Express your philosophical perspective on the point
+4. Express your philosophical perspective in YOUR UNIQUE STYLE
 5. NEVER start with "Indeed" or generic acknowledgments
 6. RESPOND IN THE SAME LANGUAGE AS THE TOPIC AND PREVIOUS MESSAGES
 
-Instead of using names, focus on responding to ideas:
-- "That perspective overlooks..."
-- "This reasoning fails to consider..."
-- "Such a view might lead to..."
-- "The argument presented has merit, but..."
-
-Create a natural flowing dialogue that doesn't constantly use names to address others.
+Create a natural flowing dialogue that genuinely captures how YOU as this specific philosopher would speak.
 """
 
-        # Generate the response
+        # Generate the initial response
         start_time = time.time()
         response_text = self.generate_response(
             system_prompt=system_prompt,
@@ -290,409 +352,413 @@ Create a natural flowing dialogue that doesn't constantly use names to address o
             llm_provider=llm_provider,
             llm_model=llm_model
         )
+        
+        # RAG 사용을 위한 변수 초기화
+        rag_used = False
+        rag_query = latest_user_message if latest_user_message else topic
+        rag_detailed_results = []
+        citations = []  # 인용 정보를 저장할 배열 추가
+        
+        # 생성된 응답에 RAG를 적용하여 강화
+        if use_rag and npc_id:
+            try:
+                # 언어 감지
+                original_language = self.detect_language(response_text)
+                logger.info(f"🔍 원본 응답 언어: {original_language}")
+                
+                # RAG 쿼리 준비 - 한국어인 경우 영어로 번역
+                translated_query = rag_query
+                if original_language == 'ko':
+                    translated_query = self.translate_korean_to_english(rag_query)
+                    logger.info(f"🔄 RAG 쿼리가 영어로 번역되었습니다: {translated_query[:50]}...")
+                
+                # RAG로 관련 콘텐츠 검색
+                logger.info(f"🔍 철학자 {npc_id}의 저작물에서 관련 내용 검색 중...")
+                rag_result, rag_metadata = self.get_relevant_content_with_rag(
+                    npc_id=npc_id, 
+                    topic=topic, 
+                    query=translated_query
+                )
+                
+                # 검색 결과가 있는 경우 응답 강화
+                if rag_result and "documents" in rag_metadata:
+                    logger.info(f"✅ {len(rag_metadata['documents'])}개의 관련 저작물 청크를 찾았습니다.")
+                    
+                    # 원본 응답 저장
+                    original_response = response_text
+                    
+                    # RAG로 강화된 응답 생성 및 인용 정보 가져오기
+                    response_text, citations = self.enhance_message_with_rag(
+                        message=response_text,
+                        rag_results=rag_metadata,
+                        original_language=original_language
+                    )
+                    
+                    # 상세 검색 결과 저장
+                    if "documents" in rag_metadata and "distances" in rag_metadata:
+                        documents = rag_metadata["documents"]
+                        distances = rag_metadata["distances"]
+                        metadatas = rag_metadata.get("metadatas", [{}] * len(documents))
+                        
+                        for i, (doc, distance) in enumerate(zip(documents, distances)):
+                            doc_metadata = metadatas[i] if i < len(metadatas) else {}
+                            source = doc_metadata.get("source", "Unknown source")
+                            
+                            # 유사도 변환
+                            if distance is not None:
+                                similarity = max(0, min(1, 1 - (distance / 2)))
+                            else:
+                                similarity = None
+                                
+                            rag_detailed_results.append({
+                                "chunk": doc,
+                                "similarity": similarity,
+                                "source": source
+                            })
+                    
+                    rag_used = True
+                    logger.info(f"✅ RAG를 통해 철학적 응답이 강화되었습니다.")
+                else:
+                    logger.warning(f"⚠️ {npc_id}의 저작물에서 관련 콘텐츠를 찾지 못했습니다.")
+            except Exception as e:
+                logger.error(f"❌ RAG 강화 중 오류 발생: {str(e)}")
+                # 오류 발생 시 원본 응답 유지
+        
         elapsed_time = time.time() - start_time
         
-        # Return the response along with metadata
+        # 메타데이터 구성 - 인용 정보 추가
         metadata = {
-            "elapsed_time": elapsed_time,
-            "prompt_tokens": len(system_prompt) + len(user_prompt),
-            "response_tokens": len(response_text),
-            "source_count": len(source_materials) if source_materials else 0,
-            "context_count": len(user_contexts) if user_contexts else 0,
-            "timestamp": time.time()
+            "elapsed_time": f"{elapsed_time:.2f}s",
+            "rag_used": rag_used,
+            "rag_results": rag_detailed_results if rag_used else [],
+            "citations": citations  # 인용 정보 추가
         }
         
         return response_text, metadata
 
-    def generate_philosophical_response_old(self, 
-                                      npc_description: str, 
-                                      topic: str,
-                                      context: str = "",
-                                      previous_dialogue: str = "",
-                                      source_materials: List[Dict[str, str]] = None,
-                                      user_contexts: List[Dict[str, Any]] = None,
-                                      references: List[Dict[str, Any]] = None,
-                                      llm_provider: str = None,
-                                      llm_model: str = None) -> Tuple[str, Dict[str, Any]]:
+    def get_relevant_content_with_rag(self, npc_id: str, topic: str, query: str) -> Tuple[str, Dict[str, Any]]:
         """
-        Generate a philosophical response from an NPC (old version)
+        Retrieve relevant content for an NPC using RAG
         
         Args:
-            npc_description: Description of the NPC's traits and philosophical background
-            topic: The philosophical topic being discussed
-            context: Additional context about the discussion
-            previous_dialogue: Previous dialogue in the conversation
-            source_materials: Relevant philosophical source materials
-            user_contexts: User-provided context materials
-            references: Deprecated, kept for compatibility
-            llm_provider: Override default LLM provider
-            llm_model: Override default model for the provider
+            npc_id: The ID of the NPC
+            topic: The current discussion topic
+            query: The query to search for (usually the most recent message)
             
         Returns:
-            Tuple containing (response text, metadata)
+            Tuple containing (relevant content, metadata)
         """
-        # Prepare source materials context
-        sources_context = ""
-        if source_materials:
-            sources_context = "Relevant philosophical context:\n\n"
-            for i, source in enumerate(source_materials):
-                sources_context += f"Source {i+1}: {source['source']} by {source['author']}\n"
-                sources_context += f"Excerpt: {source['text']}\n\n"
-        
-        # Format user contexts
-        user_context_str = ""
-        if user_contexts:
-            user_context_str = "# User-Provided References\n\n"
-            for ctx in user_contexts:
-                user_context_str += f"**{ctx['title']}**\n"
-                user_context_str += f"Source: {ctx['source']}\n"
-                user_context_str += f"Excerpt: {ctx['excerpt']}\n\n"
+        try:
+            # Lowercase NPC ID for standard format
+            npc_id_lower = npc_id.lower()
+            
+            # Get RAG path for this NPC
+            rag_path = None
+            collection_name = None
+            
+            # Check if in standard mapping
+            if npc_id_lower in self.rag_paths:
+                rag_path = self.rag_paths[npc_id_lower]
+                collection_name = self.rag_collections.get(npc_id_lower, "langchain")
+            
+            # If no RAG path found, return empty result
+            if not rag_path or not os.path.exists(rag_path):
+                logger.warning(f"❌ No RAG data path found for NPC: {npc_id}")
+                return "", {"status": "no_rag_data"}
+            
+            logger.info(f"🔍 Using RAG path: {rag_path} with collection: {collection_name}")
+            
+            # Initialize ChromaDB client
+            chroma_client = chromadb.PersistentClient(path=rag_path)
+            embedding_function = embedding_functions.OpenAIEmbeddingFunction(
+                api_key=self.openai_api_key,
+                model_name="text-embedding-3-small"
+            )
+            
+            # Get collection
+            collection = chroma_client.get_collection(name=collection_name, embedding_function=embedding_function)
+            
+            # Log collection info
+            logger.info(f"📊 Collection count: {collection.count()}")
+            
+            # Clean query - remove any special formatting
+            clean_query = re.sub(r'\s+', ' ', query).strip()
+            
+            # If query is too short, use topic as fallback
+            if len(clean_query) < 10:
+                clean_query = topic
+                logger.info(f"⚠️ Query too short, using topic instead: {clean_query}")
+            
+            # Query for relevant documents
+            results = collection.query(
+                query_texts=[clean_query],
+                n_results=5,  # 5개의 관련 청크 검색
+                include=["documents", "distances", "metadatas"]  # 거리 및 메타데이터 포함
+            )
+            
+            # Process results
+            if results and "documents" in results and results["documents"]:
+                documents = results["documents"][0]  # 첫 번째 쿼리 결과
+                distances = results.get("distances", [[]])[0] if "distances" in results else []
+                metadatas = results.get("metadatas", [[]])[0] if "metadatas" in results else []
                 
-        # Build the system prompt
-        system_prompt = f"""You are an AI simulating the philosophical thinking of a specific philosopher or perspective.
-Your goal is to respond to philosophical topics as this specific philosophical viewpoint would.
-Maintain the philosophical style, terminology, and worldview consistent with this perspective.
+                # 거리값 로깅
+                logger.info(f"🔍 검색된 거리값(distances): {distances}")
+                
+                if not documents:
+                    logger.warning("❌ No documents found in query results")
+                    return "", {"status": "no_results"}
+                
+                # RAG 메타데이터 생성
+                metadata = {
+                    "status": "success",
+                    "result_count": len(documents),
+                    "query": clean_query,
+                    "collection": collection_name,
+                    "documents": documents,
+                    "distances": distances,
+                    "metadatas": metadatas
+                }
+                
+                # 단순 텍스트 결합 (이후 enhance_message_with_rag에서 실제 포맷팅됨)
+                combined_text = ""
+                for i, (doc, distance) in enumerate(zip(documents, distances if distances else [None] * len(documents))):
+                    combined_text += f"Excerpt {i+1}: {doc}\n\n"
+                
+                logger.info(f"✅ Retrieved {len(documents)} relevant chunks")
+                return combined_text, metadata
+            else:
+                logger.warning("❌ No documents found in query results")
+                return "", {"status": "no_results"}
+                
+        except Exception as e:
+            logger.error(f"❌ Error in RAG retrieval: {str(e)}")
+            return "", {"status": "error", "error": str(e)}
 
-This is a philosophical simulation where different perspectives interact with each other.
-Don't break character. Don't refer to yourself as an AI. Don't explain your thinking process.
-Respond directly as if you truly hold this philosophical position.
-
-IMPORTANT GUIDELINES FOR INTERACTIVE DIALOGUE:
-1. Be concise and direct - keep responses to 2-3 sentences maximum
-2. Focus on one key philosophical point in each response 
-3. If referring to abstract concepts, briefly include one concrete example
-4. Response should feel like part of a natural conversation, not a lecture
-5. Use varied ways to engage with previous speakers - don't always start with "Indeed" or agreement
-6. Express your unique philosophical viewpoint even if it contradicts others
-7. Start your responses in different ways - sometimes with questions, sometimes with assertions, sometimes with counterpoints
-8. RESPOND IN THE SAME LANGUAGE AS THE TOPIC - if the topic is in Korean, respond in Korean; if in English, respond in English
-
-When you respond:
-1. Consider the philosophical topic carefully
-2. Draw from the philosophical background described
-3. Maintain the described voice style while being relatable
-4. Reference provided source materials when relevant, but briefly
-5. Be consistent with your personality traits
-6. Stay in character at all times
-7. Be brief and to the point - as if speaking in a real conversation
-8. Vary your opening phrases based on your character's speaking style
-9. Match the language of the topic in your response
-
-The response should be philosophical yet accessible, brief, and true to the described perspective.
-"""
-
-        # Build the user prompt
-        user_prompt = f"""# Philosophical Persona
-{npc_description}
-
-# Topic
-{topic}
-
-{sources_context}
-
-{user_context_str}
-
-# Additional Context
-{context}
-
-# Previous Dialogue
-{previous_dialogue}
-
-Respond directly as this philosophical perspective would to the topic.
-KEEP YOUR RESPONSE BRIEF (2-3 SENTENCES) as if speaking in a natural conversation.
-IMPORTANT: 
-1. Start your response in a way that reflects your philosophical character. 
-2. Avoid starting every response with "Indeed" or similar acknowledgments.
-3. RESPOND IN THE SAME LANGUAGE AS THE TOPIC - if the topic is in Korean, respond in Korean; if in English, respond in English
-
-Use varied opening phrases that match your philosophical style:
-- Present a counterpoint with "However" or "Conversely"
-- Ask a rhetorical question
-- Make a bold statement about the topic
-- Share a personal observation
-- Introduce a relevant metaphor or analogy
-- Express skepticism with "I question whether"
-- Challenge assumptions with "Consider a different view"
-
-Focus on one key insight rather than covering multiple points.
-"""
-
-        # Generate the response
-        start_time = time.time()
-        response_text = self.generate_response(
-            system_prompt=system_prompt,
-            user_prompt=user_prompt,
-            llm_provider=llm_provider,
-            llm_model=llm_model
-        )
-        elapsed_time = time.time() - start_time
-        
-        # Return the response along with metadata
-        metadata = {
-            "elapsed_time": elapsed_time,
-            "prompt_tokens": len(system_prompt) + len(user_prompt),
-            "response_tokens": len(response_text),
-            "source_count": len(source_materials) if source_materials else 0,
-            "context_count": len(user_contexts) if user_contexts else 0,
-            "timestamp": time.time()
-        }
-        
-        return response_text, metadata
-        
-    def generate_dialogue_exchange(self,
-                                  npc1_description: str,
-                                  npc2_description: str,
-                                  topic: str,
-                                  previous_dialogue: str = "",
-                                  source_materials: List[Dict[str, str]] = None,
-                                  user_contexts: List[Dict[str, Any]] = None,
-                                  references: List[Dict[str, Any]] = None) -> Dict[str, Any]:
+    def should_use_rag(self, npc_id: str, user_message: str, previous_dialogue: str = "", topic: str = "") -> bool:
         """
-        Generate a philosophical dialogue exchange between two NPCs
+        Automatically determines if RAG should be used based on conversation context and NPC
         
         Args:
-            npc1_description: Description of the first NPC
-            npc2_description: Description of the second NPC
-            topic: The philosophical topic being discussed
-            previous_dialogue: Previous dialogue in the conversation
-            source_materials: Relevant philosophical source materials
-            user_contexts: User-provided context materials
-            references: Deprecated, kept for compatibility
+            npc_id: The ID of the NPC that will respond
+            user_message: The current user message
+            previous_dialogue: Previous dialogue for context
+            topic: The conversation topic
             
         Returns:
-            Dict containing dialogue exchange data
+            Boolean indicating whether RAG should be used
         """
-        # Prepare source materials context
-        sources_context = ""
-        if source_materials:
-            sources_context = "# Relevant Philosophical Context\n\n"
-            for i, source in enumerate(source_materials):
-                sources_context += f"Source {i+1}: {source['source']} by {source['author']}\n"
-                sources_context += f"Excerpt: {source['text']}\n\n"
+        # Check if this NPC has RAG data available
+        npc_id_lower = npc_id.lower()
         
-        # Format user contexts
-        user_context_str = ""
-        if user_contexts:
-            user_context_str = "# User-Provided References\n\n"
-            for ctx in user_contexts:
-                user_context_str += f"**{ctx['title']}**\n"
-                user_context_str += f"Source: {ctx['source']}\n"
-                user_context_str += f"Excerpt: {ctx['excerpt']}\n\n"
+        # 철학자가 RAG 데이터를 가지고 있는지 확인
+        if npc_id_lower in self.rag_paths:
+            rag_path = self.rag_paths[npc_id_lower]
+            # RAG 데이터 경로가 실제로 존재하는지 확인
+            if os.path.exists(rag_path):
+                logger.info(f"✅ {npc_id}의 RAG 데이터가 존재합니다. RAG 자동 활성화됨.")
+                return True
+            else:
+                logger.warning(f"⚠️ {npc_id}의 RAG 경로({rag_path})가 존재하지 않습니다.")
+                return False
                 
-        # System prompt for dialogue generation
-        system_prompt = f"""You are simulating a philosophical dialogue between two distinct philosophical perspectives.
-Your task is to generate a back-and-forth exchange where each perspective responds to the other's points.
-Each perspective should maintain its unique philosophical viewpoint, terminology, and style.
+        # RAG 데이터가 없는 철학자는 RAG를 사용하지 않음
+        logger.info(f"⚠️ {npc_id}는 RAG 데이터가 없습니다.")
+        return False
 
-This is a philosophical simulation where different perspectives interact with each other.
-Generate responses for both perspectives, labeled clearly.
-
-IMPORTANT: CREATING CONCISE AND NATURAL PHILOSOPHICAL DIALOGUE
-1. Keep each response SHORT (2-3 sentences maximum) and conversational
-2. Focus on making ONE key point per response rather than covering multiple ideas
-3. Each speaker should directly acknowledge or respond to the previous speaker's point
-4. Use everyday language while preserving philosophical depth
-5. When introducing philosophical concepts, provide brief real-world examples
-6. Maintain a natural conversational flow as if in a real-time discussion
-7. RESPOND IN THE SAME LANGUAGE AS THE TOPIC - if the topic is in Korean, respond in Korean; if in English, respond in English
-
-DIALOGUE STRUCTURE:
-- Keep exchanges brief and focused, like a real conversation
-- Each response should build on, question, or redirect the previous statement
-- Occasionally reference source materials, but keep citations very brief
-- Allow perspectives to genuinely engage with each other's ideas rather than just stating positions
-
-For each response:
-1. Begin by briefly acknowledging the previous speaker's point
-2. Make a single philosophical point or ask a philosophical question
-3. Relate to concrete examples or practical implications when possible
-4. Keep the philosophical style authentic but the language accessible
-"""
-
-        # User prompt for dialogue
-        user_prompt = f"""# Philosophical Personas
-
-## Persona 1
-{npc1_description}
-
-## Persona 2
-{npc2_description}
-
-# Topic
-{topic}
-
-{sources_context}
-
-{user_context_str}
-
-# Previous Dialogue
-{previous_dialogue}
-
-Generate a brief philosophical dialogue exchange between these two perspectives on the given topic.
-Extract the names of the philosophers/personas from the descriptions provided.
-Format the dialogue as:
-
-[Name of Persona 1]: [brief philosophical response to the topic (2-3 sentences maximum)]
-
-[Name of Persona 2]: [briefly acknowledge Persona 1's point, then give a short response (2-3 sentences maximum)]
-
-[Name of Persona 1]: [briefly acknowledge Persona 2's point, then give a short response (2-3 sentences maximum)]
-
-IMPORTANT: 
-- Use the actual names from the persona descriptions (e.g., "Modern Socrates", "Neo-Hegelian")
-- Keep each response VERY BRIEF (2-3 sentences maximum)
-- Make the dialogue feel like a natural conversation, not formal philosophical statements
-- Each response should directly engage with what the previous speaker just said
-- RESPOND IN THE SAME LANGUAGE AS THE TOPIC - if the topic is in Korean, respond in Korean; if in English, respond in English
-"""
-
-        # Generate the dialogue
-        dialogue_text = self.generate_response(system_prompt, user_prompt)
-        
-        # Process the dialogue into a structured format
-        # This is a simple implementation; a more robust one would parse the dialogue more carefully
-        dialogue_parts = dialogue_text.split("\n\n")
-        processed_dialogue = []
-        
-        for part in dialogue_parts:
-            if ":" in part:
-                speaker, content = part.split(":", 1)
-                processed_dialogue.append({
-                    "speaker": speaker.strip(),
-                    "content": content.strip()
-                })
-                
-        return {
-            "topic": topic,
-            "exchanges": processed_dialogue,
-            "raw_text": dialogue_text,
-            "timestamp": time.time(),
-            "user_contexts_used": bool(user_contexts)
-        }
-    
-    def generate_single_response(self, 
-                                npc,
-                                topic: str,
-                                dialogue_history: List[Dict[str, str]],
-                                is_first: bool = False,
-                                source_materials: List[Dict[str, str]] = None,
-                                user_contexts: List[Dict[str, Any]] = None) -> str:
+    # 언어 감지 함수 추가
+    def detect_language(self, text: str) -> str:
         """
-        Generate a single response from an NPC for interactive dialogue
+        텍스트의 언어를 감지합니다.
         
         Args:
-            npc: PhilosophicalNPC object
-            topic: The philosophical topic being discussed
-            dialogue_history: List of previous dialogue exchanges
-            is_first: Whether this is the first response in the dialogue
-            source_materials: Relevant philosophical source materials
-            user_contexts: User-provided context materials
+            text: 언어를 감지할 텍스트
             
         Returns:
-            String containing the NPC's response
+            감지된 언어 코드 (예: 'ko', 'en')
         """
-        # Get NPC description
-        npc_description = f"""Name: {npc.name}
-Role: {npc.role}
-Voice Style: {npc.voice_style}
-Communication Style: {npc.communication_style}
-Debate Approach: {npc.debate_approach}
-Personality Traits: {', '.join([f'{k}: {v}' for k, v in npc.personality_traits.items()])}
-Philosophical Background: {', '.join(npc.philosophical_background)}
-"""
-
-        if hasattr(npc, 'reference_philosophers') and npc.reference_philosophers:
-            npc_description += f"Reference Philosophers: {', '.join(npc.reference_philosophers)}\n"
-            if hasattr(npc, 'philosopher_weights') and npc.philosopher_weights:
-                for phil, weight in npc.philosopher_weights.items():
-                    npc_description += f"- {phil} (influence weight: {weight})\n"
-        
-        # Prepare source materials context
-        sources_context = ""
-        if source_materials:
-            sources_context = "# Relevant Philosophical Context\n\n"
-            for i, source in enumerate(source_materials):
-                sources_context += f"Source {i+1}: {source['source']} by {source['author']}\n"
-                sources_context += f"Excerpt: {source['text']}\n\n"
-        
-        # Format user contexts
-        user_context_str = ""
-        if user_contexts:
-            user_context_str = "# User-Provided References\n\n"
-            for ctx in user_contexts:
-                user_context_str += f"**{ctx['title']}**\n"
-                user_context_str += f"Source: {ctx['source']}\n"
-                user_context_str += f"Excerpt: {ctx['excerpt']}\n\n"
-                
-        # Format previous dialogue
-        previous_dialogue = ""
-        if dialogue_history:
-            previous_dialogue = "# Previous Dialogue\n\n"
-            for exchange in dialogue_history:
-                previous_dialogue += f"{exchange['speaker']}: {exchange['content']}\n\n"
-                
-        # System prompt for response generation
-        system_prompt = f"""You are an AI simulating the philosophical thinking of a specific philosopher or perspective.
-Your goal is to respond to philosophical topics as this specific philosophical viewpoint would.
-Maintain the philosophical style, terminology, and worldview consistent with this perspective.
-
-This is a philosophical simulation where different perspectives interact with each other.
-Don't break character. Don't refer to yourself as an AI. Don't explain your thinking process.
-Respond directly as if you truly hold this philosophical position.
-
-IMPORTANT GUIDELINES FOR INTERACTIVE DIALOGUE:
-1. Be concise and direct - keep responses to 2-3 sentences maximum
-2. Focus on one key philosophical point in each response 
-3. If referring to abstract concepts, briefly include one concrete example
-4. Response should feel like part of a natural conversation, not a lecture
-5. Use varied ways to engage with previous speakers - don't always start with "Indeed" or agreement
-6. Keep language accessible and conversational while maintaining philosophical depth
-7. RESPOND IN THE SAME LANGUAGE AS THE TOPIC - if the topic is in Korean, respond in Korean; if in English, respond in English
-
-When you respond:
-1. Consider the philosophical topic carefully
-2. Draw from the philosophical background described
-3. Maintain the described voice style while being relatable
-4. Reference provided source materials when relevant, but briefly
-5. Be consistent with your personality traits
-6. Stay in character at all times
-7. Be brief and to the point - as if speaking in a real conversation
-8. Match the language of the topic in your response
-
-The response should be philosophical yet accessible, brief, and true to the described perspective.
-"""
-
-        # User prompt for response
-        user_prompt = f"""# Philosophical Persona
-{npc_description}
-
-# Topic
-{topic}
-
-{sources_context}
-
-{user_context_str}
-
-{previous_dialogue}
-
-RESPOND AS {npc.name}:
-"""
-
-        if is_first:
-            user_prompt += "\nThis is the first response in the dialogue. Introduce a thought-provoking insight on the topic."
+        # 간단한 휴리스틱: 한글 글자가 포함되어 있는지 확인
+        korean_pattern = re.compile('[가-힣]')
+        if korean_pattern.search(text):
+            return 'ko'
         else:
-            user_prompt += "\nRespond to the previous dialogue, acknowledging the last speaker's point and adding your philosophical perspective."
-
-        user_prompt += """
-KEEP YOUR RESPONSE BRIEF (2-3 SENTENCES) as if speaking in a natural conversation.
-IMPORTANT: RESPOND IN THE SAME LANGUAGE AS THE TOPIC - if the topic is in Korean, respond in Korean; if in English, respond in English"""
-
-        # Generate the response
-        response_text = self.generate_response(system_prompt, user_prompt)
-        
-        # Clean up the response - remove any name prefixes if the model added them
-        if ":" in response_text and response_text.split(":")[0].strip() == npc.name:
-            response_text = response_text.split(":", 1)[1].strip()
+            return 'en'
             
-        return response_text 
+    # 한국어 번역 기능 추가
+    def translate_korean_to_english(self, korean_text: str) -> str:
+        """
+        한국어 텍스트를 영어로 번역합니다.
+        
+        Args:
+            korean_text: 번역할 한국어 텍스트
+            
+        Returns:
+            번역된 영어 텍스트
+        """
+        try:
+            logger.info(f"🔄 한국어 텍스트 번역 시작: {korean_text[:50]}...")
+            
+            response = self.client.chat.completions.create(
+                model="gpt-4o", # 모델 설정 - 번역에 최적화된 모델 사용
+                messages=[
+                    {"role": "system", "content": "You are a professional Korean to English translator. Your task is to accurately translate Korean text to English. Translate ONLY the text provided, without any additional explanation or context."},
+                    {"role": "user", "content": f"Translate this Korean text to English: {korean_text}"}
+                ],
+                temperature=0.1,
+                max_tokens=500
+            )
+            
+            english_text = response.choices[0].message.content.strip()
+            logger.info(f"✅ 번역 완료: {english_text[:50]}...")
+            return english_text
+            
+        except Exception as e:
+            logger.error(f"❌ 번역 오류: {str(e)}")
+            return korean_text  # 오류 시 원본 텍스트 반환
+
+    # 텍스트를 RAG를 통해 강화하는 함수 수정
+    def enhance_message_with_rag(self, 
+                                message: str, 
+                                rag_results: Dict[str, Any], 
+                                original_language: str = 'en') -> Tuple[str, List[Dict[str, str]]]:
+        """
+        검색된 RAG 결과를 활용하여 메시지를 강화합니다.
+        
+        Args:
+            message: 원본 메시지
+            rag_results: RAG 검색 결과 (documents, distances, metadatas 포함)
+            original_language: 원본 언어 코드 ('ko' 또는 'en')
+            
+        Returns:
+            Tuple의 형태로 (강화된 메시지, 인용 정보 리스트) 반환
+        """
+        try:
+            logger.info(f"📚 RAG 검색 결과를 활용한 메시지 강화 시작")
+            
+            # 검색 결과 추출 및 포맷팅
+            retrieved_contexts = ""
+            
+            if "documents" in rag_results and "distances" in rag_results:
+                documents = rag_results["documents"]
+                distances = rag_results["distances"]
+                metadatas = rag_results.get("metadatas", [{}] * len(documents))
+                
+                # 각 검색 결과에 대한 상세 정보 포맷팅
+                for i, (doc, distance) in enumerate(zip(documents, distances)):
+                    metadata = metadatas[i] if i < len(metadatas) else {}
+                    source = metadata.get("source", "Unknown source")
+                    
+                    # 거리를 유사도로 변환 (0~1 범위)
+                    similarity = max(0, min(1, 1 - (distance / 2))) if distance is not None else 0
+                    
+                    retrieved_contexts += f"Source {i+1} ({source}): {doc}\n\n"
+            
+            # RAG 강화 프롬프트 작성 - 각주 스타일 변경하되 1인칭 시점 유지
+            system_prompt = """You are simulating a specific philosopher, speaking in first person as if you ARE that philosopher. 
+Your goal is to enhance a philosophical response with source material from your own works, while maintaining your authentic voice and style.
+
+IMPORTANT INSTRUCTIONS:
+1. ALWAYS SPEAK IN FIRST PERSON as the philosopher - you ARE Kant, Hegel, etc., not someone describing their view
+2. Maintain the exact same philosophical perspective and speaking style as in the original message
+3. PRESERVE AND ENHANCE THE LOGICAL STRUCTURE of philosophical argumentation:
+   - Present your core philosophical principle relevant to the topic
+   - Connect this principle to the specific topic with clear logical reasoning
+   - Provide your philosophical conclusion that follows from your principles
+   - End with a brief philosophical reflection if appropriate
+4. Use the retrieved excerpts from your own works to strengthen your points with specific references
+5. When referencing your philosophical works, use numbered footnotes like [1], [2], etc. at the end of relevant sentences
+6. Include a list of citations at the end of your response in this format:
+   [1] Source: "Critique of Pure Reason", Text: "original quoted text"
+   [2] Source: "Critique of Practical Reason", Text: "original quoted text"
+7. Maintain the same formal philosophical tone, terminology and first-person perspective throughout
+8. DO NOT change the message's main points or conclusions, but DO strengthen the logical connections
+9. Output MUST be in the same language as the original message
+
+Remember: You ARE the philosopher speaking directly, not someone explaining their views.
+"""
+            
+            # 사용자 프롬프트 작성 - 각주 스타일 변경
+            user_prompt = f"""# Your Original Response (Speaking as the Philosopher)
+{message}
+
+# Relevant Source Materials from Your Own Philosophical Works
+{retrieved_contexts}
+
+Enhance your original philosophical response using the retrieved source materials from your own works. Follow these guidelines:
+
+1. Maintain your identity as the philosopher throughout - YOU are Kant, Nietzsche, etc. speaking in first person
+2. Use a clear logical structure in your enhanced response:
+   - Present your core philosophical principle relevant to this topic, citing the ACTUAL SOURCE
+   - Connect this principle to the specific topic with crystal-clear logical reasoning
+   - Provide your philosophical conclusion based on this reasoning
+   - End with a brief philosophical reflection
+3. Strengthen your argument by citing your own actual works - referring to their specific titles
+4. Use numbered footnotes [1], [2], etc. at the end of sentences that reference your specific works
+5. Include a list of citations at the end of your response in this format:
+   [1] Source: "Critique of Pure Reason", Text: "original quoted text"
+   [2] Source: "Critique of Practical Reason", Text: "original quoted text"
+6. Keep the same philosophical tone, speaking style and perspective as in your original response
+7. Maintain the same core points as your original message but enhance the logical structure and connections
+
+DO NOT use explicit section headers like "전제 1" or "결론". Instead, create a naturally flowing philosophical response that contains all the logical components (principles, connections, conclusion) seamlessly integrated.
+"""
+            
+            # 강화된 메시지 생성
+            response = self.client.chat.completions.create(
+                model="gpt-4o",
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt}
+                ],
+                temperature=0.2,
+                max_tokens=1000
+            )
+            
+            full_enhanced_message = response.choices[0].message.content.strip()
+            logger.info(f"✅ 메시지 강화 완료: {full_enhanced_message[:50]}...")
+            
+            # 메시지와 인용 부분 분리
+            message_parts = full_enhanced_message.split("\n\n")
+            
+            # 인용 목록 추출
+            citations = []
+            enhanced_message = full_enhanced_message
+            
+            # 마지막 부분에 있는 각주 목록 찾기
+            citation_pattern = r'\[(\d+)\]\s+Source:\s+"([^"]+)",\s+Text:\s+"([^"]+)"'
+            citation_matches = re.findall(citation_pattern, full_enhanced_message)
+            
+            if citation_matches:
+                # 각주 목록 찾음
+                logger.info(f"📚 {len(citation_matches)}개의 인용 정보 찾음: {citation_matches}")
+                
+                for citation_id, source, text in citation_matches:
+                    citation_obj = {
+                        "id": citation_id,
+                        "source": source,
+                        "text": text
+                    }
+                    citations.append(citation_obj)
+                    logger.debug(f"📚 인용 정보 생성: {citation_obj}")
+                
+                # 각주 목록 부분 제거하고 실제 메시지만 유지
+                enhanced_message = re.sub(r'\n\n\[1\]\s+Source:.+', '', full_enhanced_message, flags=re.DOTALL)
+                
+                logger.info(f"✅ {len(citations)}개의 각주를 추출했습니다.")
+            else:
+                logger.warning("⚠️ 각주 목록을 찾지 못했습니다.")
+            
+            # 반환하기 전에 citations 구조 확인
+            if citations:
+                logger.info(f"📚 반환할 인용 정보: {citations}")
+                # 각 인용 정보에 필수 필드가 있는지 확인
+                for i, citation in enumerate(citations):
+                    if not isinstance(citation, dict) or not all(k in citation for k in ["id", "source", "text"]):
+                        logger.warning(f"⚠️ 인용 정보 {i}번의 형식이 올바르지 않습니다: {citation}")
+                        
+            return enhanced_message, citations
+            
+        except Exception as e:
+            logger.error(f"❌ 메시지 강화 오류: {str(e)}")
+            return message, []  # 오류 시 원본 메시지와 빈 인용 목록 반환
  
