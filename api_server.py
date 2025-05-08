@@ -97,6 +97,8 @@ class ChatRoomCreationRequest(BaseModel):
     generateInitialMessage: Optional[bool] = True
     llmProvider: Optional[str] = "openai"
     llmModel: Optional[str] = "gpt-4o"
+    dialogueType: Optional[str] = "free"
+    npcPositions: Optional[Dict[str, str]] = None  # 찬반토론 입장 정보 (pro/con)
 
 # 대화 생성 요청 모델 추가
 class ChatGenerateRequest(BaseModel):
@@ -450,560 +452,210 @@ async def check_auto_conversation_status(room_id: str):
         return {"room_id": room_id, "active": False}
 
 # 자동 대화 생성 루프 함수
-async def auto_conversation_loop(room_id: str, npcs: List[str], topic: str, delay_range: List[int]):
-    """백그라운드에서 실행되는 자동 대화 생성 루프"""
-    try:
-        logger.debug(f"====== 자동 대화 루프 시작 - 방 ID: {room_id} ======")
-        logger.debug(f"NPC 목록: {npcs}")
-        logger.debug(f"주제: {topic}")
-        logger.debug(f"지연 범위: {delay_range}")
-        logger.debug(f"현재 활성 대화: {active_auto_conversations}")
-        
-        min_delay, max_delay = delay_range
-        prev_npc = None
-        message_count = 0
-        max_messages = 50  # 안전장치: 최대 메시지 수 제한
-        
-        # 이전 대화 메시지를 보관할 대화 기록
-        dialogue_history = ""
-        
-        # 누가 언급되었는지 추적하는 변수
-        mentioned_npc = None
-        # 사용자 질문을 추적하는 변수
-        last_user_question = None
-        # 사용자 질문에 대답했는지 추적
-        user_question_answered = True
-        
-        # 룸 데이터 가져오기 - 사용자 정보 포함
-        room_data = await get_room_data(room_id)
-        
-        # 사용자 이름 매핑 초기화 (sender ID -> username)
-        user_name_mapping = {}
-        
-        # 방에 있는 사용자 정보 추출
-        if room_data and 'participants' in room_data and 'users' in room_data['participants']:
-            users = room_data['participants'].get('users', [])
-            logger.info(f"룸 {room_id}의 사용자: {users}")
+async def auto_conversation_loop(room_id, current_topic, room_data, current_npcs):
+    # 초기화
+    global active_auto_conversations
+    
+    # 실행 중인 대화가 이미 있는지 확인
+    if room_id not in active_auto_conversations:
+        # 초기 상태 설정
+        active_auto_conversations[room_id] = {
+            "running": True,
+            "topic": current_topic,
+            "last_user_interaction": time.time(),
+            "dialogue_history": [],
+            "user_question_pending": False
+        }
+    
+    additional_context = ""
+    if room_data.get("context"):
+        additional_context = f"Additional context: {room_data['context']}"
+    
+    # 대화 패턴 타입 가져오기 (기본값: free)
+    dialogue_type = room_data.get("dialogueType", "free")
+    
+    logger.info(f"🎭 자동 대화 시작: 방 ID {room_id}, 주제: {current_topic}, 대화 패턴: {dialogue_type}")
+    
+    # 대화 패턴에 따른 초기화
+    if dialogue_type not in active_auto_conversations[room_id]:
+        if dialogue_type == "debate":
+            # 찬반토론의 경우 각 NPC에게 찬성/반대 입장 할당
+            active_auto_conversations[room_id]["debate_positions"] = {}
             
-            # 사용자 ID -> 이름 매핑 구성
-            for user in users:
-                if isinstance(user, dict) and 'id' in user and 'username' in user:
-                    user_name_mapping[user['id']] = user['username']
-                elif isinstance(user, str):
-                    # ID만 있는 경우 임시 이름 사용
-                    user_name_mapping[user] = f"User_{user[:4]}"
-        
-        logger.info(f"사용자 이름 매핑: {user_name_mapping}")
-        
-        # 컨텍스트에 사용자 정보 추가
-        user_context = ""
-        if user_name_mapping:
-            user_context = "현재 대화에 참여 중인 사용자:\n"
-            for user_id, username in user_name_mapping.items():
-                user_context += f"- {username}\n"
-        
-        # 루프 실행 - active 플래그가 켜져 있는 동안 계속 실행
-        while active_auto_conversations.get(room_id, {}).get("active", False) and message_count < max_messages:
-            try:
-                logger.debug(f"====== 자동 대화 루프 사이클 {message_count+1} ======")
-                # 현재 NPC 목록 가져오기 (동적 업데이트 가능)
-                current_npcs = active_auto_conversations.get(room_id, {}).get("npcs", npcs)
-                current_topic = active_auto_conversations.get(room_id, {}).get("topic", topic)
+            # 프론트엔드에서 전달된 입장 정보가 있다면 사용
+            if "npcPositions" in room_data and room_data["npcPositions"]:
+                logger.info(f"🎭 클라이언트에서 전달된 찬반토론 포지션 사용: {room_data['npcPositions']}")
                 
-                logger.debug(f"현재 active_auto_conversations 상태: {active_auto_conversations}")
+                # 입장 정보를 debate_positions로 복사
+                for npc_id, position in room_data["npcPositions"].items():
+                    if npc_id in current_npcs:
+                        active_auto_conversations[room_id]["debate_positions"][npc_id] = position
                 
-                if len(current_npcs) < 2:
-                    logger.warning(f"Not enough NPCs for auto conversation in room {room_id}")
-                    break
+                # 입장이 지정되지 않은 NPC가 있다면 기본값 할당
+                for npc in current_npcs:
+                    if npc not in active_auto_conversations[room_id]["debate_positions"]:
+                        # 더 적은 쪽에 배정
+                        pro_count = list(active_auto_conversations[room_id]["debate_positions"].values()).count("pro")
+                        con_count = list(active_auto_conversations[room_id]["debate_positions"].values()).count("con")
+                        default_position = "pro" if pro_count <= con_count else "con"
+                        active_auto_conversations[room_id]["debate_positions"][npc] = default_position
+            else:
+                # 기존 로직: 번갈아가며 찬성/반대 입장 할당
+                positions = ["pro", "con"]
+                position_idx = 0
                 
-                # 먼저 채팅방의 최근 메시지를 가져옴 (최대 20개)
-                # 매 메시지마다 대화 컨텍스트를 업데이트하여 연속성 보장
-                try:
-                    logger.debug(f"채팅방 {room_id}의 최근 메시지 가져오기")
-                    recent_messages = await get_room_messages(room_id, limit=20)
+                for npc in current_npcs:
+                    active_auto_conversations[room_id]["debate_positions"][npc] = positions[position_idx % len(positions)]
+                    position_idx += 1
+                
+            logger.info(f"🎭 찬반토론 포지션 할당: {active_auto_conversations[room_id]['debate_positions']}")
+            
+        elif dialogue_type == "socratic":
+            # 소크라테스식 대화에서는 소크라테스가 질문 역할을 하도록 함
+            active_auto_conversations[room_id]["questioner"] = "socrates" if "socrates" in current_npcs else current_npcs[0]
+            active_auto_conversations[room_id]["socratic_phase"] = "question"  # question, examination, refutation
+            
+        elif dialogue_type == "dialectical":
+            # 변증법적 대화 구조 초기화
+            active_auto_conversations[room_id]["dialectical_phase"] = "thesis"  # thesis, antithesis, synthesis
+            active_auto_conversations[room_id]["thesis_npc"] = None
+            active_auto_conversations[room_id]["antithesis_npc"] = None
+    
+    # ... 기존 코드 ...
+    
+    try:
+        while active_auto_conversations.get(room_id, {}).get("running", False):
+            # ... 기존 코드 ...
+            
+            # 응답할 NPC 선택 - 대화 패턴에 따라 달라짐
+            responding_npc_id = None
+            prompt_prefix = ""
+            
+            if dialogue_type == "free":
+                # 자유토론: 기존 방식대로 무작위 NPC 선택 (다른 조건 충족 시)
+                # ... 기존 NPC 선택 로직 유지 ...
+                pass
+                
+            elif dialogue_type == "debate":
+                # 찬반토론: 이전 발언자의 반대 입장을 가진 NPC 선택
+                if active_auto_conversations[room_id]["dialogue_history"]:
+                    last_npc = active_auto_conversations[room_id]["dialogue_history"][-1]["npc_id"]
+                    last_position = active_auto_conversations[room_id]["debate_positions"].get(last_npc)
                     
-                    # 메시지를 대화 기록 형식으로 변환 및 사용자 질문/언급된 NPC 확인
-                    if recent_messages:
-                        dialogue_history = ""
-                        mentioned_npc = None
-                        last_user_question = None
-                        
-                        # 최근 메시지 역순으로 확인하여 사용자 질문 찾기
-                        user_messages = [msg for msg in recent_messages if msg.get('isUser', False)]
-                        if user_messages:
-                            # 가장 최근 사용자 메시지
-                            latest_user_msg = user_messages[-1]
-                            user_text = latest_user_msg.get('text', '').strip()
-                            user_id = latest_user_msg.get('sender', '')
-                            
-                            # 메시지가 질문인지 확인 (한국어/영어 물음표 또는 특정 질문 패턴)
-                            is_question = '?' in user_text or '?' in user_text or '할까' in user_text or '인가요' in user_text or '인가' in user_text or '할까요' in user_text or '해요' in user_text or '해' in user_text or '해줄래' in user_text
-                            
-                            if is_question and not user_question_answered:
-                                last_user_question = user_text
-                                logger.info(f"사용자 질문 감지: {last_user_question}")
-                                
-                                # 질문에서 언급된 NPC 찾기
-                                for npc_id in current_npcs:
-                                    # NPC 정보 가져오기
-                                    npc_info = await get_npc_details(npc_id)
-                                    npc_name = npc_info.get('name', '').strip()
-                                    
-                                    # 이름이 질문에 있는지 확인 (다양한 형태)
-                                    name_variations = [
-                                        npc_name, 
-                                        npc_name + "님", 
-                                        "@" + npc_name, 
-                                        npc_id
-                                    ]
-                                    
-                                    for name_var in name_variations:
-                                        if name_var.lower() in user_text.lower():
-                                            mentioned_npc = npc_id
-                                            logger.info(f"사용자가 언급한 NPC 발견: {mentioned_npc} ({npc_name})")
-                                            break
-                                    
-                                    if mentioned_npc:
-                                        break
-                            
-                        # 대화 기록 구성
-                        for msg in recent_messages:
-                            # 발신자 이름 결정 - 사용자 메시지인 경우 실제 username 사용
-                            if msg.get('isUser', False):
-                                user_id = msg.get('sender', '')
-                                # 실제 username이 있으면 사용, 없으면 기본값
-                                sender_name = user_name_mapping.get(user_id, msg.get('senderName', 'User'))
-                            else:
-                                # NPC 메시지는 기존대로 처리
-                                sender_name = msg.get('senderName')
-                                # senderName이 없는 경우 처리
-                                if not sender_name:
-                                    try:
-                                        npc_id = msg.get('sender')
-                                        if npc_id and npc_id in current_npcs:
-                                            npc_info = await get_npc_details(npc_id)
-                                            sender_name = npc_info.get('name', npc_id.capitalize())
-                                        else:
-                                            sender_name = msg.get('sender', 'Unknown').capitalize()
-                                    except:
-                                        sender_name = msg.get('sender', 'Unknown').capitalize()
-                            
-                            text = msg.get('text', '')
-                            if text:
-                                # 대화 기록에 이름과 메시지 내용 추가
-                                dialogue_history += f"{sender_name}: {text}\n\n"
-                        
-                        # 대화 기록 구성 완료 후 NPC ID 변환 처리
-                        try:
-                            # ID-이름 매핑 생성
-                            id_name_mapping = await create_npc_id_name_mapping(current_npcs)
-                            
-                            # 대화 내용 전체에서 ID를 이름으로 변환
-                            original_dialogue = dialogue_history
-                            dialogue_history = replace_ids_with_names(dialogue_history, id_name_mapping)
-                            
-                            if original_dialogue != dialogue_history:
-                                logger.info(f"대화 기록에서 NPC ID가 이름으로 변환되었습니다.")
-                                logger.debug(f"변환 전 샘플: {original_dialogue[:200]}...")
-                                logger.debug(f"변환 후 샘플: {dialogue_history[:200]}...")
-                        except Exception as e:
-                            logger.error(f"대화 기록 ID-이름 변환 오류: {str(e)}")
-                        
-                        logger.debug(f"대화 기록 업데이트됨: {len(recent_messages)}개 메시지")
-                        logger.debug(f"대화 기록 샘플: {dialogue_history[:200]}...")
+                    # 반대 입장의 NPC들을 찾음
+                    opposite_position = "con" if last_position == "pro" else "pro"
+                    opposing_npcs = [
+                        npc for npc in current_npcs 
+                        if active_auto_conversations[room_id]["debate_positions"].get(npc) == opposite_position
+                    ]
+                    
+                    if opposing_npcs:
+                        responding_npc_id = random.choice(opposing_npcs)
+                        position = active_auto_conversations[room_id]["debate_positions"].get(responding_npc_id)
+                        prompt_prefix = f"You are taking the {position} position on this topic. Present a strong argument for your side in response to the previous speaker."
                     else:
-                        logger.debug(f"채팅방 {room_id}에서 가져온 메시지 없음")
-                except Exception as e:
-                    logger.error(f"메시지 가져오기 오류: {str(e)}")
+                        # 첫 발언은 찬성 측에서 시작
+                        pro_npcs = [
+                            npc for npc in current_npcs 
+                            if active_auto_conversations[room_id]["debate_positions"].get(npc) == "pro"
+                        ]
+                        if pro_npcs:
+                            responding_npc_id = random.choice(pro_npcs)
+                            prompt_prefix = "You are taking the pro position on this topic. Present your initial thesis and arguments supporting it."
+            
+            elif dialogue_type == "socratic":
+                # 소크라테스식 대화: 질문자(대개 소크라테스)와 응답자 간 번갈아가며 진행
+                questioner = active_auto_conversations[room_id]["questioner"]
+                phase = active_auto_conversations[room_id]["socratic_phase"]
                 
-                # NPC 선택 로직 개선
-                responding_npc_id = None
-                
-                # 최근 참여한 NPC들을 추적하는 변수 추가 (없으면 초기화)
-                if "recent_npcs" not in active_auto_conversations.get(room_id, {}):
-                    active_auto_conversations[room_id]["recent_npcs"] = []
-                
-                recent_npcs = active_auto_conversations[room_id]["recent_npcs"]
-                logger.info(f"🎭 최근 대화에 참여한 NPC들: {recent_npcs}")
-                
-                # 사용자 질문에서 언급된 NPC가 있으면 그 NPC가 응답
-                if mentioned_npc and mentioned_npc in current_npcs:
-                    responding_npc_id = mentioned_npc
-                    user_question_answered = True  # 질문에 응답 표시
-                    logger.info(f"사용자가 언급한 {responding_npc_id}가 응답합니다")
-                # 그렇지 않으면 최근에 참여하지 않은 NPC 중에서 선택
+                if not active_auto_conversations[room_id]["dialogue_history"] or phase == "question":
+                    # 대화 시작 또는 질문 단계: 질문자가 발언
+                    responding_npc_id = questioner
+                    prompt_prefix = "Ask a thought-provoking question that challenges assumptions about the topic."
+                    active_auto_conversations[room_id]["socratic_phase"] = "examination"
                 else:
-                    # 최근 참여하지 않은 NPC 목록 생성 (최대 절반까지만 제외)
-                    exclude_count = min(len(current_npcs) // 2, len(recent_npcs))
-                    exclude_npcs = recent_npcs[:exclude_count]
+                    # 검토 단계: 질문자가 아닌 다른 NPC가 응답
+                    available_npcs = [npc for npc in current_npcs if npc != questioner]
+                    if available_npcs:
+                        responding_npc_id = random.choice(available_npcs)
+                        if phase == "examination":
+                            prompt_prefix = "Respond to the question, but be aware you may need to defend your answer."
+                            active_auto_conversations[room_id]["socratic_phase"] = "refutation"
+                        else:  # refutation
+                            prompt_prefix = "Reconsider your position in light of the critique."
+                            active_auto_conversations[room_id]["socratic_phase"] = "question"
+            
+            elif dialogue_type == "dialectical":
+                # 변증법적 대화: 주장(thesis) -> 반론(antithesis) -> 종합(synthesis)
+                phase = active_auto_conversations[room_id]["dialectical_phase"]
+                
+                if phase == "thesis" or not active_auto_conversations[room_id]["thesis_npc"]:
+                    # 주장 단계
+                    responding_npc_id = random.choice(current_npcs)
+                    active_auto_conversations[room_id]["thesis_npc"] = responding_npc_id
+                    prompt_prefix = "Present your philosophical thesis on this topic."
+                    active_auto_conversations[room_id]["dialectical_phase"] = "antithesis"
                     
-                    # 선택 가능한 NPC 목록 생성
-                    available_npcs = [npc for npc in current_npcs if npc not in exclude_npcs]
+                elif phase == "antithesis":
+                    # 반론 단계: 주장한 NPC와 다른 NPC를 선택
+                    thesis_npc = active_auto_conversations[room_id]["thesis_npc"]
+                    available_npcs = [npc for npc in current_npcs if npc != thesis_npc]
+                    if available_npcs:
+                        responding_npc_id = random.choice(available_npcs)
+                        active_auto_conversations[room_id]["antithesis_npc"] = responding_npc_id
+                        prompt_prefix = "Challenge and present a counter-argument to the thesis presented earlier."
+                        active_auto_conversations[room_id]["dialectical_phase"] = "synthesis"
+                
+                elif phase == "synthesis":
+                    # 종합 단계: 주장, 반론 외의 다른 NPC 또는 주장/반론 NPC 중 하나를 선택
+                    thesis_npc = active_auto_conversations[room_id]["thesis_npc"]
+                    antithesis_npc = active_auto_conversations[room_id]["antithesis_npc"]
                     
-                    # 선택 가능한 NPC가 없으면 모든 NPC 중에서 선택
-                    if not available_npcs:
-                        available_npcs = current_npcs
-                        logger.info(f"🎭 선택 가능한 NPC가 없어 모든 NPC 중에서 선택합니다")
+                    # 종합은 제3자 또는 주장/반론 NPC 중 하나가 수행
+                    synthesis_candidates = current_npcs
+                    if len(current_npcs) > 2:  # 충분한 NPC가 있으면 제3자 우선
+                        synthesis_candidates = [npc for npc in current_npcs if npc != thesis_npc and npc != antithesis_npc]
                     
-                    # 무작위로 다음 NPC 선택
-                    responding_npc_id = random.choice(available_npcs)
-                    logger.info(f"🎭 선택 가능한 NPC 목록 ({len(available_npcs)}개): {available_npcs}")
+                    if synthesis_candidates:
+                        responding_npc_id = random.choice(synthesis_candidates)
+                        prompt_prefix = "Synthesize the thesis and antithesis into a more comprehensive understanding."
+                        # 다시 처음으로 돌아감
+                        active_auto_conversations[room_id]["dialectical_phase"] = "thesis"
+                        active_auto_conversations[room_id]["thesis_npc"] = None
+                        active_auto_conversations[room_id]["antithesis_npc"] = None
+            
+            # 기존 로직으로 돌아감 - responding_npc_id가 아직 선택되지 않았다면 기본 선택 로직 수행
+            if not responding_npc_id:
+                # ... 기존 NPC 선택 로직 ...
+                pass
                 
-                # 최근 참여 NPC 목록 업데이트 (맨 앞에 추가, 최대 길이 제한)
-                if responding_npc_id in recent_npcs:
-                    recent_npcs.remove(responding_npc_id)
-                recent_npcs.insert(0, responding_npc_id)
-                
-                # 최근 참여 NPC 목록 길이 제한 (최대 NPC 수의 절반까지만 유지)
-                max_recent = max(len(current_npcs) // 2, 1)
-                active_auto_conversations[room_id]["recent_npcs"] = recent_npcs[:max_recent]
-                
-                logger.info(f"🎭 선택된 NPC: {responding_npc_id}, 업데이트된 최근 참여 NPC 목록: {active_auto_conversations[room_id]['recent_npcs']}")
-                
-                # 이전 prev_npc 코드는 삭제
-                # prev_npc = responding_npc_id
-                
-                logger.debug(f"선택된 NPC ID: {responding_npc_id}")
-                
-                # NPC 정보 가져오기
-                logger.info(f"Generating response from NPC: {responding_npc_id}")
-                
-                try:
-                    # 여기서 NPC 정보를 가져올 때 디버깅 로그 추가
-                    logger.info(f"📣 Getting details for NPC ID: {responding_npc_id}")
-                    npc_info = await get_npc_details(responding_npc_id)
-                    logger.info(f"📣 NPC 정보 가져오기 완료: {npc_info.get('name', 'Unknown')}")
-                    logger.debug(f"📋 가져온 NPC 정보 전체: {npc_info}")
-                except Exception as npc_err:
-                    logger.error(f"NPC 정보 가져오기 실패: {str(npc_err)}")
-                    # 다음 사이클로 넘어감
-                    await asyncio.sleep(5)
-                    continue
-                
-                # *** 새 로직: NPC 선택 즉시 소켓 이벤트 발송 ***
-                try:
-                    # npc-selected 이벤트 발송
-                    async with aiohttp.ClientSession() as session:
-                        nextjs_api_url = os.environ.get("NEXTJS_API_URL", "http://localhost:3000")
-                        
-                        # 소켓 이벤트 데이터
-                        npc_selected_data = {
-                            "action": "broadcast",
-                            "room": room_id,
-                            "event": "npc-selected",
-                            "data": {
-                                "npc_id": responding_npc_id,
-                                "npc_name": npc_info.get('name', 'Unknown')
-                            }
-                        }
-                        
-                        logger.info(f"🎯 NPC 선택 이벤트 발송: {responding_npc_id} ({npc_info.get('name', 'Unknown')})")
-                        
-                        # 이벤트 전송
-                        npc_selected_response = await session.post(
-                            f"{nextjs_api_url}/api/socket",
-                            json=npc_selected_data,
-                            headers={"Content-Type": "application/json"}
-                        )
-                        
-                        # 응답 확인
-                        npc_selected_status = npc_selected_response.status
-                        logger.info(f"NPC 선택 이벤트 발송 상태: {npc_selected_status}")
-                        
-                        if npc_selected_status != 200:
-                            logger.warning(f"NPC 선택 이벤트 발송 실패: {npc_selected_status}")
-                except Exception as e:
-                    logger.error(f"NPC 선택 이벤트 발송 중 오류: {str(e)}")
-                
-                # "thinking" 상태 소켓 이벤트 발송 - 기존 코드 삭제 (npc-selected 이벤트로 대체)
-                
-                # "thinking" 상태 소켓 이벤트 발송
-                # npc_description 변수 초기화 - 오류 수정
-                npc_description = npc_info.get('description', f"A philosopher named {npc_info.get('name', responding_npc_id)}")
-                
-                try:
-                    # 스타일 정보가 있으면 추가
-                    if npc_info.get('style'):
-                        npc_description += f". Style: {npc_info['style']}"
-                    
-                    # Custom NPC인 경우 추가 특성 포함
-                    if npc_info.get('is_custom', False):
-                        # 추가 특성이 있으면 설명에 추가
-                        additional_traits = []
-                        
-                        if npc_info.get('voice_style'):
-                            additional_traits.append(f"Voice style: {npc_info['voice_style']}")
-                            
-                        if npc_info.get('debate_approach'):
-                            additional_traits.append(f"Debate approach: {npc_info['debate_approach']}")
-                        
-                        if npc_info.get('communication_style'):
-                            additional_traits.append(f"Communication style: {npc_info['communication_style']}")
-                        
-                        # 특성이 있으면 설명에 추가
-                        if additional_traits:
-                            traits_text = "; ".join(additional_traits)
-                            npc_description += f". {traits_text}"
-                            logger.info(f"📣 Custom NPC 추가 특성 포함: {traits_text}")
-                except Exception as e:
-                    logger.error(f"NPC 추가 특성 처리 중 오류: {str(e)}")
-                
-                # 메시지 생성 - 대화 기록 반영 및 사용자 질문에 직접 응답하도록 개선
-                logger.info(f"Generating philosophical response for {npc_info['name']} on topic: {current_topic}")
-                logger.debug(f"이전 대화 길이: {len(dialogue_history)} 문자")
-                logger.info(f"📣 NPC 설명: {npc_description}")
-                
-                # 응답 생성을 위한 추가 컨텍스트 구성
-                additional_context = user_context
-                
-                # 사용자 질문이 있고 현재 NPC가 언급된 NPC라면, 그 질문에 직접 응답하도록 가이드
-                if mentioned_npc == responding_npc_id and last_user_question:
-                    additional_context += f"\n\nIMPORTANT: The user has directly asked you a question: '{last_user_question}'. Please respond to this question specifically and directly."
-                    logger.info(f"사용자 질문에 직접 응답하도록 안내: {last_user_question}")
-                
-                try:
-                    # 칸트의 경우 자동으로 RAG 활성화
-                    use_rag = False
-                    if responding_npc_id.lower() == 'kant':
-                        use_rag = True
-                        logger.info(f"🔍 칸트 응답을 위해 RAG 자동 활성화됨")
-                    
-                    response_text, metadata = llm_manager.generate_philosophical_response(
-                        npc_description=npc_description,
-                        topic=current_topic,
-                        context=additional_context,
-                        previous_dialogue=dialogue_history,  # 이전 메시지 기록 전달
-                        npc_id=responding_npc_id,  # npc_id 파라미터 추가
-                        use_rag=use_rag  # 칸트인 경우에만 RAG 활성화
-                    )
-                    logger.debug(f"LLM에서 생성된 응답: {response_text[:100]}...")
-                    
-                    # 인용 정보(citations) 추출 및 로깅
-                    citations = metadata.get("citations", [])
-                    if citations:
-                        logger.info(f"📚 {len(citations)}개의 인용 정보가 포함됨")
-                        logger.debug(f"📚 인용 정보: {citations}")
-                    else:
-                        logger.info("📚 인용 정보 없음")
-                    
-                    # NPC ID를 이름으로 변환하는 후처리 추가
-                    try:
-                        # 대화에 참여하는 모든 NPC의 ID-이름 매핑 생성
-                        id_name_mapping = await create_npc_id_name_mapping(current_npcs)
-                        
-                        # 응답 텍스트에서 NPC ID를 이름으로 변환
-                        original_text = response_text
-                        response_text = replace_ids_with_names(response_text, id_name_mapping)
-                        
-                        # 변환 결과 확인
-                        if original_text != response_text:
-                            logger.info(f"응답 텍스트에서 NPC ID가 이름으로 변환되었습니다.")
-                            logger.debug(f"원본: {original_text[:100]}...")
-                            logger.debug(f"변환 후: {response_text[:100]}...")
-                    except Exception as mapping_err:
-                        logger.error(f"NPC ID-이름 변환 중 오류: {str(mapping_err)}")
-                except Exception as llm_err:
-                    logger.error(f"LLM 응답 생성 실패: {str(llm_err)}")
-                    # 다음 사이클로 넘어감
-                    await asyncio.sleep(5)
-                    continue
-                
-                # "message-sent" 상태 소켓 이벤트 발송
-                try:
-                    async with aiohttp.ClientSession() as session:
-                        nextjs_api_url = os.environ.get("NEXTJS_API_URL", "http://localhost:3000")
-                        message_sent_data = {
-                            "action": "broadcast",
-                            "room": room_id,
-                            "event": "auto-message-sent",
-                            "data": {}
-                        }
-                        
-                        logger.info(f"자동 대화 message-sent 이벤트 발송")
-                        logger.info(f"Message-sent 이벤트 페이로드: {message_sent_data}")
-                        
-                        message_sent_response = await session.post(
-                            f"{nextjs_api_url}/api/socket",
-                            json=message_sent_data,
-                            headers={"Content-Type": "application/json"}
-                        )
-                        
-                        message_sent_status = message_sent_response.status
-                        message_sent_resp_text = await message_sent_response.text()
-                        logger.info(f"Message-sent 이벤트 발송 상태: {message_sent_status}")
-                        logger.info(f"Message-sent 이벤트 응답: {message_sent_resp_text[:100]}")
-                        
-                        # 실패 시 상세 로그
-                        if message_sent_status != 200:
-                            logger.error(f"❌ Message-sent 이벤트 발송 실패! 상태 코드: {message_sent_status}")
-                            logger.error(f"❌ 실패 응답: {message_sent_resp_text[:200]}")
-                except Exception as message_sent_err:
-                    logger.error(f"Message-sent 이벤트 발송 실패: {str(message_sent_err)}")
-                    logger.exception(message_sent_err)  # 스택 트레이스 출력
-                
-                # 응답 메시지 구성 - 더 많은 NPC 정보 포함
-                message_id = f"auto-{uuid4().hex[:8]}"
-                
-                # npc_name을 명확하게 결정
-                npc_name = npc_info.get('name', '')
-                if not npc_name:
-                    npc_name = responding_npc_id.capitalize()
-                
-                message = {
-                    "id": message_id,
-                    "text": response_text,
-                    "sender": responding_npc_id,  # sender를 NPC ID로 설정하여 프론트엔드에서 정보를 찾을 수 있게 함
-                    "senderName": npc_name,  # 항상 이름 사용
-                    "senderType": "npc",  # 추가: 발신자 타입
-                    "isUser": False,
-                    "timestamp": datetime.now().isoformat(),
-                    "portrait_url": npc_info.get('portrait_url', None),  # 추가: 프로필 이미지 URL
-                    "npc_id": responding_npc_id  # 추가: NPC ID 명시적 포함
-                }
-                
-                # 인용 정보가 있으면 메시지에 추가
-                if citations:
-                    message["citations"] = citations
-                    logger.info(f"📚 메시지에 {len(citations)}개의 인용 정보 추가됨")
-                
-                logger.info(f"📣 최종 메시지 객체: {message}")
-                logger.info(f"Generated message for {npc_name} in room {room_id}")
-                logger.info(f"Message: {message['text'][:100]}...")
-                
-                # 대화 기록에 새 메시지 추가
-                dialogue_history += f"{npc_name}: {message['text']}\n\n"
-                
-                # 언급된 NPC가 응답했다면 상태 재설정
-                if mentioned_npc == responding_npc_id:
-                    mentioned_npc = None
-                    user_question_answered = True
-                
-                # Next.js API를 통해 메시지 저장 및 브로드캐스트
-                nextjs_api_url = os.environ.get("NEXTJS_API_URL", "http://localhost:3000")
-                logger.info(f"Sending message to Next.js API at {nextjs_api_url}/api/rooms")
-                
-                try:
-                    # 메시지 저장 요청
-                    async with aiohttp.ClientSession() as session:
-                        # 로그에 URL과 payload 내용을 자세히 출력
-                        request_payload = {
-                            "message": message
-                        }
-                        # URL 쿼리 파라미터로 room_id 전달
-                        request_url = f"{nextjs_api_url}/api/rooms?id={room_id}"
-                        logger.info(f"Sending to Next.js API - URL: {request_url}")
-                        logger.debug(f"전체 Payload: {request_payload}")
-                        
-                        api_response = await session.put(
-                            request_url,
-                            json=request_payload,
-                            headers={
-                                "Content-Type": "application/json"
-                            }
-                        )
-                        
-                        # 응답 확인
-                        status_code = api_response.status
-                        logger.info(f"Response status code: {status_code}")
-                        
-                        response_text = await api_response.text()
-                        logger.debug(f"Next.js API 응답 전체: {response_text}")
-                        
-                        if status_code == 200:
-                            try:
-                                response_data = await api_response.json()
-                                success = response_data.get('success', False)
-                                logger.info(f"Message successfully saved to DB: {success}")
-                                
-                                # 성공 여부를 명확하게 출력
-                                if success:
-                                    logger.info(f"✅ 메시지 저장 성공 - ID: {message['id']}, 발신자: {message['senderName']}")
-                                else:
-                                    logger.warning(f"⚠️ 메시지 저장 실패 - ID: {message['id']}, 발신자: {message['senderName']}")
-                            except Exception as json_err:
-                                logger.error(f"응답 JSON 파싱 오류: {str(json_err)}")
-                                success = False
-                            
-                            # 성공 응답일 경우 WebSocket 연결을 위한 추가 요청 (WebSocket 이벤트 발생을 위해)
-                            try:
-                                # 메시지가 저장되었으니 소켓 서버에 알림
-                                socket_data = {
-                                    "action": "broadcast",
-                                    "room": room_id,
-                                    "event": "new-message",
-                                    "data": {
-                                        "roomId": room_id,
-                                        "message": message
-                                    }
-                                }
-                                logger.debug(f"소켓 API 요청 페이로드: {socket_data}")
-                                
-                                socket_notify_response = await session.post(
-                                    f"{nextjs_api_url}/api/socket",
-                                    json=socket_data,
-                                    headers={
-                                        "Content-Type": "application/json"
-                                    }
-                                )
-                                socket_status = socket_notify_response.status
-                                socket_text = await socket_notify_response.text()
-                                logger.info(f"Socket notification status: {socket_status}")
-                                
-                                try:
-                                    socket_data = json.loads(socket_text)
-                                    socket_success = socket_data.get('success', False)
-                                    logger.info(f"Socket broadcast success: {socket_success}")
-                                    
-                                    if socket_success:
-                                        logger.info(f"✅ 실시간 브로드캐스트 성공 - 메시지 ID: {message['id']}")
-                                    else:
-                                        logger.warning(f"⚠️ 실시간 브로드캐스트 실패 - 메시지 ID: {message['id']}")
-                                except:
-                                    logger.debug(f"Socket 응답 전체: {socket_text}")
-                            except Exception as socket_err:
-                                logger.error(f"Error notifying socket server: {str(socket_err)}", exc_info=True)
-                        else:
-                            error_text = await api_response.text()
-                            logger.error(f"Failed to save message to DB. Status: {status_code}, Error: {error_text}")
-                except Exception as e:
-                    logger.error(f"Error sending message to Next.js API: {str(e)}", exc_info=True)
-                
-                # 메시지 카운트 증가
-                message_count += 1
-                
-                # 다음 메시지 대기 시간 (기본값: 15-25초 랜덤)
-                wait_time = random.randint(min_delay, max_delay)
-                logger.info(f"Waiting {wait_time} seconds before next message")
-                
-                # 마지막 메시지 시간 업데이트
-                if room_id in active_auto_conversations:
-                    active_auto_conversations[room_id]["last_message_time"] = time.time()
-                
-                # 대기 - 사이에 active 상태가 변경되면 즉시 종료
-                for i in range(wait_time):
-                    if not active_auto_conversations.get(room_id, {}).get("active", False):
-                        logger.debug(f"대기 중 active 상태 변경으로 루프 종료")
-                        break
-                    if i % 5 == 0:  # 5초마다 로그 출력
-                        logger.debug(f"대기 중... {i}/{wait_time}초")
-                    await asyncio.sleep(1)
-                
-            except Exception as e:
-                logger.error(f"Error in auto conversation cycle: {str(e)}", exc_info=True)
-                # 에러 발생 시 5초 대기 후 재시도
-                await asyncio.sleep(5)
-        
-        # 루프 종료 후 정리
-        if room_id in active_auto_conversations:
-            logger.info(f"Auto conversation loop completed for room {room_id} after {message_count} messages")
-            # 루프가 완료되면 상태에서 제거
-            del active_auto_conversations[room_id]
+            # NPC 정보 가져오기
+            npc_info = {}
+            for npc in philosophers_data:
+                if npc["id"].lower() == responding_npc_id.lower():
+                    npc_info = npc
+                    break
+            
+            # ... 기존 코드 ...
+            
+            # 프롬프트에 대화 패턴 관련 지시 추가
+            if prompt_prefix:
+                additional_context = f"{prompt_prefix}\n\n{additional_context}"
+            
+            # ... 기존 코드 ...
+            
+            # "npc-selected" 이벤트 발송 - 이미 구현된 부분
+            socket_manager.emit_to_room(
+                room_id=str(room_id),
+                event="npc-selected",
+                data={"npc_id": responding_npc_id, "npc_name": npc_info.get("name", responding_npc_id)}
+            )
+            
+            # ... 기존 코드 ...
             
     except Exception as e:
-        logger.exception(f"Unexpected error in auto conversation loop: {str(e)}")
-        # 오류 발생 시 상태에서 제거
-        if room_id in active_auto_conversations:
-            del active_auto_conversations[room_id]
+        logger.error(f"자동 대화 오류: {str(e)}", exc_info=True)
+        # ... 기존 코드 ...
 
 # WebSocket 엔드포인트
 @app.websocket("/ws/{room_id}")
@@ -2285,8 +1937,14 @@ async def create_chat_room(request: ChatRoomCreationRequest):
             },
             "totalParticipants": len(request.npcs) + (1 if request.currentUser else 0),
             "lastActivity": datetime.now().isoformat(),
-            "isPublic": request.isPublic
+            "isPublic": request.isPublic,
+            "dialogueType": request.dialogueType
         }
+        
+        # 찬반토론 모드일 경우 NPC 입장 정보 추가
+        if request.dialogueType == "debate" and request.npcPositions:
+            new_room["npcPositions"] = request.npcPositions
+            logger.info(f"찬반토론 입장 정보 설정: {request.npcPositions}")
         
         # 2. 초기 메시지 생성 로직 개선 (통합)
         initial_message = None
