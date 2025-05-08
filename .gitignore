@@ -43,5 +43,14 @@ ENV/
 logs/
 output/
 data/sources/custom/
-.ipynb_checkpoints/ 
- node_modules/
+.ipynb_checkpoints/
+node_modules/
+
+# Next.js
+/.next/
+/out/
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
