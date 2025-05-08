@@ -44,4 +44,4 @@ logs/
 output/
 data/sources/custom/
 .ipynb_checkpoints/ 
- 
+ node_modules/
