@@ -28,6 +28,7 @@ import re
 # Sapiens Engine 임포트
 from sapiens_engine.core.llm_manager import LLMManager
 from sapiens_engine.core.config_loader import ConfigLoader
+from sapiens_engine.dialogue import DialogueFactory
 
 # tiktoken 추가 - 토큰 계산용
 try:
@@ -1941,12 +1942,79 @@ async def create_chat_room(request: ChatRoomCreationRequest):
             "dialogueType": request.dialogueType
         }
         
-        # 찬반토론 모드일 경우 NPC 입장 정보 추가
-        if request.dialogueType == "debate" and request.npcPositions:
-            new_room["npcPositions"] = request.npcPositions
-            logger.info(f"찬반토론 입장 정보 설정: {request.npcPositions}")
+        # 찬반토론 모드일 경우 NPC 입장 정보 추가 및 진행자 메시지 생성
+        if request.dialogueType == "debate":
+            # NPC 포지션 정보 추가
+            if request.npcPositions:
+                new_room["npcPositions"] = request.npcPositions
+                logger.info(f"찬반토론 입장 정보 설정: {request.npcPositions}")
+            else:
+                # NPC 포지션 자동 배정
+                npcPositions = {}
+                for i, npc_id in enumerate(request.npcs):
+                    npcPositions[npc_id] = "pro" if i % 2 == 0 else "con"
+                new_room["npcPositions"] = npcPositions
+                logger.info(f"찬반토론 입장 자동 배정: {npcPositions}")
+            
+            # 주제에서 찬성/반대 입장 명확화
+            stance_statements = await generate_stance_statements(request.title, request.context)
+            logger.info(f"토론 주제 입장 명확화: {stance_statements}")
+            
+            # 진행자 오프닝 메시지 생성
+            if request.generateInitialMessage:
+                try:
+                    logger.info(f"진행자 오프닝 메시지 생성 중...")
+                    moderator_opening = await generate_moderator_opening(
+                        request.title,
+                        request.context,
+                        stance_statements,
+                        request.npcs,
+                        new_room["npcPositions"]
+                    )
+                    
+                    if moderator_opening:
+                        # 메시지 ID 생성
+                        message_id = f"moderator-{int(time.time())}"
+                        
+                        # 메시지 객체 생성
+                        message_obj = {
+                            "id": message_id,
+                            "text": moderator_opening,
+                            "sender": "Moderator",
+                            "isUser": False,
+                            "timestamp": datetime.now().isoformat()
+                        }
+                        
+                        # 응답에 초기 메시지 포함
+                        new_room["initial_message"] = message_obj
+                        logger.info(f"진행자 오프닝 메시지 생성 완료: {moderator_opening[:100]}...")
+                    else:
+                        logger.warning("진행자 오프닝 메시지 생성 실패")
+                        # 기본 진행자 메시지 생성
+                        message_obj = {
+                            "id": f"moderator-{int(time.time())}",
+                            "text": f"Welcome to our debate on the topic: {request.title}. Let's begin with opening statements from our participants, starting with the pro side.",
+                            "sender": "Moderator",
+                            "isUser": False,
+                            "timestamp": datetime.now().isoformat()
+                        }
+                        new_room["initial_message"] = message_obj
+                except Exception as e:
+                    logger.error(f"진행자 오프닝 메시지 생성 오류: {str(e)}")
+                    # 기본 진행자 메시지 생성
+                    message_obj = {
+                        "id": f"moderator-{int(time.time())}",
+                        "text": f"Welcome to our debate on the topic: {request.title}. Let's begin with opening statements from our participants, starting with the pro side.",
+                        "sender": "Moderator",
+                        "isUser": False,
+                        "timestamp": datetime.now().isoformat()
+                    }
+                    new_room["initial_message"] = message_obj
+            
+            # 찬반토론이 아닌 경우에만 기존 초기 메시지 생성 로직 실행
+            return new_room
         
-        # 2. 초기 메시지 생성 로직 개선 (통합)
+        # 2. 찬반토론이 아닌 경우 기존 초기 메시지 생성 로직 실행
         initial_message = None
         if request.generateInitialMessage and request.npcs and len(request.npcs) > 0:
             logger.info(f"Generating initial message for room {new_room_id}")
@@ -2093,6 +2161,143 @@ async def create_chat_room(request: ChatRoomCreationRequest):
     except Exception as e:
         logger.exception(f"Error creating chat room: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
+
+# 주제에서 찬성/반대 입장 추출 함수
+async def generate_stance_statements(topic: str, context: str = "") -> Dict[str, str]:
+    """주제에서 찬성/반대 입장을 명확한 문장으로 추출"""
+    try:
+        logger.info(f"Generating stance statements for topic: {topic}")
+        
+        system_prompt = """
+        You are a debate preparation assistant. Your task is to analyze the given topic and create clear stance statements for both PRO and CON positions.
+        Format your response as JSON with the following structure:
+        {
+            "pro_statement": "Clear statement supporting the position...",
+            "con_statement": "Clear statement opposing the position..."
+        }
+        Keep each statement concise (1-2 sentences) and strongly articulated.
+        """
+        
+        user_prompt = f"Topic: {topic}\n\nContext: {context}"
+        
+        # LLM API 호출
+        response = llm_manager.generate_response(
+            system_prompt=system_prompt,
+            user_prompt=user_prompt,
+            llm_provider="openai",
+            llm_model="gpt-4o"
+        )
+        
+        # JSON 응답 파싱
+        import json
+        try:
+            result = json.loads(response)
+            pro_statement = result.get("pro_statement", "")
+            con_statement = result.get("con_statement", "")
+            
+            logger.info(f"Generated stance statements - PRO: {pro_statement}, CON: {con_statement}")
+            
+            return {
+                "pro": pro_statement,
+                "con": con_statement
+            }
+        except json.JSONDecodeError:
+            logger.error(f"Failed to parse stance statements JSON: {response}")
+            # 기본값 반환
+            return {
+                "pro": f"{topic} is true and beneficial.",
+                "con": f"{topic} is false and harmful."
+            }
+    except Exception as e:
+        logger.error(f"Error generating stance statements: {str(e)}")
+        return {
+            "pro": f"{topic} is true and beneficial.",
+            "con": f"{topic} is false and harmful."
+        }
+
+# 진행자 오프닝 메시지 생성 함수
+async def generate_moderator_opening(
+    topic: str, 
+    context: str = "", 
+    stance_statements: Dict[str, str] = None,
+    participants: List[str] = None,
+    positions: Dict[str, str] = None
+) -> str:
+    """진행자의 오프닝 메시지 생성"""
+    try:
+        logger.info(f"Generating moderator opening for topic: {topic}")
+        
+        # 기본값 설정
+        stance_statements = stance_statements or {
+            "pro": f"{topic} is true and beneficial.",
+            "con": f"{topic} is false and harmful."
+        }
+        
+        # 참가자 정보 구성
+        pro_participants = []
+        con_participants = []
+        
+        if participants and positions:
+            for npc_id in participants:
+                position = positions.get(npc_id, "")
+                try:
+                    # NPC 정보 가져오기
+                    npc_info = await get_npc_details(npc_id)
+                    npc_name = npc_info.get("name", npc_id)
+                    
+                    if position == "pro":
+                        pro_participants.append(npc_name)
+                    elif position == "con":
+                        con_participants.append(npc_name)
+                except Exception as e:
+                    logger.error(f"Error getting NPC details: {str(e)}")
+                    # NPC 정보 조회 실패 시 ID 그대로 사용
+                    if position == "pro":
+                        pro_participants.append(npc_id)
+                    elif position == "con":
+                        con_participants.append(npc_id)
+        
+        # 프롬프트 구성
+        system_prompt = f"""
+        You are the moderator of a debate on the topic: "{topic}".
+        
+        Act as a professional podcast host with a neutral stance. Your task is to:
+        1. Welcome the audience and participants
+        2. Summarize the debate topic clearly
+        3. Explain the format of the debate
+        4. Call on the PRO side to present their opening statement
+        
+        Important: Respond in the same language as the topic. Keep your response concise (150-200 words).
+        """
+        
+        # 주제 언어에 맞게 응답하기 위한 추가 정보
+        user_prompt = f"""
+        Topic: {topic}
+        
+        Additional context: {context}
+        
+        PRO position: {stance_statements.get('pro', '')}
+        CON position: {stance_statements.get('con', '')}
+        
+        PRO side participants: {', '.join(pro_participants)}
+        CON side participants: {', '.join(con_participants)}
+        """
+        
+        # LLM API 호출
+        opening_message = llm_manager.generate_response(
+            system_prompt=system_prompt,
+            user_prompt=user_prompt,
+            llm_provider="openai",
+            llm_model="gpt-4o"
+        )
+        
+        logger.info(f"Generated moderator opening message: {opening_message[:100]}...")
+        return opening_message
+        
+    except Exception as e:
+        logger.error(f"Error creating moderator opening: {str(e)}")
+        # 오류 시 기본 메시지 반환
+        return f"Welcome to today's debate on the topic: \"{topic}\". Let's begin with the opening statements from our participants."
 
 # NPC 간 자동 대화 생성 API
 @app.post("/api/dialogue/generate")
@@ -2361,3 +2566,133 @@ async def debug_token_count(text: str):
     except Exception as e:
         logger.error(f"❌ 토큰 계산 테스트 오류: {e}")
         raise HTTPException(status_code=500, detail=f"토큰 계산 오류: {str(e)}")
+
+# ==========================================
+# 대화 형식 관련 엔드포인트
+# ==========================================
+
+# 대화 형식 객체 캐시
+dialogue_instances = {}
+
+@app.get("/api/dialogue/types")
+async def get_dialogue_types():
+    """사용 가능한 대화 형식 목록 반환"""
+    return DialogueFactory.get_available_types()
+
+@app.get("/api/dialogue/{room_id}/state")
+async def get_dialogue_state(room_id: str):
+    """채팅방의 현재 대화 상태 조회"""
+    # 채팅방 정보 조회
+    room = await get_room_by_id(room_id)
+    if not room:
+        raise HTTPException(status_code=404, detail=f"Room {room_id} not found")
+    
+    # 대화 형식 확인
+    dialogue_type = room.get("dialogueType", "standard")
+    
+    # 해당 대화 객체 가져오기 또는 생성
+    dialogue = _get_or_create_dialogue(room_id, dialogue_type, room)
+    
+    # 대화 상태 반환
+    return dialogue.get_dialogue_state()
+
+@app.post("/api/dialogue/{room_id}/next-speaker")
+async def get_next_speaker(room_id: str):
+    """다음 발언자 정보 조회"""
+    # 채팅방 정보 조회
+    room = await get_room_by_id(room_id)
+    if not room:
+        raise HTTPException(status_code=404, detail=f"Room {room_id} not found")
+    
+    # 대화 형식 확인
+    dialogue_type = room.get("dialogueType", "standard")
+    
+    # 해당 대화 객체 가져오기 또는 생성
+    dialogue = _get_or_create_dialogue(room_id, dialogue_type, room)
+    
+    # 다음 발언자 정보 반환
+    return dialogue.get_next_speaker()
+
+@app.post("/api/dialogue/{room_id}/generate")
+async def generate_dialogue_response(
+    room_id: str, 
+    request: Dict[str, Any] = Body(...)
+):
+    """대화 형식에 맞는 AI 응답 생성"""
+    context = request.get("context", {})
+    
+    # 채팅방 정보 조회
+    room = await get_room_by_id(room_id)
+    if not room:
+        raise HTTPException(status_code=404, detail=f"Room {room_id} not found")
+    
+    # 대화 형식 확인
+    dialogue_type = room.get("dialogueType", "standard")
+    
+    # 해당 대화 객체 가져오기 또는 생성
+    dialogue = _get_or_create_dialogue(room_id, dialogue_type, room)
+    
+    # 최근 메시지 가져오기 (context에 없는 경우)
+    if "recent_messages" not in context and room.get("messages"):
+        messages = room["messages"]
+        context["recent_messages"] = messages[-5:] if len(messages) > 5 else messages
+    
+    # 대화 형식에 맞는 응답 생성
+    response_info = dialogue.generate_response(context)
+    
+    # 응답 생성에 필요한 정보 추출
+    speaker_id = response_info.get("speaker_id")
+    prompt = response_info.get("prompt")
+    
+    # 실제 응답 생성 (기존 생성 로직 활용)
+    # 이 부분은 기존 generate_ai_response 함수를 호출하거나 유사한 로직 구현
+    ai_response = await generate_ai_response(room_id, speaker_id, prompt)
+    
+    # 생성된 응답과 대화 정보 합치기
+    combined_response = {
+        **response_info,
+        "response_text": ai_response.get("text", ""),
+        "timestamp": ai_response.get("timestamp", time.time())
+    }
+    
+    return combined_response
+
+@app.post("/api/dialogue/{room_id}/process-message")
+async def process_dialogue_message(
+    room_id: str, 
+    request: Dict[str, Any] = Body(...)
+):
+    """사용자 메시지 처리 및 대화 상태 업데이트"""
+    message = request.get("message", "")
+    user_id = request.get("user_id", "")
+    
+    # 채팅방 정보 조회
+    room = await get_room_by_id(room_id)
+    if not room:
+        raise HTTPException(status_code=404, detail=f"Room {room_id} not found")
+    
+    # 대화 형식 확인
+    dialogue_type = room.get("dialogueType", "standard")
+    
+    # 해당 대화 객체 가져오기 또는 생성
+    dialogue = _get_or_create_dialogue(room_id, dialogue_type, room)
+    
+    # 메시지 처리
+    processed_info = dialogue.process_message(message, user_id)
+    
+    return processed_info
+
+def _get_or_create_dialogue(room_id: str, dialogue_type: str, room_data: Dict[str, Any]) -> Any:
+    """대화 객체 가져오기 또는 생성"""
+    # 캐시에서 객체 확인
+    cache_key = f"{room_id}_{dialogue_type}"
+    if cache_key in dialogue_instances:
+        return dialogue_instances[cache_key]
+    
+    # 객체 생성
+    dialogue = DialogueFactory.create_dialogue(dialogue_type, room_id, room_data)
+    
+    # 캐시에 저장
+    dialogue_instances[cache_key] = dialogue
+    
+    return dialogue
