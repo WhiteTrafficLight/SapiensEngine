@@ -1,86 +1,49 @@
-# AgoraMind: A Philosophical Dialogue Platform
+# 철학자 찬반토론 실험 (Philosopher Debate Experiment)
 
-AgoraMind is a collaborative knowledge creation platform where multiple AI philosophers and human thinkers engage in meaningful dialogue to explore complex philosophical questions. Named after the ancient Greek gathering place for intellectual discourse, AgoraMind creates a digital space for the exchange of ideas across time and perspectives.
+이 Streamlit 애플리케이션은 철학자들 간의 찬반토론을 실험하고 프롬프팅 기법을 테스트하기 위한 도구입니다.
 
-## Features
+## 기능
 
-- **Interactive Dialogues**: Engage in real-time conversations with AI models trained on the writings and ideas of history's greatest philosophers.
-- **Open Chat Rooms**: Join multi-participant discussions where humans and AI collaboratively explore ideas and generate new insights.
-- **Custom Context**: Add your own sources, texts, and contexts to shape and guide philosophical discussions in new directions.
-- **Custom NPCs**: Create and customize philosophical personas with unique perspectives and speaking styles.
-- **Multiple Model Support**: Use OpenAI API or local LLM models for generating responses.
+- 철학자들을 찬성/반대 측으로 선택 가능
+- 사용자도 토론에 참여 가능
+- 토론 진행자의 오프닝 멘트 자동 생성
+- 철학자들의 주장 자동 생성
+- 실시간으로 토론 진행 상황 확인
+- 토론 종료 후 진행자의 요약 생성
 
-## Getting Started
+## 설치 및 실행
 
-### Prerequisites
+1. 의존성 설치:
+```bash
+pip install streamlit openai
+```
 
-- Node.js (v18 or higher)
-- npm or yarn
-- OpenAI API key (optional if using local LLM)
+2. OpenAI API 키 설정:
+```bash
+export OPENAI_API_KEY="your-api-key-here"
+```
 
-### Installation
+3. 애플리케이션 실행:
+```bash
+streamlit run debate_experiment.py
+```
 
-1. Clone the repository:
-   ```
-   git clone https://github.com/yourusername/agoramind.git
-   cd agoramind
-   ```
+## 사용 방법
 
-2. Install dependencies:
-   ```
-   npm install
-   ```
+1. 토론 주제를 입력합니다.
+2. 필요한 경우 배경 설명을 추가합니다.
+3. 찬성측과 반대측 철학자들을 선택합니다.
+4. 원하는 경우 사용자가 토론에 참여할 수 있습니다.
+5. "토론 시작" 버튼을 클릭하여 토론을 시작합니다.
+6. 토론이 진행됨에 따라 "다음 발언" 버튼을 클릭하여 다음 단계로 진행합니다.
+7. 사용자 차례에는 메시지를 입력하여 토론에 참여합니다.
 
-3. Create a `.env.local` file in the root directory with your API keys:
-   ```
-   OPENAI_API_KEY=your-openai-api-key-here
-   MONGODB_URI=your-mongodb-uri-here
-   NEXTAUTH_SECRET=your-nextauth-secret-here
-   NEXTAUTH_URL=http://localhost:3000
-   ```
+## 목적
 
-4. Start the development server:
-   ```
-   npm run dev
-   ```
+이 도구는 다음 목적으로 설계되었습니다:
+- 찬반토론 프롬프팅 기법 실험
+- 발언 순서 로직 테스트
+- 철학자별 특성이 반영된 응답 생성 검증
+- 모더레이터 오프닝 및 요약 생성 최적화
 
-5. Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
-
-## Using Local LLM Models
-
-AgoraMind supports using local language models as an alternative to OpenAI's API:
-
-1. Download a compatible GGUF model file (e.g., from HuggingFace)
-2. Go to Settings > Model Settings in the app
-3. Select "Use Local LLM" and enter the path to your model file
-4. Click "Save Settings"
-
-## Project Structure
-
-- `src/app/`: Main application code and routes
-- `src/components/`: Reusable UI components
-- `src/lib/`: Utility functions and services
-- `src/models/`: Data models and schemas
-- `public/`: Static assets
-
-## Built With
-
-- [Next.js](https://nextjs.org/) - React framework
-- [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework
-- [Socket.io](https://socket.io/) - Real-time communication
-- [OpenAI API](https://openai.com/api/) - AI language model API
-- [MongoDB](https://www.mongodb.com/) - Database
-
-## Inspired By
-
-This project was inspired by the Sapiens Engine prototype, which was designed for philosophical dialogue generation and has been expanded into a collaborative multi-user platform.
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Acknowledgments
-
-- Thanks to all the philosophers throughout history whose ideas continue to inspire and challenge us.
-- Special thanks to the open-source community for providing the tools and technologies that make this project possible. 
- 
+실험 결과는 향후 프론트엔드 애플리케이션과 연동될 예정입니다. 

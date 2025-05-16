@@ -24,32 +24,51 @@ class LLMManager:
     for philosophical dialogue generation
     """
     
-    def __init__(self, llm_config: Union[Dict[str, Any], ConfigLoader] = None):
-        """
-        Initialize the LLM manager
-        
-        Args:
-            llm_config: LLM configuration dictionary or ConfigLoader instance
-        """
-        if isinstance(llm_config, ConfigLoader):
-            # Handle case where a ConfigLoader is passed
-            self.config_loader = llm_config
+    def __init__(self, config: Union[Dict[str, Any], ConfigLoader] = None):
+        """Initialize the LLM Manager"""
+        # Get configuration
+        if isinstance(config, ConfigLoader):
+            self.config_loader = config
             self.llm_config = self.config_loader.get_main_config().get("llm", {})
-        elif isinstance(llm_config, dict):
-            # Handle case where a config dict is passed directly
-            self.config_loader = None
-            self.llm_config = llm_config
+        elif isinstance(config, dict):
+            self.config_loader = ConfigLoader()
+            self.llm_config = config
         else:
-            # Default case
             self.config_loader = ConfigLoader()
             self.llm_config = self.config_loader.get_main_config().get("llm", {})
-        
+            
         # Get API keys from .env file directly to ensure we use the correct values
         env_values = dotenv_values()
         self.openai_api_key = env_values.get("OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY")
         self.anthropic_api_key = env_values.get("ANTHROPIC_API_KEY") or os.getenv("ANTHROPIC_API_KEY")
+            
+        # Set up RAG paths
+        self.rag_paths = {
+            "aristotle": os.path.join("data", "vectordbs", "aristotle"),
+            "plato": os.path.join("data", "vectordbs", "plato"),
+            "socrates": os.path.join("data", "vectordbs", "socrates"),
+            "kant": os.path.join("data", "vectordbs", "kant"),
+            "hegel": os.path.join("data", "vectordbs", "hegel"),
+            "nietzsche": os.path.join("data", "vectordbs", "nietzsche"),
+            "beauvoir": os.path.join("data", "vectordbs", "beauvoir"),
+            "arendt": os.path.join("data", "vectordbs", "arendt"),
+            "butler": os.path.join("data", "vectordbs", "butler"),
+        }
         
-        # Set up clients
+        # Set up RAG collection names
+        self.rag_collections = {
+            "aristotle": "langchain",
+            "plato": "langchain",
+            "socrates": "langchain",
+            "kant": "langchain",
+            "hegel": "langchain", 
+            "nietzsche": "langchain",
+            "beauvoir": "langchain",
+            "arendt": "langchain",
+            "butler": "langchain",
+        }
+        
+        # Setup LLM clients
         self._setup_clients()
         
         # Initialize context manager
@@ -57,18 +76,6 @@ class LLMManager:
         
         # NPC cache for RAG data - key is NPC ID, value is a dict with RAG config
         self.npc_rag_cache = {}
-        
-        # RAG paths for philosophers - 클래스 변수로 이동
-        self.rag_paths = {
-            "kant": "rag_data/kant/vector_db",
-            # Add more philosophers here as their RAG data becomes available
-        }
-        
-        # Default collection names
-        self.rag_collections = {
-            "kant": "langchain", 
-            # Add more as needed
-        }
         
         logger.info(f"Initialized LLM Manager with provider: {self.llm_config.get('provider', 'openai')}, model: {self.llm_config.get('model', 'gpt-4')}")
         
@@ -99,83 +106,96 @@ class LLMManager:
         else:
             raise ValueError(f"Unsupported LLM provider: {provider}")
             
-    def generate_response(self, system_prompt: str, user_prompt: str, llm_provider: str = None, llm_model: str = None) -> str:
+    def generate_response(self, system_prompt: str, user_prompt: str, 
+                        llm_provider: str = "openai", llm_model: str = "gpt-4",
+                        max_tokens: int = 500, temperature: float = 0.7) -> str:
         """
-        Generate a response from the LLM
+        LLM을 사용하여 응답을 생성합니다.
         
         Args:
-            system_prompt: The system prompt to use
-            user_prompt: The user prompt to use
-            llm_provider: Override default LLM provider (openai, anthropic, etc.)
-            llm_model: Override default model for the provider
+            system_prompt: 시스템 프롬프트
+            user_prompt: 사용자 프롬프트
+            llm_provider: LLM 제공자 (기본값: "openai")
+            llm_model: 사용할 모델 (기본값: "gpt-4")
+            max_tokens: 최대 토큰 수 (기본값: 500)
+            temperature: 온도 (기본값: 0.7)
             
         Returns:
-            String containing the LLM's response
+            생성된 응답 텍스트
         """
-        provider = llm_provider or self.llm_config.get("provider", "openai").lower()
-        
-        # Update config if model is specified
-        if llm_model:
-            original_model = None
-            if provider == "openai" and "model" in self.llm_config:
-                original_model = self.llm_config["model"]
-                self.llm_config["model"] = llm_model
+        try:
+            logger.info("[LLM_DEBUG] LLM 응답 생성 시작")
+            logger.info(f"[LLM_DEBUG] Provider: {llm_provider}, Model: {llm_model}")
+            logger.info(f"[LLM_DEBUG] System prompt 길이: {len(system_prompt)}")
+            logger.info(f"[LLM_DEBUG] User prompt 길이: {len(user_prompt)}")
             
-            try:
-                if provider == "openai":
-                    return self._generate_openai_response(system_prompt, user_prompt)
-                elif provider == "anthropic":
-                    return self._generate_anthropic_response(system_prompt, user_prompt)
-                else:
-                    raise ValueError(f"Unsupported LLM provider: {provider}")
-            finally:
-                # Restore original model config
-                if original_model:
-                    self.llm_config["model"] = original_model
-        else:
-            # Use standard config
-            if provider == "openai":
-                return self._generate_openai_response(system_prompt, user_prompt)
-            elif provider == "anthropic":
-                return self._generate_anthropic_response(system_prompt, user_prompt)
+            # OpenAI 사용
+            if llm_provider == "openai":
+                # 환경 변수 체크
+                if not os.environ.get("OPENAI_API_KEY"):
+                    api_key = self.openai_api_key
+                    if api_key:
+                        os.environ["OPENAI_API_KEY"] = api_key
+                        logger.info("[LLM_DEBUG] OpenAI API 키를 환경 변수로 설정했습니다")
+                    else:
+                        logger.error("[LLM_DEBUG] OpenAI API 키가 설정되지 않았습니다")
+                        return "OpenAI API 키가 설정되지 않았습니다."
+                
+                # OpenAI 클라이언트 초기화
+                from openai import OpenAI
+                client = OpenAI()
+                
+                logger.info(f"[LLM_DEBUG] OpenAI 클라이언트 초기화 완료")
+                logger.info(f"[LLM_DEBUG] API 요청 시작 - max_tokens: {max_tokens}, temperature: {temperature}")
+                
+                # API 요청
+                try:
+                    response = client.chat.completions.create(
+                        model=llm_model,
+                        messages=[
+                            {"role": "system", "content": system_prompt},
+                            {"role": "user", "content": user_prompt}
+                        ],
+                        max_tokens=max_tokens,
+                        temperature=temperature
+                    )
+                    
+                    logger.info(f"[LLM_DEBUG] API 응답 받음")
+                    
+                    if not response or not hasattr(response, 'choices') or not response.choices:
+                        logger.error(f"[LLM_DEBUG] 유효하지 않은 응답 형식: {response}")
+                        return ""
+                    
+                    # 응답 처리
+                    content = response.choices[0].message.content
+                    
+                    if not content:
+                        logger.error("[LLM_DEBUG] 빈 응답을 받았습니다")
+                        return ""
+                    
+                    logger.info(f"[LLM_DEBUG] 응답 길이: {len(content)}")
+                    logger.info(f"[LLM_DEBUG] 응답 내용: {content[:100]}..." if len(content) > 100 else f"[LLM_DEBUG] 응답 내용: {content}")
+                    
+                    # 오리지널 언어 감지
+                    try:
+                        detected_language = self.detect_language(content)
+                        logger.info(f"[LLM_DEBUG] 감지된 언어: {detected_language}")
+                    except Exception as lang_error:
+                        logger.error(f"[LLM_DEBUG] 언어 감지 오류: {str(lang_error)}")
+                        detected_language = "en"  # 기본값으로 영어 설정
+                    
+                    return content
+                
+                except Exception as api_error:
+                    logger.error(f"[LLM_DEBUG] OpenAI API 호출 오류: {str(api_error)}", exc_info=True)
+                    return ""
             else:
-                raise ValueError(f"Unsupported LLM provider: {provider}")
-            
-    def _generate_openai_response(self, system_prompt: str, user_prompt: str) -> str:
-        """Generate a response using OpenAI"""
-        model = self.llm_config.get("model", "gpt-4")
-        temperature = self.llm_config.get("temperature", 0.7)
-        max_tokens = self.llm_config.get("max_tokens", 1000)
-        
-        response = self.client.chat.completions.create(
-            model=model,
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt}
-            ],
-            temperature=temperature,
-            max_tokens=max_tokens
-        )
-        
-        return response.choices[0].message.content
-        
-    def _generate_anthropic_response(self, system_prompt: str, user_prompt: str) -> str:
-        """Generate a response using Anthropic"""
-        model = self.llm_config.get("model", "claude-3-opus-20240229")
-        temperature = self.llm_config.get("temperature", 0.7)
-        max_tokens = self.llm_config.get("max_tokens", 1000)
-        
-        message = self.client.messages.create(
-            model=model,
-            system=system_prompt,
-            messages=[
-                {"role": "user", "content": user_prompt}
-            ],
-            temperature=temperature,
-            max_tokens=max_tokens
-        )
-        
-        return message.content[0].text
+                logger.error(f"[LLM_DEBUG] 지원하지 않는 LLM 제공자: {llm_provider}")
+                return ""
+                
+        except Exception as e:
+            logger.error(f"[LLM_DEBUG] LLM 응답 생성 중 오류 발생: {str(e)}", exc_info=True)
+            return ""
         
     def generate_philosophical_response(self, 
                                       npc_description: str, 

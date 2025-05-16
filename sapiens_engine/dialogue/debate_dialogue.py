@@ -137,6 +137,10 @@ class DebateDialogue(BaseDialogue):
             topic = self.room_data.get('title', '')
             context = self.room_data.get('context', '')
             
+            logger.info(f"[DEBUG] 진행자 오프닝 메시지 생성 시작: 주제 '{topic}'")
+            logger.info(f"[DEBUG] 컨텍스트 길이: {len(context) if context else 0}")
+            logger.info(f"[DEBUG] 찬성/반대 입장 정보: {self.stance_statements}")
+            
             # LLM 매니저를 임포트하기 위한 코드 추가 필요할 수 있음
             from sapiens_engine.core.llm_manager import LLMManager
             from sapiens_engine.core.config_loader import ConfigLoader
@@ -161,6 +165,8 @@ class DebateDialogue(BaseDialogue):
             pro_participants_names = [self._get_participant_name(p) for p in self.pro_participants]
             con_participants_names = [self._get_participant_name(p) for p in self.con_participants]
             
+            logger.info(f"[DEBUG] 참가자 정보 - 찬성측: {pro_participants_names}, 반대측: {con_participants_names}")
+            
             # 주제 언어에 맞게 응답하기 위한 추가 정보
             user_prompt = f"""
             Topic: {topic}
@@ -174,6 +180,10 @@ class DebateDialogue(BaseDialogue):
             CON side participants: {', '.join(con_participants_names)}
             """
             
+            logger.info(f"[DEBUG] LLM 요청 시작 - provider: openai, model: gpt-4o")
+            logger.info(f"[DEBUG] System prompt: {system_prompt[:100]}...")
+            logger.info(f"[DEBUG] User prompt: {user_prompt[:100]}...")
+            
             # LLM API 호출
             opening_message = llm_manager.generate_response(
                 system_prompt=system_prompt,
@@ -182,10 +192,12 @@ class DebateDialogue(BaseDialogue):
                 llm_model="gpt-4o"
             )
             
+            logger.info(f"[DEBUG] LLM 응답 받음 - 길이: {len(opening_message) if opening_message else 0}")
+            logger.info(f"[DEBUG] LLM 응답 내용: {opening_message[:100]}..." if opening_message else "[DEBUG] LLM 응답 없음")
             logger.info(f"Generated moderator opening message for room {self.room_id}")
             
-            # 생성된 메시지를 반환 - 실제 저장은 API 서버에서 처리
-            return {
+            # 생성된 메시지 객체
+            message_obj = {
                 "id": f"moderator-{int(time.time())}",
                 "text": opening_message,
                 "sender": self.debate_state["moderator_id"],
@@ -194,8 +206,27 @@ class DebateDialogue(BaseDialogue):
                 "role": ParticipantRole.MODERATOR
             }
             
+            # 메시지를 speaking_history에 추가하여 다음 발언자를 올바르게 결정할 수 있도록 함
+            self.debate_state["speaking_history"].append({
+                "speaker_id": self.debate_state["moderator_id"],
+                "role": ParticipantRole.MODERATOR,
+                "timestamp": time.time(),
+                "stage": self.debate_state["current_stage"]
+            })
+            
+            # 턴 카운트 증가
+            self.debate_state["turn_count"] += 1
+            
+            # 다음 발언자 결정
+            next_speaker = self.get_next_speaker()
+            self.debate_state["next_speaker"] = next_speaker["speaker_id"]
+            
+            logger.info(f"Next speaker after moderator opening: {next_speaker['speaker_id']} ({next_speaker['role']})")
+            
+            return message_obj
+            
         except Exception as e:
-            logger.error(f"Error creating opening message: {str(e)}")
+            logger.error(f"[ERROR] Error creating opening message: {str(e)}", exc_info=True)
             # 기본 메시지 반환
             return {
                 "id": f"moderator-{int(time.time())}",
@@ -556,69 +587,244 @@ Your closing statement:"""
         
         if current_stage == DebateStage.COMPLETED:
             logger.info(f"Debate is completed in room {self.room_id}, no next speaker")
-            return {"speaker_id": None, "role": None, "status": "completed"}
+            return {
+                "speaker_id": None, 
+                "role": None, 
+                "status": "completed",
+                "is_user": False,
+                "display_message": "토론이 종료되었습니다."
+            }
         
+        # 각 단계별 다음 발언자 결정
         if current_stage == DebateStage.OPENING:
-            # 오프닝 단계: 정해진 순서대로
-            index = turn_count % len(self.speaking_order)
-            next_speaker = self.speaking_order[index]
+            next_speaker = self._get_next_opening_speaker()
         elif current_stage == DebateStage.CLOSING:
-            # 마무리 단계: 역순으로
-            total_speakers = len(self.speaking_order)
-            index = (total_speakers - (turn_count % total_speakers) - 1) % total_speakers
-            next_speaker = self.speaking_order[index]
+            next_speaker = self._get_next_closing_speaker()
         else:  # DISCUSSION
-            # 토론 단계: pro -> neutral -> con 교대 순서
             next_speaker = self._determine_discussion_speaker()
+        
+        # 사용자인지 여부 결정 (프론트엔드에서 사용)
+        is_user = next_speaker["speaker_id"] in ["You", "User123"] or (
+            self.room_data and 
+            self.room_data.get("participants", {}).get("users", []) and
+            next_speaker["speaker_id"] in self.room_data["participants"]["users"]
+        )
+        
+        # 표시용 메시지 생성
+        display_name = self._get_participant_name(next_speaker["speaker_id"])
+        if next_speaker["role"] == ParticipantRole.MODERATOR:
+            display_message = "진행자의 차례입니다."
+        else:
+            role_text = "찬성측" if next_speaker["role"] == ParticipantRole.PRO else (
+                "반대측" if next_speaker["role"] == ParticipantRole.CON else "중립"
+            )
+            display_message = f"{display_name}({role_text})의 차례입니다."
+        
+        if is_user:
+            display_message = "지금은 당신의 발언 차례입니다!"
         
         logger.info(f"Next speaker in room {self.room_id}: {next_speaker['speaker_id']} ({next_speaker['role']})")
         
+        # 확장된 응답 형식
         return {
             "speaker_id": next_speaker["speaker_id"],
             "role": next_speaker["role"],
             "dialogue_type": self.dialogue_type,
             "debate_stage": current_stage,
-            "status": "ready"
+            "status": "ready",
+            "is_user": is_user,
+            "display_message": display_message,
+            "display_name": display_name
         }
+
+    def _get_next_opening_speaker(self) -> Dict[str, str]:
+        """오프닝 단계의 다음 발언자 결정"""
+        speaking_history = self.debate_state["speaking_history"]
+        roles_spoken = [entry.get("role") for entry in speaking_history]
+        
+        # 모더레이터가 아직 발언하지 않았다면
+        if ParticipantRole.MODERATOR not in roles_spoken:
+            logger.info(f"[DEBUG] 모더레이터가 아직 발언하지 않음, 모더레이터 선택")
+            return {
+                "speaker_id": self.debate_state["moderator_id"],
+                "role": ParticipantRole.MODERATOR
+            }
+        
+        # 모더레이터 발언 후, 찬성측이 아직 모두 발언하지 않았다면
+        pro_speakers_history = [entry.get("speaker_id") for entry in speaking_history 
+                               if entry.get("role") == ParticipantRole.PRO]
+        
+        if len(pro_speakers_history) < len(self.pro_participants):
+            # 아직 발언하지 않은 찬성측 참가자 찾기
+            for p in self.pro_participants:
+                if p not in pro_speakers_history:
+                    logger.info(f"[DEBUG] 찬성측 참가자 선택: {p}")
+                    return {"speaker_id": p, "role": ParticipantRole.PRO}
+        
+        # 찬성측이 모두 발언한 후, 반대측 참가자 찾기
+        con_speakers_history = [entry.get("speaker_id") for entry in speaking_history 
+                               if entry.get("role") == ParticipantRole.CON]
+        
+        if len(con_speakers_history) < len(self.con_participants):
+            # 아직 발언하지 않은 반대측 참가자 찾기
+            for p in self.con_participants:
+                if p not in con_speakers_history:
+                    logger.info(f"[DEBUG] 반대측 참가자 선택: {p}")
+                    return {"speaker_id": p, "role": ParticipantRole.CON}
+        
+        # 모두 발언했으면 다음 단계로 전환 (DISCUSSION)
+        logger.info(f"[DEBUG] 모든 참가자가 오프닝 발언 완료, 토론 단계로 전환")
+        self.debate_state["current_stage"] = DebateStage.DISCUSSION
+        return self._determine_discussion_speaker()
+    
+    def _get_next_closing_speaker(self) -> Dict[str, str]:
+        """마무리 단계의 다음 발언자 결정"""
+        # 마무리 단계는 역순으로 발언
+        total_speakers = len(self.speaking_order)
+        turn_count = self.debate_state["turn_count"]
+        index = (total_speakers - (turn_count % total_speakers) - 1) % total_speakers
+        return self.speaking_order[index]
     
     def _determine_discussion_speaker(self) -> Dict[str, str]:
         """토론 단계에서 다음 발언자 결정 로직"""
+        # 디버그 로깅 추가
+        logger.info(f"[DEBUG] _determine_discussion_speaker 호출 - room_id: {self.room_id}")
+        logger.info(f"[DEBUG] 현재 speaking_history 길이: {len(self.debate_state['speaking_history'])}")
+        logger.info(f"[DEBUG] Pro 참가자: {self.pro_participants}")
+        logger.info(f"[DEBUG] Con 참가자: {self.con_participants}")
+        
         # 이전 발언 기록 확인
         if not self.debate_state["speaking_history"]:
             # 기록이 없으면 찬성측부터 시작
+            logger.info(f"[DEBUG] 발언 기록 없음, 찬성측부터 시작")
             if self.pro_participants:
                 return {"speaker_id": self.pro_participants[0], "role": ParticipantRole.PRO}
             elif self.neutral_participants:
                 return {"speaker_id": self.neutral_participants[0], "role": ParticipantRole.NEUTRAL}
             else:
                 return {"speaker_id": self.con_participants[0], "role": ParticipantRole.CON}
+        
+        # 현재 토론 단계의 발언 기록만 필터링
+        current_stage = self.debate_state["current_stage"]
+        stage_history = [s for s in self.debate_state["speaking_history"] 
+                        if s.get("stage") == current_stage]
         
         # 가장 최근 발언자 정보
         last_speaker = self.debate_state["speaking_history"][-1]
+        last_speaker_id = last_speaker.get("speaker_id")
         last_role = last_speaker.get("role", ParticipantRole.NEUTRAL)
         
-        # 찬성 → 중립 → 반대 → 찬성... 순으로 진행
+        logger.info(f"[DEBUG] 최근 발언자: {last_speaker_id}, 역할: {last_role}")
+        
+        # 현재 단계에서 발언한 각 측의 참가자들 추적
+        spoken_pro = [s.get("speaker_id") for s in stage_history 
+                    if s.get("role") == ParticipantRole.PRO]
+        spoken_con = [s.get("speaker_id") for s in stage_history 
+                    if s.get("role") == ParticipantRole.CON]
+        spoken_neutral = [s.get("speaker_id") for s in stage_history 
+                        if s.get("role") == ParticipantRole.NEUTRAL]
+        
+        logger.info(f"[DEBUG] 현재 단계에서 발언한 Pro: {spoken_pro}")
+        logger.info(f"[DEBUG] 현재 단계에서 발언한 Con: {spoken_con}")
+        logger.info(f"[DEBUG] 현재 단계에서 발언한 Neutral: {spoken_neutral}")
+        
+        # 각 측의 모든 참가자가 발언했는지 확인
+        all_pro_spoken = all(p in spoken_pro for p in self.pro_participants)
+        all_con_spoken = all(p in spoken_con for p in self.con_participants)
+        all_neutral_spoken = all(p in spoken_neutral for p in self.neutral_participants)
+        
+        logger.info(f"[DEBUG] 모든 Pro 발언 완료: {all_pro_spoken}")
+        logger.info(f"[DEBUG] 모든 Con 발언 완료: {all_con_spoken}")
+        logger.info(f"[DEBUG] 모든 Neutral 발언 완료: {all_neutral_spoken}")
+        
+        # 순서 결정 로직: 찬성측 모두 → 반대측 모두 → 중립 → 다시 찬성측 모두...
+        
+        # 마지막 발언이 어느 측이었는지에 따라 다음 발언자 결정
         if last_role == ParticipantRole.PRO:
+            # Pro 측이 마지막으로 발언한 경우
+            
+            # 1. 아직 발언하지 않은 Pro 측 참가자가 있으면 먼저 발언하게 함
+            for p in self.pro_participants:
+                if p not in spoken_pro:
+                    logger.info(f"[DEBUG] 아직 발언하지 않은 Pro 참가자 선택: {p}")
+                    return {"speaker_id": p, "role": ParticipantRole.PRO}
+            
+            # 2. 모든 Pro 측이 발언했으면 Con 측으로 전환
+            logger.info(f"[DEBUG] 모든 Pro 참가자가 발언함, Con 측으로 전환")
+            # Con 측에서 아직 발언하지 않은 첫 번째 참가자 선택
+            for p in self.con_participants:
+                if p not in spoken_con:
+                    logger.info(f"[DEBUG] Con 측의 첫 발언자 선택: {p}")
+                    return {"speaker_id": p, "role": ParticipantRole.CON}
+            
+            # 3. 모든 Con도 발언했다면, Neutral 측으로 전환 (있을 경우)
             if self.neutral_participants:
-                return {"speaker_id": self.neutral_participants[0], "role": ParticipantRole.NEUTRAL}
-            elif self.con_participants:
-                return {"speaker_id": self.con_participants[0], "role": ParticipantRole.CON}
-            else:
-                return {"speaker_id": self.pro_participants[0], "role": ParticipantRole.PRO}
-        elif last_role == ParticipantRole.NEUTRAL:
-            if self.con_participants:
-                return {"speaker_id": self.con_participants[0], "role": ParticipantRole.CON}
-            elif self.pro_participants:
-                return {"speaker_id": self.pro_participants[0], "role": ParticipantRole.PRO}
-            else:
-                return {"speaker_id": self.neutral_participants[0], "role": ParticipantRole.NEUTRAL}
-        else:  # CON
-            if self.pro_participants:
-                return {"speaker_id": self.pro_participants[0], "role": ParticipantRole.PRO}
-            elif self.neutral_participants:
-                return {"speaker_id": self.neutral_participants[0], "role": ParticipantRole.NEUTRAL}
-            else:
-                return {"speaker_id": self.con_participants[0], "role": ParticipantRole.CON}
+                for p in self.neutral_participants:
+                    if p not in spoken_neutral:
+                        logger.info(f"[DEBUG] Neutral 측의 첫 발언자 선택: {p}")
+                        return {"speaker_id": p, "role": ParticipantRole.NEUTRAL}
+            
+            # 4. 모두 발언했으면 다시 처음부터 (Pro 측부터)
+            logger.info(f"[DEBUG] 모든 참가자가 발언 완료, 다시 Pro 측부터 시작")
+            # 모든 참가자가 발언했으므로 speaking_history 초기화 고려
+            return {"speaker_id": self.pro_participants[0], "role": ParticipantRole.PRO}
+                
+        elif last_role == ParticipantRole.CON:
+            # Con 측이 마지막으로 발언한 경우
+            
+            # 1. 아직 발언하지 않은 Con 측 참가자가 있으면 먼저 발언하게 함
+            for p in self.con_participants:
+                if p not in spoken_con:
+                    logger.info(f"[DEBUG] 아직 발언하지 않은 Con 참가자 선택: {p}")
+                    return {"speaker_id": p, "role": ParticipantRole.CON}
+            
+            # 2. 모든 Con 측이 발언했으면 Neutral 측으로 전환 (있을 경우)
+            if self.neutral_participants:
+                logger.info(f"[DEBUG] 모든 Con 참가자가 발언함, Neutral 측으로 전환")
+                for p in self.neutral_participants:
+                    if p not in spoken_neutral:
+                        logger.info(f"[DEBUG] Neutral 측의 첫 발언자 선택: {p}")
+                        return {"speaker_id": p, "role": ParticipantRole.NEUTRAL}
+            
+            # 3. Neutral이 없거나 모두 발언했다면, Pro 측으로 전환
+            logger.info(f"[DEBUG] Neutral 측이 없거나 모두 발언함, Pro 측으로 전환")
+            for p in self.pro_participants:
+                if p not in spoken_pro:
+                    logger.info(f"[DEBUG] Pro 측의 첫 발언자 선택: {p}")
+                    return {"speaker_id": p, "role": ParticipantRole.PRO}
+            
+            # 4. 모두 발언했으면 다시 처음부터 (Pro 측부터)
+            logger.info(f"[DEBUG] 모든 참가자가 발언 완료, 다시 Pro 측부터 시작")
+            # 모든 참가자가 발언했으므로 speaking_history 초기화 고려
+            return {"speaker_id": self.pro_participants[0], "role": ParticipantRole.PRO}
+                
+        else:  # NEUTRAL
+            # Neutral 측이 마지막으로 발언한 경우
+            
+            # 1. 아직 발언하지 않은 Neutral 측 참가자가 있으면 먼저 발언하게 함
+            for p in self.neutral_participants:
+                if p not in spoken_neutral:
+                    logger.info(f"[DEBUG] 아직 발언하지 않은 Neutral 참가자 선택: {p}")
+                    return {"speaker_id": p, "role": ParticipantRole.NEUTRAL}
+            
+            # 2. 모든 Neutral 측이 발언했으면 Pro 측으로 전환
+            logger.info(f"[DEBUG] 모든 Neutral 참가자가 발언함, Pro 측으로 전환")
+            for p in self.pro_participants:
+                if p not in spoken_pro:
+                    logger.info(f"[DEBUG] Pro 측의 첫 발언자 선택: {p}")
+                    return {"speaker_id": p, "role": ParticipantRole.PRO}
+            
+            # 3. 모든 Pro도 발언했다면, Con 측으로 전환
+            logger.info(f"[DEBUG] 모든 Pro 참가자가 발언함, Con 측으로 전환")
+            for p in self.con_participants:
+                if p not in spoken_con:
+                    logger.info(f"[DEBUG] Con 측의 첫 발언자 선택: {p}")
+                    return {"speaker_id": p, "role": ParticipantRole.CON}
+            
+            # 4. 모두 발언했으면 다시 처음부터 (Pro 측부터)
+            logger.info(f"[DEBUG] 모든 참가자가 발언 완료, 다시 Pro 측부터 시작")
+            # 모든 참가자가 발언했으므로 speaking_history 초기화 고려
+            return {"speaker_id": self.pro_participants[0], "role": ParticipantRole.PRO}
     
     def get_dialogue_state(self) -> Dict[str, Any]:
         """

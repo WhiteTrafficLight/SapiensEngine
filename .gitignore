@@ -45,6 +45,9 @@ output/
 data/sources/custom/
 .ipynb_checkpoints/
 node_modules/
+vectordb/
+*.pdf
+sapiens_engine/context_files/*.pdf
 
 # Next.js
 /.next/

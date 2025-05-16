@@ -82,3 +82,6 @@ xxhash @ file:///Users/runner/miniforge3/conda-bld/python-xxhash_1740594928909/w
 yarl @ file:///Users/runner/miniforge3/conda-bld/yarl_1744972515470/work
 zipp @ file:///home/conda/feedstock_root/build_artifacts/zipp_1732827521216/work
 zstandard==0.23.0
+streamlit>=1.24.0
+openai>=1.0.0
+python-dotenv>=1.0.0

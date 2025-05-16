@@ -24,6 +24,7 @@ import aiohttp
 from uuid import uuid4
 from types import SimpleNamespace
 import re
+import httpx
 
 # Sapiens Engine 임포트
 from sapiens_engine.core.llm_manager import LLMManager
@@ -276,6 +277,48 @@ class ConnectionManager:
 
 # ConnectionManager 인스턴스 생성
 manager = ConnectionManager()
+
+# Socket Manager 클래스 추가 - Next.js 서버에 이벤트 전달용
+class SocketManager:
+    def __init__(self):
+        # Next.js API URL 가져오기 (기본값: localhost:3000)
+        self.nextjs_url = os.environ.get("NEXTJS_API_URL", "http://localhost:3000")
+        logger.info(f"Socket Manager initialized with Next.js URL: {self.nextjs_url}")
+    
+    async def emit_to_room(self, room_id: str, event: str, data: dict):
+        """Next.js Socket.IO 서버를 통해 특정 방에 이벤트 발송"""
+        try:
+            async with aiohttp.ClientSession() as session:
+                # socket API 엔드포인트
+                socket_url = f"{self.nextjs_url}/api/socket"
+                
+                # 이벤트 데이터 구성
+                payload = {
+                    "action": "broadcast",
+                    "room": str(room_id),
+                    "event": event,
+                    "data": data
+                }
+                
+                # API 호출
+                async with session.post(
+                    socket_url, 
+                    json=payload,
+                    headers={"Content-Type": "application/json"}
+                ) as response:
+                    if response.status == 200:
+                        logger.info(f"Socket event '{event}' emitted to room {room_id}")
+                        return True
+                    else:
+                        error_text = await response.text()
+                        logger.error(f"Failed to emit socket event: {error_text}")
+                        return False
+        except Exception as e:
+            logger.error(f"Error emitting socket event: {str(e)}")
+            return False
+
+# Socket Manager 인스턴스 생성
+socket_manager = SocketManager()
 
 # 채팅 메시지를 Next.js API를 통해 저장하는 함수
 async def save_message_to_db(room_id: str, message: dict):
@@ -1827,10 +1870,9 @@ async def get_npc_details(id: str):
         except ValueError:
             is_uuid = False
         
+        # 커스텀 NPC일 경우 다양한 방법으로 이름 조회 시도
         if is_uuid:
-            # 커스텀 NPC 조회 로직
-            custom_npc = None
-            
+            # 1. MongoDB 직접 조회 시도
             try:
                 # MongoDB에서 NPC 조회
                 db_client = get_mongo_client()
@@ -1841,7 +1883,10 @@ async def get_npc_details(id: str):
                 custom_npc = npc_collection.find_one({"backend_id": id})
                 
                 if custom_npc:
-                    logger.info(f"Found custom NPC with backend_id: {id}")
+                    logger.info(f"✅ Found custom NPC: {custom_npc.get('name', 'Unknown')}")
+                    logger.info(f"   _id: {custom_npc.get('_id')}, backend_id: {id}")
+                    if "portrait_url" in custom_npc:
+                        logger.info(f"   portrait_url: {custom_npc.get('portrait_url')}")
                     
                     # MongoDB ObjectId를 문자열로 변환
                     custom_npc["_id"] = str(custom_npc["_id"])
@@ -1867,7 +1912,63 @@ async def get_npc_details(id: str):
                     
                     return response_data
             except Exception as e:
-                logger.error(f"Error looking up custom NPC: {str(e)}")
+                logger.error(f"❌ MongoDB 조회 오류: {str(e)}")
+                
+            # 2. NextJS API를 통한 조회 시도
+            try:
+                # 여러 가능한 URL 시도
+                possible_urls = [
+                    "http://localhost:3000",       # 로컬 개발 환경
+                    "http://localhost:3001",       # 대체 포트
+                    "http://0.0.0.0:3000",         # 대체 호스트
+                    "http://127.0.0.1:3000"        # 대체 IP
+                ]
+                
+                for url in possible_urls:
+                    try:
+                        async with aiohttp.ClientSession() as session:
+                            # 절대 URL 구성
+                            full_url = f"{url}/api/npc/get?id={id}"
+                            logger.info(f"🔄 Trying NextJS API at {full_url}")
+                            
+                            async with session.get(full_url, timeout=2) as response:
+                                if response.status == 200:
+                                    data = await response.json()
+                                    if data and "name" in data and data["name"]:
+                                        logger.info(f"✅ Got NPC details from NextJS: {data['name']}")
+                                        
+                                        # 캐시에 저장
+                                        npc_cache[cache_key] = {
+                                            'data': data,
+                                            'timestamp': current_time
+                                        }
+                                        
+                                        return data
+                    except Exception as e:
+                        logger.warning(f"❌ NextJS API 호출 실패 ({url}): {str(e)}")
+                        continue
+            except Exception as e:
+                logger.error(f"❌ NextJS API 조회 최종 실패: {str(e)}")
+                
+            # 3. 마지막 수단: 기본 응답 생성
+            logger.warning(f"⚠️ 심각: 커스텀 NPC({id})의 실제 이름을 찾지 못했습니다!")
+            
+            # 기본 응답 생성
+            default_response = {
+                "id": id,
+                "name": f"Unknown Philosopher",
+                "description": "A custom philosopher whose details could not be retrieved.",
+                "is_custom": True
+            }
+            
+            # 캐시에 저장 (재시도 방지)
+            npc_cache[cache_key] = {
+                'data': default_response,
+                'timestamp': current_time
+            }
+            
+            logger.info(f"📢 기본 이름 사용: {id} -> {default_response['name']}")
+            return default_response
 
         # 기본 철학자 ID 또는 커스텀 NPC를 찾지 못한 경우
         philosopher_id = id.lower()
@@ -1921,6 +2022,7 @@ async def create_chat_room(request: ChatRoomCreationRequest):
         logger.info(f"Generate initial message: {request.generateInitialMessage}")
         logger.info(f"NPCs: {request.npcs}")
         logger.info(f"LLM Provider: {request.llmProvider}, Model: {request.llmModel}")
+        logger.info(f"Dialogue type: {request.dialogueType}")
         
         # 1. 채팅방 생성 - 기존 로직 유지
         # 고유 ID 생성
@@ -1944,75 +2046,144 @@ async def create_chat_room(request: ChatRoomCreationRequest):
         
         # 찬반토론 모드일 경우 NPC 입장 정보 추가 및 진행자 메시지 생성
         if request.dialogueType == "debate":
+            # 디버깅 로그 추가
+            logger.info(f"[DEBUG] 토론 모드 채팅방 생성 요청 처리 시작: {request.title}")
+            
             # NPC 포지션 정보 추가
             if request.npcPositions:
                 new_room["npcPositions"] = request.npcPositions
-                logger.info(f"찬반토론 입장 정보 설정: {request.npcPositions}")
+                logger.info(f"[DEBUG] 찬반토론 입장 정보 설정: {request.npcPositions}")
             else:
                 # NPC 포지션 자동 배정
                 npcPositions = {}
                 for i, npc_id in enumerate(request.npcs):
                     npcPositions[npc_id] = "pro" if i % 2 == 0 else "con"
                 new_room["npcPositions"] = npcPositions
-                logger.info(f"찬반토론 입장 자동 배정: {npcPositions}")
+                logger.info(f"[DEBUG] 찬반토론 입장 자동 배정: {npcPositions}")
             
             # 주제에서 찬성/반대 입장 명확화
-            stance_statements = await generate_stance_statements(request.title, request.context)
-            logger.info(f"토론 주제 입장 명확화: {stance_statements}")
-            
-            # 진행자 오프닝 메시지 생성
-            if request.generateInitialMessage:
-                try:
-                    logger.info(f"진행자 오프닝 메시지 생성 중...")
-                    moderator_opening = await generate_moderator_opening(
-                        request.title,
-                        request.context,
-                        stance_statements,
-                        request.npcs,
-                        new_room["npcPositions"]
-                    )
-                    
-                    if moderator_opening:
-                        # 메시지 ID 생성
-                        message_id = f"moderator-{int(time.time())}"
+            logger.info(f"[DEBUG] 토론 주제에서 찬성/반대 입장 명확화 시작")
+            try:
+                stance_statements = await generate_stance_statements(request.title, request.context)
+                logger.info(f"[DEBUG] 토론 주제 입장 명확화 결과: {stance_statements}")
+                
+                # 진행자 오프닝 메시지 생성
+                if request.generateInitialMessage:
+                    try:
+                        logger.info(f"[DEBUG] 진행자 오프닝 메시지 생성 시작...")
+                        pro_npcs = []
+                        con_npcs = []
                         
-                        # 메시지 객체 생성
-                        message_obj = {
-                            "id": message_id,
-                            "text": moderator_opening,
-                            "sender": "Moderator",
-                            "isUser": False,
-                            "timestamp": datetime.now().isoformat()
-                        }
+                        # NPC 분류
+                        for npc_id, position in new_room["npcPositions"].items():
+                            if position == "pro":
+                                pro_npcs.append(npc_id)
+                            else:
+                                con_npcs.append(npc_id)
                         
-                        # 응답에 초기 메시지 포함
-                        new_room["initial_message"] = message_obj
-                        logger.info(f"진행자 오프닝 메시지 생성 완료: {moderator_opening[:100]}...")
-                    else:
-                        logger.warning("진행자 오프닝 메시지 생성 실패")
+                        logger.info(f"[DEBUG] 찬성측 NPCs: {pro_npcs}")
+                        logger.info(f"[DEBUG] 반대측 NPCs: {con_npcs}")
+                        
+                        # NPC 이름 조회 시도
+                        pro_npc_names = []
+                        con_npc_names = []
+                        
+                        for npc_id in pro_npcs:
+                            try:
+                                npc_info = await get_npc_details(npc_id)
+                                pro_npc_names.append(npc_info.get("name", npc_id))
+                                logger.info(f"[DEBUG] NPC 정보 조회 성공: {npc_id} -> {npc_info.get('name', npc_id)}")
+                            except Exception as e:
+                                logger.error(f"[DEBUG] NPC 정보 조회 실패: {str(e)}")
+                                pro_npc_names.append(npc_id)
+                        
+                        for npc_id in con_npcs:
+                            try:
+                                npc_info = await get_npc_details(npc_id)
+                                con_npc_names.append(npc_info.get("name", npc_id))
+                                logger.info(f"[DEBUG] NPC 정보 조회 성공: {npc_id} -> {npc_info.get('name', npc_id)}")
+                            except Exception as e:
+                                logger.error(f"[DEBUG] NPC 정보 조회 실패: {str(e)}")
+                                con_npc_names.append(npc_id)
+                        
+                        logger.info(f"[DEBUG] 이름으로 변환된 찬성측: {pro_npc_names}")
+                        logger.info(f"[DEBUG] 이름으로 변환된 반대측: {con_npc_names}")
+                        
+                        logger.info(f"[DEBUG_MODERATOR] generate_moderator_opening 함수 호출 직전")
+                        moderator_opening = await generate_moderator_opening(
+                            request.title,
+                            request.context,
+                            stance_statements,
+                            request.npcs,
+                            new_room["npcPositions"],
+                            pro_npc_names,  # 새로 추가: 이름 목록 전달
+                            con_npc_names   # 새로 추가: 이름 목록 전달
+                        )
+                        logger.info(f"[DEBUG_MODERATOR] generate_moderator_opening 함수 호출 완료")
+                        
+                        logger.info(f"[DEBUG_MODERATOR] 생성된 모더레이터 메시지 길이: {len(moderator_opening) if moderator_opening else 0}")
+                        if moderator_opening and len(moderator_opening) > 10:  # 실제 응답 확인
+                            logger.info(f"[DEBUG_MODERATOR] 생성된 모더레이터 메시지 내용: {moderator_opening[:100]}...")
+                            
+                            # 메시지 ID 생성
+                            message_id = f"moderator-{int(time.time())}"
+                            
+                            # 메시지 객체 생성 - 특수 모더레이터 메시지, 항상 sender는 "Moderator"로 고정
+                            message_obj = {
+                                "id": message_id,
+                                "text": moderator_opening,
+                                "sender": "Moderator",  # 고정된 시스템 송신자명
+                                "isUser": False,
+                                "isSystemMessage": True,  # 시스템 메시지 표시 플래그 추가
+                                "timestamp": datetime.now().isoformat(),
+                                "role": "moderator"  # 명확한 역할 추가
+                            }
+                            
+                            # 응답에 초기 메시지 포함
+                            logger.info(f"[DEBUG_MODERATOR] 모더레이터 메시지 객체 생성 완료, initial_message 필드에 설정")
+                            logger.info(f"[DEBUG_MODERATOR] 최종 initial_message 객체: {message_obj}")
+                            logger.info(f"[DEBUG_MODERATOR] 모더레이터 메시지 텍스트: {moderator_opening}")
+                            logger.info(f"[DEBUG_MODERATOR] 하드코딩된 메시지 텍스트 포함 여부: {'초기메시지에용' in moderator_opening}")
+                            new_room["initial_message"] = message_obj
+                            logger.info(f"[DEBUG_MODERATOR] 채팅방에 initial_message 필드가 설정됨")
+                            logger.info(f"[DEBUG_MODERATOR] 테스트: 'initial_message' in new_room = {'initial_message' in new_room}")
+                            logger.info(f"[DEBUG_MODERATOR] new_room 객체 키 목록: {list(new_room.keys())}")
+                        else:
+                            logger.warning("[DEBUG_MODERATOR] 진행자 오프닝 메시지 생성 실패 - 빈 응답 또는 짧은 응답 받음")
+                            # 기본 진행자 메시지 생성
+                            message_obj = {
+                                "id": f"moderator-{int(time.time())}",
+                                "text": f"안녕하세요, '{request.title}'에 대한 토론을 시작하겠습니다. 먼저 찬성측 참가자분들의 의견을 들어보겠습니다.",
+                                "sender": "Moderator",  # 고정된 시스템 송신자명
+                                "isUser": False,
+                                "isSystemMessage": True,  # 시스템 메시지 표시 플래그 추가
+                                "timestamp": datetime.now().isoformat(),
+                                "role": "moderator"  # 명확한 역할 추가
+                            }
+                            logger.info(f"[DEBUG_MODERATOR] 폴백 모더레이터 메시지 객체 생성 완료, initial_message 필드에 설정")
+                            new_room["initial_message"] = message_obj
+                            logger.info(f"[DEBUG_MODERATOR] 폴백 메시지 사용: {message_obj['text'][:100]}...")
+                    except Exception as e:
+                        logger.error(f"[DEBUG] 진행자 오프닝 메시지 생성 오류: {str(e)}", exc_info=True)
                         # 기본 진행자 메시지 생성
                         message_obj = {
                             "id": f"moderator-{int(time.time())}",
-                            "text": f"Welcome to our debate on the topic: {request.title}. Let's begin with opening statements from our participants, starting with the pro side.",
-                            "sender": "Moderator",
+                            "text": f"안녕하세요, '{request.title}'에 대한 토론을 시작하겠습니다. 먼저 찬성측 참가자분들의 의견을 들어보겠습니다.",
+                            "sender": "Moderator",  # 고정된 시스템 송신자명
                             "isUser": False,
-                            "timestamp": datetime.now().isoformat()
+                            "isSystemMessage": True,  # 시스템 메시지 표시 플래그 추가
+                            "timestamp": datetime.now().isoformat(),
+                            "role": "moderator"  # 명확한 역할 추가
                         }
                         new_room["initial_message"] = message_obj
-                except Exception as e:
-                    logger.error(f"진행자 오프닝 메시지 생성 오류: {str(e)}")
-                    # 기본 진행자 메시지 생성
-                    message_obj = {
-                        "id": f"moderator-{int(time.time())}",
-                        "text": f"Welcome to our debate on the topic: {request.title}. Let's begin with opening statements from our participants, starting with the pro side.",
-                        "sender": "Moderator",
-                        "isUser": False,
-                        "timestamp": datetime.now().isoformat()
-                    }
-                    new_room["initial_message"] = message_obj
-            
-            # 찬반토론이 아닌 경우에만 기존 초기 메시지 생성 로직 실행
-            return new_room
+                        logger.info(f"[DEBUG] 예외 발생 후 폴백 메시지 사용: {message_obj['text'][:100]}...")
+                
+                # 찬반토론 모드 채팅방 생성 완료
+                logger.info(f"[DEBUG] 토론 모드 채팅방 생성 완료, 응답 반환")
+                return new_room
+            except Exception as e:
+                logger.error(f"[DEBUG] 찬반토론 처리 중 오류: {str(e)}", exc_info=True)
+                # 오류 발생 시 기본 채팅방으로 계속 진행
         
         # 2. 찬반토론이 아닌 경우 기존 초기 메시지 생성 로직 실행
         initial_message = None
@@ -2156,6 +2327,21 @@ async def create_chat_room(request: ChatRoomCreationRequest):
         else:
             logger.warning(f"Room {new_room_id} has NO initial message")
         
+        # 최종 응답 객체 확인
+        logger.info(f"[DEBUG_FINAL] 채팅방 반환 직전 확인: 'initial_message' in new_room = {'initial_message' in new_room}")
+        if 'initial_message' in new_room:
+            logger.info(f"[DEBUG_FINAL] initial_message sender: {new_room['initial_message']['sender']}")
+            logger.info(f"[DEBUG_FINAL] initial_message text 미리보기: {new_room['initial_message']['text'][:100]}")
+            logger.info(f"[DEBUG_FINAL] initial_message isSystemMessage: {new_room['initial_message'].get('isSystemMessage')}")
+            logger.info(f"[DEBUG_FINAL] initial_message role: {new_room['initial_message'].get('role')}")
+            logger.info(f"[DEBUG_FINAL] 'initial_message'가 JSON 직렬화 가능한지 확인")
+            import json
+            try:
+                json_str = json.dumps(new_room)
+                logger.info(f"[DEBUG_FINAL] JSON 직렬화 성공: 길이 {len(json_str)}")
+            except Exception as json_err:
+                logger.error(f"[DEBUG_FINAL] JSON 직렬화 실패: {json_err}")
+        
         logger.info(f"Returning new room with ID: {new_room_id}")
         return new_room
     except Exception as e:
@@ -2221,83 +2407,158 @@ async def generate_moderator_opening(
     context: str = "", 
     stance_statements: Dict[str, str] = None,
     participants: List[str] = None,
-    positions: Dict[str, str] = None
+    positions: Dict[str, str] = None,
+    pro_participants: List[str] = None,  # 이름 변경: 찬성측 참가자들(NPC + 유저)
+    con_participants: List[str] = None   # 이름 변경: 반대측 참가자들(NPC + 유저)
 ) -> str:
-    """진행자의 오프닝 메시지 생성"""
+    """토론 주제에 대한 진행자 오프닝 메시지 생성 - LLM을 사용한 자연스러운 진행자 메시지
+    
+    Args:
+        topic: 토론 주제
+        context: 추가 컨텍스트
+        stance_statements: 찬반 입장 문장 (pro/con)
+        participants: 전체 참가자 목록
+        positions: 참가자 포지션 매핑
+        pro_participants: 찬성측 참가자 목록 (NPC와 유저 모두 포함)
+        con_participants: 반대측 참가자 목록 (NPC와 유저 모두 포함)
+    """
     try:
-        logger.info(f"Generating moderator opening for topic: {topic}")
+        logger.info(f"[MODERATOR_OPENING] 진행자 메시지 생성 시작! 주제: {topic}")
+        logger.info(f"[MODERATOR_OPENING] 찬성측 참가자: {pro_participants}")
+        logger.info(f"[MODERATOR_OPENING] 반대측 참가자: {con_participants}")
         
-        # 기본값 설정
-        stance_statements = stance_statements or {
-            "pro": f"{topic} is true and beneficial.",
-            "con": f"{topic} is false and harmful."
-        }
+        # 이름 문자열 생성 (참가자 = NPC + User)
+        pro_names_str = ", ".join(pro_participants) if pro_participants else "찬성측"
+        con_names_str = ", ".join(con_participants) if con_participants else "반대측"
         
-        # 참가자 정보 구성
-        pro_participants = []
-        con_participants = []
+        logger.info(f"[MODERATOR_OPENING] 찬성측 이름 문자열: {pro_names_str}")
+        logger.info(f"[MODERATOR_OPENING] 반대측 이름 문자열: {con_names_str}")
         
-        if participants and positions:
-            for npc_id in participants:
-                position = positions.get(npc_id, "")
-                try:
-                    # NPC 정보 가져오기
-                    npc_info = await get_npc_details(npc_id)
-                    npc_name = npc_info.get("name", npc_id)
-                    
-                    if position == "pro":
-                        pro_participants.append(npc_name)
-                    elif position == "con":
-                        con_participants.append(npc_name)
-                except Exception as e:
-                    logger.error(f"Error getting NPC details: {str(e)}")
-                    # NPC 정보 조회 실패 시 ID 그대로 사용
-                    if position == "pro":
-                        pro_participants.append(npc_id)
-                    elif position == "con":
-                        con_participants.append(npc_id)
+        # 첫 번째 찬성측 참가자의 이름 (첫 번째 발언자)
+        first_pro_name = pro_participants[0] if pro_participants else "찬성측"
         
-        # 프롬프트 구성
+        # 주제 언어 감지
+        topic_language = detect_language(topic)
+        logger.info(f"[MODERATOR_OPENING] 감지된 주제 언어: {topic_language}")
+        
+        # LLM을 사용한 모더레이터 메시지 생성
         system_prompt = f"""
-        You are the moderator of a debate on the topic: "{topic}".
+        You are a professional debate moderator. Your task is to create a detailed, natural-sounding opening statement for a debate on the given topic.
+
+        IMPORTANT: If the topic is in Korean, you MUST write your ENTIRE response in Korean. If the topic is in English, write in English.
+        (The detected language of the topic is: {topic_language})
+
+        Write as if you are speaking directly to the participants and audience. Be engaging, clear, and structured.
+
+        Your opening statement should include:
+        1. A warm welcome and clear introduction of the debate topic
+        2. Brief explanation of the context/background (if provided)
+        3. Clear explanation of both PRO and CON positions in a balanced way
+        4. Introduction of ALL participants by name on each side - IMPORTANT: Use the EXACT participant names provided, including both NPCs and human users
+        5. Brief explanation of debate format and rules
+        6. Encouragement for respectful, thoughtful exchange
+        7. A specific invitation for the first pro-side speaker to begin (use their exact name)
+
+        Make your statement conversational and natural, like how a real moderator would speak.
+        Avoid using formulaic language - each debate opening should feel unique and tailored to the specific topic.
         
-        Act as a professional podcast host with a neutral stance. Your task is to:
-        1. Welcome the audience and participants
-        2. Summarize the debate topic clearly
-        3. Explain the format of the debate
-        4. Call on the PRO side to present their opening statement
-        
-        Important: Respond in the same language as the topic. Keep your response concise (150-200 words).
+        IMPORTANT: Never mention internal IDs like "User123". Only use the display names provided in the participant lists.
         """
         
-        # 주제 언어에 맞게 응답하기 위한 추가 정보
         user_prompt = f"""
-        Topic: {topic}
+        DEBATE TOPIC: {topic}
+
+        CONTEXT: {context if context and context.strip() else "No additional context provided."}
+
+        PRO POSITION: {stance_statements.get('pro', f"Supporting the idea that {topic}") if stance_statements else f"Supporting the idea that {topic}"}
+
+        CON POSITION: {stance_statements.get('con', f"Opposing the idea that {topic}") if stance_statements else f"Opposing the idea that {topic}"}
+
+        PRO SIDE PARTICIPANTS: {pro_names_str}
+        CON SIDE PARTICIPANTS: {con_names_str}
+
+        FIRST SPEAKER TO INVITE: {first_pro_name}
+
+        IMPORTANT: When introducing participants, use their exact names as provided above.
+        Do not refer to them by IDs or modify their names in any way.
+        Make sure to include EVERY participant in your introduction, both NPCs and human users.
         
-        Additional context: {context}
-        
-        PRO position: {stance_statements.get('pro', '')}
-        CON position: {stance_statements.get('con', '')}
-        
-        PRO side participants: {', '.join(pro_participants)}
-        CON side participants: {', '.join(con_participants)}
+        CRITICAL: NEVER mention internal user IDs like "User123" in your response. Only use the display names listed above.
+
+        Remember: The ENTIRE response must be in the language of the topic.
+        If the topic contains "vs" or "versus", create a lively comparison-style debate introduction.
+
+        Create a complete, natural-sounding moderator opening that a real person would use to start this debate.
         """
         
         # LLM API 호출
-        opening_message = llm_manager.generate_response(
+        moderator_message = llm_manager.generate_response(
             system_prompt=system_prompt,
             user_prompt=user_prompt,
             llm_provider="openai",
-            llm_model="gpt-4o"
+            llm_model="gpt-4o",
+            temperature=0.7  # 'language' 파라미터 대신 temperature 파라미터 사용
         )
         
-        logger.info(f"Generated moderator opening message: {opening_message[:100]}...")
-        return opening_message
-        
+        logger.info(f"[MODERATOR_OPENING] LLM으로 생성된 모더레이터 메시지: {moderator_message[:100]}...")
+        return moderator_message
     except Exception as e:
-        logger.error(f"Error creating moderator opening: {str(e)}")
-        # 오류 시 기본 메시지 반환
-        return f"Welcome to today's debate on the topic: \"{topic}\". Let's begin with the opening statements from our participants."
+        logger.error(f"[MODERATOR_OPENING] 오류 발생: {str(e)}")
+        # 오류 발생 시 더 자세한 기본 메시지 반환
+        fallback_message = (
+            f"안녕하세요, 오늘의 토론 주제는 \"{topic}\"입니다. "
+            f"저는 이번 토론의 진행을 맡게 된 모더레이터입니다. "
+        )
+        
+        # 컨텍스트 정보가 있으면 추가
+        if context and context.strip():
+            fallback_message += f"토론 배경: {context}\n\n"
+        
+        # 찬성/반대 입장 추가
+        if stance_statements and "pro" in stance_statements:
+            fallback_message += f"찬성 입장: {stance_statements['pro']}\n"
+        
+        if stance_statements and "con" in stance_statements:
+            fallback_message += f"반대 입장: {stance_statements['con']}\n\n"
+        
+        # 참가자 소개
+        fallback_message += f"찬성측 참가자: {pro_names_str}\n"
+        fallback_message += f"반대측 참가자: {con_names_str}\n\n"
+        
+        # 토론 진행 방식 안내
+        fallback_message += (
+            f"토론은 찬성측의 주장으로 시작하여, 이후 반대측의 반론 순으로 진행됩니다. "
+            f"각자의 논점을 명확히 하고 상대방의 의견을 존중하며 진행해 주시기 바랍니다.\n\n"
+            f"먼저 {first_pro_name} 측에서 찬성 입장을 개진해 주시기 바랍니다."
+        )
+        
+        return fallback_message
+
+# 언어 감지 함수 추가
+def detect_language(text: str) -> str:
+    """텍스트의 언어를 감지합니다."""
+    try:
+        # ASCII 문자만 있으면 영어로 간주
+        if all(ord(c) < 128 for c in text):
+            return "en"
+        
+        # 한글이 포함되어 있으면 한국어로 간주
+        if any('\uAC00' <= c <= '\uD7A3' for c in text):
+            return "ko"
+        
+        # 일본어 문자가 포함되어 있으면 일본어로 간주
+        if any('\u3040' <= c <= '\u30FF' for c in text):
+            return "ja"
+        
+        # 중국어 문자가 포함되어 있으면 중국어로 간주
+        if any('\u4E00' <= c <= '\u9FFF' for c in text):
+            return "zh"
+        
+        # 기본값은 영어
+        return "en"
+    except Exception as e:
+        logger.error(f"언어 감지 중 오류: {str(e)}")
+        return "en"  # 오류 발생 시 기본값은 영어
 
 # NPC 간 자동 대화 생성 API
 @app.post("/api/dialogue/generate")
@@ -2600,18 +2861,44 @@ async def get_dialogue_state(room_id: str):
 async def get_next_speaker(room_id: str):
     """다음 발언자 정보 조회"""
     # 채팅방 정보 조회
-    room = await get_room_by_id(room_id)
+    room = await get_room_data(room_id)
     if not room:
         raise HTTPException(status_code=404, detail=f"Room {room_id} not found")
     
     # 대화 형식 확인
     dialogue_type = room.get("dialogueType", "standard")
+    logger.info(f"[DEBUG] next-speaker 요청 - Room: {room_id}, Type: {dialogue_type}")
     
     # 해당 대화 객체 가져오기 또는 생성
     dialogue = _get_or_create_dialogue(room_id, dialogue_type, room)
     
     # 다음 발언자 정보 반환
-    return dialogue.get_next_speaker()
+    next_speaker = dialogue.get_next_speaker()
+    
+    # 디버그 로깅
+    logger.info(f"[DEBUG] next-speaker 응답 - ID: {next_speaker.get('speaker_id')}, Role: {next_speaker.get('role')}")
+    logger.info(f"[DEBUG] 현재 speaking_history 길이: {len(dialogue.debate_state.get('speaking_history', []))}")
+    
+    # 현재 발언 기록 로깅 (마지막 5개)
+    if dialogue_type == "debate" and hasattr(dialogue, 'debate_state'):
+        history = dialogue.debate_state.get('speaking_history', [])
+        last_5 = history[-5:] if len(history) >= 5 else history
+        logger.info(f"[DEBUG] 최근 5개 발언 기록: {last_5}")
+    
+    # 소켓 서버를 통해 다음 발언자 정보 브로드캐스트
+    try:
+        if socket_manager:
+            # 소켓 이벤트 발송 - 다음 발언자 정보
+            event_data = {
+                "roomId": room_id,
+                "nextSpeaker": next_speaker
+            }
+            await socket_manager.emit_to_room(room_id, "next-speaker-update", event_data)
+            logger.info(f"[DEBUG] 소켓 이벤트 발송 - next-speaker-update: {next_speaker.get('speaker_id')}, is_user: {next_speaker.get('is_user', False)}")
+    except Exception as e:
+        logger.error(f"[ERROR] 소켓 이벤트 발송 실패: {str(e)}")
+    
+    return next_speaker
 
 @app.post("/api/dialogue/{room_id}/generate")
 async def generate_dialogue_response(
@@ -2621,8 +2908,15 @@ async def generate_dialogue_response(
     """대화 형식에 맞는 AI 응답 생성"""
     context = request.get("context", {})
     
+    # 클라이언트에서 전달된 npc_id 사용
+    npc_id = request.get("npc_id")
+    if not npc_id:
+        logger.warning(f"No npc_id provided in request for room {room_id}")
+    else:
+        logger.info(f"Using provided npc_id: {npc_id} for room {room_id}")
+    
     # 채팅방 정보 조회
-    room = await get_room_by_id(room_id)
+    room = await get_room_data(room_id)
     if not room:
         raise HTTPException(status_code=404, detail=f"Room {room_id} not found")
     
@@ -2641,11 +2935,14 @@ async def generate_dialogue_response(
     response_info = dialogue.generate_response(context)
     
     # 응답 생성에 필요한 정보 추출
-    speaker_id = response_info.get("speaker_id")
+    # 클라이언트가 제공한 npc_id가 있으면 그것을 사용, 없으면 대화 시스템이 결정한 speaker_id 사용
+    speaker_id = npc_id if npc_id else response_info.get("speaker_id")
+    speaker_role = response_info.get("speaker_role")
     prompt = response_info.get("prompt")
     
+    logger.info(f"Generating response for speaker: {speaker_id} in room {room_id}")
+    
     # 실제 응답 생성 (기존 생성 로직 활용)
-    # 이 부분은 기존 generate_ai_response 함수를 호출하거나 유사한 로직 구현
     ai_response = await generate_ai_response(room_id, speaker_id, prompt)
     
     # 생성된 응답과 대화 정보 합치기
@@ -2654,6 +2951,40 @@ async def generate_dialogue_response(
         "response_text": ai_response.get("text", ""),
         "timestamp": ai_response.get("timestamp", time.time())
     }
+    
+    # 토론 객체의 speaking_history 업데이트
+    if dialogue_type == "debate":
+        try:
+            # 디버그: 업데이트 전 상태 로깅
+            logger.info(f"[DEBUG] 업데이트 전 speaking_history: {dialogue.debate_state.get('speaking_history', [])}")
+            logger.info(f"[DEBUG] 업데이트 전 turn_count: {dialogue.debate_state.get('turn_count', 0)}")
+                
+            # turn_count 증가
+            dialogue.debate_state["turn_count"] += 1
+            
+            # speaking_history에 새 메시지 추가
+            dialogue.debate_state["speaking_history"].append({
+                "speaker_id": speaker_id,
+                "role": speaker_role,
+                "timestamp": time.time(),
+                "stage": dialogue.debate_state["current_stage"]
+            })
+            
+            # 단계 전환 체크
+            dialogue._check_stage_transition()
+            
+            # 다음 발언자 결정
+            next_speaker = dialogue.get_next_speaker()
+            dialogue.debate_state["next_speaker"] = next_speaker["speaker_id"]
+            
+            # 디버그: 업데이트 후 상태 로깅
+            logger.info(f"[DEBUG] 업데이트 후 speaking_history: {dialogue.debate_state.get('speaking_history', [])}")
+            logger.info(f"[DEBUG] 업데이트 후 turn_count: {dialogue.debate_state.get('turn_count', 0)}")
+            logger.info(f"[DEBUG] 다음 발언자: {dialogue.debate_state['next_speaker']} (역할: {next_speaker['role']})")
+            
+            logger.info(f"Updated debate state for room {room_id}: turn_count={dialogue.debate_state['turn_count']}, next_speaker={dialogue.debate_state['next_speaker']}")
+        except Exception as e:
+            logger.error(f"Error updating debate state: {str(e)}", exc_info=True)
     
     return combined_response
 
@@ -2665,34 +2996,574 @@ async def process_dialogue_message(
     """사용자 메시지 처리 및 대화 상태 업데이트"""
     message = request.get("message", "")
     user_id = request.get("user_id", "")
+    role = request.get("role", "")  # 사용자 역할 정보 (pro, con 등)
+    
+    logger.info(f"⭐ [DEBUG] Processing message for room {room_id}: user_id={user_id}, role={role}")
+    logger.info(f"⭐ [DEBUG] Message content: {message[:100]}..." if len(message) > 100 else f"⭐ [DEBUG] Message content: {message}")
     
     # 채팅방 정보 조회
-    room = await get_room_by_id(room_id)
+    room = await get_room_data(room_id)
     if not room:
+        logger.error(f"❌ Room {room_id} not found")
         raise HTTPException(status_code=404, detail=f"Room {room_id} not found")
     
     # 대화 형식 확인
     dialogue_type = room.get("dialogueType", "standard")
+    logger.info(f"⭐ [DEBUG] Room dialogue type: {dialogue_type}")
     
     # 해당 대화 객체 가져오기 또는 생성
     dialogue = _get_or_create_dialogue(room_id, dialogue_type, room)
     
+    # 역할을 강제로 지정한 경우 사용하고, 그렇지 않으면 객체에서 결정
+    if role and role.lower() in ["pro", "con", "neutral"]:
+        logger.info(f"⭐ [DEBUG] Using client-specified role: {role} for user {user_id}")
+        user_role = role.lower()
+    else:
     # 메시지 처리
-    processed_info = dialogue.process_message(message, user_id)
+        user_role = dialogue._get_user_role(user_id)
+        logger.info(f"⭐ [DEBUG] Determined role from dialogue: {user_role} for user {user_id}")
     
-    return processed_info
+    # 현재 대화 상태 기록
+    logger.info(f"⭐ [DEBUG] 대화 상태 업데이트 전: turn_count={dialogue.debate_state.get('turn_count', 0)}, speaking_history 길이={len(dialogue.debate_state.get('speaking_history', []))}")
+    logger.info(f"⭐ [DEBUG] Current speaking order: {[entry.get('speaker_id') for entry in dialogue.debate_state.get('speaking_history', [])]}")
+    
+    # 토론 진행 상태 업데이트
+    dialogue.debate_state["turn_count"] += 1
+    dialogue.debate_state["speaking_history"].append({
+        "speaker_id": user_id,
+        "role": user_role,  # 클라이언트에서 지정한 역할 또는 객체에서 결정된 역할 사용
+        "timestamp": time.time(),
+        "stage": dialogue.debate_state["current_stage"]
+    })
+    
+    # 단계 전환 체크
+    dialogue._check_stage_transition()
+    
+    # 다음 발언자 결정
+    next_speaker = dialogue.get_next_speaker()
+    dialogue.debate_state["next_speaker"] = next_speaker["speaker_id"]
+    
+    logger.info(f"⭐ [DEBUG] After user message: next speaker is {next_speaker['speaker_id']} ({next_speaker['role']})")
+    
+    # 디버그: 업데이트 후 상태 로깅
+    logger.info(f"⭐ [DEBUG] 업데이트 후 speaking_history: {[entry.get('speaker_id') for entry in dialogue.debate_state.get('speaking_history', [])]}")
+    logger.info(f"⭐ [DEBUG] 업데이트 후 turn_count: {dialogue.debate_state.get('turn_count', 0)}")
+    logger.info(f"⭐ [DEBUG] 다음 발언자: {dialogue.debate_state.get('next_speaker', 'None')} (역할: {next_speaker.get('role', 'unknown')})")
+    
+    # 사용자 메시지가 처리되었음을 Next.js API에 알리기 위한 이벤트 발송
+    try:
+        # Socket.io 이벤트 발송
+        await emit_socket_event(
+            room_id=room_id,
+            event="user-message-processed",
+            data={
+                "user_id": user_id,
+                "role": user_role,
+                "next_speaker": next_speaker,
+                "processed_timestamp": time.time()
+            }
+        )
+        logger.info(f"⭐ [DEBUG] Socket event 'user-message-processed' emitted to room {room_id}")
+    except Exception as e:
+        logger.error(f"[ERROR] 소켓 이벤트 발송 실패: {str(e)}")
+    
+    # 다음 발언자 업데이트를 위한 소켓 이벤트 발송
+    try:
+        is_user_next = next_speaker.get("is_user", False)
+        
+        # Socket.io 이벤트 발송
+        await emit_socket_event(
+            room_id=room_id,
+            event="next-speaker-update",
+            data={
+                "roomId": room_id,
+                "nextSpeaker": next_speaker
+            }
+        )
+        logger.info(f"⭐ [DEBUG] Socket event 'next-speaker-update' emitted to room {room_id}, next speaker: {next_speaker['speaker_id']}, is_user: {is_user_next}")
+    except Exception as e:
+        logger.error(f"[ERROR] 소켓 이벤트 발송 실패: {str(e)}")
+    
+    # 사용자 메시지를 데이터베이스에 저장하기 위한 함수 호출 (MongoDB API 사용)
+    try:
+        save_result = await save_message_to_mongodb(
+            room_id=room_id,
+            message_text=message,
+            sender=user_id,
+            is_user=True,
+            role=user_role
+        )
+        logger.info(f"⭐ [DEBUG] 사용자 메시지 DB 저장 결과: {save_result}")
+    except Exception as e:
+        logger.error(f"[ERROR] 사용자 메시지 DB 저장 실패: {str(e)}")
+    
+    return {
+        "processed": True,
+        "user_id": user_id,
+        "user_role": user_role,
+        "message": message,
+        "dialogue_type": dialogue.dialogue_type,
+        "debate_stage": dialogue.debate_state["current_stage"],
+        "next_speaker": next_speaker
+    }
 
 def _get_or_create_dialogue(room_id: str, dialogue_type: str, room_data: Dict[str, Any]) -> Any:
     """대화 객체 가져오기 또는 생성"""
-    # 캐시에서 객체 확인
-    cache_key = f"{room_id}_{dialogue_type}"
-    if cache_key in dialogue_instances:
-        return dialogue_instances[cache_key]
+    try:
+        # 캐시에서 객체 확인
+        cache_key = f"{room_id}_{dialogue_type}"
+        
+        # 디버그: 기존 캐시 로깅
+        if 'dialogue_instances' in globals():
+            logger.info(f"[DEBUG] 현재 캐싱된 dialogue_instances 키 목록: {list(dialogue_instances.keys())}")
+        else: 
+            logger.warning("[DEBUG] dialogue_instances가 전역 변수로 정의되지 않았습니다.")
+            globals()['dialogue_instances'] = {}
+            
+        if cache_key in dialogue_instances:
+            # 기존 인스턴스 재사용
+            instance = dialogue_instances[cache_key]
+            logger.info(f"[DEBUG] 캐시된 dialogue 인스턴스 사용 ({cache_key})")
+            
+            # 인스턴스 상태 검증
+            if hasattr(instance, 'debate_state'):
+                logger.info(f"[DEBUG] 캐시된 인스턴스 상태 - turn_count: {instance.debate_state.get('turn_count', 'N/A')}")
+                logger.info(f"[DEBUG] 캐시된 인스턴스 상태 - speaking_history 길이: {len(instance.debate_state.get('speaking_history', []))}")
+                logger.info(f"[DEBUG] 캐시된 인스턴스 상태 - current_stage: {instance.debate_state.get('current_stage', 'N/A')}")
+            
+            return instance
+        
+        # 객체 생성 전 로깅
+        logger.info(f"[DEBUG] 새로운 dialogue 인스턴스 생성 필요 ({cache_key})")
+        
+        # 사용 가능한 대화 타입 가져오기 - 디버깅용
+        available_types = DialogueFactory.get_available_types()
+        logger.info(f"Available dialogue types: {list(available_types.keys())}")
+        
+        # 대화 타입이 유효하지 않은 경우 기본값으로 변경
+        if dialogue_type not in available_types:
+            logger.warning(f"Invalid dialogue type: {dialogue_type}, falling back to 'standard'")
+            dialogue_type = "standard"
+        
+        # 객체 생성
+        dialogue = DialogueFactory.create_dialogue(dialogue_type, room_id, room_data)
+        
+        # 생성 결과 로깅
+        logger.info(f"[DEBUG] 새 인스턴스 생성됨: {type(dialogue).__name__}")
+        
+        # 인스턴스 초기 상태 로깅
+        if hasattr(dialogue, 'debate_state'):
+            logger.info(f"[DEBUG] 새 인스턴스 초기 상태 - turn_count: {dialogue.debate_state.get('turn_count', 'N/A')}")
+            logger.info(f"[DEBUG] 새 인스턴스 초기 상태 - speaking_history 길이: {len(dialogue.debate_state.get('speaking_history', []))}")
+            logger.info(f"[DEBUG] 새 인스턴스 초기 상태 - current_stage: {dialogue.debate_state.get('current_stage', 'N/A')}")
+        
+        # 캐시에 저장
+        dialogue_instances[cache_key] = dialogue
+        logger.info(f"[DEBUG] 새 인스턴스를 캐시에 저장 ({cache_key})")
+        
+        return dialogue
     
-    # 객체 생성
-    dialogue = DialogueFactory.create_dialogue(dialogue_type, room_id, room_data)
+    except Exception as e:
+        logger.error(f"Error creating dialogue instance: {str(e)}")
+        logger.exception("Detailed error:")
+        
+        # 오류 발생 시 StandardDialogue 사용
+        from sapiens_engine.dialogue.standard_dialogue import StandardDialogue
+        logger.warning(f"Falling back to StandardDialogue for room {room_id}")
+        
+        # 기본 객체 생성
+        fallback_dialogue = StandardDialogue(room_id, room_data)
+        
+        # 캐시에 저장
+        cache_key = f"{room_id}_standard"
+        dialogue_instances[cache_key] = fallback_dialogue
+        
+        return fallback_dialogue
+
+# 새로운 AI 응답 생성 함수
+async def generate_ai_response(room_id: str, speaker_id: str, prompt: str) -> Dict[str, Any]:
+    """
+    대화 시스템을 위한 AI 응답 생성
     
-    # 캐시에 저장
-    dialogue_instances[cache_key] = dialogue
+    Args:
+        room_id: 채팅방 ID
+        speaker_id: 응답할 NPC ID
+        prompt: 응답 생성을 위한 프롬프트
     
-    return dialogue
+    Returns:
+        Dictionary containing the response text and metadata
+    """
+    try:
+        logger.info(f"[DIALOGUE] AI 응답 생성 시작: speaker_id={speaker_id}, room_id={room_id}")
+        logger.info(f"[DIALOGUE] 프롬프트: {prompt[:100]}...")
+        
+        # 채팅방 정보 조회
+        room = await get_room_data(room_id)
+        if not room:
+            logger.error(f"[DIALOGUE] 채팅방 정보를 찾을 수 없음: {room_id}")
+            return {"text": "I cannot respond at this time.", "timestamp": time.time()}
+        
+        # NPC ID 검증 - 잘못된 NPC ID면 처리할 수 없음
+        if not speaker_id:
+            logger.error(f"[DIALOGUE] 유효하지 않은 NPC ID: {speaker_id}")
+            return {"text": "Invalid speaker ID", "timestamp": time.time()}
+            
+        # NPC 이름 조회
+        try:
+            npc_info = await get_npc_details(speaker_id)
+            npc_name = npc_info.get("name", speaker_id)
+            logger.info(f"[DIALOGUE] NPC 이름 조회 성공: {speaker_id} -> {npc_name}")
+        except Exception as e:
+            logger.warning(f"[DIALOGUE] NPC 이름 조회 실패: {str(e)}")
+            npc_name = speaker_id
+        
+        # ChatGenerateRequest 객체 생성
+        request = ChatGenerateRequest(
+            room_id=room_id,
+            npcs=[speaker_id],  # 응답할 NPC만 지정
+            user_message=prompt,  # 프롬프트를 사용자 메시지로 사용
+            topic=room.get("title", ""),
+            context=room.get("context", ""),
+            llm_provider="openai",  # 기본값
+            llm_model="gpt-4o"  # 기본값
+        )
+        
+        # generate_chat_response 함수 호출
+        logger.info(f"[DIALOGUE] generate_chat_response 함수 호출 직전")
+        response_data = await generate_chat_response(request)
+        logger.info(f"[DIALOGUE] generate_chat_response 응답 받음: {len(response_data.get('response', ''))} 글자")
+        
+        # 응답 데이터 구성
+        message_id = f"ai-{int(time.time() * 1000)}"
+        result = {
+            "id": message_id,
+            "text": response_data.get("response", ""),
+            "sender": npc_name,  # 화면 표시용 이름 사용
+            "npc_id": speaker_id,  # 원본 NPC ID 유지 (내부 참조용)
+            "isUser": False,
+            "timestamp": datetime.now().isoformat(),
+            "metadata": response_data.get("metadata", {}),
+            "citations": response_data.get("citations", [])
+        }
+        
+        # 메시지 저장
+        try:
+            logger.info(f"[DIALOGUE] 메시지 DB 저장 시작: {message_id}")
+            saved = await save_message_to_db(room_id, result)
+            if saved:
+                logger.info(f"[DIALOGUE] 메시지 DB 저장 성공: {message_id}")
+            else:
+                logger.warning(f"[DIALOGUE] 메시지 DB 저장 실패: {message_id}")
+        except Exception as e:
+            logger.error(f"[DIALOGUE] 메시지 저장 중 오류: {str(e)}")
+        
+        logger.info(f"[DIALOGUE] AI 응답 생성 완료: {result['text'][:50]}...")
+        return result
+        
+    except Exception as e:
+        logger.error(f"[DIALOGUE] AI 응답 생성 오류: {str(e)}")
+        # 오류 스택 트레이스 출력
+        logger.exception("상세 오류:")
+        # 기본 응답 반환
+        return {
+            "id": f"error-{int(time.time() * 1000)}",
+            "text": "I apologize, but I cannot provide a proper response at this time.",
+            "sender": speaker_id,
+            "isUser": False,
+            "timestamp": datetime.now().isoformat(),
+            "error": str(e)
+        }
+
+# 모더레이터 오프닝 메시지 요청 모델
+class ModeratorOpeningRequest(BaseModel):
+    title: str
+    room_id: Optional[str] = None  # 필수 필드를 Optional로 변경
+    context: Optional[str] = ""
+    npcs: List[str]
+    npcPositions: Dict[str, str]
+    proNpcIds: List[str]
+    conNpcIds: List[str]
+    npcNames: Optional[Dict[str, str]] = None  # NPC ID -> 이름 매핑
+    userData: Optional[Dict[str, str]] = None  # 유저 ID -> 이름 매핑
+
+# NPC 이름을 여러 소스에서 적절히.가져오는 유틸리티 함수
+async def get_proper_npc_name(npc_id: str, name_mapping: Dict[str, str], nextjs_url: str = None) -> str:
+    """NPC의 실제 이름을 여러 소스에서 조회하여 가져옵니다"""
+    try:
+        # 기본 NextJS URL 설정 (인자로 받지 않은 경우)
+        if not nextjs_url:
+            nextjs_url = "http://localhost:3000"  # NextJS 서버 기본 URL
+            
+        logger.info(f"[NPC_NAME] NPC 이름 조회 시작: {npc_id}")
+            
+        # 1. 먼저 이름 매핑에서 이름 찾기
+        if name_mapping and npc_id in name_mapping:
+            name = name_mapping[npc_id]
+            if name and isinstance(name, str) and len(name.strip()) > 0:
+                logger.info(f"[NPC_NAME] 매핑에서 이름 찾음: {npc_id} -> {name}")
+                return name
+        
+        # 2. NextJS API에서 커스텀 NPC 이름 직접 조회 (MongoDB 데이터 활용)
+        if len(npc_id) > 30 and '-' in npc_id:  # UUID 형태 감지
+            # 여러 가능한 URL 시도
+            possible_urls = [
+                nextjs_url,                    # 기본 URL (인자로 전달된 것)
+                "http://localhost:3000",       # 로컬 개발 환경
+                "http://localhost:3001",       # 대체 포트
+                "http://0.0.0.0:3000",         # 대체 호스트
+                "http://127.0.0.1:3000"        # 대체 IP
+            ]
+            
+            # 중복 제거
+            possible_urls = list(set(possible_urls))
+            logger.info(f"[NPC_NAME] 시도할 URL 목록: {possible_urls}")
+            
+            for url in possible_urls:
+                try:
+                    async with aiohttp.ClientSession() as session:
+                        # 절대 URL 구성
+                        full_url = f"{url}/api/npc/get?id={npc_id}"
+                        logger.info(f"[NPC_NAME] NextJS API 호출: {full_url}")
+                        
+                        async with session.get(full_url, timeout=2) as response:
+                            if response.status == 200:
+                                data = await response.json()
+                                if data and "name" in data and data["name"]:
+                                    logger.info(f"[NPC_NAME] NextJS API에서 커스텀 NPC 이름 찾음: {npc_id} -> {data['name']} (URL: {url})")
+                                    return data["name"]
+                                else:
+                                    logger.warning(f"[NPC_NAME] NextJS API 응답에 name 필드 없음: {data}")
+                            else:
+                                logger.warning(f"[NPC_NAME] NextJS API 응답 오류: {response.status} (URL: {url})")
+                except Exception as e:
+                    logger.error(f"[NPC_NAME] NextJS API 호출 오류 ({url}): {str(e)}")
+                    # 실패해도 계속 다음 URL 시도
+                    continue
+        
+        # 3. 내부 API로 NPC 상세 정보 조회
+        try:
+            npc_info = await get_npc_details(npc_id)
+            if npc_info and "name" in npc_info and npc_info["name"]:
+                logger.info(f"[NPC_NAME] 내부 API에서 이름 찾음: {npc_id} -> {npc_info['name']}")
+                return npc_info["name"]
+        except Exception as e:
+            logger.error(f"[NPC_NAME] 내부 API 호출 오류: {str(e)}")
+        
+        # 4. 기본 철학자 이름 하드코딩
+        philosopher_names = {
+            "socrates": "Socrates",
+            "plato": "Plato",
+            "aristotle": "Aristotle",
+            "kant": "Kant",
+            "nietzsche": "Friedrich Nietzsche",
+            "marx": "Karl Marx",
+            "sartre": "Jean-Paul Sartre",
+            "camus": "Albert Camus", 
+            "beauvoir": "Simone de Beauvoir",
+            "confucius": "Confucius",
+            "heidegger": "Martin Heidegger",
+            "kierkegaard": "Søren Kierkegaard",
+            "wittgenstein": "Ludwig Wittgenstein",
+            "hume": "David Hume"
+        }
+        
+        if npc_id.lower() in philosopher_names:
+            name = philosopher_names[npc_id.lower()]
+            logger.info(f"[NPC_NAME] 기본 철학자 이름 사용: {npc_id} -> {name}")
+            return name
+        
+        # 5. UUID 형태인 경우 더 친숙한 이름 형태로 반환
+        if len(npc_id) > 30 and '-' in npc_id:
+            logger.warning(f"[NPC_NAME] 커스텀 NPC({npc_id})의 실제 이름을 찾지 못했습니다!")
+            custom_name = f"Unknown Custom NPC"
+            logger.warning(f"[NPC_NAME] UUID 형태 이름 대체: {npc_id} -> {custom_name}")
+            return custom_name
+        
+        # 6. 마지막 대안: ID의 첫 글자를 대문자로 변환
+        default_name = npc_id.capitalize()
+        logger.warning(f"[NPC_NAME] 기본 이름 사용: {npc_id} -> {default_name}")
+        return default_name
+    
+    except Exception as e:
+        logger.error(f"[NPC_NAME] 이름 조회 중 오류 발생: {str(e)}")
+        # 안전장치: 절대 오류가 나지 않도록 항상 문자열 반환
+        return npc_id
+
+
+# 모더레이터 메시지 전용 엔드포인트 추가
+@app.post("/api/moderator/opening")
+async def create_moderator_opening(request: ModeratorOpeningRequest):
+    try:
+        logger.info("[MODERATOR_ENDPOINT] 모더레이터 오프닝 메시지 생성 요청")
+        logger.info(f"[MODERATOR_ENDPOINT] 요청 데이터: {request}")
+        
+        # 필수 필드 검증
+        if not request.title:
+            logger.error("[MODERATOR_ENDPOINT] 제목 누락")
+            raise HTTPException(status_code=400, detail="토론 제목이 필요합니다")
+        
+        # NextJS URL 설정
+        nextjs_url = "http://localhost:3000"  # NextJS 서버 URL
+        
+        # 사용자 ID -> 표시 이름 매핑 생성 (예: User123 -> WhiteTrafficLight)
+        user_display_names = {}
+        if request.userData:
+            for user_id, display_name in request.userData.items():
+                user_display_names[user_id] = display_name
+                logger.info(f"[MODERATOR_ENDPOINT] 사용자 매핑: {user_id} -> {display_name}")
+        
+        # 찬성 측 참가자 목록 (표시 이름만 포함)
+        pro_names = []
+        
+        # 찬성 측 처리 - 유저 ID는 표시 이름으로 대체, NPC ID는 이름으로 대체
+        for participant_id in request.proNpcIds:
+            # 유저인지 확인
+            if request.userData and participant_id in request.userData:
+                display_name = request.userData[participant_id]
+                pro_names.append(display_name)
+                logger.info(f"[MODERATOR_ENDPOINT] 찬성 측 유저 추가: {display_name} (ID: {participant_id})")
+            else:
+                # NPC인 경우 이름 가져오기
+                npc_name = await get_proper_npc_name(participant_id, request.npcNames or {}, nextjs_url)
+                pro_names.append(npc_name)
+                logger.info(f"[MODERATOR_ENDPOINT] 찬성 측 NPC 추가: {npc_name} (ID: {participant_id})")
+        
+        # 반대 측 참가자 목록 (표시 이름만 포함)
+        con_names = []
+        
+        # 반대 측 처리 - 유저 ID는 표시 이름으로 대체, NPC ID는 이름으로 대체
+        for participant_id in request.conNpcIds:
+            # 유저인지 확인
+            if request.userData and participant_id in request.userData:
+                display_name = request.userData[participant_id]
+                con_names.append(display_name)
+                logger.info(f"[MODERATOR_ENDPOINT] 반대 측 유저 추가: {display_name} (ID: {participant_id})")
+            else:
+                # NPC인 경우 이름 가져오기
+                npc_name = await get_proper_npc_name(participant_id, request.npcNames or {}, nextjs_url)
+                con_names.append(npc_name)
+                logger.info(f"[MODERATOR_ENDPOINT] 반대 측 NPC 추가: {npc_name} (ID: {participant_id})")
+        
+        # 참가자 검증
+        if not pro_names or not con_names:
+            logger.error("[MODERATOR_ENDPOINT] 찬성과 반대 측 모두 참가자가 있어야 합니다")
+            raise HTTPException(status_code=400, detail="찬성과 반대 측 모두 참가자가 있어야 합니다")
+        
+        logger.info(f"[MODERATOR_ENDPOINT] 최종 찬성 측 명단: {', '.join(pro_names)}")
+        logger.info(f"[MODERATOR_ENDPOINT] 최종 반대 측 명단: {', '.join(con_names)}")
+        
+        # 모더레이터 오프닝 메시지 생성
+        opening_message = await generate_moderator_opening(
+            topic=request.title,
+            context=request.context or "",
+            pro_participants=pro_names,
+            con_participants=con_names
+        )
+        
+        logger.info("[MODERATOR_ENDPOINT] 모더레이터 오프닝 메시지 생성 완료")
+        logger.info(f"[MODERATOR_ENDPOINT] 모더레이터 메시지: {opening_message[:100]}...")
+        
+        # 메시지 내에 "User123"이 있는지 확인하고 제거 (안전장치)
+        if request.userData:
+            for user_id, display_name in request.userData.items():
+                if user_id in opening_message:
+                    # User123과 같은 내부 ID가 메시지에 있으면 표시 이름으로 대체
+                    opening_message = opening_message.replace(user_id, display_name)
+                    logger.info(f"[MODERATOR_ENDPOINT] 메시지에서 사용자 ID 제거: {user_id} -> {display_name}")
+        
+        # 응답 형식 구성
+        response_data = {
+            "status": "success",
+            "initial_message": {
+                "text": opening_message,
+                "sender": "Moderator",
+                "isUser": False,
+                "isSystemMessage": True,
+                "role": "moderator",
+            }
+        }
+        
+        # room_id가 요청에 있다면 응답에도 포함
+        if request.room_id:
+            response_data["room_id"] = request.room_id
+            
+        return response_data
+        
+    except Exception as e:
+        logger.error(f"[MODERATOR_ENDPOINT] 오류 발생: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"모더레이터 메시지 생성 중 오류: {str(e)}")
+
+# 채팅 메시지를 Next.js API를 통해 저장하는 함수
+async def save_message_to_mongodb(room_id: str, message_text: str, sender: str, is_user: bool = False, role: str = None):
+    """
+    MongoDB에 메시지를 직접 저장하는 함수
+    
+    Args:
+        room_id: 방 ID
+        message_text: 메시지 텍스트
+        sender: 발신자
+        is_user: 사용자 메시지 여부
+        role: 발신자 역할 (debate 모드에서 사용)
+    
+    Returns:
+        저장 결과
+    """
+    try:
+        # Next.js API 기본 URL
+        api_url = "http://localhost:3000/api/messages"
+        
+        # 메시지 ID 생성
+        message_id = f"user-{int(time.time()*1000)}"
+        
+        # 메시지 객체 구성
+        message_data = {
+            "id": message_id,
+            "text": message_text,
+            "sender": sender,
+            "isUser": is_user,
+            "timestamp": datetime.now().isoformat(),
+        }
+        
+        # 역할 정보가 있으면 추가
+        if role:
+            message_data["role"] = role
+        
+        # API 요청 데이터
+        request_data = {
+            "roomId": room_id,
+            "message": message_data,
+            "isInitial": False
+        }
+        
+        logger.info(f"✅ Sending message to MongoDB via Next.js API: {json.dumps(request_data)[:200]}...")
+        
+        # API 호출
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            response = await client.post(
+                api_url,
+                json=request_data,
+                headers={"Content-Type": "application/json"}
+            )
+            
+            if response.status_code == 200:
+                result = response.json()
+                logger.info(f"✅ Message saved to database for room {room_id}: {message_id}")
+                logger.info(f"🧪 MongoDB 저장 응답: {json.dumps(result)[:500]}")
+                return {"success": True, "message_id": message_id, "response": result}
+            else:
+                error_text = response.text
+                logger.error(f"❌ Failed to save message: {response.status_code}, {error_text}")
+                return {
+                    "success": False, 
+                    "error": f"API returned {response.status_code}", 
+                    "response": error_text[:200]
+                }
+    
+    except Exception as e:
+        logger.error(f"❌ Error saving message to MongoDB: {str(e)}", exc_info=True)
+        return {"success": False, "error": str(e)}
+        
+    finally:
+        logger.info(f"[DIALOGUE] 메시지 DB 저장 시도 완료: {room_id}")
+
+# ... existing code ...
