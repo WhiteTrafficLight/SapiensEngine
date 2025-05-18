@@ -48,6 +48,7 @@ node_modules/
 vectordb/
 *.pdf
 sapiens_engine/context_files/*.pdf
+experiments/rag/experiment_results/
 
 # Next.js
 /.next/
