@@ -1,0 +1,815 @@
+{
+  "query": "What's health benefit of banana",
+  "search_provider": "google",
+  "timestamp": "2025-05-17T14:45:34.701882",
+  "search_results": [
+    {
+      "title": "Bananas: 11 Evidence-Based Health Benefits",
+      "url": "https://www.healthline.com/nutrition/11-proven-benefits-of-bananas",
+      "snippet": "Mar 27, 2025 ... 11 Evidence-Based Health Benefits of Bananas · 1. Rich in nutrients · 2. May improve blood sugar levels · 3. May support digestive health · 4. May ...",
+      "source": "google_api",
+      "domain": "www.healthline.com",
+      "date": "",
+      "position": 1
+    },
+    {
+      "title": "Are Bananas Good for You? 6+ Health Benefits",
+      "url": "https://health.clevelandclinic.org/benefits-of-bananas",
+      "snippet": "May 6, 2025 ... Health benefits of bananas · Improved digestion · Blood pressure management · Fighting off illness · Weight management · Athletic performance · Blood ...",
+      "source": "google_api",
+      "domain": "health.clevelandclinic.org",
+      "date": "",
+      "position": 2
+    },
+    {
+      "title": "Bananas: Health Benefits and Nutritional Info Explained",
+      "url": "https://www.webmd.com/food-recipes/health-benefits-bananas",
+      "snippet": "Dec 8, 2023 ... Bananas are best known for containing potassium, which is a big player in heart health. This vital mineral and electrolyte carries a small ...",
+      "source": "google_api",
+      "domain": "www.webmd.com",
+      "date": "",
+      "position": 3
+    }
+  ],
+  "extracted_chunks": [
+    {
+      "text": "Dopamineis also found in bananas. In addition to impacting your mood, it acts as an antioxidant that protects against inflammation. “Bananas are rich in important nutrients and antioxidants,” says Rottinger. “Including them regularly in a healthy diet is one of the best ways to reduce inflammation and support your immune system.” When you eat a banana, your belly will feel full for longer thanks to the dietary fiber in the fruit, says Rottinger.",
+      "metadata": {
+        "url": "https://health.clevelandclinic.org/benefits-of-bananas",
+        "title": "Are Bananas Good for You? 6+ Health Benefits",
+        "domain": "health.clevelandclinic.org",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:45:30.892489",
+        "search_position": 2,
+        "snippet": "May 6, 2025 ... Health benefits of bananas · Improved digestion · Blood pressure management · Fighting off illness · Weight management · Athletic performance · Blood ...",
+        "content_length": 5801,
+        "word_count": 953,
+        "chunk_id": "health.clevelandclinic.org_5",
+        "chunk_index": 5,
+        "total_chunks": 14
+      },
+      "similarity": 0.8096286654472351,
+      "score": 0.8337400658130645
+    },
+    {
+      "text": "Banana Benefits Bananas are rich in potassium and other important minerals and vitamins that help your body perform critical functions. Their potential benefits include: Heart health Bananas are best known for containing potassium, which is a big player in heart health . This vital mineral and electrolyte carries a small electrical charge, causing nerve cells to send out signals for your heart to beat regularly and muscles to contract.",
+      "metadata": {
+        "url": "https://www.webmd.com/food-recipes/health-benefits-bananas",
+        "title": "Bananas: Health Benefits and Nutritional Info Explained",
+        "domain": "www.webmd.com",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:45:31.515369",
+        "search_position": 3,
+        "snippet": "Dec 8, 2023 ... Bananas are best known for containing potassium, which is a big player in heart health. This vital mineral and electrolyte carries a small ...",
+        "content_length": 10863,
+        "word_count": 1837,
+        "chunk_id": "www.webmd.com_3",
+        "chunk_index": 3,
+        "total_chunks": 27
+      },
+      "similarity": 0.854306697845459,
+      "score": 0.8170146884918212
+    },
+    {
+      "text": "We do not endorse non-Cleveland Clinic products or services.Policy But while simplicity and yumminess are definite pluses, the true benefits of bananas involve what they offer nutritionally. Let’s take a healthy look at the popular fruit with registered dietitian Elyse Rottinger, RD, LD. So what do you get when you peel and eat a banana?",
+      "metadata": {
+        "url": "https://health.clevelandclinic.org/benefits-of-bananas",
+        "title": "Are Bananas Good for You? 6+ Health Benefits",
+        "domain": "health.clevelandclinic.org",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:45:30.892489",
+        "search_position": 2,
+        "snippet": "May 6, 2025 ... Health benefits of bananas · Improved digestion · Blood pressure management · Fighting off illness · Weight management · Athletic performance · Blood ...",
+        "content_length": 5801,
+        "word_count": 953,
+        "chunk_id": "health.clevelandclinic.org_1",
+        "chunk_index": 1,
+        "total_chunks": 14
+      },
+      "similarity": 0.7766724824905396,
+      "score": 0.8106707377433775
+    },
+    {
+      "text": "“The high amount of vitamin B6 in bananas also helps your body produce energy, making them a smart snack to have before a workout,” she adds. Bananas can help level out your blood sugar IF you eat them at the right time. (Hence, the asterisk.) That’s because the sugar content in a banana varies depending on its ripeness. Green (or unripe) bananas are high inresistant starch, a type of fiber your body can’t digest.",
+      "metadata": {
+        "url": "https://health.clevelandclinic.org/benefits-of-bananas",
+        "title": "Are Bananas Good for You? 6+ Health Benefits",
+        "domain": "health.clevelandclinic.org",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:45:30.892489",
+        "search_position": 2,
+        "snippet": "May 6, 2025 ... Health benefits of bananas · Improved digestion · Blood pressure management · Fighting off illness · Weight management · Athletic performance · Blood ...",
+        "content_length": 5801,
+        "word_count": 953,
+        "chunk_id": "health.clevelandclinic.org_8",
+        "chunk_index": 8,
+        "total_chunks": 14
+      },
+      "similarity": 0.7613847851753235,
+      "score": 0.7999693496227263
+    },
+    {
+      "text": "A medium-sized ripe banana (7 to 8 inches long) contains: A list of vitamins and nutrients is nice, but it can be more important to know what all that good stuff does for your body. Here’s some of what bananas offer. Being ahigher-fiber foodmakes bananas fabulous for digestion and overall gut health. Bananas contain bothinsoluble and soluble fiberto keep your bowel movements regular while boosting your gut’s microbiome.",
+      "metadata": {
+        "url": "https://health.clevelandclinic.org/benefits-of-bananas",
+        "title": "Are Bananas Good for You? 6+ Health Benefits",
+        "domain": "health.clevelandclinic.org",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:45:30.892489",
+        "search_position": 2,
+        "snippet": "May 6, 2025 ... Health benefits of bananas · Improved digestion · Blood pressure management · Fighting off illness · Weight management · Athletic performance · Blood ...",
+        "content_length": 5801,
+        "word_count": 953,
+        "chunk_id": "health.clevelandclinic.org_2",
+        "chunk_index": 2,
+        "total_chunks": 14
+      },
+      "similarity": 0.7569600343704224,
+      "score": 0.7968720240592955
+    },
+    {
+      "text": "They're good for digestive and heart health. You can eat this tropical fruit raw, or add it to smoothies or baked goods. Banana FAQs What are the benefits of eating a banana? A banana is loaded with nutrients your body needs. It may even help you recover faster from a hard workout.Â Is it good to eat a banana every day?Â You should aim for three to five servings of fruit every day.",
+      "metadata": {
+        "url": "https://www.webmd.com/food-recipes/health-benefits-bananas",
+        "title": "Bananas: Health Benefits and Nutritional Info Explained",
+        "domain": "www.webmd.com",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:45:31.515369",
+        "search_position": 3,
+        "snippet": "Dec 8, 2023 ... Bananas are best known for containing potassium, which is a big player in heart health. This vital mineral and electrolyte carries a small ...",
+        "content_length": 10863,
+        "word_count": 1837,
+        "chunk_id": "www.webmd.com_25",
+        "chunk_index": 25,
+        "total_chunks": 27
+      },
+      "similarity": 0.8215146660804749,
+      "score": 0.7940602662563323
+    },
+    {
+      "text": "Potassium also eases tension on blood vessel walls to help reduce blood pressure. The American Heart Association recommends eating bananas and other potassium-rich foods to managehigh blood pressure(hypertension) and lower your risk ofheart attackandstroke. The vitamin C packed in a banana can boost your immune system’s ability to fight illness, notes Rottinger. Vitamin C is anantioxidantthat neutralizes free radicals before they cause cellular chaos in your body.",
+      "metadata": {
+        "url": "https://health.clevelandclinic.org/benefits-of-bananas",
+        "title": "Are Bananas Good for You? 6+ Health Benefits",
+        "domain": "health.clevelandclinic.org",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:45:30.892489",
+        "search_position": 2,
+        "snippet": "May 6, 2025 ... Health benefits of bananas · Improved digestion · Blood pressure management · Fighting off illness · Weight management · Athletic performance · Blood ...",
+        "content_length": 5801,
+        "word_count": 953,
+        "chunk_id": "health.clevelandclinic.org_4",
+        "chunk_index": 4,
+        "total_chunks": 14
+      },
+      "similarity": 0.747873842716217,
+      "score": 0.7905116899013518
+    },
+    {
+      "text": "B6 can help you sleep better, may help you lose weight, and may improve your brain health. Magnesium:Â This mineral helps control your blood pressure and blood sugar and keeps your bones strong. It also helps your nerves and muscles function and boosts your immune system. A banana gives you 8% of what you need. Fiber: One banana provides about 3 grams of fiber, which is roughly 10% of the recommended daily amount.",
+      "metadata": {
+        "url": "https://www.webmd.com/food-recipes/health-benefits-bananas",
+        "title": "Bananas: Health Benefits and Nutritional Info Explained",
+        "domain": "www.webmd.com",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:45:31.515369",
+        "search_position": 3,
+        "snippet": "Dec 8, 2023 ... Bananas are best known for containing potassium, which is a big player in heart health. This vital mineral and electrolyte carries a small ...",
+        "content_length": 10863,
+        "word_count": 1837,
+        "chunk_id": "www.webmd.com_17",
+        "chunk_index": 17,
+        "total_chunks": 27
+      },
+      "similarity": 0.8004018068313599,
+      "score": 0.7792812647819518
+    },
+    {
+      "text": "This handy fruit is packed with nutrients that can benefit your heart, gut and immune system It’s easy to see why some call bananas “nature’s perfect snack.” The curved yellow fruit is conveniently packaged for on-the-go eating after all. Just peel back that exterior skin and take a delicious bite. Cleveland Clinic is a non-profit academic medical center. Advertising on our site helps support our mission.",
+      "metadata": {
+        "url": "https://health.clevelandclinic.org/benefits-of-bananas",
+        "title": "Are Bananas Good for You? 6+ Health Benefits",
+        "domain": "health.clevelandclinic.org",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:45:30.892489",
+        "search_position": 2,
+        "snippet": "May 6, 2025 ... Health benefits of bananas · Improved digestion · Blood pressure management · Fighting off illness · Weight management · Athletic performance · Blood ...",
+        "content_length": 5801,
+        "word_count": 953,
+        "chunk_id": "health.clevelandclinic.org_0",
+        "chunk_index": 0,
+        "total_chunks": 14
+      },
+      "similarity": 0.7299289703369141,
+      "score": 0.7779502792358397
+    },
+    {
+      "text": "“It’s a food that can help keep things moving in your intestines,” says Rottinger. The fruit is also gentle on your gastrointestinal tract, making it a star in theBRAT dietthat’s a go-to for easing a queasy stomach. (The B in BRAT stands for banana.) Eating bananas can help keep your blood pressure (BP) managed. The reason? Potassium. Potassium works to lower blood pressureby helping your body get rid ofsodium(which, as we all know, can drive your BP higher).",
+      "metadata": {
+        "url": "https://health.clevelandclinic.org/benefits-of-bananas",
+        "title": "Are Bananas Good for You? 6+ Health Benefits",
+        "domain": "health.clevelandclinic.org",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:45:30.892489",
+        "search_position": 2,
+        "snippet": "May 6, 2025 ... Health benefits of bananas · Improved digestion · Blood pressure management · Fighting off illness · Weight management · Athletic performance · Blood ...",
+        "content_length": 5801,
+        "word_count": 953,
+        "chunk_id": "health.clevelandclinic.org_3",
+        "chunk_index": 3,
+        "total_chunks": 14
+      },
+      "similarity": 0.7169796228408813,
+      "score": 0.768885735988617
+    },
+    {
+      "text": "Green bananas can contain less than half the amount of sugar than ripe ones.” For those concerned about blood sugar levels with more yellow bananas, pairing the fruit with a protein source (such as a handful of nuts or a cheese stick) can help better regulate the increase. While bananas may seem like a perfect food, they may not be the best choice for you if you have certain health conditions or concerns. Here’s why. Bananas are a healthy food option packed with nutrients lacking in many diets.",
+      "metadata": {
+        "url": "https://health.clevelandclinic.org/benefits-of-bananas",
+        "title": "Are Bananas Good for You? 6+ Health Benefits",
+        "domain": "health.clevelandclinic.org",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:45:30.892489",
+        "search_position": 2,
+        "snippet": "May 6, 2025 ... Health benefits of bananas · Improved digestion · Blood pressure management · Fighting off illness · Weight management · Athletic performance · Blood ...",
+        "content_length": 5801,
+        "word_count": 953,
+        "chunk_id": "health.clevelandclinic.org_10",
+        "chunk_index": 10,
+        "total_chunks": 14
+      },
+      "similarity": 0.7135433554649353,
+      "score": 0.7664803488254546
+    },
+    {
+      "text": "“Top Greek yogurt with banana slices or spread nut butter on slices for a delicious snack.” Bananas may qualify as a performance-enhancing fruit.Research showsthat bananas can mimic sports drinks in how they fuel athletes to improve performance and aid post-workout recovery. Some of that is due to the potassium and magnesium in bananas, explains Rottinger. Both areelectrolytesthat help your heart, muscles, brain and nerves function.",
+      "metadata": {
+        "url": "https://health.clevelandclinic.org/benefits-of-bananas",
+        "title": "Are Bananas Good for You? 6+ Health Benefits",
+        "domain": "health.clevelandclinic.org",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:45:30.892489",
+        "search_position": 2,
+        "snippet": "May 6, 2025 ... Health benefits of bananas · Improved digestion · Blood pressure management · Fighting off illness · Weight management · Athletic performance · Blood ...",
+        "content_length": 5801,
+        "word_count": 953,
+        "chunk_id": "health.clevelandclinic.org_7",
+        "chunk_index": 7,
+        "total_chunks": 14
+      },
+      "similarity": 0.7026922106742859,
+      "score": 0.7588845474720001
+    },
+    {
+      "text": "Most people don’t consume enough fiber, for instance. The same can be said when it comes to potassium and magnesium. They’re also versatile in the kitchen. They make a great smoothie mixer or a tasty topper on cereal or oatmeal, for instance. They’re ideal for baking, too. (Banana muffins, anyone?) Best of all, bananas rank as one of the more inexpensive fruits in the produce aisle.",
+      "metadata": {
+        "url": "https://health.clevelandclinic.org/benefits-of-bananas",
+        "title": "Are Bananas Good for You? 6+ Health Benefits",
+        "domain": "health.clevelandclinic.org",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:45:30.892489",
+        "search_position": 2,
+        "snippet": "May 6, 2025 ... Health benefits of bananas · Improved digestion · Blood pressure management · Fighting off illness · Weight management · Athletic performance · Blood ...",
+        "content_length": 5801,
+        "word_count": 953,
+        "chunk_id": "health.clevelandclinic.org_11",
+        "chunk_index": 11,
+        "total_chunks": 14
+      },
+      "similarity": 0.7008347511291504,
+      "score": 0.7575843257904051
+    },
+    {
+      "text": "In your body, it gets converted to serotonin, which boosts mood. Many other substances in bananas are known to fight cognitive decline, which can cause memory loss. Research continues on the best way to use those compounds for brain health . Banana Nutrition One medium banana provides about 110 calories and:Â 1 gram of proteinÂ 0 grams of fat 3 grams of fiberÂ 15 grams of naturally occurring sugarÂ 450 milligrams of potassiumÂ How many carbs are in a banana?",
+      "metadata": {
+        "url": "https://www.webmd.com/food-recipes/health-benefits-bananas",
+        "title": "Bananas: Health Benefits and Nutritional Info Explained",
+        "domain": "www.webmd.com",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:45:31.515369",
+        "search_position": 3,
+        "snippet": "Dec 8, 2023 ... Bananas are best known for containing potassium, which is a big player in heart health. This vital mineral and electrolyte carries a small ...",
+        "content_length": 10863,
+        "word_count": 1837,
+        "chunk_id": "www.webmd.com_14",
+        "chunk_index": 14,
+        "total_chunks": 27
+      },
+      "similarity": 0.7684463262557983,
+      "score": 0.7569124283790588
+    },
+    {
+      "text": "The American Diabetes Association also doesn't recognize net carbs, because the process used to calculate them isn't scientifically accurate.Â Banana nutrients Bananas provide vitamins and minerals, including : Vitamin B6: A medium banana gives you about a quarter of the vitamin B6 you should get each day. It helps with metabolism . And it plays an important role in brain development during pregnancy and infancy, as well as immune system health.",
+      "metadata": {
+        "url": "https://www.webmd.com/food-recipes/health-benefits-bananas",
+        "title": "Bananas: Health Benefits and Nutritional Info Explained",
+        "domain": "www.webmd.com",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:45:31.515369",
+        "search_position": 3,
+        "snippet": "Dec 8, 2023 ... Bananas are best known for containing potassium, which is a big player in heart health. This vital mineral and electrolyte carries a small ...",
+        "content_length": 10863,
+        "word_count": 1837,
+        "chunk_id": "www.webmd.com_16",
+        "chunk_index": 16,
+        "total_chunks": 27
+      },
+      "similarity": 0.7673949003219604,
+      "score": 0.7561764302253723
+    },
+    {
+      "text": "While some believe they're more nutritious and better tasting than conventional bananas, very little scientific research has been done on the subject. Health benefits Organic bananas contain the same nutrients as conventionally grown bananas, including vitamin B6 and tryptophan , one of the essential amino acids that your body needs.Â Some studies have shown that organically grown fruits and vegetables may have higher levels of certain nutrients, but we need more research on this.",
+      "metadata": {
+        "url": "https://www.webmd.com/food-recipes/health-benefits-bananas",
+        "title": "Bananas: Health Benefits and Nutritional Info Explained",
+        "domain": "www.webmd.com",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:45:31.515369",
+        "search_position": 3,
+        "snippet": "Dec 8, 2023 ... Bananas are best known for containing potassium, which is a big player in heart health. This vital mineral and electrolyte carries a small ...",
+        "content_length": 10863,
+        "word_count": 1837,
+        "chunk_id": "www.webmd.com_20",
+        "chunk_index": 20,
+        "total_chunks": 27
+      },
+      "similarity": 0.7626436948776245,
+      "score": 0.7528505864143371
+    },
+    {
+      "text": "Green, or unripe, bananas are a good source of resistant starch, which is a type of carbohydrate that isn't digested in your small intestine. Instead, it ferments in your large intestine and feeds good bacteria in your gut. Resistant starch can make you feel fuller, which helps with weight loss. It's also good for dealing with constipation. Resistant starch can also lower cholesterol and reduce the risk of colon cancer.",
+      "metadata": {
+        "url": "https://www.webmd.com/food-recipes/health-benefits-bananas",
+        "title": "Bananas: Health Benefits and Nutritional Info Explained",
+        "domain": "www.webmd.com",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:45:31.515369",
+        "search_position": 3,
+        "snippet": "Dec 8, 2023 ... Bananas are best known for containing potassium, which is a big player in heart health. This vital mineral and electrolyte carries a small ...",
+        "content_length": 10863,
+        "word_count": 1837,
+        "chunk_id": "www.webmd.com_9",
+        "chunk_index": 9,
+        "total_chunks": 27
+      },
+      "similarity": 0.7614713907241821,
+      "score": 0.7520299735069275
+    },
+    {
+      "text": "Most of the fiber in bananas is whatâs called soluble fiber.Â It can help keep your cholesterol and blood pressure in check and help ease inflammation . In general, foods that are high in fiber make you feel full without extra calories. That also makes them a good choice if you want to shed a few pounds. Faster workout recovery Research suggests bananas can also help you bounce back from strenuous workouts.",
+      "metadata": {
+        "url": "https://www.webmd.com/food-recipes/health-benefits-bananas",
+        "title": "Bananas: Health Benefits and Nutritional Info Explained",
+        "domain": "www.webmd.com",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:45:31.515369",
+        "search_position": 3,
+        "snippet": "Dec 8, 2023 ... Bananas are best known for containing potassium, which is a big player in heart health. This vital mineral and electrolyte carries a small ...",
+        "content_length": 10863,
+        "word_count": 1837,
+        "chunk_id": "www.webmd.com_12",
+        "chunk_index": 12,
+        "total_chunks": 27
+      },
+      "similarity": 0.7563776969909668,
+      "score": 0.7484643878936766
+    },
+    {
+      "text": "But we need more studies to confirm this.Â Cancer prevention One study found that children who ate bananas and oranges regularly, and drank orange juice, had a lower risk of childhood leukemia . Various compounds in bananas have shown promise against breast, cervical, colorectal, esophageal, liver, oral, prostate, and skin cancers. But more research is needed.Â Memory and mood help Bananas contain tryptophan, which is a beneficial amino acid.",
+      "metadata": {
+        "url": "https://www.webmd.com/food-recipes/health-benefits-bananas",
+        "title": "Bananas: Health Benefits and Nutritional Info Explained",
+        "domain": "www.webmd.com",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:45:31.515369",
+        "search_position": 3,
+        "snippet": "Dec 8, 2023 ... Bananas are best known for containing potassium, which is a big player in heart health. This vital mineral and electrolyte carries a small ...",
+        "content_length": 10863,
+        "word_count": 1837,
+        "chunk_id": "www.webmd.com_13",
+        "chunk_index": 13,
+        "total_chunks": 27
+      },
+      "similarity": 0.7535046935081482,
+      "score": 0.7464532854557037
+    },
+    {
+      "text": "Bite into a slice of papaya to enjoy a taste of the tropics and disease-fighting nutrients With a sweet, tangy flavor, this tropical fruit is super versatile and high in antioxidants Full of antioxidants and nutrients, apricots may boost your eye, skin, digestive and overall health This glorious green superfood is full of vitamins, minerals and lots of other good stuff An apple a day may reduce high blood pressure, lower cholesterol and help you live longer From managing blood sugar to lowering",
+      "metadata": {
+        "url": "https://health.clevelandclinic.org/benefits-of-bananas",
+        "title": "Are Bananas Good for You? 6+ Health Benefits",
+        "domain": "health.clevelandclinic.org",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:45:30.892489",
+        "search_position": 2,
+        "snippet": "May 6, 2025 ... Health benefits of bananas · Improved digestion · Blood pressure management · Fighting off illness · Weight management · Athletic performance · Blood ...",
+        "content_length": 5801,
+        "word_count": 953,
+        "chunk_id": "health.clevelandclinic.org_12",
+        "chunk_index": 12,
+        "total_chunks": 14
+      },
+      "similarity": 0.6823239326477051,
+      "score": 0.7446267528533934
+    },
+    {
+      "text": "Resistant starch helps steady blood sugar by slowing the release of glucose (sugar) into your blood. But as bananas ripen, that resistant starch changes to sugar that digests more quickly and causes a spike in blood sugar. “I often hear people say they avoid bananas since they’ve heard the fruit is too high in sugar,” shares Rottinger. “But it depends on where the banana is in its ripening process.",
+      "metadata": {
+        "url": "https://health.clevelandclinic.org/benefits-of-bananas",
+        "title": "Are Bananas Good for You? 6+ Health Benefits",
+        "domain": "health.clevelandclinic.org",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:45:30.892489",
+        "search_position": 2,
+        "snippet": "May 6, 2025 ... Health benefits of bananas · Improved digestion · Blood pressure management · Fighting off illness · Weight management · Athletic performance · Blood ...",
+        "content_length": 5801,
+        "word_count": 953,
+        "chunk_id": "health.clevelandclinic.org_9",
+        "chunk_index": 9,
+        "total_chunks": 14
+      },
+      "similarity": 0.6805019378662109,
+      "score": 0.7433513565063476
+    },
+    {
+      "text": "Digestive health Despite their sugar content, bananas have a low glycemic index (GI) value of 51. (Glycemic index is a measure of how fast a food causes your blood sugar to rise.) Their fiber â which helps with digestion â is the reason for this. Bananas contain a type of fiber called pectin, which can play a part in controlling how quickly you digest carbohydrates.Â Bananas may be good for your tummy, too.",
+      "metadata": {
+        "url": "https://www.webmd.com/food-recipes/health-benefits-bananas",
+        "title": "Bananas: Health Benefits and Nutritional Info Explained",
+        "domain": "www.webmd.com",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:45:31.515369",
+        "search_position": 3,
+        "snippet": "Dec 8, 2023 ... Bananas are best known for containing potassium, which is a big player in heart health. This vital mineral and electrolyte carries a small ...",
+        "content_length": 10863,
+        "word_count": 1837,
+        "chunk_id": "www.webmd.com_6",
+        "chunk_index": 6,
+        "total_chunks": 27
+      },
+      "similarity": 0.7438074350357056,
+      "score": 0.7396652045249938
+    },
+    {
+      "text": "Fiber can reduce your risk of colorectal cancer, lower your cholesterol, help keep your blood sugar normal, and can help you maintain a healthy weight.Â Vitamin C : You should shoot for 75 to 90 milligrams per day. With about 10 milligrams,Â your morning banana can get you well on your way. Vitamin C helps protect you from the damage caused by harmful molecules in your body called free radicals .",
+      "metadata": {
+        "url": "https://www.webmd.com/food-recipes/health-benefits-bananas",
+        "title": "Bananas: Health Benefits and Nutritional Info Explained",
+        "domain": "www.webmd.com",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:45:31.515369",
+        "search_position": 3,
+        "snippet": "Dec 8, 2023 ... Bananas are best known for containing potassium, which is a big player in heart health. This vital mineral and electrolyte carries a small ...",
+        "content_length": 10863,
+        "word_count": 1837,
+        "chunk_id": "www.webmd.com_18",
+        "chunk_index": 18,
+        "total_chunks": 27
+      },
+      "similarity": 0.7409391403198242,
+      "score": 0.7376573982238769
+    },
+    {
+      "text": "Keeping thosehunger pangsat bay can keep you from making less-than-healthy snack choices between meals that can result in extra pounds. “It’s a great idea to pair bananas with a high protein food to keep you even more satisfied,” she recommends.",
+      "metadata": {
+        "url": "https://health.clevelandclinic.org/benefits-of-bananas",
+        "title": "Are Bananas Good for You? 6+ Health Benefits",
+        "domain": "health.clevelandclinic.org",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:45:30.892489",
+        "search_position": 2,
+        "snippet": "May 6, 2025 ... Health benefits of bananas · Improved digestion · Blood pressure management · Fighting off illness · Weight management · Athletic performance · Blood ...",
+        "content_length": 5801,
+        "word_count": 953,
+        "chunk_id": "health.clevelandclinic.org_6",
+        "chunk_index": 6,
+        "total_chunks": 14
+      },
+      "similarity": 0.6499028205871582,
+      "score": 0.7219319744110106
+    },
+    {
+      "text": "Bananas are a good choice, but don't focus on them so much that you skip other fruits that offer different nutrients. Bananas are higher in calories than some other fruits, something to keep in mind if you're trying to lose weight.Â What is the healthiest fruit in the world? There isn't one perfect fruit. Different fruits offer different nutrients. That's why it's important to eat a variety.Â Â",
+      "metadata": {
+        "url": "https://www.webmd.com/food-recipes/health-benefits-bananas",
+        "title": "Bananas: Health Benefits and Nutritional Info Explained",
+        "domain": "www.webmd.com",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:45:31.515369",
+        "search_position": 3,
+        "snippet": "Dec 8, 2023 ... Bananas are best known for containing potassium, which is a big player in heart health. This vital mineral and electrolyte carries a small ...",
+        "content_length": 10863,
+        "word_count": 1837,
+        "chunk_id": "www.webmd.com_26",
+        "chunk_index": 26,
+        "total_chunks": 27
+      },
+      "similarity": 0.709391176700592,
+      "score": 0.7155738236904144
+    },
+    {
+      "text": "These form in reaction to the food we eat as well as cigarette smoke, pesticides, and other potentially harmful things. Vitamin C also helps your immune system work better and can help you heal. Vitamin A: Â This vitamin is good for your vision and might help protect you from cancer.Â Are Organic Bananas Better? Organic bananas are grown without man-made pesticides or herbicides.",
+      "metadata": {
+        "url": "https://www.webmd.com/food-recipes/health-benefits-bananas",
+        "title": "Bananas: Health Benefits and Nutritional Info Explained",
+        "domain": "www.webmd.com",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:45:31.515369",
+        "search_position": 3,
+        "snippet": "Dec 8, 2023 ... Bananas are best known for containing potassium, which is a big player in heart health. This vital mineral and electrolyte carries a small ...",
+        "content_length": 10863,
+        "word_count": 1837,
+        "chunk_id": "www.webmd.com_19",
+        "chunk_index": 19,
+        "total_chunks": 27
+      },
+      "similarity": 0.7067870497703552,
+      "score": 0.7137509348392487
+    },
+    {
+      "text": "Medically Reviewed by Jabeen Begum,Â MD on December 08, 2023 Written by Joan Raymond ,Â Shawna Seed 8 min read What Are Bananas? Bananas grow from a tropical flowering plant. They're soft, sweet, and a convenient source of some important nutrients.Â They have origins in Southeast Asia. People have grown bananas since ancient times, and their health benefits have been promoted for more than a century.",
+      "metadata": {
+        "url": "https://www.webmd.com/food-recipes/health-benefits-bananas",
+        "title": "Bananas: Health Benefits and Nutritional Info Explained",
+        "domain": "www.webmd.com",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:45:31.515369",
+        "search_position": 3,
+        "snippet": "Dec 8, 2023 ... Bananas are best known for containing potassium, which is a big player in heart health. This vital mineral and electrolyte carries a small ...",
+        "content_length": 10863,
+        "word_count": 1837,
+        "chunk_id": "www.webmd.com_0",
+        "chunk_index": 0,
+        "total_chunks": 27
+      },
+      "similarity": 0.7023580074310303,
+      "score": 0.7106506052017212
+    },
+    {
+      "text": "Foods with potassium help protect against hardening of the arteries (atherosclerosis) and high blood pressure.Â Â A medium banana gives you about 450 milligrams, which is about 10% of what you need every day.",
+      "metadata": {
+        "url": "https://www.webmd.com/food-recipes/health-benefits-bananas",
+        "title": "Bananas: Health Benefits and Nutritional Info Explained",
+        "domain": "www.webmd.com",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:45:31.515369",
+        "search_position": 3,
+        "snippet": "Dec 8, 2023 ... Bananas are best known for containing potassium, which is a big player in heart health. This vital mineral and electrolyte carries a small ...",
+        "content_length": 10863,
+        "word_count": 1837,
+        "chunk_id": "www.webmd.com_4",
+        "chunk_index": 4,
+        "total_chunks": 27
+      },
+      "similarity": 0.6968660354614258,
+      "score": 0.706806224822998
+    },
+    {
+      "text": "Probiotics may also help: Improve yeast and urinary tract infections (UTIs) Treat some infections in your gut EaseÂ irritable bowel syndrome (IBS) LessenÂ lactose intolerance Ease someÂ allergy symptoms Probiotics may even help makeÂ colds and the flu less severe. Bananas contain fructooligosaccharides (FOS), which are unique fructose-filled carbohydrates that you don't fully digest. These FOS are involved in a process that helps maintain the balance of good bacteria in your lower intestine.",
+      "metadata": {
+        "url": "https://www.webmd.com/food-recipes/health-benefits-bananas",
+        "title": "Bananas: Health Benefits and Nutritional Info Explained",
+        "domain": "www.webmd.com",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:45:31.515369",
+        "search_position": 3,
+        "snippet": "Dec 8, 2023 ... Bananas are best known for containing potassium, which is a big player in heart health. This vital mineral and electrolyte carries a small ...",
+        "content_length": 10863,
+        "word_count": 1837,
+        "chunk_id": "www.webmd.com_8",
+        "chunk_index": 8,
+        "total_chunks": 27
+      },
+      "similarity": 0.6880067586898804,
+      "score": 0.7006047310829162
+    },
+    {
+      "text": "Because most people don't like to peel and eat a green banana â they're hard to chew â the unripe fruit is being used in flour and other food products.Â Diabetes management Eating a diet rich in low-GI foods (and avoiding higher-glycemic foods) may decrease the risk of complications in people with diabetes. If you have diabetes, you can enjoy half a banana when you need a snack.Â Like all fruits, bananas have carbs, but they wonât blow up a low-carbÂ diet.",
+      "metadata": {
+        "url": "https://www.webmd.com/food-recipes/health-benefits-bananas",
+        "title": "Bananas: Health Benefits and Nutritional Info Explained",
+        "domain": "www.webmd.com",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:45:31.515369",
+        "search_position": 3,
+        "snippet": "Dec 8, 2023 ... Bananas are best known for containing potassium, which is a big player in heart health. This vital mineral and electrolyte carries a small ...",
+        "content_length": 10863,
+        "word_count": 1837,
+        "chunk_id": "www.webmd.com_10",
+        "chunk_index": 10,
+        "total_chunks": 27
+      },
+      "similarity": 0.6875158548355103,
+      "score": 0.7002610983848572
+    },
+    {
+      "text": "You can also place yellow bananas in a sealed refrigerator drawer, which helps keep the taste even after the peel becomes brown, or on a banana hanger, which helps them to ripen more evenly. If you want to ripen bananas fast, place them in a paper bag or store them close to other ripe fruit . Once the peel darkens, cut up or mash the banana and freeze it to use in smoothies or other recipes. Takeaways Bananas are a good source of potassium, magnesium , vitamin B6, and other important nutrients.",
+      "metadata": {
+        "url": "https://www.webmd.com/food-recipes/health-benefits-bananas",
+        "title": "Bananas: Health Benefits and Nutritional Info Explained",
+        "domain": "www.webmd.com",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:45:31.515369",
+        "search_position": 3,
+        "snippet": "Dec 8, 2023 ... Bananas are best known for containing potassium, which is a big player in heart health. This vital mineral and electrolyte carries a small ...",
+        "content_length": 10863,
+        "word_count": 1837,
+        "chunk_id": "www.webmd.com_24",
+        "chunk_index": 24,
+        "total_chunks": 27
+      },
+      "similarity": 0.6675754189491272,
+      "score": 0.686302793264389
+    },
+    {
+      "text": "cholesterol, this fruit is a jack-of-all-trades If you’re feeling short of breath, sleep can be tough — propping yourself up or sleeping on your side may help If you fear the unknown or find yourself needing reassurance often, you may identify with this attachment style If you’re looking to boost your gut health, it’s better to get fiber from whole foods",
+      "metadata": {
+        "url": "https://health.clevelandclinic.org/benefits-of-bananas",
+        "title": "Are Bananas Good for You? 6+ Health Benefits",
+        "domain": "health.clevelandclinic.org",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:45:30.892489",
+        "search_position": 2,
+        "snippet": "May 6, 2025 ... Health benefits of bananas · Improved digestion · Blood pressure management · Fighting off illness · Weight management · Athletic performance · Blood ...",
+        "content_length": 5801,
+        "word_count": 953,
+        "chunk_id": "health.clevelandclinic.org_13",
+        "chunk_index": 13,
+        "total_chunks": 14
+      },
+      "similarity": 0.5935966968536377,
+      "score": 0.6825176877975463
+    },
+    {
+      "text": "Thanks to their thick peels, conventionally grown bananas are considered to have low to moderate levels of pesticide residue, according to the Environmental Working Group's rankings. But some chemicals can get through the peel.Â Â How to Eat Bananas Like most fruit, bananas can be enjoyed raw â just peel and eat! But they can also be used in many recipes. Bananas can be a substitute for eggs, butter or oil, or a sweetener in healthy baked goods.",
+      "metadata": {
+        "url": "https://www.webmd.com/food-recipes/health-benefits-bananas",
+        "title": "Bananas: Health Benefits and Nutritional Info Explained",
+        "domain": "www.webmd.com",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:45:31.515369",
+        "search_position": 3,
+        "snippet": "Dec 8, 2023 ... Bananas are best known for containing potassium, which is a big player in heart health. This vital mineral and electrolyte carries a small ...",
+        "content_length": 10863,
+        "word_count": 1837,
+        "chunk_id": "www.webmd.com_21",
+        "chunk_index": 21,
+        "total_chunks": 27
+      },
+      "similarity": 0.6591165661811829,
+      "score": 0.6803815963268279
+    },
+    {
+      "text": "A medium one gives you about 27 grams of carbs. Weight control Eating low-GI foods may promote weight loss. Fiber, like that found in bananas, can also help you control your weight.Â Itâs no secret that the right amount of fiber in your diet is good for you. An average-size ripe banana gives you 3 grams of it. Thatâs about 10% of what you need each day.",
+      "metadata": {
+        "url": "https://www.webmd.com/food-recipes/health-benefits-bananas",
+        "title": "Bananas: Health Benefits and Nutritional Info Explained",
+        "domain": "www.webmd.com",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:45:31.515369",
+        "search_position": 3,
+        "snippet": "Dec 8, 2023 ... Bananas are best known for containing potassium, which is a big player in heart health. This vital mineral and electrolyte carries a small ...",
+        "content_length": 10863,
+        "word_count": 1837,
+        "chunk_id": "www.webmd.com_11",
+        "chunk_index": 11,
+        "total_chunks": 27
+      },
+      "similarity": 0.655143141746521,
+      "score": 0.6776001992225646
+    },
+    {
+      "text": "Bananas : Can be found at your grocery store all year long Are easily stored Travel well in their peelÂ Is a banana a fruit?Â A banana is considered a fruit. Bananas grow in a cluster at the top of a tropical plant. Is a banana a berry? A banana is a berry from a botanical point of view. Berries are fruits that come from one flower and usually have several seeds.",
+      "metadata": {
+        "url": "https://www.webmd.com/food-recipes/health-benefits-bananas",
+        "title": "Bananas: Health Benefits and Nutritional Info Explained",
+        "domain": "www.webmd.com",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:45:31.515369",
+        "search_position": 3,
+        "snippet": "Dec 8, 2023 ... Bananas are best known for containing potassium, which is a big player in heart health. This vital mineral and electrolyte carries a small ...",
+        "content_length": 10863,
+        "word_count": 1837,
+        "chunk_id": "www.webmd.com_2",
+        "chunk_index": 2,
+        "total_chunks": 27
+      },
+      "similarity": 0.6435017585754395,
+      "score": 0.6694512310028076
+    },
+    {
+      "text": "Today, b ananas are grown in more than 150 countries in tropical climates, including Africa, South and Central America, China, and India. There are hundreds of types. The dessert banana (Cavendish) is the most popular variety in North America and Europe. Bananas are versatile as well as tasty. You can eat them raw, mixed into your favorite smoothie, or in a peanut butter-banana sandwich, bananaÂ bread, or muffins.",
+      "metadata": {
+        "url": "https://www.webmd.com/food-recipes/health-benefits-bananas",
+        "title": "Bananas: Health Benefits and Nutritional Info Explained",
+        "domain": "www.webmd.com",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:45:31.515369",
+        "search_position": 3,
+        "snippet": "Dec 8, 2023 ... Bananas are best known for containing potassium, which is a big player in heart health. This vital mineral and electrolyte carries a small ...",
+        "content_length": 10863,
+        "word_count": 1837,
+        "chunk_id": "www.webmd.com_1",
+        "chunk_index": 1,
+        "total_chunks": 27
+      },
+      "similarity": 0.6432158350944519,
+      "score": 0.6692510845661163
+    },
+    {
+      "text": "foster Tossing frozen bananas into smoothies with greens, protein , and healthy fats How to Store Bananas Bananas can ripen quickly, so it's best to store them away from direct sunlight.",
+      "metadata": {
+        "url": "https://www.webmd.com/food-recipes/health-benefits-bananas",
+        "title": "Bananas: Health Benefits and Nutritional Info Explained",
+        "domain": "www.webmd.com",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:45:31.515369",
+        "search_position": 3,
+        "snippet": "Dec 8, 2023 ... Bananas are best known for containing potassium, which is a big player in heart health. This vital mineral and electrolyte carries a small ...",
+        "content_length": 10863,
+        "word_count": 1837,
+        "chunk_id": "www.webmd.com_23",
+        "chunk_index": 23,
+        "total_chunks": 27
+      },
+      "similarity": 0.6390523910522461,
+      "score": 0.6663366737365722
+    },
+    {
+      "text": "Some other ways to enjoy them include: Adding sliced bananas to your morning cereal Making dairy-free \"nice cream\" by tossing frozen bananas in a food processor Slathering halved bananas in nut butter and topping with chocolate chips, raisins, or shredded coconut Slicing banana into pancake batter Freezing a sliced banana, dipping it into melted dark chocolate, and freezing it again for a sweet summertime treat Using overripe bananas to make sweet, moist banana bread Making indulgent bananas",
+      "metadata": {
+        "url": "https://www.webmd.com/food-recipes/health-benefits-bananas",
+        "title": "Bananas: Health Benefits and Nutritional Info Explained",
+        "domain": "www.webmd.com",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:45:31.515369",
+        "search_position": 3,
+        "snippet": "Dec 8, 2023 ... Bananas are best known for containing potassium, which is a big player in heart health. This vital mineral and electrolyte carries a small ...",
+        "content_length": 10863,
+        "word_count": 1837,
+        "chunk_id": "www.webmd.com_22",
+        "chunk_index": 22,
+        "total_chunks": 27
+      },
+      "similarity": 0.6364808678627014,
+      "score": 0.664536607503891
+    },
+    {
+      "text": "A medium banana has about 28 grams of carbohydrate. Some people like to count \"net\" carbs, a number you get by subtracting the fiber and and sugar alcohols from the total carbs. But the FDA doesn't offer a legal definition of net carbs and recommends sticking with the total carbs number.",
+      "metadata": {
+        "url": "https://www.webmd.com/food-recipes/health-benefits-bananas",
+        "title": "Bananas: Health Benefits and Nutritional Info Explained",
+        "domain": "www.webmd.com",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:45:31.515369",
+        "search_position": 3,
+        "snippet": "Dec 8, 2023 ... Bananas are best known for containing potassium, which is a big player in heart health. This vital mineral and electrolyte carries a small ...",
+        "content_length": 10863,
+        "word_count": 1837,
+        "chunk_id": "www.webmd.com_15",
+        "chunk_index": 15,
+        "total_chunks": 27
+      },
+      "similarity": 0.6338527202606201,
+      "score": 0.6626969041824341
+    },
+    {
+      "text": "Potassium -rich foods also help you get rid of more sodium when you pee and relax the walls of your blood vessels, both of which help lower your blood pressure.Â Whatâs more, potassium: May lower your risk ofÂ stroke Can help keep your bones healthy as you age May help your muscles work better Can help prevent kidney stones If you haveÂ kidney problems, too much potassium isnât good for you. Check with your doctor to see how much you should have.",
+      "metadata": {
+        "url": "https://www.webmd.com/food-recipes/health-benefits-bananas",
+        "title": "Bananas: Health Benefits and Nutritional Info Explained",
+        "domain": "www.webmd.com",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:45:31.515369",
+        "search_position": 3,
+        "snippet": "Dec 8, 2023 ... Bananas are best known for containing potassium, which is a big player in heart health. This vital mineral and electrolyte carries a small ...",
+        "content_length": 10863,
+        "word_count": 1837,
+        "chunk_id": "www.webmd.com_5",
+        "chunk_index": 5,
+        "total_chunks": 27
+      },
+      "similarity": 0.5712661743164062,
+      "score": 0.6188863220214843
+    },
+    {
+      "text": "They have probiotics, which are the good bacteria found in your gut, and prebiotics, carbs that feed these good bacteria. Thereâs also evidence that probiotics can help with the annoyingÂ diarrhea people get after taking some antibiotics.",
+      "metadata": {
+        "url": "https://www.webmd.com/food-recipes/health-benefits-bananas",
+        "title": "Bananas: Health Benefits and Nutritional Info Explained",
+        "domain": "www.webmd.com",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:45:31.515369",
+        "search_position": 3,
+        "snippet": "Dec 8, 2023 ... Bananas are best known for containing potassium, which is a big player in heart health. This vital mineral and electrolyte carries a small ...",
+        "content_length": 10863,
+        "word_count": 1837,
+        "chunk_id": "www.webmd.com_7",
+        "chunk_index": 7,
+        "total_chunks": 27
+      },
+      "similarity": 0.539885401725769,
+      "score": 0.5969197812080383
+    }
+  ]
+}

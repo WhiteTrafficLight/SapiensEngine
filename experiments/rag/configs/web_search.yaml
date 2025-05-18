@@ -1,0 +1,50 @@
+# 웹 검색 통합 실험 설정
+name: "웹 검색 통합 실험"
+description: "웹 검색 결과 통합 효과 평가"
+
+# 청크화 설정
+chunk_size: 500
+chunk_overlap: 50
+chunking_strategy: "text_splitter"
+chunk_metadata: ["source", "page_num"]
+
+# 임베딩 모델
+embedding_model: "BAAI/bge-large-en-v1.5"
+embedding_dims: 1024
+
+# 검색 알고리즘
+search_algorithm: "top_k"
+top_k: 5
+similarity_threshold: 0.6
+similarity_metric: "cosine"
+reranker_model: "cross-encoder/ms-marco-MiniLM-L-6-v2"
+
+# 쿼리 강화
+query_enhancement: false
+enhancement_type: "none"
+enhancement_model: "gpt-3.5-turbo"
+expansion_terms: 5
+
+# 웹 검색 통합 (이 설정은 실제 실험에서 변경될 항목)
+web_search_enabled: true
+search_provider: "google"
+max_results: 5
+web_content_max_tokens: 1000
+
+# 결과 융합
+fusion_strategy: "weighted"
+local_weight: 0.5
+web_weight: 0.5
+
+# 테스트 데이터
+data_sources:
+  - "./data/sample_document.pdf"
+  - "./data/knowledge_base.txt"
+
+# 테스트 쿼리
+test_queries:
+  - "인공지능이란 무엇인가?"
+  - "머신러닝과 딥러닝의 차이점은?"
+  - "자연어 처리 기술의 발전 과정을 설명해주세요."
+  - "벡터 데이터베이스의 장점은 무엇인가요?"
+  - "RAG 시스템을 구축하는 방법에 대해 알려주세요." 

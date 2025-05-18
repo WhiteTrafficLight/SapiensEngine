@@ -1,0 +1,210 @@
+
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>RAG 실험 결과 대시보드</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <style>
+                body { font-family: Arial, sans-serif; margin: 20px; }
+                h1, h2 { color: #2c3e50; }
+                .section { margin-bottom: 30px; }
+                .chart { margin: 20px 0; text-align: center; }
+                .chart img { 
+                    max-width: 100%; 
+                    height: auto; 
+                    width: auto;
+                    max-height: 80vh; 
+                    object-fit: contain; 
+                    border: 1px solid #ddd; 
+                }
+                table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+                th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                th { background-color: #f2f2f2; }
+                tr:nth-child(even) { background-color: #f9f9f9; }
+                
+                @media (max-width: 768px) {
+                    body { margin: 10px; }
+                    .chart img { max-height: 50vh; }
+                    h1 { font-size: 24px; }
+                    h2 { font-size: 20px; }
+                }
+            </style>
+        </head>
+        <body>
+            <h1>RAG 실험 결과 대시보드</h1>
+            <p>생성 시간: 2025-05-18 01:17:26</p>
+            
+            <div class="section">
+                <h2>1. 실험 성능 비교</h2>
+                <div class="chart">
+                    <img src="visualizations/performance_comparison.png" alt="성능 비교">
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>2. 파라미터 영향 분석</h2>
+                <div class="chart">
+                    <img src="visualizations/chunk_size_impact.png" alt="청크 크기 영향">
+                </div>
+                <div class="chart">
+                    <img src="visualizations/embedding_model_impact.png" alt="임베딩 모델 영향">
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>3. 파라미터 간 상관관계</h2>
+                <div class="chart">
+                    <img src="visualizations/correlation_heatmap.png" alt="상관관계 히트맵">
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>4. 유사도 분포 분석</h2>
+                <div class="chart">
+                    <img src="visualizations/similarity_distribution.png" alt="유사도 분포">
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>5. 쿼리별 성능 분석</h2>
+                <div class="chart">
+                    <img src="visualizations/query_performance.png" alt="쿼리별 성능">
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>6. 실험 요약 테이블</h2>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <tr>
+                            <th>실험 ID</th>
+                            <th>이름</th>
+                            <th>최고 유사도</th>
+                            <th>평균 유사도</th>
+                            <th>실행 시간</th>
+                            <th>주요 파라미터</th>
+                        </tr>
+        
+                        <tr>
+                            <td>0c4823dc</td>
+                            <td>기본 RAG 실험</td>
+                            <td>0.6830</td>
+                            <td>0.5707</td>
+                            <td>53.23초</td>
+                            <td>청크: 500, 모델: BAAI/bge-large-en-v1.5</td>
+                        </tr>
+            
+                        <tr>
+                            <td>2c820eca</td>
+                            <td>기본 RAG 실험</td>
+                            <td>0.6625</td>
+                            <td>0.5572</td>
+                            <td>36.92초</td>
+                            <td>청크: 500, 모델: BAAI/bge-large-en-v1.5</td>
+                        </tr>
+            
+                        <tr>
+                            <td>528449d1</td>
+                            <td>기본 RAG 실험</td>
+                            <td>0.6830</td>
+                            <td>0.5707</td>
+                            <td>61.11초</td>
+                            <td>청크: 500, 모델: BAAI/bge-large-en-v1.5</td>
+                        </tr>
+            
+                        <tr>
+                            <td>82b965b9</td>
+                            <td>기본 RAG 실험</td>
+                            <td>0.6625</td>
+                            <td>0.5572</td>
+                            <td>67.54초</td>
+                            <td>청크: 500, 모델: BAAI/bge-large-en-v1.5</td>
+                        </tr>
+            
+                        <tr>
+                            <td>86818a8e</td>
+                            <td>기본 RAG 실험</td>
+                            <td>0.6678</td>
+                            <td>0.5590</td>
+                            <td>66.76초</td>
+                            <td>청크: 500, 모델: BAAI/bge-large-en-v1.5</td>
+                        </tr>
+            
+                        <tr>
+                            <td>c0dd59cf</td>
+                            <td>기본 RAG 실험</td>
+                            <td>0.7536</td>
+                            <td>0.5770</td>
+                            <td>67.37초</td>
+                            <td>청크: 500, 모델: BAAI/bge-large-en-v1.5</td>
+                        </tr>
+            
+                        <tr>
+                            <td>65d4b7c4</td>
+                            <td>merged_chunks_hybrid_sm0.3</td>
+                            <td>0.7500</td>
+                            <td>0.4786</td>
+                            <td>70.93초</td>
+                            <td>청크: 500, 모델: BAAI/bge-large-en-v1.5</td>
+                        </tr>
+            
+                        <tr>
+                            <td>047a22e2</td>
+                            <td>기본 RAG 실험</td>
+                            <td>0.6625</td>
+                            <td>0.5572</td>
+                            <td>57.29초</td>
+                            <td>청크: 500, 모델: BAAI/bge-large-en-v1.5</td>
+                        </tr>
+            
+                        <tr>
+                            <td>6343c6b1</td>
+                            <td>기본 RAG 실험</td>
+                            <td>0.7125</td>
+                            <td>0.5747</td>
+                            <td>55.91초</td>
+                            <td>청크: 500, 모델: BAAI/bge-large-en-v1.5</td>
+                        </tr>
+            
+                        <tr>
+                            <td>4e752d0e</td>
+                            <td>기본 RAG 실험</td>
+                            <td>0.7137</td>
+                            <td>0.5868</td>
+                            <td>56.75초</td>
+                            <td>청크: 500, 모델: BAAI/bge-large-en-v1.5</td>
+                        </tr>
+            
+                        <tr>
+                            <td>21308ec4</td>
+                            <td>기본 RAG 실험 - hybrid search</td>
+                            <td>0.7137</td>
+                            <td>0.5868</td>
+                            <td>67.37초</td>
+                            <td>청크: 500, 모델: BAAI/bge-large-en-v1.5</td>
+                        </tr>
+            
+                        <tr>
+                            <td>c4b35485</td>
+                            <td>기본 RAG 실험 - hybrid search</td>
+                            <td>0.7137</td>
+                            <td>0.5868</td>
+                            <td>71.59초</td>
+                            <td>청크: 500, 모델: BAAI/bge-large-en-v1.5</td>
+                        </tr>
+            
+                        <tr>
+                            <td>2a2ce21d</td>
+                            <td>기본 RAG 실험 - merged_chunks</td>
+                            <td>0.8392</td>
+                            <td>0.7707</td>
+                            <td>102.69초</td>
+                            <td>청크: 500, 모델: BAAI/bge-large-en-v1.5</td>
+                        </tr>
+            
+                    </table>
+                </div>
+            </div>
+        </body>
+        </html>
+        

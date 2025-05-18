@@ -1,0 +1,520 @@
+{
+  "query": "How has Berlin contributed to left-wing or progressive political movements throughout its modern history?",
+  "search_provider": "google",
+  "timestamp": "2025-05-17T14:37:20.092948",
+  "search_results": [
+    {
+      "title": "History - Democratic Socialists of America (DSA)",
+      "url": "https://www.dsausa.org/about-us/history/",
+      "snippet": "Jul 1, 2017 ... Unlike DSOC, the New American Movement, founded in 1971, had its origins not in a wing of the Old Left but in Students for a Democratic Society ...",
+      "source": "google_api",
+      "domain": "www.dsausa.org",
+      "date": "",
+      "position": 1
+    },
+    {
+      "title": "The Weimar Republic | Holocaust Encyclopedia",
+      "url": "https://encyclopedia.ushmm.org/content/en/article/the-weimar-republic",
+      "snippet": "The Weimar Republic was a liberal democratic republic founded in Germany in the aftermath of WWI. Learn about the era's political and economic crises and ...",
+      "source": "google_api",
+      "domain": "encyclopedia.ushmm.org",
+      "date": "",
+      "position": 2
+    }
+  ],
+  "extracted_chunks": [
+    {
+      "text": "Berlin had a thriving nightlife full of bars and cabarets. There were between 65 and 80 gay bars and 50 lesbian bars in the capital alone. Sexual liberation was a very real phenomenon, complete with a gay and lesbian rights movement led by Dr. Magnus Hirschfeld who ran an Institute for Sexual Science. Significant increases in women's rights were another achievement of the period.",
+      "metadata": {
+        "url": "https://encyclopedia.ushmm.org/content/en/article/the-weimar-republic",
+        "title": "The Weimar Republic | Holocaust Encyclopedia",
+        "domain": "encyclopedia.ushmm.org",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:22:29.215464",
+        "search_position": 2,
+        "snippet": "The Weimar Republic was a liberal democratic republic founded in Germany in the aftermath of WWI. Learn about the era's political and economic crises and ...",
+        "chunk_id": "encyclopedia.ushmm.org_20",
+        "chunk_index": 20,
+        "total_chunks": 29
+      },
+      "similarity": 0.6381197571754456,
+      "score": 0.6536838300228118
+    },
+    {
+      "text": "At first, however, right-wing Freikorps or volunteer paramilitary organizations were deployed against left wing agitators. The violent confrontations between left and right-wing extremists became ever bloodier. At least 1,200 Germans died in nine days of street fighting in Berlin in March 1919. Similar violence took place across Germany, most notably in Munich.",
+      "metadata": {
+        "url": "https://encyclopedia.ushmm.org/content/en/article/the-weimar-republic",
+        "title": "The Weimar Republic | Holocaust Encyclopedia",
+        "domain": "encyclopedia.ushmm.org",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:22:29.215464",
+        "search_position": 2,
+        "snippet": "The Weimar Republic was a liberal democratic republic founded in Germany in the aftermath of WWI. Learn about the era's political and economic crises and ...",
+        "chunk_id": "encyclopedia.ushmm.org_8",
+        "chunk_index": 8,
+        "total_chunks": 29
+      },
+      "similarity": 0.6357306241989136,
+      "score": 0.6520114369392395
+    },
+    {
+      "text": "Cultural Changes Not everything about the Weimar period was impoverishment and political turmoil. Germany experienced its own “Roaring Twenties” until they were cut short by the Great Depression. Cities burgeoned with new arrivals from the countryside in search of jobs, setting the stage for a vibrant urban life. Urban centers like Berlin became some of the most socially liberal places in Europe, much to the chagrin of conservative elites.",
+      "metadata": {
+        "url": "https://encyclopedia.ushmm.org/content/en/article/the-weimar-republic",
+        "title": "The Weimar Republic | Holocaust Encyclopedia",
+        "domain": "encyclopedia.ushmm.org",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:22:29.215464",
+        "search_position": 2,
+        "snippet": "The Weimar Republic was a liberal democratic republic founded in Germany in the aftermath of WWI. Learn about the era's political and economic crises and ...",
+        "chunk_id": "encyclopedia.ushmm.org_19",
+        "chunk_index": 19,
+        "total_chunks": 29
+      },
+      "similarity": 0.6231335401535034,
+      "score": 0.6431934781074523
+    },
+    {
+      "text": "The cutting edge Bauhaus movement changed the face of architecture. Weimar also produced great thinkers like Theodor Adorno and Herbert Marcuse. German scientists won at least one Nobel Prize a year from 1918 to 1933, including a physicist named Albert Einstein. Global Economic Crisis However, the global economic downturn created by the Great Depression in America had devastating repercussions for the Weimar Republic.",
+      "metadata": {
+        "url": "https://encyclopedia.ushmm.org/content/en/article/the-weimar-republic",
+        "title": "The Weimar Republic | Holocaust Encyclopedia",
+        "domain": "encyclopedia.ushmm.org",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:22:29.215464",
+        "search_position": 2,
+        "snippet": "The Weimar Republic was a liberal democratic republic founded in Germany in the aftermath of WWI. Learn about the era's political and economic crises and ...",
+        "chunk_id": "encyclopedia.ushmm.org_23",
+        "chunk_index": 23,
+        "total_chunks": 29
+      },
+      "similarity": 0.554395318031311,
+      "score": 0.5950767226219177
+    },
+    {
+      "text": "The Reichstag, in turn, was also elected by a popular vote with its seats distributed proportionally. This meant when the Social Democratic Party (SPD) won 21.7% of the popular vote in 1920, it was allocated (roughly) 21.7% of the 459 seats available (102). This system ensured that Germans had a voice in government that they had never had before but it also allowed for a massive proliferation of parties that could make it difficult to gain a majority or form a governing coalition.",
+      "metadata": {
+        "url": "https://encyclopedia.ushmm.org/content/en/article/the-weimar-republic",
+        "title": "The Weimar Republic | Holocaust Encyclopedia",
+        "domain": "encyclopedia.ushmm.org",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:22:29.215464",
+        "search_position": 2,
+        "snippet": "The Weimar Republic was a liberal democratic republic founded in Germany in the aftermath of WWI. Learn about the era's political and economic crises and ...",
+        "chunk_id": "encyclopedia.ushmm.org_12",
+        "chunk_index": 12,
+        "total_chunks": 29
+      },
+      "similarity": 0.5529360771179199,
+      "score": 0.5940552539825439
+    },
+    {
+      "text": "The Weimar Constitution extended the right to vote to all men and women over the age of 20 in 1919 (the United States did not adopt this standard until 1920, Britain in 1928). German Jews as well experienced a period of increased social and economic freedom. Culturally, the period produced important and lasting results.",
+      "metadata": {
+        "url": "https://encyclopedia.ushmm.org/content/en/article/the-weimar-republic",
+        "title": "The Weimar Republic | Holocaust Encyclopedia",
+        "domain": "encyclopedia.ushmm.org",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:22:29.215464",
+        "search_position": 2,
+        "snippet": "The Weimar Republic was a liberal democratic republic founded in Germany in the aftermath of WWI. Learn about the era's political and economic crises and ...",
+        "chunk_id": "encyclopedia.ushmm.org_21",
+        "chunk_index": 21,
+        "total_chunks": 29
+      },
+      "similarity": 0.5436870455741882,
+      "score": 0.5875809319019317
+    },
+    {
+      "text": "Heinrich Brüning, who became Chancellor in 1930, chose the deeply unpopular option of an austerity program which cut spending and those programs designed precisely to help those most in need. Economic hardship combined with a general distrust of the Weimar system to destabilize parliamentary politics. Majorities and even coalitions in the Reichstag were difficult to form among an increasing large number of extremist parties, left and right. Elections were held more and more frequently.",
+      "metadata": {
+        "url": "https://encyclopedia.ushmm.org/content/en/article/the-weimar-republic",
+        "title": "The Weimar Republic | Holocaust Encyclopedia",
+        "domain": "encyclopedia.ushmm.org",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:22:29.215464",
+        "search_position": 2,
+        "snippet": "The Weimar Republic was a liberal democratic republic founded in Germany in the aftermath of WWI. Learn about the era's political and economic crises and ...",
+        "chunk_id": "encyclopedia.ushmm.org_25",
+        "chunk_index": 25,
+        "total_chunks": 29
+      },
+      "similarity": 0.5432334542274475,
+      "score": 0.5872634179592132
+    },
+    {
+      "text": "For example, the Bavarian Peasants' League, a party representing purely agricultural interests in Bavaria won 0.8% of the vote and gained 4 seats. Proportional representation later allowed more extremist parties such as the Nazi Party to gain influence. Immediate Challenges However, the Weimar Republic faced more immediate problems in early 1920 when a group of right-wing paramilitaries seized power in what became known as the Kapp Putsch.",
+      "metadata": {
+        "url": "https://encyclopedia.ushmm.org/content/en/article/the-weimar-republic",
+        "title": "The Weimar Republic | Holocaust Encyclopedia",
+        "domain": "encyclopedia.ushmm.org",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:22:29.215464",
+        "search_position": 2,
+        "snippet": "The Weimar Republic was a liberal democratic republic founded in Germany in the aftermath of WWI. Learn about the era's political and economic crises and ...",
+        "chunk_id": "encyclopedia.ushmm.org_13",
+        "chunk_index": 13,
+        "total_chunks": 29
+      },
+      "similarity": 0.5408034920692444,
+      "score": 0.585562444448471
+    },
+    {
+      "text": "As historian Peter Gay wrote, “the republic created little; it liberated what was already there.” Weimar witnessed some of the most important developments of early film such as The Cabinet of Dr. Caligari (1919) and Nosferatu (1922). It was home to famous authors such as Franz Kafka, Vladimir Nabokov, W.H. Auden, Virginia Woolf, and Graham Greene. In the art world, Weimar featured the Expressionist works of Otto Dix and George Grosz. The plays of Bertolt Brecht appeared on German stages.",
+      "metadata": {
+        "url": "https://encyclopedia.ushmm.org/content/en/article/the-weimar-republic",
+        "title": "The Weimar Republic | Holocaust Encyclopedia",
+        "domain": "encyclopedia.ushmm.org",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:22:29.215464",
+        "search_position": 2,
+        "snippet": "The Weimar Republic was a liberal democratic republic founded in Germany in the aftermath of WWI. Learn about the era's political and economic crises and ...",
+        "chunk_id": "encyclopedia.ushmm.org_22",
+        "chunk_index": 22,
+        "total_chunks": 29
+      },
+      "similarity": 0.5383078455924988,
+      "score": 0.5838154919147491
+    },
+    {
+      "text": "In many ways, it never shook this association, particularly from the clauses of the Versailles Treaty that reduced the once proud German military to practically nothing and placed all blame for the war on Germany. Mutiny, Unrest, and Violence But, even before that government could come into being, the German navy chose in November to order a suicidal assault against the British navy in an attempt to salvage some honor. The sailors refused. A massive leftist mutiny began on November 3.",
+      "metadata": {
+        "url": "https://encyclopedia.ushmm.org/content/en/article/the-weimar-republic",
+        "title": "The Weimar Republic | Holocaust Encyclopedia",
+        "domain": "encyclopedia.ushmm.org",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:22:29.215464",
+        "search_position": 2,
+        "snippet": "The Weimar Republic was a liberal democratic republic founded in Germany in the aftermath of WWI. Learn about the era's political and economic crises and ...",
+        "chunk_id": "encyclopedia.ushmm.org_5",
+        "chunk_index": 5,
+        "total_chunks": 29
+      },
+      "similarity": 0.5285581350326538,
+      "score": 0.5769906945228577
+    },
+    {
+      "text": "What social, economic, and legal changes may have been most challenging or threatening to many Germans during the 1920s? How can governments and societies maintain their structure and principles in the face of dramatic social change? How can knowledge of the events in Germany and Europe before the Nazis came to power help citizens today respond to threats of genocide and mass atrocity in the world?",
+      "metadata": {
+        "url": "https://encyclopedia.ushmm.org/content/en/article/the-weimar-republic",
+        "title": "The Weimar Republic | Holocaust Encyclopedia",
+        "domain": "encyclopedia.ushmm.org",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:22:29.215464",
+        "search_position": 2,
+        "snippet": "The Weimar Republic was a liberal democratic republic founded in Germany in the aftermath of WWI. Learn about the era's political and economic crises and ...",
+        "chunk_id": "encyclopedia.ushmm.org_28",
+        "chunk_index": 28,
+        "total_chunks": 29
+      },
+      "similarity": 0.5279917120933533,
+      "score": 0.5765941984653472
+    },
+    {
+      "text": "Close Image Lightbox The Weimar Republic is the name given to the German government between the end of the Imperial period (1918) and the beginning of Nazi Germany (1933). The Weimar Republic (and period) draws its name from the town of Weimar in central Germany where the constitutional assembly met. Political turmoil and violence, economic hardship, and also new social freedoms and vibrant artistic movements characterized the complex Weimar period.",
+      "metadata": {
+        "url": "https://encyclopedia.ushmm.org/content/en/article/the-weimar-republic",
+        "title": "The Weimar Republic | Holocaust Encyclopedia",
+        "domain": "encyclopedia.ushmm.org",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:22:29.215464",
+        "search_position": 2,
+        "snippet": "The Weimar Republic was a liberal democratic republic founded in Germany in the aftermath of WWI. Learn about the era's political and economic crises and ...",
+        "chunk_id": "encyclopedia.ushmm.org_0",
+        "chunk_index": 0,
+        "total_chunks": 29
+      },
+      "similarity": 0.5279072523117065,
+      "score": 0.5765350766181946
+    },
+    {
+      "text": "Thus, in August 1918, after it became clear that Germany's last gasp military offensives had failed, Generals Hindenburg and Ludendorff passed control of the government to Chancellor Max von Baden, a moderate, and two Social Democrats to enact reforms. This transfer of power would have far-reaching effects.",
+      "metadata": {
+        "url": "https://encyclopedia.ushmm.org/content/en/article/the-weimar-republic",
+        "title": "The Weimar Republic | Holocaust Encyclopedia",
+        "domain": "encyclopedia.ushmm.org",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:22:29.215464",
+        "search_position": 2,
+        "snippet": "The Weimar Republic was a liberal democratic republic founded in Germany in the aftermath of WWI. Learn about the era's political and economic crises and ...",
+        "chunk_id": "encyclopedia.ushmm.org_3",
+        "chunk_index": 3,
+        "total_chunks": 29
+      },
+      "similarity": 0.5248643755912781,
+      "score": 0.5744050629138946
+    },
+    {
+      "text": "Political violence peaked in 1923 with Hitler's attempted coup, the Beer Hall Putsch, which was put down by the military. Economic Burdens Nevertheless, the leaders of the Weimar Republic still faced daunting challenges, mainly of the economic variety, particularly the burden placed upon them by the outgoing leadership of the Kaiser and the generals. This took several forms. The first was the immense cost of the war itself and the damage it had done to Germany's civilian economy.",
+      "metadata": {
+        "url": "https://encyclopedia.ushmm.org/content/en/article/the-weimar-republic",
+        "title": "The Weimar Republic | Holocaust Encyclopedia",
+        "domain": "encyclopedia.ushmm.org",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:22:29.215464",
+        "search_position": 2,
+        "snippet": "The Weimar Republic was a liberal democratic republic founded in Germany in the aftermath of WWI. Learn about the era's political and economic crises and ...",
+        "chunk_id": "encyclopedia.ushmm.org_15",
+        "chunk_index": 15,
+        "total_chunks": 29
+      },
+      "similarity": 0.5167033076286316,
+      "score": 0.568692315340042
+    },
+    {
+      "text": "Many Germans who considered themselves middle class found themselves destitute. [caption=4e6611e4-63e6-449f-a269-2974f6bd0ce9] - [credit=4e6611e4-63e6-449f-a269-2974f6bd0ce9] However, one of the overlooked successes of the Weimar government was skillfully renegotiating and restructuring its debts and bringing the economy back under control. In fact, Article 48 was used frequently by liberal chancellors to take immediate action to stabilize the economy.",
+      "metadata": {
+        "url": "https://encyclopedia.ushmm.org/content/en/article/the-weimar-republic",
+        "title": "The Weimar Republic | Holocaust Encyclopedia",
+        "domain": "encyclopedia.ushmm.org",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:22:29.215464",
+        "search_position": 2,
+        "snippet": "The Weimar Republic was a liberal democratic republic founded in Germany in the aftermath of WWI. Learn about the era's political and economic crises and ...",
+        "chunk_id": "encyclopedia.ushmm.org_18",
+        "chunk_index": 18,
+        "total_chunks": 29
+      },
+      "similarity": 0.5143804550170898,
+      "score": 0.5670663185119629
+    },
+    {
+      "text": "At home, the civilian population suffered from malnutrition as a result of the Allied blockade, with starvation a serious and often fatal outcome. Workers went on strike in attempts to gain better working conditions; in 1917 alone, there were 562 separate strikes. In short, Germany was coming apart. The government, centered on an ineffective Emperor, devolved into a military dictatorship incapable of reforming the system.",
+      "metadata": {
+        "url": "https://encyclopedia.ushmm.org/content/en/article/the-weimar-republic",
+        "title": "The Weimar Republic | Holocaust Encyclopedia",
+        "domain": "encyclopedia.ushmm.org",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:22:29.215464",
+        "search_position": 2,
+        "snippet": "The Weimar Republic was a liberal democratic republic founded in Germany in the aftermath of WWI. Learn about the era's political and economic crises and ...",
+        "chunk_id": "encyclopedia.ushmm.org_2",
+        "chunk_index": 2,
+        "total_chunks": 29
+      },
+      "similarity": 0.5042898654937744,
+      "score": 0.560002905845642
+    },
+    {
+      "text": "When Ebert sought the promised help of the army in maintaining control, he was told that “the Army does not fire on other Army units.” The military, therefore, made it clear that they were happy to fight the left but would not take arms against the right-wing Freikorps. A highly effective general strike by the left saved Chancellor Ebert's government. In this strike, the national bank refused to pay out currency, civil servants refused to follow orders, and workers refused to work.",
+      "metadata": {
+        "url": "https://encyclopedia.ushmm.org/content/en/article/the-weimar-republic",
+        "title": "The Weimar Republic | Holocaust Encyclopedia",
+        "domain": "encyclopedia.ushmm.org",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:22:29.215464",
+        "search_position": 2,
+        "snippet": "The Weimar Republic was a liberal democratic republic founded in Germany in the aftermath of WWI. Learn about the era's political and economic crises and ...",
+        "chunk_id": "encyclopedia.ushmm.org_14",
+        "chunk_index": 14,
+        "total_chunks": 29
+      },
+      "similarity": 0.4979109466075897,
+      "score": 0.5555376626253128
+    },
+    {
+      "text": "Hitler's Rise to Power A combination of political and economic dissatisfaction, some of it dating back to the founding of the Republic, helped create the conditions for Hitler's rise to power. By drawing together the fringe nationalist parties into his Nazi Party, Hitler was able to gain a sufficient number of seats in the Reichstag to make him a political player. Eventually, conservatives, hoping to control him and capitalize on his popularity brought him into the government.",
+      "metadata": {
+        "url": "https://encyclopedia.ushmm.org/content/en/article/the-weimar-republic",
+        "title": "The Weimar Republic | Holocaust Encyclopedia",
+        "domain": "encyclopedia.ushmm.org",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:22:29.215464",
+        "search_position": 2,
+        "snippet": "The Weimar Republic was a liberal democratic republic founded in Germany in the aftermath of WWI. Learn about the era's political and economic crises and ...",
+        "chunk_id": "encyclopedia.ushmm.org_26",
+        "chunk_index": 26,
+        "total_chunks": 29
+      },
+      "similarity": 0.4913295805454254,
+      "score": 0.5509307063817978
+    },
+    {
+      "text": "Those most responsible for the war itself and the accompanying human and economic disasters handed their debacle to a new civilian government which then became responsible for conducting peace negotiations. The Weimar Republic came to bear for many the humiliation of World War I and the blame for all its accompanying hardships.",
+      "metadata": {
+        "url": "https://encyclopedia.ushmm.org/content/en/article/the-weimar-republic",
+        "title": "The Weimar Republic | Holocaust Encyclopedia",
+        "domain": "encyclopedia.ushmm.org",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:22:29.215464",
+        "search_position": 2,
+        "snippet": "The Weimar Republic was a liberal democratic republic founded in Germany in the aftermath of WWI. Learn about the era's political and economic crises and ...",
+        "chunk_id": "encyclopedia.ushmm.org_4",
+        "chunk_index": 4,
+        "total_chunks": 29
+      },
+      "similarity": 0.4835664927959442,
+      "score": 0.5454965449571609
+    },
+    {
+      "text": "Many of the challenges of this era set the stage for Hitler's rise to power, but it is only with hindsight that some say the Weimar Republic was doomed from the start. World War I left Germany a shattered nation. Two million young men had been killed and a further 4.2 million had been wounded; in all, 19% of the male population were casualties of the war.",
+      "metadata": {
+        "url": "https://encyclopedia.ushmm.org/content/en/article/the-weimar-republic",
+        "title": "The Weimar Republic | Holocaust Encyclopedia",
+        "domain": "encyclopedia.ushmm.org",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:22:29.215464",
+        "search_position": 2,
+        "snippet": "The Weimar Republic was a liberal democratic republic founded in Germany in the aftermath of WWI. Learn about the era's political and economic crises and ...",
+        "chunk_id": "encyclopedia.ushmm.org_1",
+        "chunk_index": 1,
+        "total_chunks": 29
+      },
+      "similarity": 0.4795580506324768,
+      "score": 0.5426906354427338
+    },
+    {
+      "text": "On November 9, the Kaiser abdicated and fled the country. Unfortunately, this was too little, too late. Antiwar demonstrations and massive unrest in Bavaria followed thereafter which unseated the old regime. In this moment of great confusion and turmoil, the army under General Wilhelm Groener offered the Social Democratic Chancellor, Friedrich Ebert, a deal.",
+      "metadata": {
+        "url": "https://encyclopedia.ushmm.org/content/en/article/the-weimar-republic",
+        "title": "The Weimar Republic | Holocaust Encyclopedia",
+        "domain": "encyclopedia.ushmm.org",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:22:29.215464",
+        "search_position": 2,
+        "snippet": "The Weimar Republic was a liberal democratic republic founded in Germany in the aftermath of WWI. Learn about the era's political and economic crises and ...",
+        "chunk_id": "encyclopedia.ushmm.org_6",
+        "chunk_index": 6,
+        "total_chunks": 29
+      },
+      "similarity": 0.4764201045036316,
+      "score": 0.540494073152542
+    },
+    {
+      "text": "However, Hitler used the weaknesses written into the Weimar Constitution (like Article 48) to subvert it and assume dictatorial power. The Weimar Republic ended with Hitler's appointment as Chancellor in 1933. Critical Thinking Questions What challenges does a defeated nation face at the end of a major conflict? What responsibilities do the victors and the rest of the international community have in this situation, if any?",
+      "metadata": {
+        "url": "https://encyclopedia.ushmm.org/content/en/article/the-weimar-republic",
+        "title": "The Weimar Republic | Holocaust Encyclopedia",
+        "domain": "encyclopedia.ushmm.org",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:22:29.215464",
+        "search_position": 2,
+        "snippet": "The Weimar Republic was a liberal democratic republic founded in Germany in the aftermath of WWI. Learn about the era's political and economic crises and ...",
+        "chunk_id": "encyclopedia.ushmm.org_27",
+        "chunk_index": 27,
+        "total_chunks": 29
+      },
+      "similarity": 0.4697558283805847,
+      "score": 0.5358290798664093
+    },
+    {
+      "text": "The basic format of the government was based around a president, a chancellor, and a parliament or Reichstag. The President was elected by a popular vote to a seven year term and held real political power, controlling the military and having the ability to call for new Reichstag elections.",
+      "metadata": {
+        "url": "https://encyclopedia.ushmm.org/content/en/article/the-weimar-republic",
+        "title": "The Weimar Republic | Holocaust Encyclopedia",
+        "domain": "encyclopedia.ushmm.org",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:22:29.215464",
+        "search_position": 2,
+        "snippet": "The Weimar Republic was a liberal democratic republic founded in Germany in the aftermath of WWI. Learn about the era's political and economic crises and ...",
+        "chunk_id": "encyclopedia.ushmm.org_10",
+        "chunk_index": 10,
+        "total_chunks": 29
+      },
+      "similarity": 0.4689190983772278,
+      "score": 0.5352433688640594
+    },
+    {
+      "text": "Creating a New Constitution With the violence quelled, 25 men including the famous sociologist Max Weber, legal scholar Hugo Preuss, politician Friedrich Naumann, and historian Friedrich Meinecke worked from February to July 1919 crafting a new constitution which became law on August 11. The drafters of this new constitution faced the difficult task of creating a government acceptable to both the political left and right without being too radical. They compromised to satisfy both groups.",
+      "metadata": {
+        "url": "https://encyclopedia.ushmm.org/content/en/article/the-weimar-republic",
+        "title": "The Weimar Republic | Holocaust Encyclopedia",
+        "domain": "encyclopedia.ushmm.org",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:22:29.215464",
+        "search_position": 2,
+        "snippet": "The Weimar Republic was a liberal democratic republic founded in Germany in the aftermath of WWI. Learn about the era's political and economic crises and ...",
+        "chunk_id": "encyclopedia.ushmm.org_9",
+        "chunk_index": 9,
+        "total_chunks": 29
+      },
+      "similarity": 0.4687036871910095,
+      "score": 0.5350925810337066
+    },
+    {
+      "text": "In a nod to conservatives afraid of too much democracy, the framers also added elements such as Article 48 which allowed the President to assume emergency powers, suspend civil rights, and operate without the consent of the Reichstag for a limited period of time. The chancellor was responsible for appointing a cabinet and running the day-to-day operations of the government. Ideally, the chancellor was to come from the majority party in the Reichstag or if no majority existed, from a coalition.",
+      "metadata": {
+        "url": "https://encyclopedia.ushmm.org/content/en/article/the-weimar-republic",
+        "title": "The Weimar Republic | Holocaust Encyclopedia",
+        "domain": "encyclopedia.ushmm.org",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:22:29.215464",
+        "search_position": 2,
+        "snippet": "The Weimar Republic was a liberal democratic republic founded in Germany in the aftermath of WWI. Learn about the era's political and economic crises and ...",
+        "chunk_id": "encyclopedia.ushmm.org_11",
+        "chunk_index": 11,
+        "total_chunks": 29
+      },
+      "similarity": 0.4671296775341034,
+      "score": 0.5339907742738723
+    },
+    {
+      "text": "The second was the Versailles Treaty . The Allies charged the Germans with paying staggering reparations for the cost of the war while simultaneously occupying some of the most productive regions of western Germany. For example, Germany lost 13% of its territory including areas accounting for 16% of coal and 48% of iron ore production. The high reparations payments and costs of war had devastating consequences.",
+      "metadata": {
+        "url": "https://encyclopedia.ushmm.org/content/en/article/the-weimar-republic",
+        "title": "The Weimar Republic | Holocaust Encyclopedia",
+        "domain": "encyclopedia.ushmm.org",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:22:29.215464",
+        "search_position": 2,
+        "snippet": "The Weimar Republic was a liberal democratic republic founded in Germany in the aftermath of WWI. Learn about the era's political and economic crises and ...",
+        "chunk_id": "encyclopedia.ushmm.org_16",
+        "chunk_index": 16,
+        "total_chunks": 29
+      },
+      "similarity": 0.46162211894989014,
+      "score": 0.5301354832649231
+    },
+    {
+      "text": "As the panic hit Wall Street, the US government pressed its former allies, Britain and France, to repay their war debts. Not having the money, Britain and France pressed Germany for more reparations payments, causing an economic depression. The German government faced the classic dilemma: cut government spending in an attempt to balance the budget or increase it in an attempt to jumpstart the economy.",
+      "metadata": {
+        "url": "https://encyclopedia.ushmm.org/content/en/article/the-weimar-republic",
+        "title": "The Weimar Republic | Holocaust Encyclopedia",
+        "domain": "encyclopedia.ushmm.org",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:22:29.215464",
+        "search_position": 2,
+        "snippet": "The Weimar Republic was a liberal democratic republic founded in Germany in the aftermath of WWI. Learn about the era's political and economic crises and ...",
+        "chunk_id": "encyclopedia.ushmm.org_24",
+        "chunk_index": 24,
+        "total_chunks": 29
+      },
+      "similarity": 0.4614487886428833,
+      "score": 0.5300141520500182
+    },
+    {
+      "text": "In exchange for a guarantee not to reform the officer corps or reduce the power of the armed forces, Groener promised the support of the military in maintaining order and defending the government. Faced with increasing violence from all sides, Ebert agreed in what became known as the Ebert-Groener Pact. While some historians condemn this act as a betrayal of democratic values, Ebert had few options at the time in order to maintain some semblance of law and order.",
+      "metadata": {
+        "url": "https://encyclopedia.ushmm.org/content/en/article/the-weimar-republic",
+        "title": "The Weimar Republic | Holocaust Encyclopedia",
+        "domain": "encyclopedia.ushmm.org",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:22:29.215464",
+        "search_position": 2,
+        "snippet": "The Weimar Republic was a liberal democratic republic founded in Germany in the aftermath of WWI. Learn about the era's political and economic crises and ...",
+        "chunk_id": "encyclopedia.ushmm.org_7",
+        "chunk_index": 7,
+        "total_chunks": 29
+      },
+      "similarity": 0.4611274302005768,
+      "score": 0.5297892011404037
+    },
+    {
+      "text": "The cost of living in Germany rose twelve times between 1914 and 1922 (compared to three in the United States). When the government sought to pay reparations simply by printing more money, the value of German currency rapidly declined, leading to hyper-inflation. In January 1920, the exchange rate was 64.8 Marks to one Dollar; in November 1923, it was 4,200,000,000,000 to one. This economic disaster had social consequences as well.",
+      "metadata": {
+        "url": "https://encyclopedia.ushmm.org/content/en/article/the-weimar-republic",
+        "title": "The Weimar Republic | Holocaust Encyclopedia",
+        "domain": "encyclopedia.ushmm.org",
+        "source": "google_api",
+        "date_extracted": "2025-05-17T14:22:29.215464",
+        "search_position": 2,
+        "snippet": "The Weimar Republic was a liberal democratic republic founded in Germany in the aftermath of WWI. Learn about the era's political and economic crises and ...",
+        "chunk_id": "encyclopedia.ushmm.org_17",
+        "chunk_index": 17,
+        "total_chunks": 29
+      },
+      "similarity": 0.4484366476535797,
+      "score": 0.5209056533575057
+    }
+  ]
+}

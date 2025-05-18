@@ -1,0 +1,140 @@
+{
+  "timestamp": "2025-05-17T16:29:07.162599",
+  "configurations": [
+    {
+      "name": "lightweight",
+      "query_model": "all-MiniLM-L6-v2",
+      "document_model": "all-MiniLM-L6-v2",
+      "results": [
+        {
+          "query": "Cases where excessive adherence to the law violated human dignity",
+          "execution_time": 4.510071754455566,
+          "num_chunks": 26,
+          "top_chunk_similarity": 0.46210527420043945,
+          "avg_similarity": 0.37337385232631976
+        },
+        {
+          "query": "Benefits of bananas",
+          "execution_time": 1.6303832530975342,
+          "num_chunks": 0,
+          "top_chunk_similarity": 0,
+          "avg_similarity": 0
+        },
+        {
+          "query": "Why people love violence",
+          "execution_time": 1.065938949584961,
+          "num_chunks": 0,
+          "top_chunk_similarity": 0,
+          "avg_similarity": 0
+        },
+        {
+          "query": "Impact of technology on interpersonal relationships",
+          "execution_time": 0.8788831233978271,
+          "num_chunks": 0,
+          "top_chunk_similarity": 0,
+          "avg_similarity": 0
+        },
+        {
+          "query": "How quantum physics explains consciousness",
+          "execution_time": 0.8782460689544678,
+          "num_chunks": 0,
+          "top_chunk_similarity": 0,
+          "avg_similarity": 0
+        }
+      ]
+    },
+    {
+      "name": "mixed",
+      "query_model": "BAAI/bge-large-en-v1.5",
+      "document_model": "all-MiniLM-L6-v2",
+      "results": [
+        {
+          "query": "Cases where excessive adherence to the law violated human dignity",
+          "execution_time": 6.836699962615967,
+          "num_chunks": 26,
+          "top_chunk_similarity": 0.46767082810401917,
+          "avg_similarity": 0.3583982718678621
+        },
+        {
+          "query": "Benefits of bananas",
+          "execution_time": 1.088794231414795,
+          "num_chunks": 0,
+          "top_chunk_similarity": 0,
+          "avg_similarity": 0
+        },
+        {
+          "query": "Why people love violence",
+          "execution_time": 1.1439669132232666,
+          "num_chunks": 0,
+          "top_chunk_similarity": 0,
+          "avg_similarity": 0
+        },
+        {
+          "query": "Impact of technology on interpersonal relationships",
+          "execution_time": 0.36133480072021484,
+          "num_chunks": 0,
+          "top_chunk_similarity": 0,
+          "avg_similarity": 0
+        },
+        {
+          "query": "How quantum physics explains consciousness",
+          "execution_time": 0.08265304565429688,
+          "num_chunks": 0,
+          "top_chunk_similarity": 0,
+          "avg_similarity": 0
+        }
+      ]
+    },
+    {
+      "name": "powerful",
+      "query_model": "BAAI/bge-large-en-v1.5",
+      "document_model": "BAAI/bge-large-en-v1.5",
+      "results": [
+        {
+          "query": "Cases where excessive adherence to the law violated human dignity",
+          "execution_time": 7.672887086868286,
+          "num_chunks": 26,
+          "top_chunk_similarity": 0.6391469240188599,
+          "avg_similarity": 0.5598998826283675
+        },
+        {
+          "query": "Benefits of bananas",
+          "execution_time": 0.9953510761260986,
+          "num_chunks": 0,
+          "top_chunk_similarity": 0,
+          "avg_similarity": 0
+        },
+        {
+          "query": "Why people love violence",
+          "execution_time": 0.6165528297424316,
+          "num_chunks": 0,
+          "top_chunk_similarity": 0,
+          "avg_similarity": 0
+        },
+        {
+          "query": "Impact of technology on interpersonal relationships",
+          "execution_time": 0.3921661376953125,
+          "num_chunks": 0,
+          "top_chunk_similarity": 0,
+          "avg_similarity": 0
+        },
+        {
+          "query": "How quantum physics explains consciousness",
+          "execution_time": 0.0998070240020752,
+          "num_chunks": 0,
+          "top_chunk_similarity": 0,
+          "avg_similarity": 0
+        }
+      ]
+    }
+  ],
+  "queries": [
+    "Cases where excessive adherence to the law violated human dignity",
+    "Benefits of bananas",
+    "Why people love violence",
+    "Impact of technology on interpersonal relationships",
+    "How quantum physics explains consciousness"
+  ],
+  "search_provider": "google",
+  "max_results": 1
+}

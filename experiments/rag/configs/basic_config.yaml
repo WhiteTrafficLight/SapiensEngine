@@ -1,0 +1,48 @@
+# RAG 기본 실험 설정
+name: "hybrid_merged_chunks_web_search"
+description: "하이브리드 청크, 통합청크 검색알고리즘, 웹검색 활성화"
+
+# 청크화 설정
+chunk_size: 500
+chunk_overlap: 0.50
+chunking_strategy: "hybrid"
+chunk_metadata: ["source", "page_num"]
+
+# 임베딩 모델
+embedding_model: "BAAI/bge-large-en-v1.5"
+embedding_dims: 1024
+
+# 검색 알고리즘
+search_algorithm: "merged_chunks"
+semantic_weight: 0.3
+top_k: 5
+similarity_threshold: 0.6
+similarity_metric: "cosine"
+reranker_model: "none"
+
+# 쿼리 강화
+query_enhancement: false
+enhancement_type: "none"
+enhancement_model: "gpt-3.5-turbo"
+expansion_terms: 5
+
+# 웹 검색 통합
+web_search_enabled: true
+search_provider: "google"
+max_results: 5
+web_content_max_tokens: 1000
+
+# 결과 융합
+fusion_strategy: "weighted"
+local_weight: 0.7
+web_weight: 0.3
+
+# 테스트 데이터
+data_sources:
+  - "/Users/jihoon/sapiens_engine/sapiens_engine/context_files/LimitationsofTranshumanism.pdf"
+
+# 테스트 쿼리
+test_queries:
+  - "transhumanism as expression of will to power"
+  - "Nietzschean perspective on overcoming human limits with technology"
+  - "philosophical defense of transhumanism as enhancement, not dehumanization"

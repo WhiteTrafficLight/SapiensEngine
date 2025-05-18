@@ -1,0 +1,409 @@
+# RAG 검색 알고리즘 설정 예제
+# 각 알고리즘별 권장 설정과 사용 사례별 파라미터 예시
+
+# =====================================================
+# Top-K 알고리즘 예제
+# =====================================================
+
+# 기본 Top-K 설정
+---
+experiment_id: basic_top_k
+name: "기본 Top-K 검색"
+description: "간단한 Top-K 검색 알고리즘 기본 설정"
+search_algorithm: "top_k"
+top_k: 5
+chunk_size: 500
+chunk_overlap: 50
+chunking_strategy: "text_splitter"
+embedding_model: "BAAI/bge-large-en-v1.5"
+query_enhancement: false
+web_search_enabled: false
+
+# 퀵 서치용 Top-K 설정 (리소스 제약 환경용)
+---
+experiment_id: quick_top_k
+name: "경량 Top-K 검색"
+description: "빠른 응답 시간을 위한 경량 Top-K 설정"
+search_algorithm: "top_k"
+top_k: 3
+chunk_size: 300
+chunk_overlap: 30
+chunking_strategy: "text_splitter"
+embedding_model: "sentence-transformers/all-MiniLM-L6-v2"
+query_enhancement: false
+web_search_enabled: false
+
+# 상세 Top-K 설정 (품질 우선)
+---
+experiment_id: detailed_top_k
+name: "상세 Top-K 검색"
+description: "품질 우선 Top-K 설정 (더 많은 결과)"
+search_algorithm: "top_k"
+top_k: 8
+chunk_size: 400
+chunk_overlap: 100
+chunking_strategy: "text_splitter"
+embedding_model: "BAAI/bge-large-en-v1.5"
+query_enhancement: true
+enhancement_type: "expansion"
+web_search_enabled: false
+
+# =====================================================
+# Threshold 알고리즘 예제
+# =====================================================
+
+# 기본 Threshold 설정 (품질 우선)
+---
+experiment_id: basic_threshold
+name: "기본 임계값 검색"
+description: "품질 우선 임계값 기반 검색 기본 설정"
+search_algorithm: "threshold"
+top_k: 10
+similarity_threshold: 0.7
+chunk_size: 500
+chunk_overlap: 50
+chunking_strategy: "text_splitter"
+embedding_model: "BAAI/bge-large-en-v1.5"
+
+# 높은 정밀도 Threshold 설정 (정확한 정보 검색용)
+---
+experiment_id: high_precision_threshold
+name: "고정밀 임계값 검색"
+description: "높은 정확도가 필요한 도메인 특화 검색"
+search_algorithm: "threshold"
+top_k: 15
+similarity_threshold: 0.8
+chunk_size: 400
+chunk_overlap: 100
+chunking_strategy: "text_splitter"
+embedding_model: "BAAI/bge-large-en-v1.5"
+query_enhancement: true
+enhancement_type: "rephrasing"
+
+# 균형 잡힌 Threshold 설정 (정확도-재현율 균형)
+---
+experiment_id: balanced_threshold
+name: "균형 임계값 검색"
+description: "정확도와 재현율 사이의 균형을 맞춘 설정"
+search_algorithm: "threshold"
+top_k: 20
+similarity_threshold: 0.65
+chunk_size: 450
+chunk_overlap: 75
+chunking_strategy: "text_splitter"
+embedding_model: "BAAI/bge-large-en-v1.5"
+
+# =====================================================
+# Adjacent Chunks 알고리즘 예제
+# =====================================================
+
+# 기본 Adjacent Chunks 설정
+---
+experiment_id: basic_adjacent
+name: "기본 인접 청크 검색"
+description: "기본 인접 청크 포함 검색 설정"
+search_algorithm: "adjacent_chunks"
+top_k: 3
+neighbor_threshold: 0.5
+chunk_size: 500
+chunk_overlap: 50
+chunking_strategy: "text_splitter"
+embedding_model: "BAAI/bge-large-en-v1.5"
+
+# 학술 자료용 Adjacent Chunks 설정
+---
+experiment_id: academic_adjacent
+name: "학술 자료 인접 청크 검색"
+description: "학술 논문 및 연구 분석을 위한 인접 청크 검색"
+search_algorithm: "adjacent_chunks"
+top_k: 4
+neighbor_threshold: 0.6
+chunk_size: 400
+chunk_overlap: 100
+chunking_strategy: "text_splitter"
+embedding_model: "BAAI/bge-large-en-v1.5"
+query_enhancement: true
+enhancement_type: "expansion"
+
+# 스토리텔링용 Adjacent Chunks 설정
+---
+experiment_id: storytelling_adjacent
+name: "스토리텔링 인접 청크 검색"
+description: "이야기 흐름 파악을 위한 인접 청크 검색"
+search_algorithm: "adjacent_chunks"
+top_k: 3
+neighbor_threshold: 0.4  # 더 낮은 임계값으로 더 많은 인접 청크 포함
+chunk_size: 300
+chunk_overlap: 150
+chunking_strategy: "text_splitter"
+embedding_model: "BAAI/bge-large-en-v1.5"
+
+# =====================================================
+# Merged Chunks 알고리즘 예제
+# =====================================================
+
+# 기본 Merged Chunks 설정
+---
+experiment_id: basic_merged
+name: "기본 병합 청크 검색"
+description: "기본 청크 병합 검색 설정"
+search_algorithm: "merged_chunks"
+top_k: 3
+similarity_threshold: 0.8  # 병합 임계값
+chunk_size: 300
+chunk_overlap: 100
+chunking_strategy: "text_splitter"
+embedding_model: "BAAI/bge-large-en-v1.5"
+
+# 학술 논문용 Merged Chunks 설정
+---
+experiment_id: academic_merged
+name: "학술 논문 병합 청크 검색"
+description: "학술 논문의 논리적 흐름 파악을 위한 병합 청크 검색"
+search_algorithm: "merged_chunks"
+top_k: 4
+similarity_threshold: 0.75
+chunk_size: 250
+chunk_overlap: 125
+chunking_strategy: "text_splitter"
+embedding_model: "BAAI/bge-large-en-v1.5"
+query_enhancement: true
+enhancement_type: "expansion"
+
+# 기술 문서용 Merged Chunks 설정
+---
+experiment_id: technical_merged
+name: "기술 문서 병합 청크 검색"
+description: "기술 문서의 완성된 설명을 위한 병합 청크 검색"
+search_algorithm: "merged_chunks"
+top_k: 3
+similarity_threshold: 0.85
+chunk_size: 200
+chunk_overlap: 100
+chunking_strategy: "text_splitter"
+embedding_model: "BAAI/bge-large-en-v1.5"
+
+# =====================================================
+# Semantic Window 알고리즘 예제
+# =====================================================
+
+# 기본 Semantic Window 설정
+---
+experiment_id: basic_semantic_window
+name: "기본 의미적 윈도우 검색"
+description: "기본 의미적 윈도우 검색 설정"
+search_algorithm: "semantic_window"
+top_k: 3
+window_size: 5
+window_threshold: 0.6
+chunk_size: 400
+chunk_overlap: 50
+chunking_strategy: "text_splitter"
+embedding_model: "BAAI/bge-large-en-v1.5"
+
+# 복잡한 개념 분석용 Semantic Window 설정
+---
+experiment_id: concept_semantic_window
+name: "개념 분석 의미적 윈도우 검색"
+description: "복잡한 개념과 관계 분석을 위한 의미적 윈도우 검색"
+search_algorithm: "semantic_window"
+top_k: 4
+window_size: 8
+window_threshold: 0.55
+chunk_size: 350
+chunk_overlap: 100
+chunking_strategy: "text_splitter"
+embedding_model: "BAAI/bge-large-en-v1.5"
+query_enhancement: true
+enhancement_type: "rephrasing"
+
+# 다관점 분석용 Semantic Window 설정
+---
+experiment_id: multi_perspective_semantic_window
+name: "다관점 분석 의미적 윈도우 검색"
+description: "다양한 관점과 의견 분석을 위한 의미적 윈도우 검색"
+search_algorithm: "semantic_window"
+top_k: 3
+window_size: 10
+window_threshold: 0.5
+chunk_size: 400
+chunk_overlap: 200
+chunking_strategy: "text_splitter"
+embedding_model: "BAAI/bge-large-en-v1.5"
+
+# =====================================================
+# Hybrid 알고리즘 예제
+# =====================================================
+
+# 기본 Hybrid 설정
+---
+experiment_id: basic_hybrid
+name: "기본 하이브리드 검색"
+description: "기본 벡터-키워드 하이브리드 검색 설정"
+search_algorithm: "hybrid"
+top_k: 5
+semantic_weight: 0.7
+chunk_size: 500
+chunk_overlap: 50
+chunking_strategy: "text_splitter"
+embedding_model: "BAAI/bge-large-en-v1.5"
+
+# 전문 용어 중심 Hybrid 설정 (의학, 법률 등)
+---
+experiment_id: terminology_hybrid
+name: "전문 용어 하이브리드 검색"
+description: "전문 용어와 개념을 다루는 도메인용 하이브리드 검색"
+search_algorithm: "hybrid"
+top_k: 6
+semantic_weight: 0.6  # 키워드 매칭에 더 중점
+chunk_size: 450
+chunk_overlap: 100
+chunking_strategy: "text_splitter"
+embedding_model: "BAAI/bge-large-en-v1.5"
+query_enhancement: true
+enhancement_type: "expansion"
+
+# 개념 중심 Hybrid 설정 (철학, 이론 등)
+---
+experiment_id: concept_hybrid
+name: "개념 중심 하이브리드 검색"
+description: "추상적 개념과 아이디어를 다루는 하이브리드 검색"
+search_algorithm: "hybrid"
+top_k: 5
+semantic_weight: 0.8  # 의미적 검색에 더 중점
+chunk_size: 500
+chunk_overlap: 150
+chunking_strategy: "text_splitter"
+embedding_model: "BAAI/bge-large-en-v1.5"
+query_enhancement: true
+enhancement_type: "rephrasing"
+
+# =====================================================
+# MMR 알고리즘 예제
+# =====================================================
+
+# 기본 MMR 설정
+---
+experiment_id: basic_mmr
+name: "기본 MMR 검색"
+description: "기본 Maximum Marginal Relevance 검색 설정"
+search_algorithm: "mmr"
+top_k: 5
+lambda_param: 0.7
+initial_results: 20
+chunk_size: 500
+chunk_overlap: 50
+chunking_strategy: "text_splitter"
+embedding_model: "BAAI/bge-large-en-v1.5"
+
+# 탐색적 검색용 MMR 설정
+---
+experiment_id: exploratory_mmr
+name: "탐색적 MMR 검색"
+description: "다양한 관점 탐색을 위한 MMR 검색 설정"
+search_algorithm: "mmr"
+top_k: 8
+lambda_param: 0.5  # 다양성에 더 중점
+initial_results: 30
+chunk_size: 450
+chunk_overlap: 100
+chunking_strategy: "text_splitter"
+embedding_model: "BAAI/bge-large-en-v1.5"
+query_enhancement: true
+enhancement_type: "decomposition"
+
+# 맞춤형 요약용 MMR 설정
+---
+experiment_id: summary_mmr
+name: "맞춤형 요약 MMR 검색"
+description: "다양한 관점을 포함한 요약 생성을 위한 MMR 검색"
+search_algorithm: "mmr"
+top_k: 6
+lambda_param: 0.6
+initial_results: 25
+chunk_size: 400
+chunk_overlap: 150
+chunking_strategy: "text_splitter"
+embedding_model: "BAAI/bge-large-en-v1.5"
+
+# =====================================================
+# Conversational 알고리즘 예제
+# =====================================================
+
+# 기본 Conversational 설정
+---
+experiment_id: basic_conversational
+name: "기본 대화형 검색"
+description: "기본 대화 맥락 검색 설정"
+search_algorithm: "conversational"
+top_k: 5
+history_weight: 0.3
+chunk_size: 500
+chunk_overlap: 50
+chunking_strategy: "text_splitter"
+embedding_model: "BAAI/bge-large-en-v1.5"
+
+# 챗봇용 Conversational 설정
+---
+experiment_id: chatbot_conversational
+name: "챗봇 대화형 검색"
+description: "챗봇 시스템을 위한 대화 맥락 검색 설정"
+search_algorithm: "conversational"
+top_k: 4
+history_weight: 0.4
+chunk_size: 300
+chunk_overlap: 100
+chunking_strategy: "text_splitter"
+embedding_model: "BAAI/bge-large-en-v1.5"
+query_enhancement: true
+enhancement_type: "rephrasing"
+
+# 심층 질의응답용 Conversational 설정
+---
+experiment_id: deep_qa_conversational
+name: "심층 질의응답 대화형 검색"
+description: "복잡한 주제에 대한 지속적 대화를 위한 검색 설정"
+search_algorithm: "conversational"
+top_k: 6
+history_weight: 0.35
+chunk_size: 450
+chunk_overlap: 150
+chunking_strategy: "text_splitter"
+embedding_model: "BAAI/bge-large-en-v1.5"
+query_enhancement: true
+enhancement_type: "hybrid"
+
+# =====================================================
+# 하이브리드 전략 조합 예제
+# =====================================================
+
+# 단계적 필터링 조합 (Threshold → MMR)
+# (참고: 실제 구현은 파이프라인 코드 수정 필요)
+---
+experiment_id: staged_filtering
+name: "단계적 필터링 전략"
+description: "임계값 기반 필터링 후 다양성 확보 전략"
+search_algorithm: "mmr"  # 마지막 단계의 알고리즘
+top_k: 5
+lambda_param: 0.6
+initial_results: 15  # 임계값 필터링 결과 수
+similarity_threshold: 0.7  # 첫 단계 필터링 임계값
+chunk_size: 450
+chunk_overlap: 100
+chunking_strategy: "text_splitter"
+embedding_model: "BAAI/bge-large-en-v1.5"
+
+# 맥락 확장 조합 (Top-K → Semantic Window)
+# (참고: 실제 구현은 파이프라인 코드 수정 필요)
+---
+experiment_id: context_expansion
+name: "맥락 확장 전략"
+description: "핵심 결과 검색 후 의미적 맥락 확장"
+search_algorithm: "semantic_window"  # 마지막 단계의 알고리즘
+top_k: 3  # 초기 핵심 결과 수
+window_size: 5
+window_threshold: 0.6
+chunk_size: 400
+chunk_overlap: 100
+chunking_strategy: "text_splitter"
+embedding_model: "BAAI/bge-large-en-v1.5" 

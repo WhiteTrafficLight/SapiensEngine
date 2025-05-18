@@ -1,0 +1,47 @@
+# 웹 검색 전용 실험 설정
+name: "adjacent_chunks_web_only_search"
+description: "웹 검색만 사용한 RAG 실험 (로컬 문서 없음)"
+
+# 청크화 설정
+chunk_size: 500
+chunk_overlap: 0.50
+chunking_strategy: "hybrid"
+chunk_metadata: ["source", "page_num"]
+
+# 임베딩 모델
+embedding_model: "BAAI/bge-large-en-v1.5"
+embedding_dims: 1024
+
+# 검색 알고리즘
+search_algorithm: "adjacent_chunks"
+top_k: 5
+similarity_threshold: 0.6
+similarity_metric: "cosine"
+reranker_model: "none"
+
+# 쿼리 강화
+query_enhancement: false
+enhancement_type: "none"
+enhancement_model: "gpt-3.5-turbo"
+expansion_terms: 5
+
+# 웹 검색 통합
+web_search_enabled: true
+search_provider: "google"
+max_results: 5
+web_content_max_tokens: 1000
+advanced_scoring: true
+
+# 결과 융합 - 웹 검색만 사용하므로 웹 가중치를 1.0으로 설정
+fusion_strategy: "weighted"
+local_weight: 0.0
+web_weight: 1.0
+
+# 테스트 데이터 - 빈 리스트로 로컬 데이터 소스 없음
+data_sources: []
+
+# 테스트 쿼리
+test_queries:
+  - "transhumanism as expression of will to power"
+  - "Nietzschean perspective on overcoming human limits with technology"
+  - "philosophical defense of transhumanism as enhancement, not dehumanization"

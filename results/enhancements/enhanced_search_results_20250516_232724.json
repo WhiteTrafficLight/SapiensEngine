@@ -1,0 +1,398 @@
+{
+  "original_query": "Transhumanism simplifies human existence into a technical problem",
+  "enhancement_method": "hybrid",
+  "search_method": "semantic",
+  "timestamp": "2025-05-16T23:27:20.898851",
+  "results": [
+    {
+      "query": "Transhumanism simplifies human existence into a technical problem",
+      "is_original": true,
+      "results": [
+        {
+          "text": "니체가 말한 초인은 단순한 생물학적 진화가 아니라 정신적, 문화적 변환을 의미한다. 이는 현대 트랜스휴머니즘과 차별화되는 점이다.",
+          "distance": 1.6377427577972412,
+          "metadata": {
+            "chunk_id": 7,
+            "topic": "트랜스휴머니즘과 철학",
+            "source": "philosophy_texts"
+          }
+        },
+        {
+          "text": "카뮈는 인간 존재의 근본적인 부조리성을 강조한다. 죽음과 삶의 무의미함에도 불구하고 살아가는 것이 인간의 조건이다.",
+          "distance": 1.661440134048462,
+          "metadata": {
+            "topic": "트랜스휴머니즘과 철학",
+            "chunk_id": 8,
+            "source": "philosophy_texts"
+          }
+        },
+        {
+          "text": "니체의 초인 개념은 인간이 자신의 한계를 극복하고 더 높은 존재로 진화하는 것을 말한다. 이는 트랜스휴머니즘의 핵심 사상과 매우 유사하다.",
+          "distance": 1.668296217918396,
+          "metadata": {
+            "chunk_id": 0,
+            "topic": "트랜스휴머니즘과 철학",
+            "source": "philosophy_texts"
+          }
+        }
+      ],
+      "scores": [
+        0,
+        0,
+        0
+      ],
+      "avg_score": 0.0
+    },
+    {
+      "query": "Transhumanism reduces human life to a mere technological issue",
+      "is_original": false,
+      "results": [
+        {
+          "text": "니체가 말한 초인은 단순한 생물학적 진화가 아니라 정신적, 문화적 변환을 의미한다. 이는 현대 트랜스휴머니즘과 차별화되는 점이다.",
+          "distance": 1.607285499572754,
+          "metadata": {
+            "topic": "트랜스휴머니즘과 철학",
+            "chunk_id": 7,
+            "source": "philosophy_texts"
+          }
+        },
+        {
+          "text": "카뮈는 인간 존재의 근본적인 부조리성을 강조한다. 죽음과 삶의 무의미함에도 불구하고 살아가는 것이 인간의 조건이다.",
+          "distance": 1.6462968587875366,
+          "metadata": {
+            "source": "philosophy_texts",
+            "topic": "트랜스휴머니즘과 철학",
+            "chunk_id": 8
+          }
+        },
+        {
+          "text": "카뮈의 실존주의 관점에서, 인간의 본질은 불완전함과 유한성에 있다. 이를 기술로 극복하려는 시도는 인간 존재의 의미를 훼손할 수 있다.",
+          "distance": 1.6561126708984375,
+          "metadata": {
+            "chunk_id": 3,
+            "topic": "트랜스휴머니즘과 철학",
+            "source": "philosophy_texts"
+          }
+        }
+      ],
+      "scores": [
+        0,
+        0,
+        0
+      ],
+      "avg_score": 0.0
+    },
+    {
+      "query": "Transhumanism turns the complexities of human existence into a simple tech problem",
+      "is_original": false,
+      "results": [
+        {
+          "text": "니체가 말한 초인은 단순한 생물학적 진화가 아니라 정신적, 문화적 변환을 의미한다. 이는 현대 트랜스휴머니즘과 차별화되는 점이다.",
+          "distance": 1.6845301389694214,
+          "metadata": {
+            "topic": "트랜스휴머니즘과 철학",
+            "chunk_id": 7,
+            "source": "philosophy_texts"
+          }
+        },
+        {
+          "text": "니체의 초인 개념은 인간이 자신의 한계를 극복하고 더 높은 존재로 진화하는 것을 말한다. 이는 트랜스휴머니즘의 핵심 사상과 매우 유사하다.",
+          "distance": 1.7085559368133545,
+          "metadata": {
+            "source": "philosophy_texts",
+            "chunk_id": 0,
+            "topic": "트랜스휴머니즘과 철학"
+          }
+        },
+        {
+          "text": "카뮈는 인간 존재의 근본적인 부조리성을 강조한다. 죽음과 삶의 무의미함에도 불구하고 살아가는 것이 인간의 조건이다.",
+          "distance": 1.7282347679138184,
+          "metadata": {
+            "topic": "트랜스휴머니즘과 철학",
+            "source": "philosophy_texts",
+            "chunk_id": 8
+          }
+        }
+      ],
+      "scores": [
+        0,
+        0,
+        0
+      ],
+      "avg_score": 0.0
+    },
+    {
+      "query": "transhumanism simplifies human existence technical",
+      "is_original": false,
+      "results": [
+        {
+          "text": "니체가 말한 초인은 단순한 생물학적 진화가 아니라 정신적, 문화적 변환을 의미한다. 이는 현대 트랜스휴머니즘과 차별화되는 점이다.",
+          "distance": 1.610738754272461,
+          "metadata": {
+            "chunk_id": 7,
+            "topic": "트랜스휴머니즘과 철학",
+            "source": "philosophy_texts"
+          }
+        },
+        {
+          "text": "니체의 초인 개념은 인간이 자신의 한계를 극복하고 더 높은 존재로 진화하는 것을 말한다. 이는 트랜스휴머니즘의 핵심 사상과 매우 유사하다.",
+          "distance": 1.6351208686828613,
+          "metadata": {
+            "chunk_id": 0,
+            "topic": "트랜스휴머니즘과 철학",
+            "source": "philosophy_texts"
+          }
+        },
+        {
+          "text": "카뮈는 인간 존재의 근본적인 부조리성을 강조한다. 죽음과 삶의 무의미함에도 불구하고 살아가는 것이 인간의 조건이다.",
+          "distance": 1.6359130144119263,
+          "metadata": {
+            "source": "philosophy_texts",
+            "topic": "트랜스휴머니즘과 철학",
+            "chunk_id": 8
+          }
+        }
+      ],
+      "scores": [
+        0,
+        0,
+        0
+      ],
+      "avg_score": 0.0
+    },
+    {
+      "query": "transhumanism AND simplifies AND human",
+      "is_original": false,
+      "results": [
+        {
+          "text": "니체가 말한 초인은 단순한 생물학적 진화가 아니라 정신적, 문화적 변환을 의미한다. 이는 현대 트랜스휴머니즘과 차별화되는 점이다.",
+          "distance": 1.5371348857879639,
+          "metadata": {
+            "chunk_id": 7,
+            "source": "philosophy_texts",
+            "topic": "트랜스휴머니즘과 철학"
+          }
+        },
+        {
+          "text": "카뮈는 인간 존재의 근본적인 부조리성을 강조한다. 죽음과 삶의 무의미함에도 불구하고 살아가는 것이 인간의 조건이다.",
+          "distance": 1.5504789352416992,
+          "metadata": {
+            "chunk_id": 8,
+            "source": "philosophy_texts",
+            "topic": "트랜스휴머니즘과 철학"
+          }
+        },
+        {
+          "text": "니체의 초인 개념은 인간이 자신의 한계를 극복하고 더 높은 존재로 진화하는 것을 말한다. 이는 트랜스휴머니즘의 핵심 사상과 매우 유사하다.",
+          "distance": 1.5587955713272095,
+          "metadata": {
+            "topic": "트랜스휴머니즘과 철학",
+            "chunk_id": 0,
+            "source": "philosophy_texts"
+          }
+        }
+      ],
+      "scores": [
+        0,
+        0,
+        0
+      ],
+      "avg_score": 0.0
+    },
+    {
+      "query": "How does transhumanism reduce humanity to technical problems?",
+      "is_original": false,
+      "results": [
+        {
+          "text": "카뮈의 실존주의 관점에서, 인간의 본질은 불완전함과 유한성에 있다. 이를 기술로 극복하려는 시도는 인간 존재의 의미를 훼손할 수 있다.",
+          "distance": 1.6930612325668335,
+          "metadata": {
+            "topic": "트랜스휴머니즘과 철학",
+            "chunk_id": 3,
+            "source": "philosophy_texts"
+          }
+        },
+        {
+          "text": "카뮈는 인간 존재의 근본적인 부조리성을 강조한다. 죽음과 삶의 무의미함에도 불구하고 살아가는 것이 인간의 조건이다.",
+          "distance": 1.7011401653289795,
+          "metadata": {
+            "source": "philosophy_texts",
+            "topic": "트랜스휴머니즘과 철학",
+            "chunk_id": 8
+          }
+        },
+        {
+          "text": "니체가 말한 초인은 단순한 생물학적 진화가 아니라 정신적, 문화적 변환을 의미한다. 이는 현대 트랜스휴머니즘과 차별화되는 점이다.",
+          "distance": 1.7080211639404297,
+          "metadata": {
+            "chunk_id": 7,
+            "topic": "트랜스휴머니즘과 철학",
+            "source": "philosophy_texts"
+          }
+        }
+      ],
+      "scores": [
+        0,
+        0,
+        0
+      ],
+      "avg_score": 0.0
+    },
+    {
+      "query": "What limitations of humanity does transhumanism seek to overcome?",
+      "is_original": false,
+      "results": [
+        {
+          "text": "니체가 말한 초인은 단순한 생물학적 진화가 아니라 정신적, 문화적 변환을 의미한다. 이는 현대 트랜스휴머니즘과 차별화되는 점이다.",
+          "distance": 1.7271263599395752,
+          "metadata": {
+            "chunk_id": 7,
+            "source": "philosophy_texts",
+            "topic": "트랜스휴머니즘과 철학"
+          }
+        },
+        {
+          "text": "카뮈는 인간 존재의 근본적인 부조리성을 강조한다. 죽음과 삶의 무의미함에도 불구하고 살아가는 것이 인간의 조건이다.",
+          "distance": 1.7441760301589966,
+          "metadata": {
+            "chunk_id": 8,
+            "topic": "트랜스휴머니즘과 철학",
+            "source": "philosophy_texts"
+          }
+        },
+        {
+          "text": "니체의 초인 개념은 인간이 자신의 한계를 극복하고 더 높은 존재로 진화하는 것을 말한다. 이는 트랜스휴머니즘의 핵심 사상과 매우 유사하다.",
+          "distance": 1.7739975452423096,
+          "metadata": {
+            "chunk_id": 0,
+            "topic": "트랜스휴머니즘과 철학",
+            "source": "philosophy_texts"
+          }
+        }
+      ],
+      "scores": [
+        0,
+        0,
+        0
+      ],
+      "avg_score": 0.0
+    },
+    {
+      "query": "How does transhumanism simplify human existence into a technical problem?",
+      "is_original": false,
+      "results": [
+        {
+          "text": "니체가 말한 초인은 단순한 생물학적 진화가 아니라 정신적, 문화적 변환을 의미한다. 이는 현대 트랜스휴머니즘과 차별화되는 점이다.",
+          "distance": 1.6857433319091797,
+          "metadata": {
+            "source": "philosophy_texts",
+            "chunk_id": 7,
+            "topic": "트랜스휴머니즘과 철학"
+          }
+        },
+        {
+          "text": "카뮈는 인간 존재의 근본적인 부조리성을 강조한다. 죽음과 삶의 무의미함에도 불구하고 살아가는 것이 인간의 조건이다.",
+          "distance": 1.712902545928955,
+          "metadata": {
+            "source": "philosophy_texts",
+            "chunk_id": 8,
+            "topic": "트랜스휴머니즘과 철학"
+          }
+        },
+        {
+          "text": "니체의 초인 개념은 인간이 자신의 한계를 극복하고 더 높은 존재로 진화하는 것을 말한다. 이는 트랜스휴머니즘의 핵심 사상과 매우 유사하다.",
+          "distance": 1.7320773601531982,
+          "metadata": {
+            "source": "philosophy_texts",
+            "chunk_id": 0,
+            "topic": "트랜스휴머니즘과 철학"
+          }
+        }
+      ],
+      "scores": [
+        0,
+        0,
+        0
+      ],
+      "avg_score": 0.0
+    },
+    {
+      "query": "In what ways can transhumanism be seen as reducing human existence to a technical problem?",
+      "is_original": false,
+      "results": [
+        {
+          "text": "니체가 말한 초인은 단순한 생물학적 진화가 아니라 정신적, 문화적 변환을 의미한다. 이는 현대 트랜스휴머니즘과 차별화되는 점이다.",
+          "distance": 1.7102313041687012,
+          "metadata": {
+            "source": "philosophy_texts",
+            "topic": "트랜스휴머니즘과 철학",
+            "chunk_id": 7
+          }
+        },
+        {
+          "text": "카뮈는 인간 존재의 근본적인 부조리성을 강조한다. 죽음과 삶의 무의미함에도 불구하고 살아가는 것이 인간의 조건이다.",
+          "distance": 1.7187469005584717,
+          "metadata": {
+            "topic": "트랜스휴머니즘과 철학",
+            "source": "philosophy_texts",
+            "chunk_id": 8
+          }
+        },
+        {
+          "text": "카뮈의 실존주의 관점에서, 인간의 본질은 불완전함과 유한성에 있다. 이를 기술로 극복하려는 시도는 인간 존재의 의미를 훼손할 수 있다.",
+          "distance": 1.7459455728530884,
+          "metadata": {
+            "topic": "트랜스휴머니즘과 철학",
+            "source": "philosophy_texts",
+            "chunk_id": 3
+          }
+        }
+      ],
+      "scores": [
+        0,
+        0,
+        0
+      ],
+      "avg_score": 0.0
+    },
+    {
+      "query": "Transhumanism simplifies human existence into a technical problem AND human limitations AND being",
+      "is_original": false,
+      "results": [
+        {
+          "text": "니체가 말한 초인은 단순한 생물학적 진화가 아니라 정신적, 문화적 변환을 의미한다. 이는 현대 트랜스휴머니즘과 차별화되는 점이다.",
+          "distance": 1.5392013788223267,
+          "metadata": {
+            "topic": "트랜스휴머니즘과 철학",
+            "chunk_id": 7,
+            "source": "philosophy_texts"
+          }
+        },
+        {
+          "text": "카뮈는 인간 존재의 근본적인 부조리성을 강조한다. 죽음과 삶의 무의미함에도 불구하고 살아가는 것이 인간의 조건이다.",
+          "distance": 1.5605651140213013,
+          "metadata": {
+            "source": "philosophy_texts",
+            "chunk_id": 8,
+            "topic": "트랜스휴머니즘과 철학"
+          }
+        },
+        {
+          "text": "니체의 초인 개념은 인간이 자신의 한계를 극복하고 더 높은 존재로 진화하는 것을 말한다. 이는 트랜스휴머니즘의 핵심 사상과 매우 유사하다.",
+          "distance": 1.5782980918884277,
+          "metadata": {
+            "chunk_id": 0,
+            "topic": "트랜스휴머니즘과 철학",
+            "source": "philosophy_texts"
+          }
+        }
+      ],
+      "scores": [
+        0,
+        0,
+        0
+      ],
+      "avg_score": 0.0
+    }
+  ]
+}

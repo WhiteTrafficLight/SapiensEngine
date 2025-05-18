@@ -49,6 +49,9 @@ vectordb/
 *.pdf
 sapiens_engine/context_files/*.pdf
 experiments/rag/experiment_results/
+.cache/
+**/.cache/
+results/
 
 # Next.js
 /.next/

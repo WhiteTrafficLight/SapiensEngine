@@ -33,7 +33,7 @@ class RAGManager:
     def __init__(
         self,
         db_path: str = "./vectordb",
-        embedding_model: str = "all-MiniLM-L6-v2"
+        embedding_model: str = "BAAI/bge-large-en-v1.5"
     ):
         """
         초기화 함수
@@ -538,8 +538,10 @@ class RAGManager:
             selected_embeddings = []
             
             # 첫 번째로 가장 관련성 높은 문서 선택
-            similarities = util.dot_score(query_embedding, doc_embeddings)[0].numpy()
-            best_idx = np.argmax(similarities)
+            similarities = util.dot_score(query_embedding, doc_embeddings)[0]
+            # PyTorch 텐서를 NumPy 배열로 변환
+            similarities_np = similarities.cpu().numpy()
+            best_idx = np.argmax(similarities_np)
             selected_indices.append(best_idx)
             selected_embeddings.append(doc_embeddings[best_idx].reshape(1, -1))
             
@@ -550,12 +552,17 @@ class RAGManager:
                 remaining_embeddings = doc_embeddings[remaining_indices]
                 
                 # 쿼리와의 유사도 계산
-                query_similarities = util.dot_score(query_embedding, remaining_embeddings)[0].numpy()
+                query_sim_tensor = util.dot_score(query_embedding, remaining_embeddings)[0]
+                # PyTorch 텐서를 NumPy 배열로 변환
+                query_similarities = query_sim_tensor.cpu().numpy()
                 
                 # 선택된 문서들과의 유사도 계산
                 selected_concat = np.concatenate(selected_embeddings, axis=0)
                 doc_similarities = util.dot_score(remaining_embeddings, selected_concat)
-                max_doc_similarities = np.max(doc_similarities, axis=1)
+                
+                # PyTorch 텐서를 NumPy 배열로 변환 후 최대값 계산
+                doc_similarities_np = doc_similarities.cpu().numpy()
+                max_doc_similarities = np.max(doc_similarities_np, axis=1)
                 
                 # MMR 점수 계산
                 mmr_scores = lambda_param * query_similarities - (1 - lambda_param) * max_doc_similarities

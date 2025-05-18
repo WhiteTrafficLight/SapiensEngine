@@ -12,10 +12,9 @@ Context Manager Module
 
 import os
 import re
-import pdfplumber
 import requests
 from bs4 import BeautifulSoup
-from typing import List, Dict, Any, Union, Optional
+from typing import List, Dict, Any, Union, Optional, Tuple
 import chromadb
 from chromadb.utils import embedding_functions
 from langchain_text_splitters import (
@@ -51,7 +50,8 @@ class ContextManager:
         chunk_size: int = 500,
         chunk_overlap: float = 0.25,
         chunking_method: str = "sliding_window",
-        embedding_model: str = "all-MiniLM-L6-v2"
+        embedding_model: str = "all-MiniLM-L6-v2",
+        pdf_extraction_method: str = "pymupdf"
     ):
         """
         초기화 함수
@@ -60,14 +60,16 @@ class ContextManager:
             db_path: 벡터 DB 저장 경로
             chunk_size: 청크 크기 (토큰 단위)
             chunk_overlap: 오버랩 비율 (0.0 ~ 1.0)
-            chunking_method: 청크화 방식 ('sentence' 또는 'sliding_window')
+            chunking_method: 청크화 방식 ('sentence', 'sliding_window', 'hybrid')
             embedding_model: 임베딩 모델 이름
+            pdf_extraction_method: PDF 텍스트 추출 방법 ('pymupdf' 또는 'pdfplumber')
         """
         self.db_path = db_path
         self.chunk_size = chunk_size
         self.chunk_overlap = chunk_overlap
         self.chunking_method = chunking_method
         self.embedding_model_name = embedding_model
+        self.pdf_extraction_method = pdf_extraction_method
         
         # 경로가 없으면 생성
         os.makedirs(db_path, exist_ok=True)
@@ -97,6 +99,9 @@ class ContextManager:
             separators=["\n\n", "\n", ". ", "! ", "? ", ";", ":", " ", ""]
         )
         
+        # 문장 토크나이저 초기화
+        self.nltk_tokenizer = nltk.data.load('tokenizers/punkt/english.pickle')
+        
         logger.info(f"ContextManager 초기화 완료: {chunk_size} 토큰, {chunk_overlap*100}% 오버랩, {chunking_method} 방식")
     
     def load_pdf(self, file_path: str) -> str:
@@ -111,21 +116,45 @@ class ContextManager:
         """
         logger.info(f"PDF 로드 중: {file_path}")
         
-        text = ""
         try:
-            with pdfplumber.open(file_path) as pdf:
-                for page in pdf.pages:
-                    page_text = page.extract_text() or ""
-                    text += page_text + "\n\n"
-        except Exception as e:
-            logger.error(f"PDF 로드 실패: {str(e)}")
-            raise
-        
-        # 여러 줄바꿈 정리
-        text = re.sub(r'\n{3,}', '\n\n', text)
-        
-        logger.info(f"PDF 로드 완료: {len(text)} 자")
-        return text
+            # 업데이트된 pdf_processor 모듈 사용
+            from sapiens_engine.utils.pdf_processor import process_pdf
+            
+            # PDF 텍스트 추출 및 전처리
+            text = process_pdf(
+                file_path,
+                use_grobid=False,  # Grobid 서버가 실행 중인 경우 True로 설정
+                extraction_method=self.pdf_extraction_method
+            )
+            
+            if not text:
+                raise ValueError("PDF에서 텍스트를 추출할 수 없습니다.")
+                
+            logger.info(f"PDF 로드 완료: {len(text)} 자")
+            return text
+            
+        except ImportError:
+            # pdf_processor 모듈이 없는 경우 기존 방식으로 처리
+            logger.warning("pdf_processor 모듈을 찾을 수 없습니다. 기본 방식으로 전환합니다.")
+            
+            # 기존 pdfplumber 방식 사용
+            try:
+                import pdfplumber
+                text = ""
+                with pdfplumber.open(file_path) as pdf:
+                    for page in pdf.pages:
+                        page_text = page.extract_text() or ""
+                        text += page_text + "\n\n"
+                
+                # 여러 줄바꿈 정리
+                text = re.sub(r'\n{3,}', '\n\n', text)
+                
+                logger.info(f"PDF 로드 완료: {len(text)} 자")
+                return text
+                
+            except Exception as e:
+                logger.error(f"PDF 로드 실패: {str(e)}")
+                raise
     
     def load_url(self, url: str) -> str:
         """
@@ -175,11 +204,97 @@ class ContextManager:
         if self.chunking_method == "sentence":
             logger.info("문장 단위 청크화 수행")
             chunks = self.sentence_splitter.split_text(text)
+        elif self.chunking_method == "hybrid":
+            logger.info("하이브리드 청크화 수행 (문장 단위 + 슬라이딩 윈도우)")
+            chunks = self._hybrid_chunking(text)
         else:  # sliding_window
             logger.info("슬라이딩 윈도우 청크화 수행")
             chunks = self.token_splitter.split_text(text)
         
         logger.info(f"청크화 완료: {len(chunks)} 청크 생성")
+        return chunks
+    
+    def _count_tokens(self, text: str) -> int:
+        """
+        임베딩 모델의 토크나이저를 사용하여 텍스트의 토큰 수 계산
+        
+        Args:
+            text: 토큰 수를 계산할 텍스트
+            
+        Returns:
+            토큰 수
+        """
+        # SentenceTransformer 모델의 토크나이저 사용
+        tokenizer = self.embedding_model.tokenizer
+        tokens = tokenizer.tokenize(text)
+        return len(tokens)
+    
+    def _hybrid_chunking(self, text: str) -> List[str]:
+        """
+        문장 단위 + 슬라이딩 윈도우 하이브리드 청크화
+        
+        텍스트를 문장 단위로 분리한 후, 청크 크기와 오버랩을 고려하여
+        문장 경계에서만 청크가 끝나도록 조정합니다.
+        
+        Args:
+            text: 청크화할 텍스트
+            
+        Returns:
+            청크 리스트
+        """
+        # 문장 단위로 텍스트 분리
+        sentences = self.nltk_tokenizer.tokenize(text)
+        
+        # 각 문장의 토큰 수 계산
+        sentence_tokens = [(sentence, self._count_tokens(sentence)) for sentence in sentences]
+        
+        # 청크 및 오버랩 설정
+        target_chunk_size = self.chunk_size
+        target_overlap_size = int(target_chunk_size * self.chunk_overlap)
+        
+        # 청크 생성
+        chunks = []
+        current_chunk = []
+        current_chunk_tokens = 0
+        
+        for i, (sentence, token_count) in enumerate(sentence_tokens):
+            # 현재 청크에 문장을 추가하면 목표 크기를 초과하는지 확인
+            if current_chunk_tokens + token_count > target_chunk_size and current_chunk:
+                # 현재 청크 완성
+                chunks.append(" ".join(current_chunk))
+                
+                # 오버랩 계산 (슬라이딩 윈도우)
+                overlap_tokens = 0
+                overlap_sentences = []
+                
+                # 문장 단위로 오버랩 계산
+                for chunk_sentence in reversed(current_chunk):
+                    sentence_token_count = self._count_tokens(chunk_sentence)
+                    
+                    # 이 문장을 오버랩에 포함했을 때와 포함하지 않았을 때 
+                    # 목표 오버랩 크기에 얼마나 가까운지 비교
+                    new_overlap_tokens = overlap_tokens + sentence_token_count
+                    
+                    # 목표 오버랩 크기에 더 가까운 쪽 선택
+                    if abs(new_overlap_tokens - target_overlap_size) < abs(overlap_tokens - target_overlap_size):
+                        overlap_tokens = new_overlap_tokens
+                        overlap_sentences.insert(0, chunk_sentence)
+                    else:
+                        # 더 이상 오버랩에 문장 추가가 목표 크기에 가까워지지 않음
+                        break
+                
+                # 새로운 청크 시작 (오버랩 포함)
+                current_chunk = overlap_sentences
+                current_chunk_tokens = overlap_tokens
+            
+            # 현재 문장 추가
+            current_chunk.append(sentence)
+            current_chunk_tokens += token_count
+        
+        # 마지막 청크 추가
+        if current_chunk:
+            chunks.append(" ".join(current_chunk))
+        
         return chunks
     
     def process_and_store(

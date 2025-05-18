@@ -1,0 +1,11 @@
+[
+  {
+    "title": "sql server - how to test query - Database Administrators Stack ...",
+    "url": "https://dba.stackexchange.com/questions/223425/how-to-test-query",
+    "snippet": "Nov 26, 2018 ... 4 Answers 4 ... Yes, you can use BEGIN TRANSACTION ... ROLLBACK TRANSACTION to check certain queries. I changed the double quotes ( \" ) to the ...",
+    "source": "google_api",
+    "domain": "dba.stackexchange.com",
+    "date": "",
+    "position": 1
+  }
+]
