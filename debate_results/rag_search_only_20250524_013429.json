@@ -1,0 +1,18 @@
+{
+  "pro_arguments": {
+    "speaker_id": "tech_advocate",
+    "speaker_name": "기술 혁신 옹호자",
+    "stage": "pro_argument",
+    "core_arguments": [],
+    "argument_queries": [],
+    "prepared_argument": ""
+  },
+  "con_arguments": {
+    "speaker_id": "privacy_defender",
+    "speaker_name": "개인정보 보호론자",
+    "stage": "con_argument",
+    "core_arguments": [],
+    "argument_queries": [],
+    "prepared_argument": ""
+  }
+}

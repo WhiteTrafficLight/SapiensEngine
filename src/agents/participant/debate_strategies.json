@@ -1,0 +1,39 @@
+{
+  "strategy_styles": {
+    "Clipping": {
+      "description": "Refute a single, specific claim directly and clearly.",
+      "style_prompt": "'X' is wrong because...",
+      "example": "You said AI has no bias. But it's trained on human data — it inherits our bias."
+    },
+    "Framing Shift": {
+      "description": "Challenge the assumptions and shift the conversation to a deeper or alternative frame.",
+      "style_prompt": "You're assuming Y, but what if we asked Z instead?",
+      "example": "You assume creativity is just combination. But what if creativity is about subjective meaning, not novelty?"
+    },
+    "Reductive Paradox": {
+      "description": "Extend your opponent's logic to an extreme outcome to expose its flaws.",
+      "style_prompt": "If we follow your logic to the end, then...",
+      "example": "If AI is better at creating art, then why not let it replace all human artists entirely?"
+    },
+    "Conceptual Undermining": {
+      "description": "Question the definitions and clarity of key concepts used in the argument.",
+      "style_prompt": "What do we even mean by 'X' here?",
+      "example": "You call what AI generates 'art' — but can art exist without intention or consciousness?"
+    },
+    "Ethical Reversal": {
+      "description": "Turn a seemingly positive claim into an ethical concern or contradiction.",
+      "style_prompt": "You call it progress, but isn't it dehumanization?",
+      "example": "You say AI helps us transcend limitations. But does removing all struggle make us more human — or less?"
+    },
+    "Temporal Delay": {
+      "description": "Acknowledge present utility but raise concern for long-term consequences.",
+      "style_prompt": "Even if it works now, what happens in 20 years?",
+      "example": "Sure, AI art is exciting now. But what happens when humans stop learning to create at all?"
+    },
+    "Philosophical Reframing": {
+      "description": "Replace the original question with a more fundamental or existential one.",
+      "style_prompt": "Maybe the real question is not what X is, but what it *means* to us.",
+      "example": "You ask whether AI can be creative. But maybe the better question is — what kind of world do we create when we no longer need to create ourselves?"
+    }
+  }
+} 

@@ -1,0 +1,65 @@
+# 토론 유형 에이전트 구성 설정
+name: "토론 형식 대화"
+description: "서로 다른 관점을 가진 참여자들이 주제에 대해 토론하는 형식"
+version: "1.0"
+
+# 필요한 에이전트 정의
+agents:
+  # 중재자: 대화 흐름 조정 및 참여자 관리
+  moderator:
+    type: "moderator"
+    id: "debate_mod_001"
+    name: "중재자"
+    description: "토론 질서 유지 및 진행을 담당하는 중립적 중재자"
+    capabilities:
+      - "topic_management"
+      - "turn_allocation"
+      - "conflict_resolution"
+      - "summary_generation"
+    parameters:
+      strictness: 0.7  # 중재 엄격성 (0-1)
+      neutrality: 0.9  # 중립성 유지 정도 (0-1)
+      
+  # 첫 번째 토론자
+  participant1:
+    type: "participant"
+    id: "debate_p1_001"
+    name: "토론자 A"
+    description: "명제를 지지하는 입장"
+    viewpoint: "pro"
+    capabilities:
+      - "argumentation"
+      - "evidence_citation"
+      - "rebuttal"
+    parameters:
+      assertiveness: 0.8  # 주장 강도 (0-1)
+      emotion_level: 0.5  # 감정 표현 정도 (0-1)
+      
+  # 두 번째 토론자
+  participant2:
+    type: "participant"
+    id: "debate_p2_001"
+    name: "토론자 B"
+    description: "명제에 반대하는 입장"
+    viewpoint: "con"
+    capabilities:
+      - "argumentation"
+      - "evidence_citation"
+      - "rebuttal"
+    parameters:
+      assertiveness: 0.7  # 주장 강도 (0-1)
+      emotion_level: 0.4  # 감정 표현 정도 (0-1)
+      
+  # 팩트 체커: 정보 정확성 검증 (선택 사항)
+  fact_checker:
+    type: "utility"
+    id: "fact_check_001"
+    name: "팩트 체커"
+    description: "토론 중 제시된 정보의 정확성을 검증"
+    capabilities:
+      - "information_verification"
+      - "evidence_search"
+    parameters:
+      check_frequency: 0.5  # 검증 빈도 (0-1)
+      web_search_enabled: true  # 웹 검색 사용 여부
+      rag_enabled: true  # RAG 시스템 활용 여부 
