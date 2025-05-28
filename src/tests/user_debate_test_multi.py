@@ -26,28 +26,6 @@ from src.agents.participant.user_participant import UserParticipant
 
 def create_multi_participant_room_data():
     """다중 참가자 토론방 데이터 생성"""
-    # 철학자 데이터 로드
-    philosophers_file = os.path.join(project_root, "philosophers", "debate_optimized.yaml")
-    try:
-        with open(philosophers_file, 'r', encoding='utf-8') as file:
-            philosophers = yaml.safe_load(file)
-    except Exception as e:
-        print(f"⚠️ 철학자 데이터 로드 실패: {e}")
-        philosophers = {}
-    
-    # 모더레이터 스타일 로드
-    moderator_style_file = os.path.join(project_root, "src", "agents", "moderator", "moderator_style.json")
-    try:
-        with open(moderator_style_file, 'r', encoding='utf-8') as file:
-            moderator_styles = json.load(file)
-    except Exception as e:
-        print(f"⚠️ 모더레이터 스타일 로드 실패: {e}")
-        moderator_styles = {}
-    
-    # 철학자 데이터 가져오기
-    nietzsche_data = philosophers.get("nietzsche", {})
-    hegel_data = philosophers.get("hegel", {})
-    camus_data = philosophers.get("camus", {})
     
     return {
         "title": "AI가 인간의 창의성을 대체할 수 있는가?",
@@ -77,17 +55,19 @@ def create_multi_participant_room_data():
 이 토론에서는 4명의 참가자가 AI의 창의성에 대해 깊이 있게 논의합니다.
         """,
         "participants": {
-            # 다중 참가자 구조 사용
+            # 다중 참가자 구조 - 철학자 키만 지정
             "pro": [
                 {
                     "character_id": "nietzsche",
-                    "name": nietzsche_data.get("name", "니체"),
+                    "philosopher_key": "nietzsche",  # YAML에서 로드할 키
+                    "name": "Nietzsche",  # 기본 이름 (YAML에서 덮어씀)
                     "personality": "passionate",
                     "style": "provocative"
                 },
                 {
                     "character_id": "hegel",
-                    "name": hegel_data.get("name", "헤겔"),
+                    "philosopher_key": "hegel",  # YAML에서 로드할 키
+                    "name": "Hegel",  # 기본 이름 (YAML에서 덮어씀)
                     "personality": "systematic",
                     "style": "dialectical"
                 }
@@ -95,7 +75,8 @@ def create_multi_participant_room_data():
             "con": [
                 {
                     "character_id": "camus",
-                    "name": camus_data.get("name", "카뮈"),
+                    "philosopher_key": "camus",  # YAML에서 로드할 키
+                    "name": "Camus",  # 기본 이름 (YAML에서 덮어씀)
                     "personality": "existential",
                     "style": "absurdist"
                 },

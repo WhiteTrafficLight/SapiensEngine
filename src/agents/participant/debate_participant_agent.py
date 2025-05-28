@@ -6,6 +6,9 @@
 
 import logging
 import time
+import os
+import yaml
+import json
 from typing import Dict, List, Any, Optional
 
 from ..base.agent import Agent
@@ -42,13 +45,17 @@ class DebateParticipantAgent(Agent):
         self.argumentation_style = config.get("argumentation_style", "logical")  # logical, emotional, factual
         self.response_focus = config.get("response_focus", "balanced")  # attack, defend, balanced
         
-        # 철학자 고유 속성들 (토론 최적화)
-        self.philosopher_name = config.get("philosopher_name", name)
-        self.philosopher_essence = config.get("philosopher_essence", "")
-        self.philosopher_debate_style = config.get("philosopher_debate_style", "")
-        self.philosopher_personality = config.get("philosopher_personality", "")
-        self.philosopher_key_traits = config.get("philosopher_key_traits", [])
-        self.philosopher_quote = config.get("philosopher_quote", "")
+        # 철학자 정보 동적 로드
+        philosopher_key = config.get("philosopher_key", name.lower())
+        philosopher_data = self._load_philosopher_data(philosopher_key)
+        
+        # 철학자 고유 속성들 (동적 로드된 데이터 사용)
+        self.philosopher_name = philosopher_data.get("name", name)
+        self.philosopher_essence = philosopher_data.get("essence", "")
+        self.philosopher_debate_style = philosopher_data.get("debate_style", "")
+        self.philosopher_personality = philosopher_data.get("personality", "")
+        self.philosopher_key_traits = philosopher_data.get("key_traits", [])
+        self.philosopher_quote = philosopher_data.get("quote", "")
         
         # 토론 상태 및 이력
         self.interaction_history = []
@@ -67,8 +74,187 @@ class DebateParticipantAgent(Agent):
         self.argument_cache_valid = False  # 캐시된 입론이 유효한지 여부
         self.last_preparation_context = None  # 마지막 준비 시 사용된 컨텍스트
         
+        # 논지 스코어링 및 공격 전략 관련 속성
+        self.opponent_arguments = {}  # 상대방 논지 저장 {speaker_id: [arguments]}
+        self.attack_strategies = {}  # 준비된 공격 전략 {target_speaker_id: [strategies]}
+        self.argument_scores = {}  # 논지 스코어 {argument_id: score_data}
+        
+        # 철학자별 전략 가중치 동적 로드
+        self.strategy_weights = philosopher_data.get("strategy_weights", {})
+        
+        # 전략 정보 로드
+        self.strategy_styles = self._load_strategy_styles()
+        
         # LLM 관리자 초기화
         self.llm_manager = LLMManager()
+    
+    def _load_philosopher_data(self, philosopher_key: str) -> Dict[str, Any]:
+        """
+        YAML 파일에서 철학자 데이터 로드
+        
+        Args:
+            philosopher_key: 철학자 키 (예: "socrates", "plato")
+            
+        Returns:
+            철학자 데이터 딕셔너리
+        """
+        try:
+            # 프로젝트 루트에서 philosophers/debate_optimized.yaml 파일 경로 찾기
+            current_dir = os.path.dirname(os.path.abspath(__file__))
+            project_root = current_dir
+            
+            # 프로젝트 루트 찾기 (src 폴더가 있는 상위 디렉토리)
+            while project_root and not os.path.exists(os.path.join(project_root, "philosophers")):
+                parent = os.path.dirname(project_root)
+                if parent == project_root:  # 루트에 도달
+                    break
+                project_root = parent
+            
+            yaml_path = os.path.join(project_root, "philosophers", "debate_optimized.yaml")
+            
+            if not os.path.exists(yaml_path):
+                logger.warning(f"Philosopher YAML file not found at {yaml_path}")
+                return self._get_default_philosopher_data(philosopher_key)
+            
+            with open(yaml_path, 'r', encoding='utf-8') as f:
+                philosophers_data = yaml.safe_load(f)
+            
+            if philosopher_key in philosophers_data:
+                logger.info(f"Loaded philosopher data for: {philosopher_key}")
+                return philosophers_data[philosopher_key]
+            else:
+                logger.warning(f"Philosopher '{philosopher_key}' not found in YAML file")
+                return self._get_default_philosopher_data(philosopher_key)
+                
+        except Exception as e:
+            logger.error(f"Error loading philosopher data: {str(e)}")
+            return self._get_default_philosopher_data(philosopher_key)
+    
+    def _load_strategy_styles(self) -> Dict[str, Any]:
+        """
+        JSON 파일에서 전략 스타일 정보 로드
+        
+        Returns:
+            전략 스타일 딕셔너리
+        """
+        try:
+            # debate_strategies.json 파일 경로
+            current_dir = os.path.dirname(os.path.abspath(__file__))
+            json_path = os.path.join(current_dir, "debate_strategies.json")
+            
+            if not os.path.exists(json_path):
+                logger.warning(f"Strategy JSON file not found at {json_path}")
+                return self._get_default_strategy_styles()
+            
+            with open(json_path, 'r', encoding='utf-8') as f:
+                strategies_data = json.load(f)
+            
+            logger.info(f"Loaded strategy styles from: {json_path}")
+            return strategies_data.get("strategy_styles", {})
+            
+        except Exception as e:
+            logger.error(f"Error loading strategy styles: {str(e)}")
+            return self._get_default_strategy_styles()
+    
+    def _get_default_philosopher_data(self, philosopher_key: str) -> Dict[str, Any]:
+        """
+        기본 철학자 데이터 반환 (파일 로드 실패 시)
+        
+        Args:
+            philosopher_key: 철학자 키
+            
+        Returns:
+            기본 철학자 데이터
+        """
+        return {
+            "name": philosopher_key.capitalize(),
+            "essence": "A thoughtful philosopher who engages in meaningful debate",
+            "debate_style": "Presents logical arguments with clear reasoning",
+            "personality": "Analytical and respectful in discourse",
+            "key_traits": ["logical reasoning", "clear communication"],
+            "quote": "The pursuit of truth through dialogue",
+            "strategy_weights": {
+                "Clipping": 0.2,
+                "Framing Shift": 0.2,
+                "Reductive Paradox": 0.15,
+                "Conceptual Undermining": 0.15,
+                "Ethical Reversal": 0.15,
+                "Temporal Delay": 0.1,
+                "Philosophical Reframing": 0.05
+            }
+        }
+    
+    def _get_default_strategy_styles(self) -> Dict[str, Any]:
+        """
+        기본 전략 스타일 반환 (파일 로드 실패 시)
+        
+        Returns:
+            기본 전략 스타일 딕셔너리
+        """
+        return {
+            "Clipping": {
+                "description": "Refute a specific claim directly",
+                "style_prompt": "'X' is wrong because...",
+                "example": "Direct refutation with evidence"
+            },
+            "Framing Shift": {
+                "description": "Challenge assumptions and reframe the discussion",
+                "style_prompt": "You're assuming Y, but what if we asked Z instead?",
+                "example": "Shift perspective to deeper questions"
+            },
+            "Reductive Paradox": {
+                "description": "Extend logic to expose flaws",
+                "style_prompt": "If we follow your logic to the end, then...",
+                "example": "Show extreme consequences"
+            },
+            "Conceptual Undermining": {
+                "description": "Question key definitions and concepts",
+                "style_prompt": "What do we even mean by 'X' here?",
+                "example": "Challenge conceptual clarity"
+            },
+            "Ethical Reversal": {
+                "description": "Turn positive claims into ethical concerns",
+                "style_prompt": "You call it progress, but isn't it dehumanization?",
+                "example": "Reveal ethical implications"
+            },
+            "Temporal Delay": {
+                "description": "Raise long-term consequence concerns",
+                "style_prompt": "Even if it works now, what happens in 20 years?",
+                "example": "Focus on future implications"
+            },
+            "Philosophical Reframing": {
+                "description": "Replace with more fundamental questions",
+                "style_prompt": "Maybe the real question is not what X is, but what it means to us.",
+                "example": "Shift to existential questions"
+            }
+        }
+    
+    @classmethod
+    def create_from_philosopher_key(cls, agent_id: str, philosopher_key: str, role: str, config: Dict[str, Any] = None) -> 'DebateParticipantAgent':
+        """
+        철학자 키를 사용하여 에이전트 생성
+        
+        Args:
+            agent_id: 에이전트 ID
+            philosopher_key: 철학자 키 (예: "socrates", "plato")
+            role: 토론 역할 ("pro", "con")
+            config: 추가 설정
+            
+        Returns:
+            생성된 DebateParticipantAgent 인스턴스
+        """
+        if config is None:
+            config = {}
+        
+        # 철학자 키와 역할 설정
+        config["philosopher_key"] = philosopher_key
+        config["role"] = role
+        
+        # 에이전트 생성
+        agent = cls(agent_id, philosopher_key, config)
+        
+        logger.info(f"Created philosopher agent: {agent.philosopher_name} ({philosopher_key}) as {role}")
+        return agent
     
     def process(self, input_data: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -117,6 +303,28 @@ class DebateParticipantAgent(Agent):
                 "core_arguments_count": len(self.core_arguments),
                 "queries_count": len(self.argument_queries)
             }
+        elif action == "analyze_opponent_arguments":
+            # 상대방 논지 분석 및 스코어링
+            opponent_response = input_data.get("opponent_response", "")
+            speaker_id = input_data.get("speaker_id", "")
+            
+            result = self.analyze_and_score_arguments(opponent_response, speaker_id)
+            return {"status": "success", "analysis": result}
+            
+        elif action == "prepare_attack_strategies":
+            # 공격 전략 준비
+            target_speaker_id = input_data.get("target_speaker_id", "")
+            
+            strategies = self.prepare_attack_strategies_for_speaker(target_speaker_id)
+            return {"status": "success", "strategies": strategies}
+            
+        elif action == "get_best_attack_strategy":
+            # 최적 공격 전략 선택
+            target_speaker_id = input_data.get("target_speaker_id", "")
+            context = input_data.get("context", {})
+            
+            strategy = self.get_best_attack_strategy(target_speaker_id, context)
+            return {"status": "success", "strategy": strategy}
         else:
             logger.warning(f"Unknown action requested: {action}")
             return {"status": "error", "message": f"Unknown action: {action}"}
@@ -237,6 +445,31 @@ Always stay true to your assigned position, but remain respectful to the opposit
         # 유저 프롬프트 구성 - 단계에 따라 다른 지시사항 포함
         stage_instructions = self._get_stage_instructions(current_stage, topic, my_stance, opposite_stance)
         
+        # 공격 전략 활용 (상호논증 단계에서)
+        attack_strategy_text = ""
+        if current_stage == "interactive_argument" and recent_messages:
+            # 최근 상대방 발언자 찾기
+            for msg in reversed(recent_messages):
+                if msg.get("role") != self.role:
+                    target_speaker_id = msg.get("speaker_id")
+                    if target_speaker_id and target_speaker_id in self.attack_strategies:
+                        # 최적 공격 전략 선택
+                        best_strategy = self.get_best_attack_strategy(target_speaker_id, context)
+                        if best_strategy:
+                            attack_plan = best_strategy.get("attack_plan", {})
+                            strategy_type = best_strategy.get("strategy_type", "")
+                            
+                            attack_strategy_text = f"""
+ATTACK STRATEGY TO USE:
+Strategy Type: {strategy_type}
+Target Point: {attack_plan.get('target_point', '')}
+Key Phrase: {attack_plan.get('key_phrase', '')}
+Strategy Application: {attack_plan.get('strategy_application', '')}
+
+Use this strategy to structure your response and attack the opponent's argument effectively.
+"""
+                    break
+        
         user_prompt = f"""
 DEBATE TOPIC: "{topic}"
 
@@ -246,6 +479,8 @@ OPPOSITE POSITION ({opposite_role.upper()}): "{opposite_stance}"
 CURRENT STAGE: {current_stage}
 
 INSTRUCTIONS: {stage_instructions}
+
+{attack_strategy_text}
 
 RELEVANT CONTEXT:
 {relevant_context_text}
@@ -1418,17 +1653,482 @@ Each key point should be:
         logger.info(f"[{self.agent_id}] Argument cache invalidated")
     
     def _is_same_context(self, context: Dict[str, Any]) -> bool:
-        """현재 컨텍스트가 마지막 준비 시와 동일한지 확인"""
-        if self.last_preparation_context is None:
-            return context is None
+        """
+        현재 컨텍스트가 이전 준비 시와 동일한지 확인
         
-        if context is None:
+        Args:
+            context: 비교할 컨텍스트
+            
+        Returns:
+            동일 여부
+        """
+        if self.last_preparation_context is None:
             return False
         
-        # 주요 컨텍스트 요소들 비교
-        key_fields = ["topic", "current_stage", "role"]
+        # 주요 필드들만 비교
+        key_fields = ["topic", "stance_statement", "current_stage"]
         for field in key_fields:
             if context.get(field) != self.last_preparation_context.get(field):
                 return False
         
-        return True 
+        return True
+    
+    def analyze_and_score_arguments(self, opponent_response: str, speaker_id: str) -> Dict[str, Any]:
+        """
+        상대방 발언에서 논지를 추출하고 스코어링
+        
+        Args:
+            opponent_response: 상대방 발언 텍스트
+            speaker_id: 발언자 ID
+            
+        Returns:
+            분석 결과 (논지 목록, 스코어, 취약점 등)
+        """
+        try:
+            # 1. 논지 추출
+            arguments = self._extract_arguments_from_response(opponent_response, speaker_id)
+            
+            # 2. 각 논지별 스코어링
+            scored_arguments = []
+            for arg in arguments:
+                score_data = self._score_single_argument(arg, opponent_response)
+                scored_arguments.append({
+                    "argument": arg,
+                    "scores": score_data,
+                    "vulnerability_rank": score_data.get("vulnerability", 0.0)
+                })
+            
+            # 3. 취약점 순으로 정렬
+            scored_arguments.sort(key=lambda x: x["vulnerability_rank"], reverse=True)
+            
+            # 4. 상대방 논지 저장
+            if speaker_id not in self.opponent_arguments:
+                self.opponent_arguments[speaker_id] = []
+            self.opponent_arguments[speaker_id].extend(scored_arguments)
+            
+            return {
+                "speaker_id": speaker_id,
+                "arguments_count": len(arguments),
+                "scored_arguments": scored_arguments[:3],  # 상위 3개만 반환
+                "analysis_timestamp": time.time()
+            }
+            
+        except Exception as e:
+            logger.error(f"Error analyzing opponent arguments: {str(e)}")
+            return {"error": str(e)}
+    
+    def _extract_arguments_from_response(self, response: str, speaker_id: str) -> List[Dict[str, Any]]:
+        """
+        발언에서 핵심 논지들을 추출
+        
+        Args:
+            response: 발언 텍스트
+            speaker_id: 발언자 ID
+            
+        Returns:
+            추출된 논지 목록
+        """
+        system_prompt = """
+You are an expert debate analyst. Your task is to extract key arguments from a speaker's statement.
+Identify the main claims, supporting evidence, and logical structure.
+Return ONLY valid JSON format.
+"""
+
+        user_prompt = f"""
+Analyze this debate statement and extract the key arguments:
+
+STATEMENT: "{response}"
+
+Extract the main arguments and return ONLY a valid JSON array:
+[
+  {{
+    "claim": "main claim text",
+    "evidence": "supporting evidence",
+    "reasoning": "logical reasoning",
+    "assumptions": ["assumption1", "assumption2"],
+    "argument_type": "logical"
+  }}
+]
+
+IMPORTANT: Return ONLY the JSON array, no other text.
+"""
+        
+        try:
+            response_text = self.llm_manager.generate_response(
+                system_prompt=system_prompt,
+                user_prompt=user_prompt,
+                llm_model="gpt-4",
+                max_tokens=800
+            )
+            
+            # JSON 파싱 개선
+            import json
+            import re
+            
+            # 응답에서 JSON 부분만 추출 (더 견고한 정규식)
+            # 중괄호나 대괄호로 시작하는 JSON 찾기
+            json_patterns = [
+                r'\[[\s\S]*?\]',  # 배열 형태
+                r'\{[\s\S]*?\}',  # 객체 형태
+            ]
+            
+            parsed_data = None
+            for pattern in json_patterns:
+                matches = re.findall(pattern, response_text, re.DOTALL)
+                for match in matches:
+                    try:
+                        # JSON 문자열 정리
+                        clean_json = match.strip()
+                        # 잘못된 문자 제거
+                        clean_json = re.sub(r'[\x00-\x1f\x7f-\x9f]', '', clean_json)
+                        
+                        parsed_data = json.loads(clean_json)
+                        
+                        # 배열이 아니면 배열로 감싸기
+                        if not isinstance(parsed_data, list):
+                            parsed_data = [parsed_data]
+                        
+                        # 유효한 JSON을 찾았으면 중단
+                        break
+                    except json.JSONDecodeError:
+                        continue
+                
+                if parsed_data:
+                    break
+            
+            if parsed_data:
+                # 데이터 검증 및 정리
+                validated_arguments = []
+                for arg in parsed_data:
+                    if isinstance(arg, dict):
+                        validated_arg = {
+                            "claim": str(arg.get('claim', 'Unknown claim')),
+                            "evidence": str(arg.get('evidence', 'No evidence provided')),
+                            "reasoning": str(arg.get('reasoning', 'No reasoning provided')),
+                            "assumptions": arg.get('assumptions', []) if isinstance(arg.get('assumptions'), list) else [],
+                            "argument_type": str(arg.get('argument_type', 'logical'))
+                        }
+                        validated_arguments.append(validated_arg)
+                
+                return validated_arguments if validated_arguments else self._get_fallback_argument(response)
+            else:
+                return self._get_fallback_argument(response)
+                
+        except Exception as e:
+            logger.error(f"Error extracting arguments: {str(e)}")
+            return self._get_fallback_argument(response)
+    
+    def _get_fallback_argument(self, response: str) -> List[Dict[str, Any]]:
+        """JSON 파싱 실패 시 기본 논지 구조 반환"""
+        return [{
+            "claim": response[:200] + "..." if len(response) > 200 else response,
+            "evidence": "Not extracted due to parsing error",
+            "reasoning": "Not analyzed due to parsing error",
+            "assumptions": [],
+            "argument_type": "unknown"
+        }]
+    
+    def _score_single_argument(self, argument: Dict[str, Any], full_context: str) -> Dict[str, float]:
+        """
+        단일 논지에 대한 다차원 스코어링
+        
+        Args:
+            argument: 분석할 논지
+            full_context: 전체 발언 맥락
+            
+        Returns:
+            스코어 데이터 (논리적 강도, 근거 품질, 취약성, 관련성)
+        """
+        system_prompt = """
+You are a debate argument evaluator. Score arguments on multiple dimensions.
+Be objective and analytical in your assessment.
+"""
+
+        user_prompt = f"""
+Evaluate this argument on the following criteria (scale 0.0-1.0):
+
+ARGUMENT:
+- Claim: {argument.get('claim', '')}
+- Evidence: {argument.get('evidence', '')}
+- Reasoning: {argument.get('reasoning', '')}
+- Assumptions: {argument.get('assumptions', [])}
+
+FULL CONTEXT: "{full_context}"
+
+Score on these dimensions:
+1. LOGICAL_STRENGTH (0.0-1.0): How logically sound is the argument?
+2. EVIDENCE_QUALITY (0.0-1.0): How strong is the supporting evidence?
+3. VULNERABILITY (0.0-1.0): How vulnerable is this to counterattack? (higher = more vulnerable)
+4. RELEVANCE (0.0-1.0): How relevant to the main debate topic?
+
+Return JSON format:
+{{
+  "logical_strength": 0.0-1.0,
+  "evidence_quality": 0.0-1.0,
+  "vulnerability": 0.0-1.0,
+  "relevance": 0.0-1.0,
+  "overall_score": 0.0-1.0
+}}
+"""
+        
+        try:
+            response_text = self.llm_manager.generate_response(
+                system_prompt=system_prompt,
+                user_prompt=user_prompt,
+                llm_model="gpt-4",
+                max_tokens=300
+            )
+            
+            # JSON 파싱
+            import json
+            import re
+            json_pattern = r'\{.*?\}'
+            json_match = re.search(json_pattern, response_text, re.DOTALL)
+            
+            if json_match:
+                scores = json.loads(json_match.group(0))
+                # overall_score 계산 (가중평균)
+                if "overall_score" not in scores:
+                    scores["overall_score"] = (
+                        scores.get("logical_strength", 0.5) * 0.3 +
+                        scores.get("evidence_quality", 0.5) * 0.25 +
+                        (1.0 - scores.get("vulnerability", 0.5)) * 0.25 +  # 취약성은 역산
+                        scores.get("relevance", 0.5) * 0.2
+                    )
+                return scores
+            else:
+                # 기본 스코어
+                return {
+                    "logical_strength": 0.5,
+                    "evidence_quality": 0.5,
+                    "vulnerability": 0.5,
+                    "relevance": 0.5,
+                    "overall_score": 0.5
+                }
+                
+        except Exception as e:
+            logger.error(f"Error scoring argument: {str(e)}")
+            return {
+                "logical_strength": 0.5,
+                "evidence_quality": 0.5,
+                "vulnerability": 0.5,
+                "relevance": 0.5,
+                "overall_score": 0.5
+            }
+    
+    def prepare_attack_strategies_for_speaker(self, target_speaker_id: str) -> List[Dict[str, Any]]:
+        """
+        특정 상대방에 대한 공격 전략들을 준비
+        
+        Args:
+            target_speaker_id: 공격 대상 발언자 ID
+            
+        Returns:
+            준비된 공격 전략 목록
+        """
+        if target_speaker_id not in self.opponent_arguments:
+            return []
+        
+        try:
+            # 상대방의 취약한 논지들 가져오기 (상위 3개)
+            target_arguments = self.opponent_arguments[target_speaker_id]
+            vulnerable_args = sorted(target_arguments, 
+                                   key=lambda x: x["vulnerability_rank"], 
+                                   reverse=True)[:3]
+            
+            strategies = []
+            for arg_data in vulnerable_args:
+                argument = arg_data["argument"]
+                
+                # 이 철학자에게 적합한 공격 전략 선택
+                best_strategy = self._select_best_strategy_for_argument(argument)
+                
+                # 구체적인 공격 계획 생성
+                attack_plan = self._generate_attack_plan(argument, best_strategy)
+                
+                strategies.append({
+                    "target_argument": argument,
+                    "strategy_type": best_strategy,
+                    "attack_plan": attack_plan,
+                    "vulnerability_score": arg_data["vulnerability_rank"],
+                    "priority": len(strategies) + 1
+                })
+            
+            # 공격 전략 저장
+            self.attack_strategies[target_speaker_id] = strategies
+            
+            return strategies
+            
+        except Exception as e:
+            logger.error(f"Error preparing attack strategies: {str(e)}")
+            return []
+    
+    def _select_best_strategy_for_argument(self, argument: Dict[str, Any]) -> str:
+        """
+        논지에 대해 이 철학자에게 가장 적합한 공격 전략 선택
+        
+        Args:
+            argument: 공격할 논지
+            
+        Returns:
+            선택된 전략 이름
+        """
+        # 전략 가중치가 있으면 사용, 없으면 기본값
+        if not self.strategy_weights:
+            return "Clipping"  # 기본 전략
+        
+        # 논지 유형에 따른 전략 적합성 분석
+        argument_type = argument.get("argument_type", "logical")
+        claim = argument.get("claim", "")
+        
+        # 각 전략의 적합성 점수 계산
+        strategy_scores = {}
+        
+        for strategy, weight in self.strategy_weights.items():
+            base_score = weight
+            
+            # 논지 유형별 보정
+            if strategy == "Clipping" and "specific" in claim.lower():
+                base_score *= 1.2
+            elif strategy == "Framing Shift" and "assume" in claim.lower():
+                base_score *= 1.3
+            elif strategy == "Reductive Paradox" and argument_type == "logical":
+                base_score *= 1.1
+            elif strategy == "Conceptual Undermining" and any(word in claim.lower() for word in ["define", "mean", "is"]):
+                base_score *= 1.4
+            elif strategy == "Ethical Reversal" and argument_type == "emotional":
+                base_score *= 1.2
+            
+            strategy_scores[strategy] = base_score
+        
+        # 가장 높은 점수의 전략 선택
+        best_strategy = max(strategy_scores.items(), key=lambda x: x[1])[0]
+        return best_strategy
+    
+    def _generate_attack_plan(self, target_argument: Dict[str, Any], strategy_type: str) -> Dict[str, Any]:
+        """
+        특정 전략을 사용한 구체적인 공격 계획 생성
+        
+        Args:
+            target_argument: 공격할 논지
+            strategy_type: 사용할 전략 유형
+            
+        Returns:
+            구체적인 공격 계획
+        """
+        try:
+            # 이미 로드된 전략 정보 사용
+            strategy_info = self.strategy_styles.get(strategy_type, {})
+            
+            system_prompt = f"""
+You are {self.philosopher_name}, a philosopher with this essence: {self.philosopher_essence}
+Your debate style: {self.philosopher_debate_style}
+Your personality: {self.philosopher_personality}
+
+You need to prepare an attack against an opponent's argument using the "{strategy_type}" strategy.
+"""
+
+            user_prompt = f"""
+STRATEGY: {strategy_type}
+DESCRIPTION: {strategy_info.get('description', '')}
+STYLE PROMPT: {strategy_info.get('style_prompt', '')}
+EXAMPLE: {strategy_info.get('example', '')}
+
+TARGET ARGUMENT TO ATTACK:
+- Claim: {target_argument.get('claim', '')}
+- Evidence: {target_argument.get('evidence', '')}
+- Reasoning: {target_argument.get('reasoning', '')}
+- Assumptions: {target_argument.get('assumptions', [])}
+
+Create a specific attack plan using this strategy. Include:
+1. The exact point you will target
+2. How you will apply the {strategy_type} strategy
+3. The key phrase or question you will use
+4. Expected counterargument and your response
+
+Return JSON format:
+{{
+  "target_point": "specific point to attack",
+  "strategy_application": "how to apply {strategy_type}",
+  "key_phrase": "main attack phrase/question",
+  "expected_counter": "likely opponent response",
+  "follow_up": "your follow-up response"
+}}
+"""
+            
+            response_text = self.llm_manager.generate_response(
+                system_prompt=system_prompt,
+                user_prompt=user_prompt,
+                llm_model="gpt-4",
+                max_tokens=600
+            )
+            
+            # JSON 파싱
+            import re
+            json_pattern = r'\{.*?\}'
+            json_match = re.search(json_pattern, response_text, re.DOTALL)
+            
+            if json_match:
+                attack_plan = json.loads(json_match.group(0))
+                return attack_plan
+            else:
+                # 기본 공격 계획
+                return {
+                    "target_point": target_argument.get('claim', ''),
+                    "strategy_application": f"Apply {strategy_type}",
+                    "key_phrase": strategy_info.get('style_prompt', ''),
+                    "expected_counter": "Opponent may defend",
+                    "follow_up": "Continue with philosophical reasoning"
+                }
+                
+        except Exception as e:
+            logger.error(f"Error generating attack plan: {str(e)}")
+            return {
+                "target_point": target_argument.get('claim', ''),
+                "strategy_application": f"Use {strategy_type}",
+                "key_phrase": "Challenge this point",
+                "expected_counter": "Unknown",
+                "follow_up": "Continue debate"
+            }
+    
+    def get_best_attack_strategy(self, target_speaker_id: str, context: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """
+        현재 상황에서 최적의 공격 전략 선택
+        
+        Args:
+            target_speaker_id: 공격 대상 ID
+            context: 현재 토론 맥락
+            
+        Returns:
+            선택된 최적 공격 전략
+        """
+        if target_speaker_id not in self.attack_strategies:
+            return None
+        
+        strategies = self.attack_strategies[target_speaker_id]
+        if not strategies:
+            return None
+        
+        # 현재 토론 단계와 맥락을 고려하여 최적 전략 선택
+        current_stage = context.get("current_stage", "")
+        recent_messages = context.get("recent_messages", [])
+        
+        # 우선순위가 가장 높은 전략 선택 (취약성 기준)
+        best_strategy = max(strategies, key=lambda x: x["vulnerability_score"])
+        
+        return best_strategy
+    
+    def clear_opponent_data(self, speaker_id: str = None):
+        """
+        상대방 데이터 초기화 (새 토론 시작 시)
+        
+        Args:
+            speaker_id: 특정 발언자만 초기화할 경우
+        """
+        if speaker_id:
+            self.opponent_arguments.pop(speaker_id, None)
+            self.attack_strategies.pop(speaker_id, None)
+        else:
+            self.opponent_arguments.clear()
+            self.attack_strategies.clear()
+            self.argument_scores.clear() 

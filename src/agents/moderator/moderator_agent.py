@@ -373,8 +373,8 @@ TEMPLATE STYLE (adapt this style to the current topic):
 {style_template}
 
 PARTICIPANTS:
-- PRO side: {', '.join(pro_participant_names) if pro_participant_names else 'Pro participants'}
-- CON side: {', '.join(con_participant_names) if con_participant_names else 'Con participants'}
+- PRO side (찬성측, will speak first): {', '.join(pro_participant_names) if pro_participant_names else 'Pro participants'}
+- CON side (반대측, will speak second): {', '.join(con_participant_names) if con_participant_names else 'Con participants'}
 
 Your task:
 1. Create an opening introduction that matches the style and tone of the template
@@ -382,9 +382,10 @@ Your task:
 3. Present the two opposing viewpoints:
    - PRO: {pro_statement}
    - CON: {con_statement}
-4. Introduce the participants on both sides
-5. Maintain the same personality and speaking style as shown in the template
-6. Ensure your response is complete - do not stop mid-sentence
+4. Introduce the participants on both sides (PRO side first, then CON side)
+5. Announce that the PRO side will start first, and call on the first PRO participant: {pro_participant_names[0] if pro_participant_names else 'first pro participant'}
+6. Maintain the same personality and speaking style as shown in the template
+7. Ensure your response is complete - do not stop mid-sentence
 
 Important: Write your response in the SAME LANGUAGE as the debate topic. If the topic is in Korean, respond in Korean. If in English, respond in English, etc.
 """
@@ -424,8 +425,8 @@ Write a complete, comprehensive opening statement without cutting off in the mid
 You are the moderator of a formal debate on the topic: "{topic}".
 
 PARTICIPANTS:
-- PRO side: {', '.join(pro_participant_names) if pro_participant_names else 'Pro participants'}
-- CON side: {', '.join(con_participant_names) if con_participant_names else 'Con participants'}
+- PRO side (찬성측, will speak first): {', '.join(pro_participant_names) if pro_participant_names else 'Pro participants'}
+- CON side (반대측, will speak second): {', '.join(con_participant_names) if con_participant_names else 'Con participants'}
 
 Your task is to give an opening introduction for the debate with the following details:
 1. Welcome the audience and participants
@@ -433,8 +434,9 @@ Your task is to give an opening introduction for the debate with the following d
 3. Present the two opposing viewpoints:
    - PRO: {pro_statement}
    - CON: {con_statement}
-4. Introduce the participants on both sides
-5. Set expectations for a respectful discussion
+4. Introduce the participants on both sides (PRO side first, then CON side)
+5. Announce that the PRO side will start first, and call on the first PRO participant: {pro_participant_names[0] if pro_participant_names else 'first pro participant'}
+6. Set expectations for a respectful discussion
 
 Important: Write your response in the SAME LANGUAGE as the debate topic. If the topic is in Korean, respond in Korean. If in English, respond in English, etc.
 

@@ -645,6 +645,7 @@ class DebateDialogue:
         
         # room_data에서 참가자 정보 추출
         participants_data = self.room_data.get('participants', {})
+        user_ids = set(participants_data.get('users', []))  # 사용자 ID 목록
         
         # PRO 측 참가자 추가 (다중 지원)
         if 'pro' in participants_data:
@@ -661,7 +662,12 @@ class DebateDialogue:
                 for i, participant in enumerate(pro_data):
                     character_id = participant.get('character_id', f'pro_agent_{i+1}')
                     participants[ParticipantRole.PRO].append(character_id)
-                    logger.info(f"Added PRO participant {i+1}: {character_id}")
+                    
+                    # 사용자인지 확인하고 USER 목록에서 제거 (중복 방지)
+                    if character_id in user_ids:
+                        logger.info(f"Added PRO participant {i+1}: {character_id} (USER)")
+                    else:
+                        logger.info(f"Added PRO participant {i+1}: {character_id} (AI)")
             
             # 잘못된 형식인 경우 기본값
             else:
@@ -683,17 +689,27 @@ class DebateDialogue:
                 for i, participant in enumerate(con_data):
                     character_id = participant.get('character_id', f'con_agent_{i+1}')
                     participants[ParticipantRole.CON].append(character_id)
-                    logger.info(f"Added CON participant {i+1}: {character_id}")
+                    
+                    # 사용자인지 확인하고 USER 목록에서 제거 (중복 방지)
+                    if character_id in user_ids:
+                        logger.info(f"Added CON participant {i+1}: {character_id} (USER)")
+                    else:
+                        logger.info(f"Added CON participant {i+1}: {character_id} (AI)")
             
             # 잘못된 형식인 경우 기본값
             else:
                 participants[ParticipantRole.CON].append('con_agent')
                 logger.warning("Invalid CON data format, using default con_agent")
         
-        # 사용자 참가자 추가 (있는 경우)
-        if 'users' in participants_data:
-            for user_id in participants_data['users']:
+        # PRO/CON에 포함되지 않은 사용자만 USER 역할로 추가
+        assigned_users = set()
+        assigned_users.update(participants[ParticipantRole.PRO])
+        assigned_users.update(participants[ParticipantRole.CON])
+        
+        for user_id in user_ids:
+            if user_id not in assigned_users:
                 participants[ParticipantRole.USER].append(user_id)
+                logger.info(f"Added neutral USER participant: {user_id}")
         
         # 모더레이터 추가
         participants[ParticipantRole.MODERATOR].append("moderator")
@@ -724,6 +740,8 @@ class DebateDialogue:
                 user_role = "pro"
             elif user_id in self.participants.get(ParticipantRole.CON, []):
                 user_role = "con"
+            elif user_id in self.participants.get(ParticipantRole.USER, []):
+                user_role = "neutral"
             
             # UserParticipant 객체 생성
             user_participant = UserParticipant(
@@ -824,19 +842,6 @@ class DebateDialogue:
             from ...agents.moderator.moderator_agent import ModeratorAgent
             from ...agents.participant.debate_participant_agent import DebateParticipantAgent
             
-            # 토론 최적화 철학자 속성 로드
-            import yaml
-            import os
-            
-            philosophers_file = os.path.join(os.getcwd(), "philosophers", "debate_optimized.yaml")
-            try:
-                with open(philosophers_file, 'r', encoding='utf-8') as file:
-                    debate_philosophers = yaml.safe_load(file)
-                logger.info(f"Loaded debate-optimized philosopher data from {philosophers_file}")
-            except Exception as e:
-                logger.warning(f"Failed to load debate philosophers file: {e}")
-                debate_philosophers = {}
-            
             agents = {}
             
             # 모더레이터 에이전트 생성 (기본 설정)
@@ -862,59 +867,73 @@ class DebateDialogue:
                 # 단일 참가자인 경우 (기존 호환성)
                 if isinstance(pro_data, dict) and 'character_id' in pro_data:
                     character_id = pro_data.get('character_id', 'pro_agent')
-                    philosopher_attrs = debate_philosophers.get(character_id, {})
                     
-                    pro_config = {
-                        "role": ParticipantRole.PRO,
-                        "stance_statements": self.stance_statements,
-                        "personality": pro_data.get("personality", "balanced"),
-                        "style": pro_data.get("style", "formal"),
-                        "argumentation_style": pro_data.get("argumentation_style", "logical"),
-                        "philosopher_name": philosopher_attrs.get("name", pro_data.get("name", "Pro Participant")),
-                        "philosopher_essence": philosopher_attrs.get("essence", ""),
-                        "philosopher_debate_style": philosopher_attrs.get("debate_style", ""),
-                        "philosopher_personality": philosopher_attrs.get("personality", ""),
-                        "philosopher_key_traits": philosopher_attrs.get("key_traits", []),
-                        "philosopher_quote": philosopher_attrs.get("quote", "")
-                    }
+                    # philosopher_key가 있으면 동적 로드 사용
+                    if 'philosopher_key' in pro_data:
+                        agent = DebateParticipantAgent.create_from_philosopher_key(
+                            agent_id=character_id,
+                            philosopher_key=pro_data['philosopher_key'],
+                            role=ParticipantRole.PRO,
+                            config={
+                                "stance_statements": self.stance_statements,
+                                "personality": pro_data.get("personality", "balanced"),
+                                "style": pro_data.get("style", "formal"),
+                                "argumentation_style": pro_data.get("argumentation_style", "logical")
+                            }
+                        )
+                    else:
+                        # 기존 방식 (하위 호환성)
+                        pro_config = {
+                            "role": ParticipantRole.PRO,
+                            "stance_statements": self.stance_statements,
+                            "personality": pro_data.get("personality", "balanced"),
+                            "style": pro_data.get("style", "formal"),
+                            "argumentation_style": pro_data.get("argumentation_style", "logical")
+                        }
+                        agent = DebateParticipantAgent(
+                            agent_id=character_id,
+                            name=pro_data.get("name", "Pro Participant"),
+                            config=pro_config
+                        )
                     
-                    agents[character_id] = DebateParticipantAgent(
-                        agent_id=character_id,
-                        name=philosopher_attrs.get("name", pro_data.get("name", "Pro Participant")),
-                        config=pro_config
-                    )
+                    agents[character_id] = agent
+                    agents[ParticipantRole.PRO] = agent  # 역할별 대표 에이전트
                     
-                    # 역할별 대표 에이전트도 설정 (하위 호환성)
-                    agents[ParticipantRole.PRO] = agents[character_id]
-                    
-                    logger.info(f"Created single PRO agent: {character_id} ({philosopher_attrs.get('name', 'Unknown')})")
+                    logger.info(f"Created single PRO agent: {character_id} ({agent.philosopher_name})")
                 
                 # 다중 참가자인 경우 (새로운 구조)
                 elif isinstance(pro_data, list):
                     first_agent = None
                     for i, participant in enumerate(pro_data):
                         character_id = participant.get('character_id', f'pro_agent_{i+1}')
-                        philosopher_attrs = debate_philosophers.get(character_id, {})
                         
-                        pro_config = {
-                            "role": ParticipantRole.PRO,
-                            "stance_statements": self.stance_statements,
-                            "personality": participant.get("personality", "balanced"),
-                            "style": participant.get("style", "formal"),
-                            "argumentation_style": participant.get("argumentation_style", "logical"),
-                            "philosopher_name": philosopher_attrs.get("name", participant.get("name", f"Pro Participant {i+1}")),
-                            "philosopher_essence": philosopher_attrs.get("essence", ""),
-                            "philosopher_debate_style": philosopher_attrs.get("debate_style", ""),
-                            "philosopher_personality": philosopher_attrs.get("personality", ""),
-                            "philosopher_key_traits": philosopher_attrs.get("key_traits", []),
-                            "philosopher_quote": philosopher_attrs.get("quote", "")
-                        }
-                        
-                        agent = DebateParticipantAgent(
-                            agent_id=character_id,
-                            name=philosopher_attrs.get("name", participant.get("name", f"Pro Participant {i+1}")),
-                            config=pro_config
-                        )
+                        # philosopher_key가 있으면 동적 로드 사용
+                        if 'philosopher_key' in participant:
+                            agent = DebateParticipantAgent.create_from_philosopher_key(
+                                agent_id=character_id,
+                                philosopher_key=participant['philosopher_key'],
+                                role=ParticipantRole.PRO,
+                                config={
+                                    "stance_statements": self.stance_statements,
+                                    "personality": participant.get("personality", "balanced"),
+                                    "style": participant.get("style", "formal"),
+                                    "argumentation_style": participant.get("argumentation_style", "logical")
+                                }
+                            )
+                        else:
+                            # 기존 방식 (하위 호환성)
+                            pro_config = {
+                                "role": ParticipantRole.PRO,
+                                "stance_statements": self.stance_statements,
+                                "personality": participant.get("personality", "balanced"),
+                                "style": participant.get("style", "formal"),
+                                "argumentation_style": participant.get("argumentation_style", "logical")
+                            }
+                            agent = DebateParticipantAgent(
+                                agent_id=character_id,
+                                name=participant.get("name", f"Pro Participant {i+1}"),
+                                config=pro_config
+                            )
                         
                         agents[character_id] = agent
                         
@@ -923,7 +942,7 @@ class DebateDialogue:
                             first_agent = agent
                             agents[ParticipantRole.PRO] = agent
                         
-                        logger.info(f"Created PRO agent {i+1}: {character_id} ({philosopher_attrs.get('name', 'Unknown')})")
+                        logger.info(f"Created PRO agent {i+1}: {character_id} ({agent.philosopher_name})")
             
             # CON 측 에이전트들 생성 (다중 지원)
             if 'con' in participants_data:
@@ -932,59 +951,77 @@ class DebateDialogue:
                 # 단일 참가자인 경우 (기존 호환성)
                 if isinstance(con_data, dict) and 'character_id' in con_data:
                     character_id = con_data.get('character_id', 'con_agent')
-                    philosopher_attrs = debate_philosophers.get(character_id, {})
                     
-                    con_config = {
-                        "role": ParticipantRole.CON,
-                        "stance_statements": self.stance_statements,
-                        "personality": con_data.get("personality", "balanced"),
-                        "style": con_data.get("style", "formal"),
-                        "argumentation_style": con_data.get("argumentation_style", "logical"),
-                        "philosopher_name": philosopher_attrs.get("name", con_data.get("name", "Con Participant")),
-                        "philosopher_essence": philosopher_attrs.get("essence", ""),
-                        "philosopher_debate_style": philosopher_attrs.get("debate_style", ""),
-                        "philosopher_personality": philosopher_attrs.get("personality", ""),
-                        "philosopher_key_traits": philosopher_attrs.get("key_traits", []),
-                        "philosopher_quote": philosopher_attrs.get("quote", "")
-                    }
+                    # philosopher_key가 있으면 동적 로드 사용
+                    if 'philosopher_key' in con_data:
+                        agent = DebateParticipantAgent.create_from_philosopher_key(
+                            agent_id=character_id,
+                            philosopher_key=con_data['philosopher_key'],
+                            role=ParticipantRole.CON,
+                            config={
+                                "stance_statements": self.stance_statements,
+                                "personality": con_data.get("personality", "balanced"),
+                                "style": con_data.get("style", "formal"),
+                                "argumentation_style": con_data.get("argumentation_style", "logical")
+                            }
+                        )
+                    else:
+                        # 기존 방식 (하위 호환성)
+                        con_config = {
+                            "role": ParticipantRole.CON,
+                            "stance_statements": self.stance_statements,
+                            "personality": con_data.get("personality", "balanced"),
+                            "style": con_data.get("style", "formal"),
+                            "argumentation_style": con_data.get("argumentation_style", "logical")
+                        }
+                        agent = DebateParticipantAgent(
+                            agent_id=character_id,
+                            name=con_data.get("name", "Con Participant"),
+                            config=con_config
+                        )
                     
-                    agents[character_id] = DebateParticipantAgent(
-                        agent_id=character_id,
-                        name=philosopher_attrs.get("name", con_data.get("name", "Con Participant")),
-                        config=con_config
-                    )
+                    agents[character_id] = agent
+                    agents[ParticipantRole.CON] = agent  # 역할별 대표 에이전트
                     
-                    # 역할별 대표 에이전트도 설정 (하위 호환성)
-                    agents[ParticipantRole.CON] = agents[character_id]
-                    
-                    logger.info(f"Created single CON agent: {character_id} ({philosopher_attrs.get('name', 'Unknown')})")
+                    logger.info(f"Created single CON agent: {character_id} ({agent.philosopher_name})")
                 
                 # 다중 참가자인 경우 (새로운 구조)
                 elif isinstance(con_data, list):
                     first_agent = None
                     for i, participant in enumerate(con_data):
                         character_id = participant.get('character_id', f'con_agent_{i+1}')
-                        philosopher_attrs = debate_philosophers.get(character_id, {})
                         
-                        con_config = {
-                            "role": ParticipantRole.CON,
-                            "stance_statements": self.stance_statements,
-                            "personality": participant.get("personality", "balanced"),
-                            "style": participant.get("style", "formal"),
-                            "argumentation_style": participant.get("argumentation_style", "logical"),
-                            "philosopher_name": philosopher_attrs.get("name", participant.get("name", f"Con Participant {i+1}")),
-                            "philosopher_essence": philosopher_attrs.get("essence", ""),
-                            "philosopher_debate_style": philosopher_attrs.get("debate_style", ""),
-                            "philosopher_personality": philosopher_attrs.get("personality", ""),
-                            "philosopher_key_traits": philosopher_attrs.get("key_traits", []),
-                            "philosopher_quote": philosopher_attrs.get("quote", "")
-                        }
+                        # 사용자 참가자는 건너뛰기 (별도 처리)
+                        if participant.get('is_user', False):
+                            continue
                         
-                        agent = DebateParticipantAgent(
-                            agent_id=character_id,
-                            name=philosopher_attrs.get("name", participant.get("name", f"Con Participant {i+1}")),
-                            config=con_config
-                        )
+                        # philosopher_key가 있으면 동적 로드 사용
+                        if 'philosopher_key' in participant:
+                            agent = DebateParticipantAgent.create_from_philosopher_key(
+                                agent_id=character_id,
+                                philosopher_key=participant['philosopher_key'],
+                                role=ParticipantRole.CON,
+                                config={
+                                    "stance_statements": self.stance_statements,
+                                    "personality": participant.get("personality", "balanced"),
+                                    "style": participant.get("style", "formal"),
+                                    "argumentation_style": participant.get("argumentation_style", "logical")
+                                }
+                            )
+                        else:
+                            # 기존 방식 (하위 호환성)
+                            con_config = {
+                                "role": ParticipantRole.CON,
+                                "stance_statements": self.stance_statements,
+                                "personality": participant.get("personality", "balanced"),
+                                "style": participant.get("style", "formal"),
+                                "argumentation_style": participant.get("argumentation_style", "logical")
+                            }
+                            agent = DebateParticipantAgent(
+                                agent_id=character_id,
+                                name=participant.get("name", f"Con Participant {i+1}"),
+                                config=con_config
+                            )
                         
                         agents[character_id] = agent
                         
@@ -993,7 +1030,7 @@ class DebateDialogue:
                             first_agent = agent
                             agents[ParticipantRole.CON] = agent
                         
-                        logger.info(f"Created CON agent {i+1}: {character_id} ({philosopher_attrs.get('name', 'Unknown')})")
+                        logger.info(f"Created CON agent {i+1}: {character_id} ({agent.philosopher_name})")
             
             # 사용자 에이전트들 추가 (UserParticipant 객체들을 agents 딕셔너리에 포함)
             for user_id, user_participant in self.user_participants.items():
@@ -1018,6 +1055,7 @@ class DebateDialogue:
             # 사용자 에이전트들도 fallback에 추가
             fallback_agents.update(self.user_participants)
             
+            logger.warning(f"Using fallback agents due to initialization error")
             return fallback_agents
     
     def _prepare_participant_arguments(self) -> None:
@@ -1325,23 +1363,41 @@ Important:
             self.state["turn_count"] += 1
             self.state["last_update_time"] = time.time()
             
-            # 발언 기록 추가
-            self.state["speaking_history"].append({
-                "turn": self.state["turn_count"],
+            # 메시지 생성 및 저장
+            message_obj = {
+                "id": f"{speaker_id}-{int(time.time())}",
+                "text": message,
                 "speaker_id": speaker_id,
                 "role": role,
                 "stage": current_stage,
-                "message": message,
-                "timestamp": time.time()
-            })
+                "timestamp": time.time(),
+                "turn_number": self.state["turn_count"]
+            }
+            
+            # 발언 기록에 추가 (한 번만)
+            self.state["speaking_history"].append(message_obj)
+            
+            # 논지 분석 및 공격 전략 준비 (백그라운드에서 실행)
+            if role in [ParticipantRole.PRO, ParticipantRole.CON] and current_stage in [
+                DebateStage.PRO_ARGUMENT, DebateStage.CON_ARGUMENT, 
+                DebateStage.INTERACTIVE_ARGUMENT
+            ]:
+                self._trigger_argument_analysis(speaker_id, message, role)
+            
+            # 다음 단계로 진행할지 확인
+            should_advance, next_stage = self._should_advance_stage(current_stage)
+            if should_advance:
+                self.state["current_stage"] = next_stage
+                logger.info(f"Advanced to next stage: {next_stage}")
             
             return {
                 "status": "success",
-                "speaker_id": speaker_id,
-                "role": role,
                 "message": message,
-                "current_stage": current_stage,
-                "turn_count": self.state["turn_count"]
+                "speaker_id": speaker_id,
+                "speaker_role": role,
+                "current_stage": self.state["current_stage"],
+                "turn_count": self.state["turn_count"],
+                "playing": self.playing
             }
             
         except Exception as e:
@@ -1352,9 +1408,8 @@ Important:
             }
     
     def _start_next_speaker_preparation(self) -> None:
-        """다음 발언자의 백그라운드 준비 시작"""
+        """다음 발언자 준비를 백그라운드에서 시작"""
         try:
-            # 현재 단계에서 다음에 올 발언자들 예측
             current_stage = self.state["current_stage"]
             
             if current_stage == DebateStage.OPENING:
@@ -1365,7 +1420,7 @@ Important:
                         "speaker_id": pro_participants[0],
                         "role": ParticipantRole.PRO
                     }
-                    asyncio.create_task(self._prepare_next_speaker_in_background(next_speaker_info))
+                    self._safe_create_background_task(next_speaker_info)
                     
             elif current_stage == DebateStage.PRO_ARGUMENT:
                 # 찬성측 입론 중 → 다음 찬성측 또는 반대측 첫 번째 준비
@@ -1384,14 +1439,14 @@ Important:
                         "speaker_id": pro_participants[pro_speaking_count],
                         "role": ParticipantRole.PRO
                     }
-                    asyncio.create_task(self._prepare_next_speaker_in_background(next_speaker_info))
+                    self._safe_create_background_task(next_speaker_info)
                 elif con_participants:
                     # 반대측 첫 번째 준비
                     next_speaker_info = {
                         "speaker_id": con_participants[0],
                         "role": ParticipantRole.CON
                     }
-                    asyncio.create_task(self._prepare_next_speaker_in_background(next_speaker_info))
+                    self._safe_create_background_task(next_speaker_info)
                     
             elif current_stage == DebateStage.CON_ARGUMENT:
                 # 반대측 입론 중 → 다음 반대측 준비
@@ -1407,10 +1462,26 @@ Important:
                         "speaker_id": con_participants[con_speaking_count],
                         "role": ParticipantRole.CON
                     }
-                    asyncio.create_task(self._prepare_next_speaker_in_background(next_speaker_info))
+                    self._safe_create_background_task(next_speaker_info)
                     
         except Exception as e:
             logger.error(f"Error starting next speaker preparation: {str(e)}")
+    
+    def _safe_create_background_task(self, next_speaker_info: Dict[str, Any]) -> None:
+        """이벤트 루프가 있을 때만 백그라운드 태스크 생성"""
+        try:
+            import asyncio
+            # 현재 실행 중인 이벤트 루프가 있는지 확인
+            loop = asyncio.get_running_loop()
+            if loop and not loop.is_closed():
+                asyncio.create_task(self._prepare_next_speaker_in_background(next_speaker_info))
+            else:
+                logger.info("No running event loop found, skipping background task creation")
+        except RuntimeError:
+            # 이벤트 루프가 없는 경우
+            logger.info("No event loop running, skipping background speaker preparation")
+        except Exception as e:
+            logger.error(f"Error creating background task: {str(e)}")
     
     def _build_response_context(self, speaker_id: str, role: str) -> Dict[str, Any]:
         """응답 생성을 위한 컨텍스트 구성"""
@@ -1622,21 +1693,38 @@ Important:
             role = ParticipantRole.CON
             participants = self.participants.get(ParticipantRole.CON, [])
         
+        logger.info(f"[DEBUG] _get_next_argument_speaker - stage: {stage}, role: {role}, participants: {participants}")
+        
         if not participants:
             # 참가자가 없으면 다음 단계로
+            logger.warning(f"[DEBUG] No participants for {role} in {stage}, advancing to next stage")
             self._advance_to_next_stage()
             return self.get_next_speaker()
         
-        # 현재 단계에서 발언한 참가자들 확인
-        stage_speakers = [msg.get("speaker_id") for msg in self.state["speaking_history"] 
-                         if msg.get("stage") == stage and msg.get("role") == role]
+        # 현재 단계에서 발언한 참가자들 확인 - 더 정확한 필터링
+        stage_speakers = []
+        for msg in self.state["speaking_history"]:
+            msg_stage = msg.get("stage")
+            msg_role = msg.get("role") 
+            msg_speaker = msg.get("speaker_id")
+            
+            logger.info(f"[DEBUG] History entry: speaker={msg_speaker}, stage={msg_stage}, role={msg_role}")
+            
+            # 정확히 같은 stage와 role인 경우만 카운트
+            if msg_stage == stage and msg_role == role and msg_speaker:
+                stage_speakers.append(msg_speaker)
         
-        # 아직 발언하지 않은 참가자 찾기
+        logger.info(f"[DEBUG] Stage speakers for {stage}/{role}: {stage_speakers}")
+        logger.info(f"[DEBUG] All participants for {role}: {participants}")
+        
+        # 아직 발언하지 않은 참가자 찾기 - 순서대로
         for participant in participants:
             if participant not in stage_speakers:
+                logger.info(f"[DEBUG] Found next speaker: {participant} (role: {role})")
                 return {"speaker_id": participant, "role": role}
         
         # 모든 참가자가 발언했으면 다음 단계로
+        logger.info(f"[DEBUG] All participants have spoken in {stage}, advancing to next stage")
         self._advance_to_next_stage()
         return self.get_next_speaker()
     
@@ -2100,20 +2188,20 @@ Important:
             if moderator_agent:
                 topic = self.room_data.get('title', '토론 주제')
                 
-                # 참가자 정보 수집
+                # 참가자 정보 수집 - 올바른 순서로
                 pro_participants = self._get_participants_by_role(ParticipantRole.PRO)
                 con_participants = self._get_participants_by_role(ParticipantRole.CON)
+                
+                logger.info(f"[DEBUG] Moderator opening - PRO: {pro_participants}, CON: {con_participants}")
                 
                 # 모더레이터 오프닝 준비 - generate_introduction 액션 사용
                 result = moderator_agent.process({
                     "action": "generate_introduction",
-                    "dialogue_state": {
-                        "topic": topic,
-                        "stance_statements": self.stance_statements,
-                        "participants_info": {
-                            "pro": pro_participants,
-                            "con": con_participants
-                        }
+                    "topic": topic,  # 직접 topic 전달
+                    "stance_statements": self.stance_statements,
+                    "participants_info": {
+                        "pro": pro_participants,  # 찬성측 참가자
+                        "con": con_participants   # 반대측 참가자
                     }
                 })
                 
@@ -2224,3 +2312,147 @@ Important:
                 return agent.prepared_argument
             else:
                 return "입론 생성에 실패했습니다."
+    
+    def _should_advance_stage(self, current_stage: str) -> tuple[bool, str]:
+        """
+        현재 단계에서 다음 단계로 진행할지 결정
+        
+        Args:
+            current_stage: 현재 토론 단계
+            
+        Returns:
+            (진행 여부, 다음 단계)
+        """
+        stage_sequence = DebateStage.STAGE_SEQUENCE
+        current_index = stage_sequence.index(current_stage)
+        
+        # 각 단계별 진행 조건 확인
+        if current_stage == DebateStage.OPENING:
+            # 모더레이터 오프닝 완료 후 찬성측 입론으로
+            return True, DebateStage.PRO_ARGUMENT
+            
+        elif current_stage == DebateStage.PRO_ARGUMENT:
+            # 찬성측 입론 완료 후 반대측 입론으로
+            pro_participants = self._get_participants_by_role(ParticipantRole.PRO)
+            pro_messages = [msg for msg in self.state["speaking_history"] 
+                          if msg.get("stage") == current_stage and msg.get("role") == ParticipantRole.PRO]
+            
+            if len(pro_messages) >= len(pro_participants):
+                return True, DebateStage.CON_ARGUMENT
+                
+        elif current_stage == DebateStage.CON_ARGUMENT:
+            # 반대측 입론 완료 후 모더레이터 요약으로
+            con_participants = self._get_participants_by_role(ParticipantRole.CON)
+            con_messages = [msg for msg in self.state["speaking_history"] 
+                          if msg.get("stage") == current_stage and msg.get("role") == ParticipantRole.CON]
+            
+            if len(con_messages) >= len(con_participants):
+                return True, DebateStage.MODERATOR_SUMMARY_1
+                
+        elif current_stage == DebateStage.MODERATOR_SUMMARY_1:
+            # 모더레이터 요약 완료 후 상호논증으로
+            return True, DebateStage.INTERACTIVE_ARGUMENT
+            
+        elif current_stage == DebateStage.INTERACTIVE_ARGUMENT:
+            # 상호논증 단계에서 충분한 교환 후 다음 단계로
+            interactive_messages = [msg for msg in self.state["speaking_history"] 
+                                  if msg.get("stage") == current_stage]
+            
+            if len(interactive_messages) >= 6:  # 최소 6번의 교환
+                return True, DebateStage.MODERATOR_SUMMARY_2
+                
+        elif current_stage == DebateStage.MODERATOR_SUMMARY_2:
+            # 두 번째 모더레이터 요약 완료 후 결론으로
+            return True, DebateStage.PRO_CONCLUSION
+            
+        elif current_stage == DebateStage.PRO_CONCLUSION:
+            # 찬성측 결론 완료 후 반대측 결론으로
+            return True, DebateStage.CON_CONCLUSION
+            
+        elif current_stage == DebateStage.CON_CONCLUSION:
+            # 반대측 결론 완료 후 모더레이터 마무리로
+            return True, DebateStage.CLOSING
+            
+        elif current_stage == DebateStage.CLOSING:
+            # 모더레이터 마무리 완료 후 토론 종료
+            return True, DebateStage.COMPLETED
+        
+        return False, current_stage
+    
+    def _trigger_argument_analysis(self, speaker_id: str, response_text: str, speaker_role: str):
+        """
+        발언 완료 후 다른 참가자들의 논지 분석 및 공격 전략 준비를 트리거
+        
+        Args:
+            speaker_id: 발언자 ID
+            response_text: 발언 내용
+            speaker_role: 발언자 역할
+        """
+        try:
+            # 상대편 참가자들 찾기
+            if speaker_role == ParticipantRole.PRO:
+                opponent_participants = self._get_participants_by_role(ParticipantRole.CON)
+            else:
+                opponent_participants = self._get_participants_by_role(ParticipantRole.PRO)
+            
+            # 각 상대편 참가자에게 논지 분석 요청
+            for opponent_id in opponent_participants:
+                opponent_agent = self.agents.get(opponent_id)
+                if opponent_agent:
+                    try:
+                        # 논지 분석 실행
+                        analysis_result = opponent_agent.process({
+                            "action": "analyze_opponent_arguments",
+                            "opponent_response": response_text,
+                            "speaker_id": speaker_id
+                        })
+                        
+                        logger.info(f"[{opponent_id}] Analyzed arguments from {speaker_id}: "
+                                  f"{analysis_result.get('analysis', {}).get('arguments_count', 0)} arguments found")
+                        
+                        # 공격 전략 준비
+                        if analysis_result.get("status") == "success":
+                            strategy_result = opponent_agent.process({
+                                "action": "prepare_attack_strategies",
+                                "target_speaker_id": speaker_id
+                            })
+                            
+                            strategies_count = len(strategy_result.get("strategies", []))
+                            logger.info(f"[{opponent_id}] Prepared {strategies_count} attack strategies against {speaker_id}")
+                            
+                    except Exception as e:
+                        logger.error(f"Error in argument analysis for {opponent_id}: {str(e)}")
+                        
+        except Exception as e:
+            logger.error(f"Error triggering argument analysis: {str(e)}")
+    
+    def get_attack_strategy_for_response(self, attacker_id: str, target_id: str, context: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """
+        응답 생성 시 사용할 최적 공격 전략 가져오기
+        
+        Args:
+            attacker_id: 공격자 ID
+            target_id: 공격 대상 ID
+            context: 현재 맥락
+            
+        Returns:
+            선택된 공격 전략 (없으면 None)
+        """
+        try:
+            attacker_agent = self.agents.get(attacker_id)
+            if not attacker_agent:
+                return None
+            
+            strategy_result = attacker_agent.process({
+                "action": "get_best_attack_strategy",
+                "target_speaker_id": target_id,
+                "context": context
+            })
+            
+            if strategy_result.get("status") == "success":
+                return strategy_result.get("strategy")
+            
+        except Exception as e:
+            logger.error(f"Error getting attack strategy: {str(e)}")
+        
+        return None
