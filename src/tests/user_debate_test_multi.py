@@ -182,6 +182,60 @@ def print_participants_info():
     print("   - 카뮈와 함께 협력하여 찬성측(니체, 헤겔)에 맞서기")
     print("   - 인간만의 고유한 창의성과 존재적 가치 강조")
 
+def print_performance_analysis(dialogue):
+    """모든 에이전트의 성능 분석 결과 출력"""
+    print("\n" + "="*80)
+    print("🔍 성능 분석 결과")
+    print("="*80)
+    
+    total_time = 0
+    agent_summaries = []
+    
+    # 모든 에이전트의 성능 요약 수집
+    for agent_id, agent in dialogue.agents.items():
+        if hasattr(agent, 'get_performance_summary'):
+            summary = agent.get_performance_summary()
+            agent_summaries.append(summary)
+            total_time += summary.get('total_time', 0)
+    
+    # 에이전트별 성능 출력
+    for summary in agent_summaries:
+        agent_name = summary.get('philosopher_name', summary.get('agent_name', summary.get('agent_id', 'Unknown')))
+        print(f"\n📊 {agent_name}")
+        print(f"   총 액션 수: {summary.get('total_actions', 0)}")
+        print(f"   총 소요 시간: {summary.get('total_time', 0):.2f}초")
+        
+        actions = summary.get('actions', {})
+        for action_name, timing in actions.items():
+            print(f"   - {action_name}: {timing['duration']:.2f}초 ({timing['start_time']} ~ {timing['end_time']})")
+    
+    # 전체 요약
+    print(f"\n📈 전체 요약")
+    print(f"   총 에이전트 수: {len(agent_summaries)}")
+    print(f"   전체 소요 시간: {total_time:.2f}초")
+    print(f"   평균 에이전트당 시간: {total_time/len(agent_summaries):.2f}초" if agent_summaries else "   평균 계산 불가")
+    
+    # 가장 오래 걸린 액션들
+    all_actions = []
+    for summary in agent_summaries:
+        agent_name = summary.get('philosopher_name', summary.get('agent_name', summary.get('agent_id', 'Unknown')))
+        actions = summary.get('actions', {})
+        for action_name, timing in actions.items():
+            all_actions.append({
+                'agent': agent_name,
+                'action': action_name,
+                'duration': timing['duration']
+            })
+    
+    # 시간순 정렬
+    all_actions.sort(key=lambda x: x['duration'], reverse=True)
+    
+    print(f"\n⏱️  가장 오래 걸린 액션들 (Top 5)")
+    for i, action in enumerate(all_actions[:5]):
+        print(f"   {i+1}. {action['agent']} - {action['action']}: {action['duration']:.2f}초")
+    
+    print("="*80)
+
 def test_multi_participant_debate():
     """다중 참가자 토론 테스트"""
     print_header("다중 참가자 토론 테스트 (NPC + 사용자 혼합)")
@@ -433,6 +487,9 @@ def test_multi_participant_debate():
     # 세션 정리
     user_manager.end_user_session(session.session_id)
     print(f"✅ 사용자 세션 종료 완료")
+
+    # 성능 분석 출력
+    print_performance_analysis(dialogue)
 
 def test_multi_structure_validation():
     """다중 참가자 구조 검증 테스트"""

@@ -1377,12 +1377,49 @@ Important:
             # 발언 기록에 추가 (한 번만)
             self.state["speaking_history"].append(message_obj)
             
-            # 논지 분석 및 공격 전략 준비 (백그라운드에서 실행)
+            # 논지 분석 및 공격 전략 준비 (완전히 백그라운드에서 실행 - 결과를 기다리지 않음)
             if role in [ParticipantRole.PRO, ParticipantRole.CON] and current_stage in [
                 DebateStage.PRO_ARGUMENT, DebateStage.CON_ARGUMENT, 
                 DebateStage.INTERACTIVE_ARGUMENT
             ]:
-                self._trigger_argument_analysis(speaker_id, message, role)
+                # 백그라운드 태스크로 즉시 실행 (결과를 기다리지 않음)
+                try:
+                    import asyncio
+                    loop = asyncio.get_running_loop()
+                    # fire-and-forget 방식으로 백그라운드 실행
+                    loop.create_task(self._trigger_argument_analysis_async(speaker_id, message, role))
+                    logger.info(f"Started background argument analysis for {speaker_id}")
+                except RuntimeError:
+                    # 이벤트 루프가 없으면 새 스레드에서 이벤트 루프 생성하여 실행
+                    import threading
+                    
+                    def run_analysis_in_new_loop():
+                        try:
+                            # 새 이벤트 루프 생성
+                            new_loop = asyncio.new_event_loop()
+                            asyncio.set_event_loop(new_loop)
+                            
+                            # 논지 분석 실행
+                            new_loop.run_until_complete(
+                                self._trigger_argument_analysis_async(speaker_id, message, role)
+                            )
+                            
+                            logger.info(f"Background argument analysis completed for {speaker_id}")
+                        except Exception as e:
+                            logger.error(f"Error in background argument analysis: {str(e)}")
+                        finally:
+                            # 이벤트 루프 정리
+                            try:
+                                new_loop.close()
+                            except:
+                                pass
+                    
+                    # 새 스레드에서 실행 (백그라운드)
+                    analysis_thread = threading.Thread(target=run_analysis_in_new_loop, daemon=True)
+                    analysis_thread.start()
+                    logger.info(f"Started background argument analysis thread for {speaker_id}")
+                except Exception as e:
+                    logger.error(f"Failed to start background argument analysis: {str(e)}")
             
             # 다음 단계로 진행할지 확인
             should_advance, next_stage = self._should_advance_stage(current_stage)
@@ -1729,20 +1766,20 @@ Important:
         return self.get_next_speaker()
     
     def _get_next_interactive_speaker(self) -> Dict[str, str]:
-        """상호논증 단계의 다음 발언자 결정"""
-        # 간단한 번갈아가며 발언 로직
+        """상호논증 단계의 다음 발언자 결정 - 반대측부터 시작"""
+        # 간단한 번갈아가며 발언 로직 - 반대측부터 시작
         stage_messages = [msg for msg in self.state["speaking_history"] 
                          if msg.get("stage") == DebateStage.INTERACTIVE_ARGUMENT]
         
-        # 발언 수에 따라 찬성/반대 번갈아가며
+        # 발언 수에 따라 반대/찬성 번갈아가며 (반대측부터 시작)
         turn_count = len(stage_messages)
         
-        if turn_count % 2 == 0:  # 짝수 턴: 찬성측
-            participants = self.participants.get(ParticipantRole.PRO, [])
-            role = ParticipantRole.PRO
-        else:  # 홀수 턴: 반대측
+        if turn_count % 2 == 0:  # 짝수 턴: 반대측 (첫 번째 턴 포함)
             participants = self.participants.get(ParticipantRole.CON, [])
             role = ParticipantRole.CON
+        else:  # 홀수 턴: 찬성측
+            participants = self.participants.get(ParticipantRole.PRO, [])
+            role = ParticipantRole.PRO
         
         if participants:
             # 해당 측에서 가장 적게 발언한 참가자 선택
@@ -2379,9 +2416,9 @@ Important:
         
         return False, current_stage
     
-    def _trigger_argument_analysis(self, speaker_id: str, response_text: str, speaker_role: str):
+    async def _trigger_argument_analysis_async(self, speaker_id: str, response_text: str, speaker_role: str):
         """
-        발언 완료 후 다른 참가자들의 논지 분석 및 공격 전략 준비를 트리거
+        발언 완료 후 다른 참가자들의 논지 분석 및 공격 전략 준비를 백그라운드에서 트리거
         
         Args:
             speaker_id: 발언자 ID
@@ -2395,36 +2432,66 @@ Important:
             else:
                 opponent_participants = self._get_participants_by_role(ParticipantRole.PRO)
             
-            # 각 상대편 참가자에게 논지 분석 요청
+            # 각 상대편 참가자에게 논지 분석 요청 (병렬 처리)
+            analysis_tasks = []
             for opponent_id in opponent_participants:
                 opponent_agent = self.agents.get(opponent_id)
                 if opponent_agent:
-                    try:
-                        # 논지 분석 실행
-                        analysis_result = opponent_agent.process({
-                            "action": "analyze_opponent_arguments",
-                            "opponent_response": response_text,
-                            "speaker_id": speaker_id
-                        })
-                        
-                        logger.info(f"[{opponent_id}] Analyzed arguments from {speaker_id}: "
-                                  f"{analysis_result.get('analysis', {}).get('arguments_count', 0)} arguments found")
-                        
-                        # 공격 전략 준비
-                        if analysis_result.get("status") == "success":
-                            strategy_result = opponent_agent.process({
-                                "action": "prepare_attack_strategies",
-                                "target_speaker_id": speaker_id
-                            })
-                            
-                            strategies_count = len(strategy_result.get("strategies", []))
-                            logger.info(f"[{opponent_id}] Prepared {strategies_count} attack strategies against {speaker_id}")
-                            
-                    except Exception as e:
-                        logger.error(f"Error in argument analysis for {opponent_id}: {str(e)}")
-                        
+                    # 각 에이전트의 분석을 별도 태스크로 실행
+                    task = asyncio.create_task(self._analyze_single_opponent_async(
+                        opponent_agent, opponent_id, speaker_id, response_text
+                    ))
+                    analysis_tasks.append(task)
+            
+            # 모든 분석 태스크를 병렬로 실행
+            if analysis_tasks:
+                await asyncio.gather(*analysis_tasks, return_exceptions=True)
+                logger.info(f"Background argument analysis completed for {len(analysis_tasks)} opponents")
+                
         except Exception as e:
-            logger.error(f"Error triggering argument analysis: {str(e)}")
+            logger.error(f"Error in background argument analysis: {str(e)}")
+    
+    async def _analyze_single_opponent_async(self, opponent_agent, opponent_id: str, speaker_id: str, response_text: str):
+        """
+        단일 상대방 에이전트의 논지 분석을 비동기로 실행
+        
+        Args:
+            opponent_agent: 상대방 에이전트
+            opponent_id: 상대방 ID
+            speaker_id: 발언자 ID
+            response_text: 발언 내용
+        """
+        try:
+            # 논지 분석 실행
+            loop = asyncio.get_event_loop()
+            
+            def analyze_sync():
+                return opponent_agent.process({
+                    "action": "analyze_opponent_arguments",
+                    "opponent_response": response_text,
+                    "speaker_id": speaker_id
+                })
+            
+            analysis_result = await loop.run_in_executor(None, analyze_sync)
+            
+            logger.info(f"[{opponent_id}] → {speaker_id} 논지 분석 완료: "
+                      f"{analysis_result.get('arguments_count', 0)} arguments found")
+            
+            # 공격 전략 준비
+            if analysis_result.get("status") == "success":
+                def prepare_strategies_sync():
+                    return opponent_agent.process({
+                        "action": "prepare_attack_strategies",
+                        "target_speaker_id": speaker_id
+                    })
+                
+                strategy_result = await loop.run_in_executor(None, prepare_strategies_sync)
+                
+                strategies_count = len(strategy_result.get("strategies", []))
+                logger.info(f"[{opponent_id}] → {speaker_id} 공격 전략 {strategies_count}개 준비 완료")
+                
+        except Exception as e:
+            logger.error(f"Error in argument analysis for {opponent_id} → {speaker_id}: {str(e)}")
     
     def get_attack_strategy_for_response(self, attacker_id: str, target_id: str, context: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         """

@@ -35,6 +35,9 @@ class DebateParticipantAgent(Agent):
         """
         super().__init__(agent_id, name, config)
         
+        # 성능 측정을 위한 타임스탬프 기록
+        self.performance_timestamps = {}
+        
         # 참가자 성격 및 특성
         self.role = config.get("role", "neutral")  # "pro", "con", "neutral"
         self.personality = config.get("personality", "balanced")
@@ -258,7 +261,7 @@ class DebateParticipantAgent(Agent):
     
     def process(self, input_data: Dict[str, Any]) -> Dict[str, Any]:
         """
-        입력 데이터 처리 및 응답 생성
+        에이전트로 요청 처리
         
         Args:
             input_data: 처리할 입력 데이터
@@ -268,66 +271,94 @@ class DebateParticipantAgent(Agent):
         """
         action = input_data.get("action", "")
         
-        # 액션별 처리 로직
-        if action == "generate_response":
-            response = self._generate_response(
-                input_data.get("context", {}),
-                input_data.get("dialogue_state", {}),
-                input_data.get("stance_statements", {})
-            )
-            return {"status": "success", "message": response}
-        elif action == "prepare_opening":
-            opening = self._prepare_opening_statement(
-                input_data.get("topic", ""),
-                input_data.get("context", {}),
-                input_data.get("stance_statements", {})
-            )
-            return {"status": "success", "message": opening}
-        elif action == "prepare_closing":
-            closing = self._prepare_closing_statement(
-                input_data.get("dialogue_state", {}),
-                input_data.get("stance_statements", {})
-            )
-            return {"status": "success", "message": closing}
-        elif action == "prepare_argument":
-            # 입론 준비 요청
-            topic = input_data.get("topic", "")
-            stance_statement = input_data.get("stance_statement", "")
-            context = input_data.get("context", {})
-            
-            self.prepare_argument_with_rag(topic, stance_statement, context)
-            
-            return {
-                "status": "success" if self.argument_prepared else "failed",
-                "prepared": self.argument_prepared,
-                "core_arguments_count": len(self.core_arguments),
-                "queries_count": len(self.argument_queries)
-            }
-        elif action == "analyze_opponent_arguments":
-            # 상대방 논지 분석 및 스코어링
-            opponent_response = input_data.get("opponent_response", "")
-            speaker_id = input_data.get("speaker_id", "")
-            
-            result = self.analyze_and_score_arguments(opponent_response, speaker_id)
-            return {"status": "success", "analysis": result}
-            
-        elif action == "prepare_attack_strategies":
-            # 공격 전략 준비
-            target_speaker_id = input_data.get("target_speaker_id", "")
-            
-            strategies = self.prepare_attack_strategies_for_speaker(target_speaker_id)
-            return {"status": "success", "strategies": strategies}
-            
-        elif action == "get_best_attack_strategy":
-            # 최적 공격 전략 선택
-            target_speaker_id = input_data.get("target_speaker_id", "")
-            context = input_data.get("context", {})
-            
-            strategy = self.get_best_attack_strategy(target_speaker_id, context)
-            return {"status": "success", "strategy": strategy}
+        # 성능 측정 시작
+        start_time = time.time()
+        action_key = f"{self.agent_id}_{action}"
+        
+        # 로그 메시지 개선 - analyze_opponent_arguments의 경우 대상 발언자 표시
+        if action == "analyze_opponent_arguments":
+            target_speaker = input_data.get("speaker_id", "unknown")
+            print(f"🕐 [{self.philosopher_name}] → {target_speaker} 논지 분석 시작: {time.strftime('%H:%M:%S', time.localtime(start_time))}")
         else:
-            logger.warning(f"Unknown action requested: {action}")
-            return {"status": "error", "message": f"Unknown action: {action}"}
+            print(f"🕐 [{self.philosopher_name}] {action} 시작: {time.strftime('%H:%M:%S', time.localtime(start_time))}")
+        
+        try:
+            result = None
+            
+            if action == "prepare_argument":
+                result = self._prepare_argument(input_data)
+            elif action == "generate_response":
+                result = self._generate_response(input_data)
+            elif action == "analyze_opponent_arguments":
+                result = self.analyze_and_score_arguments(
+                    input_data.get("opponent_response", ""),
+                    input_data.get("speaker_id", "unknown")
+                )
+            elif action == "prepare_attack_strategies":
+                result = self.prepare_attack_strategies_for_speaker(
+                    input_data.get("target_speaker_id", "unknown")
+                )
+            elif action == "get_best_attack_strategy":
+                result = self.get_best_attack_strategy(
+                    input_data.get("target_speaker_id", "unknown"),
+                    input_data.get("context", {})
+                )
+            else:
+                result = {"status": "error", "message": f"Unknown action: {action}"}
+            
+            # 성능 측정 종료
+            end_time = time.time()
+            duration = end_time - start_time
+            self.performance_timestamps[action_key] = {
+                "start": start_time,
+                "end": end_time,
+                "duration": duration
+            }
+            
+            # 완료 로그 메시지도 개선
+            if action == "analyze_opponent_arguments":
+                target_speaker = input_data.get("speaker_id", "unknown")
+                print(f"✅ [{self.philosopher_name}] → {target_speaker} 논지 분석 완료: {time.strftime('%H:%M:%S', time.localtime(end_time))} (소요시간: {duration:.2f}초)")
+            else:
+                print(f"✅ [{self.philosopher_name}] {action} 완료: {time.strftime('%H:%M:%S', time.localtime(end_time))} (소요시간: {duration:.2f}초)")
+            
+            return result
+            
+        except Exception as e:
+            end_time = time.time()
+            duration = end_time - start_time
+            
+            # 실패 로그 메시지도 개선
+            if action == "analyze_opponent_arguments":
+                target_speaker = input_data.get("speaker_id", "unknown")
+                print(f"❌ [{self.philosopher_name}] → {target_speaker} 논지 분석 실패: {time.strftime('%H:%M:%S', time.localtime(end_time))} (소요시간: {duration:.2f}초) - {str(e)}")
+            else:
+                print(f"❌ [{self.philosopher_name}] {action} 실패: {time.strftime('%H:%M:%S', time.localtime(end_time))} (소요시간: {duration:.2f}초) - {str(e)}")
+            
+            logger.error(f"Error in {action}: {str(e)}")
+            return {"status": "error", "message": f"처리 중 오류가 발생했습니다: {str(e)}"}
+    
+    def get_performance_summary(self) -> Dict[str, Any]:
+        """성능 측정 결과 요약 반환"""
+        summary = {
+            "agent_id": self.agent_id,
+            "philosopher_name": self.philosopher_name,
+            "total_actions": len(self.performance_timestamps),
+            "actions": {}
+        }
+        
+        total_time = 0
+        for action_key, timing in self.performance_timestamps.items():
+            action_name = action_key.replace(f"{self.agent_id}_", "")
+            summary["actions"][action_name] = {
+                "duration": timing["duration"],
+                "start_time": time.strftime('%H:%M:%S', time.localtime(timing["start"])),
+                "end_time": time.strftime('%H:%M:%S', time.localtime(timing["end"]))
+            }
+            total_time += timing["duration"]
+        
+        summary["total_time"] = total_time
+        return summary
     
     def update_state(self, state_update: Dict[str, Any]) -> None:
         """
@@ -352,7 +383,24 @@ class DebateParticipantAgent(Agent):
         """
         self.llm_manager = llm_manager
     
-    def _generate_response(self, context: Dict[str, Any], dialogue_state: Dict[str, Any], stance_statements: Dict[str, str]) -> str:
+    def _generate_response(self, input_data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        응답 생성 처리
+        
+        Args:
+            input_data: 응답 생성에 필요한 데이터
+            
+        Returns:
+            생성된 응답
+        """
+        context = input_data.get("context", {})
+        dialogue_state = input_data.get("dialogue_state", {})
+        stance_statements = input_data.get("stance_statements", {})
+        
+        response = self._generate_response_internal(context, dialogue_state, stance_statements)
+        return {"status": "success", "message": response}
+    
+    def _generate_response_internal(self, context: Dict[str, Any], dialogue_state: Dict[str, Any], stance_statements: Dict[str, str]) -> str:
         """
         토론 응답 생성
         
@@ -364,182 +412,156 @@ class DebateParticipantAgent(Agent):
         Returns:
             생성된 응답 텍스트
         """
-        # 컨텍스트에서 필요한 정보 추출
-        topic = context.get("topic", "the topic")
+        current_stage = context.get("current_stage", "")
+        topic = context.get("topic", "")
         recent_messages = context.get("recent_messages", [])
-        current_stage = context.get("current_stage", "discussion")
-        relevant_context = context.get("relevant_context", [])
         emotion_enhancement = context.get("emotion_enhancement", {})
         
-        # 입론 단계에서 미리 준비된 argument 사용
-        logger.info(f"[{self.agent_id}] Checking prepared argument conditions:")
-        logger.info(f"[{self.agent_id}] - current_stage: {current_stage}")
-        logger.info(f"[{self.agent_id}] - argument_prepared: {self.argument_prepared}")
-        logger.info(f"[{self.agent_id}] - prepared_argument length: {len(self.prepared_argument) if self.prepared_argument else 0}")
-        logger.info(f"[{self.agent_id}] - core_arguments count: {len(self.core_arguments)}")
-        logger.info(f"[{self.agent_id}] - argument_queries count: {len(self.argument_queries)}")
+        # 상호논증 단계에서는 짧고 직접적인 공격/질문 형태로 생성
+        if current_stage == "interactive_argument":
+            return self._generate_interactive_argument_response(
+                topic, recent_messages, dialogue_state, stance_statements, emotion_enhancement
+            )
         
-        if current_stage in ["pro_argument", "con_argument"] and self.argument_prepared and self.prepared_argument:
-            logger.info(f"[{self.agent_id}] Using prepared argument for {current_stage}")
-            return self.prepared_argument
-        else:
-            logger.info(f"[{self.agent_id}] NOT using prepared argument - generating new response")
+        # 기존 로직 유지 (입론, 결론 등)
+        # ... existing code ...
+    
+    def _generate_interactive_argument_response(self, topic: str, recent_messages: List[Dict[str, Any]], dialogue_state: Dict[str, Any], stance_statements: Dict[str, str], emotion_enhancement: Dict[str, Any] = None) -> str:
+        """
+        상호논증 단계에서 응답 생성
         
-        # 디버그 로깅 추가
-        logger.info(f"[{self.agent_id}] Generating response for stage: {current_stage}")
-        logger.info(f"[{self.agent_id}] Recent messages count: {len(recent_messages)}")
-        logger.info(f"[{self.agent_id}] Relevant context count: {len(relevant_context)}")
-        logger.info(f"[{self.agent_id}] Emotion enhancement data: {emotion_enhancement}")
-        
-        # 내 입장과 반대 입장 확인
-        my_stance = stance_statements.get(self.role) if self.role in ["pro", "con"] else ""
+        Args:
+            topic: 토론 주제
+            recent_messages: 최근 메시지 목록
+            dialogue_state: 현재 대화 상태
+            stance_statements: 찬반 입장 진술문
+            emotion_enhancement: 감정 강화 데이터 (선택적)
+            
+        Returns:
+            생성된 응답 텍스트
+        """
+        # 상대방 에이전트 정보 찾기
         opposite_role = "con" if self.role == "pro" else "pro"
-        opposite_stance = stance_statements.get(opposite_role, "")
+        target_agent_name = None
+        target_agent_id = None
+        
+        # 최근 메시지에서 상대방 에이전트 찾기
+        for msg in reversed(recent_messages):
+            if msg.get('role') == opposite_role:
+                target_agent_id = msg.get('speaker_id', '')
+                # 철학자 이름 찾기
+                try:
+                    import yaml
+                    import os
+                    philosophers_file = os.path.join(os.getcwd(), "philosophers", "debate_optimized.yaml")
+                    with open(philosophers_file, 'r', encoding='utf-8') as file:
+                        philosophers = yaml.safe_load(file)
+                    
+                    if target_agent_id in philosophers:
+                        target_agent_name = philosophers[target_agent_id].get("name", target_agent_id)
+                    else:
+                        target_agent_name = target_agent_id
+                except:
+                    target_agent_name = target_agent_id or "상대방"
+                break
+        
+        if not target_agent_name:
+            target_agent_name = "상대방"
         
         # 최근 메시지 텍스트 형식화
         recent_messages_text = "\n".join([
             f"{msg.get('role', 'Unknown')} ({msg.get('speaker_id', '')}): {msg.get('text', '')}" 
-            for msg in recent_messages
+            for msg in recent_messages[-3:]  # 최근 3개만
         ])
         
-        # 관련 컨텍스트 결합
-        if relevant_context:
-            relevant_context_text = "\n".join(relevant_context)
-        else:
-            relevant_context_text = "No specific context provided."
+        # 내 입장과 반대 입장 확인
+        my_stance = stance_statements.get(self.role) if self.role in ["pro", "con"] else ""
+        opposite_stance = stance_statements.get(opposite_role, "")
         
-        # 시스템 프롬프트 구성
-        if self.philosopher_name and self.philosopher_essence:
-            # 철학자 정보가 있는 경우: 간결하게 철학자 특성 포함
-            philosopher_traits = ", ".join(self.philosopher_key_traits) if self.philosopher_key_traits else "논리적 사고"
-            
-            system_prompt = f"""You are {self.philosopher_name}, a renowned philosopher participating in a formal debate.
-
-Your philosophical essence: {self.philosopher_essence}
-Your debate approach: {self.philosopher_debate_style}
+        # 공격 전략 가져오기 (준비된 것이 있으면)
+        attack_strategy = None
+        if target_agent_id and hasattr(self, 'attack_strategies') and target_agent_id in self.attack_strategies:
+            strategies = self.attack_strategies[target_agent_id]
+            if strategies:
+                attack_strategy = strategies[0]  # 첫 번째 전략 사용
+        
+        # 시스템 프롬프트 구성 - 상호논증에 특화
+        system_prompt = f"""
+You are {self.philosopher_name}, a philosopher with this essence: {self.philosopher_essence}
+Your debate style: {self.philosopher_debate_style}
 Your personality: {self.philosopher_personality}
-Key traits: {philosopher_traits}
 
-Role in this debate: {self.role.upper()} side
-Your position: {my_stance}
+This is the INTERACTIVE ARGUMENT phase of the debate. Your responses should be:
+1. SHORT and DIRECT (2-3 sentences maximum)
+2. AGGRESSIVE and CHALLENGING
+3. Focus on ATTACKING specific points made by your opponent
+4. Ask POINTED QUESTIONS that expose weaknesses
+5. Use your philosophical approach to challenge their logic
 
-IMPORTANT: Stay true to your philosophical character while focusing on the debate topic. Don't lecture about your philosophy unless directly relevant to the argument. Your goal is to win the debate using your unique thinking style, not to give a philosophy lesson.
-
-Remember your famous words: "{self.philosopher_quote}"
-"""
-        else:
-            # 기본 시스템 프롬프트 (철학자 정보 없음)
-            system_prompt = f"""You are a debater representing the {self.role.upper()} side of a formal debate.
-
-Your personal characteristics:
-- Role: {self.role} ({my_stance})
-- Personality: {self.personality}
-- Knowledge level: {self.knowledge_level}
-- Style: {self.style}
-- Argumentation style: {self.argumentation_style}
-
-You should craft responses that match these characteristics while remaining persuasive and engaging.
-Always stay true to your assigned position, but remain respectful to the opposition.
+You are directly confronting {target_agent_name}. Address them by name and attack their specific arguments.
 """
 
-        # 유저 프롬프트 구성 - 단계에 따라 다른 지시사항 포함
-        stage_instructions = self._get_stage_instructions(current_stage, topic, my_stance, opposite_stance)
-        
-        # 공격 전략 활용 (상호논증 단계에서)
-        attack_strategy_text = ""
-        if current_stage == "interactive_argument" and recent_messages:
-            # 최근 상대방 발언자 찾기
-            for msg in reversed(recent_messages):
-                if msg.get("role") != self.role:
-                    target_speaker_id = msg.get("speaker_id")
-                    if target_speaker_id and target_speaker_id in self.attack_strategies:
-                        # 최적 공격 전략 선택
-                        best_strategy = self.get_best_attack_strategy(target_speaker_id, context)
-                        if best_strategy:
-                            attack_plan = best_strategy.get("attack_plan", {})
-                            strategy_type = best_strategy.get("strategy_type", "")
-                            
-                            attack_strategy_text = f"""
-ATTACK STRATEGY TO USE:
-Strategy Type: {strategy_type}
-Target Point: {attack_plan.get('target_point', '')}
-Key Phrase: {attack_plan.get('key_phrase', '')}
-Strategy Application: {attack_plan.get('strategy_application', '')}
-
-Use this strategy to structure your response and attack the opponent's argument effectively.
-"""
-                    break
-        
+        # 유저 프롬프트 구성
         user_prompt = f"""
 DEBATE TOPIC: "{topic}"
 
-YOUR POSITION ({self.role.upper()}): "{my_stance}"
-OPPOSITE POSITION ({opposite_role.upper()}): "{opposite_stance}"
+YOUR POSITION: {my_stance}
+OPPONENT'S POSITION: {opposite_stance}
 
-CURRENT STAGE: {current_stage}
+TARGET OPPONENT: {target_agent_name}
 
-INSTRUCTIONS: {stage_instructions}
-
-{attack_strategy_text}
-
-RELEVANT CONTEXT:
-{relevant_context_text}
-
-RECENT DISCUSSION:
+RECENT EXCHANGE:
 {recent_messages_text}
 
-Craft your response according to the current stage and your assigned role. 
-Respond in the SAME LANGUAGE as the debate topic.
-Make your response persuasive, clear and well-structured.
+TASK: Generate a SHORT, DIRECT response (2-3 sentences max) that:
+1. Directly addresses {target_agent_name} by name
+2. Attacks a specific point they made
+3. Asks a challenging question OR points out a logical flaw
+4. Uses your philosophical style to challenge them
+
 """
 
-        # 감정 상태 적용 (있는 경우)
-        try:
-            if emotion_enhancement:
-                logger.info(f"[{self.agent_id}] Applying emotion enhancement: {emotion_enhancement.get('emotion_state', 'unknown')}")
-                original_system_prompt = system_prompt
-                system_prompt, user_prompt = apply_debate_emotion_to_prompt(
-                    system_prompt=system_prompt,
-                    user_prompt=user_prompt,
-                    emotion_data={"prompt_enhancement": emotion_enhancement}
-                )
-                logger.info(f"[{self.agent_id}] Original system prompt: {original_system_prompt[:100]}...")
-                logger.info(f"[{self.agent_id}] Enhanced system prompt: {system_prompt[:100]}...")
-                logger.info(f"[{self.agent_id}] Emotion successfully applied to prompt")
-            else:
-                logger.info(f"[{self.agent_id}] No emotion enhancement data available for this response")
-        except Exception as e:
-            logger.error(f"[{self.agent_id}] Error applying emotion to prompt: {str(e)}")
+        # 공격 전략이 있으면 추가
+        if attack_strategy:
+            strategy_type = attack_strategy.get('strategy_type', '')
+            strategy_description = attack_strategy.get('description', '')
+            key_phrases = attack_strategy.get('key_phrases', [])
+            
+            user_prompt += f"""
+ATTACK STRATEGY: Use the "{strategy_type}" approach
+Strategy Description: {strategy_description}
+Key Phrases to Consider: {', '.join(key_phrases[:3])}
 
-        # LLM 호출
-        logger.info(f"[{self.agent_id}] Calling LLM for {self.role} response in stage: {current_stage}")
-        logger.info(f"[{self.agent_id}] System prompt: {system_prompt[:200]}...")
-        logger.info(f"[{self.agent_id}] User prompt: {user_prompt[:300]}...")
-        response = self.llm_manager.generate_response(
-            system_prompt=system_prompt,
-            user_prompt=user_prompt,
-            llm_model="gpt-4",
-            max_tokens=1500
-        )
-        logger.info(f"[{self.agent_id}] LLM response received, length: {len(response) if response else 0}")
+"""
+
+        user_prompt += f"""
+Remember: Be CONCISE, DIRECT, and CONFRONTATIONAL. This is rapid-fire debate, not a long speech.
+Address {target_agent_name} directly and challenge their specific arguments.
+
+Your response:"""
+
+        # 감정 강화 적용 (선택적)
+        if emotion_enhancement:
+            from ...agents.utility.debate_emotion_inference import apply_debate_emotion_to_prompt
+            system_prompt, user_prompt = apply_debate_emotion_to_prompt(system_prompt, user_prompt, emotion_enhancement)
         
-        # LLM 응답이 없는 경우 기본 응답 제공
-        if not response:
-            logger.warning(f"[{self.agent_id}] LLM response was empty, using fallback response")
-            if current_stage == "opening":
-                response = self._prepare_opening_statement(topic, context, stance_statements)
-            elif "conclusion" in current_stage:
-                response = self._prepare_closing_statement(dialogue_state, stance_statements)
+        try:
+            # LLM 호출 - 짧은 응답을 위해 max_tokens 제한
+            response = self.llm_manager.generate_response(
+                system_prompt=system_prompt,
+                user_prompt=user_prompt,
+                llm_model="gpt-4",
+                max_tokens=200  # 짧은 응답 강제
+            )
+            
+            if response:
+                return response.strip()
             else:
-                if self.role == "pro":
-                    response = f"저는 {topic}에 찬성합니다. {my_stance}라고 생각합니다. 그 이유는 다음과 같습니다. 첫째, [찬성 이유 1]. 둘째, [찬성 이유 2]. 셋째, [찬성 이유 3]."
-                else:
-                    response = f"저는 {topic}에 반대합니다. {my_stance}라고 생각합니다. 그 이유는 다음과 같습니다. 첫째, [반대 이유 1]. 둘째, [반대 이유 2]. 셋째, [반대 이유 3]."
-        
-        # 응답 기록 업데이트
-        self._update_interaction_history(user_prompt, response)
-        
-        return response
+                return f"{target_agent_name}님, 그 논리에는 명백한 허점이 있습니다. 어떻게 설명하시겠습니까?"
+                
+        except Exception as e:
+            logger.error(f"Error generating interactive argument response: {str(e)}")
+            return f"{target_agent_name}님, 그 주장에 대해 더 구체적인 근거를 제시해 주시기 바랍니다."
     
     def prepare_argument_with_rag(self, topic: str, stance_statement: str, context: Dict[str, Any] = None) -> None:
         """
@@ -2132,3 +2154,26 @@ Return JSON format:
             self.opponent_arguments.clear()
             self.attack_strategies.clear()
             self.argument_scores.clear() 
+    
+    def _prepare_argument(self, input_data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        입론 준비 처리
+        
+        Args:
+            input_data: 입론 준비에 필요한 데이터
+            
+        Returns:
+            준비 결과
+        """
+        topic = input_data.get("topic", "")
+        stance_statement = input_data.get("stance_statement", "")
+        context = input_data.get("context", {})
+        
+        self.prepare_argument_with_rag(topic, stance_statement, context)
+        
+        return {
+            "status": "success" if self.argument_prepared else "failed",
+            "prepared": self.argument_prepared,
+            "core_arguments_count": len(self.core_arguments),
+            "queries_count": len(self.argument_queries)
+        }

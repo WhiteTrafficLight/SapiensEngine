@@ -10,6 +10,7 @@ import logging
 from src.agents.base.agent import Agent
 from src.dialogue.state.dialogue_state import DialogueStage, Message
 from src.models.llm.llm_manager import LLMManager
+import time
 
 logger = logging.getLogger(__name__)
 
@@ -30,6 +31,9 @@ class ModeratorAgent(Agent):
             config: 설정 매개변수
         """
         super().__init__(agent_id, name, config)
+        
+        # 성능 측정을 위한 타임스탬프 기록
+        self.performance_timestamps = {}
         
         # 중재자 성격 설정
         self.strictness = config.get("parameters", {}).get("strictness", 0.7)
@@ -62,46 +66,96 @@ class ModeratorAgent(Agent):
         """
         action = input_data.get("action", "")
         
-        # 액션별 처리 로직
-        if action == "generate_introduction":
-            return self._generate_introduction(input_data.get("dialogue_state", {}))
-            
-        elif action == "generate_response":
-            return self._generate_response_for_stage(input_data)
-            
-        elif action == "determine_next_speaker":
-            return self._determine_next_speaker(
-                input_data.get("dialogue_state", {}),
-                input_data.get("participants", {}),
-                input_data.get("current_stage", "")
-            )
-            
-        elif action == "check_if_intervention_needed":
-            # 단일 메시지 객체를 받아서 처리
-            return self._moderate_qa_session(
-                input_data.get("dialogue_state", {}),
-                input_data.get("current_message", {})  # 리스트가 아닌 딕셔너리 객체
-            )
+        # 성능 측정 시작
+        start_time = time.time()
+        action_key = f"moderator_{action}"
+        print(f"🕐 [모더레이터] {action} 시작: {time.strftime('%H:%M:%S', time.localtime(start_time))}")
         
-        # 이전 방식 지원 (호환성)
-        dialogue_state = input_data.get("dialogue_state")
+        try:
+            result = None
+            
+            # 액션별 처리 로직
+            if action == "generate_introduction":
+                result = self._generate_introduction(input_data.get("dialogue_state", {}))
+                
+            elif action == "generate_response":
+                result = self._generate_response_for_stage(input_data)
+                
+            elif action == "determine_next_speaker":
+                result = self._determine_next_speaker(
+                    input_data.get("dialogue_state", {}),
+                    input_data.get("participants", {}),
+                    input_data.get("current_stage", "")
+                )
+                
+            elif action == "check_if_intervention_needed":
+                # 단일 메시지 객체를 받아서 처리
+                result = self._moderate_qa_session(
+                    input_data.get("dialogue_state", {}),
+                    input_data.get("current_message", {})  # 리스트가 아닌 딕셔너리 객체
+                )
+            
+            # 이전 방식 지원 (호환성)
+            else:
+                dialogue_state = input_data.get("dialogue_state")
+                
+                # dict인 경우 직접 current_stage 필드 접근
+                if isinstance(dialogue_state, dict):
+                    current_stage = dialogue_state.get("current_stage", "INITIALIZATION")
+                else:
+                    current_stage = getattr(dialogue_state, "stage", "INITIALIZATION")
+                
+                if current_stage == "INITIALIZATION":
+                    result = self._generate_introduction(dialogue_state)
+                elif current_stage == "MAIN_DISCUSSION":
+                    result = self._manage_discussion(dialogue_state, input_data.get("current_message"))
+                elif current_stage == "CONCLUSION":
+                    result = self._generate_conclusion(dialogue_state)
+                elif current_stage == "SUMMARY":
+                    result = self._generate_summary(dialogue_state)
+                else:
+                    result = {"status": "success", "message": "대화 진행 중입니다."}
+            
+            # 성능 측정 종료
+            end_time = time.time()
+            duration = end_time - start_time
+            self.performance_timestamps[action_key] = {
+                "start": start_time,
+                "end": end_time,
+                "duration": duration
+            }
+            
+            print(f"✅ [모더레이터] {action} 완료: {time.strftime('%H:%M:%S', time.localtime(end_time))} (소요시간: {duration:.2f}초)")
+            
+            return result
+            
+        except Exception as e:
+            end_time = time.time()
+            duration = end_time - start_time
+            print(f"❌ [모더레이터] {action} 실패: {time.strftime('%H:%M:%S', time.localtime(end_time))} (소요시간: {duration:.2f}초) - {str(e)}")
+            return {"status": "error", "message": f"처리 중 오류가 발생했습니다: {str(e)}"}
+    
+    def get_performance_summary(self) -> Dict[str, Any]:
+        """성능 측정 결과 요약 반환"""
+        summary = {
+            "agent_id": self.agent_id,
+            "agent_name": "모더레이터",
+            "total_actions": len(self.performance_timestamps),
+            "actions": {}
+        }
         
-        # dict인 경우 직접 current_stage 필드 접근
-        if isinstance(dialogue_state, dict):
-            current_stage = dialogue_state.get("current_stage", "INITIALIZATION")
-        else:
-            current_stage = getattr(dialogue_state, "stage", "INITIALIZATION")
+        total_time = 0
+        for action_key, timing in self.performance_timestamps.items():
+            action_name = action_key.replace("moderator_", "")
+            summary["actions"][action_name] = {
+                "duration": timing["duration"],
+                "start_time": time.strftime('%H:%M:%S', time.localtime(timing["start"])),
+                "end_time": time.strftime('%H:%M:%S', time.localtime(timing["end"]))
+            }
+            total_time += timing["duration"]
         
-        if current_stage == "INITIALIZATION":
-            return self._generate_introduction(dialogue_state)
-        elif current_stage == "MAIN_DISCUSSION":
-            return self._manage_discussion(dialogue_state, input_data.get("current_message"))
-        elif current_stage == "CONCLUSION":
-            return self._generate_conclusion(dialogue_state)
-        elif current_stage == "SUMMARY":
-            return self._generate_summary(dialogue_state)
-        else:
-            return {"status": "success", "message": "대화 진행 중입니다."}
+        summary["total_time"] = total_time
+        return summary
     
     def update_state(self, state_update: Dict[str, Any]) -> None:
         """
