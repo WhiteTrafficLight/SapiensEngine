@@ -11,6 +11,20 @@ socrates:
     - "Pursuit of logical consistency"
     - "Challenge assumptions"
   quote: "The unexamined life is not worth living"
+  rag_affinity: 0.6
+  # RAG 사용 판별 스탯
+  rag_stats:
+    data_respect: 0.5
+    conceptual_precision: 0.9
+    systematic_logic: 0.7
+    pragmatic_orientation: 0.6
+    rhetorical_independence: 0.4
+  vulnerability_sensitivity:
+    conceptual_clarity: 0.9
+    logical_leap: 0.8
+    overgeneralization: 0.7
+    emotional_appeal: 0.3
+    lack_of_concrete_evidence: 0.4
   strategy_weights:
     "Clipping": 0.35
     "Framing Shift": 0.2
@@ -30,6 +44,20 @@ plato:
     - "Systematic argumentation"
     - "Use of analogies and metaphors"
   quote: "Just as the shadows in the cave are not reality, what we see is not everything"
+  rag_affinity: 0.8
+  # RAG 사용 판별 스탯
+  rag_stats:
+    data_respect: 0.4
+    conceptual_precision: 0.8
+    systematic_logic: 0.8
+    pragmatic_orientation: 0.3
+    rhetorical_independence: 0.2
+  vulnerability_sensitivity:
+    conceptual_clarity: 0.8
+    logical_leap: 0.6
+    overgeneralization: 0.5
+    emotional_appeal: 0.2
+    lack_of_concrete_evidence: 0.7
   strategy_weights:
     "Clipping": 0.1
     "Framing Shift": 0.4
@@ -49,6 +77,20 @@ aristotle:
     - "Doctrine of the mean"
     - "Systematic classification"
   quote: "We are what we repeatedly do. Excellence is not an act, but a habit"
+  rag_affinity: 0.7
+  # RAG 사용 판별 스탯
+  rag_stats:
+    data_respect: 0.9
+    conceptual_precision: 0.7
+    systematic_logic: 0.8
+    pragmatic_orientation: 0.8
+    rhetorical_independence: 0.1
+  vulnerability_sensitivity:
+    conceptual_clarity: 0.6
+    logical_leap: 0.7
+    overgeneralization: 0.8
+    emotional_appeal: 0.4
+    lack_of_concrete_evidence: 0.9
   strategy_weights:
     "Clipping": 0.3
     "Framing Shift": 0.2
@@ -68,6 +110,20 @@ kant:
     - "Principle of universality"
     - "Deontological ethics"
   quote: "Act only according to that maxim whereby you can at the same time will that it should become a universal law"
+  rag_affinity: 0.9
+  # RAG 사용 판별 스탯
+  rag_stats:
+    data_respect: 0.6
+    conceptual_precision: 0.9
+    systematic_logic: 0.9
+    pragmatic_orientation: 0.2
+    rhetorical_independence: 0.1
+  vulnerability_sensitivity:
+    conceptual_clarity: 0.4
+    logical_leap: 0.4
+    overgeneralization: 0.1
+    emotional_appeal: 0.05
+    lack_of_concrete_evidence: 0.05
   strategy_weights:
     "Clipping": 0.1
     "Framing Shift": 0.1
@@ -87,6 +143,20 @@ nietzsche:
     - "Will to power"
     - "Pursuit of Übermensch"
   quote: "God is dead. Now we must create new values"
+  rag_affinity: 0.4
+  # RAG 사용 판별 스탯
+  rag_stats:
+    data_respect: 0.2
+    conceptual_precision: 0.3
+    systematic_logic: 0.4
+    pragmatic_orientation: 0.3
+    rhetorical_independence: 0.9
+  vulnerability_sensitivity:
+    conceptual_clarity: 0.3
+    logical_leap: 0.2
+    overgeneralization: 0.4
+    emotional_appeal: 0.8
+    lack_of_concrete_evidence: 0.2
   strategy_weights:
     "Clipping": 0.2
     "Framing Shift": 0.25
@@ -106,6 +176,20 @@ hegel:
     - "Historical development perspective"
     - "Pursuit of absolute spirit"
   quote: "Only the rational is real"
+  rag_affinity: 0.8
+  # RAG 사용 판별 스탯
+  rag_stats:
+    data_respect: 0.5
+    conceptual_precision: 0.7
+    systematic_logic: 0.9
+    pragmatic_orientation: 0.4
+    rhetorical_independence: 0.3
+  vulnerability_sensitivity:
+    conceptual_clarity: 0.7
+    logical_leap: 0.5
+    overgeneralization: 0.3
+    emotional_appeal: 0.2
+    lack_of_concrete_evidence: 0.6
   strategy_weights:
     "Clipping": 0.05
     "Framing Shift": 0.35
@@ -125,6 +209,20 @@ marx:
     - "Class struggle perspective"
     - "Will for historical transformation"
   quote: "Philosophers have interpreted the world in various ways; the point is to change it"
+  rag_affinity: 0.8
+  # RAG 사용 판별 스탯
+  rag_stats:
+    data_respect: 0.9
+    conceptual_precision: 0.6
+    systematic_logic: 0.7
+    pragmatic_orientation: 0.8
+    rhetorical_independence: 0.2
+  vulnerability_sensitivity:
+    conceptual_clarity: 0.5
+    logical_leap: 0.6
+    overgeneralization: 0.7
+    emotional_appeal: 0.4
+    lack_of_concrete_evidence: 0.8
   strategy_weights:
     "Clipping": 0.2
     "Framing Shift": 0.3
@@ -144,6 +242,20 @@ sartre:
     - "Absolute freedom"
     - "Engagement (commitment)"
   quote: "Man is condemned to be free"
+  rag_affinity: 0.5
+  # RAG 사용 판별 스탯
+  rag_stats:
+    data_respect: 0.4
+    conceptual_precision: 0.6
+    systematic_logic: 0.5
+    pragmatic_orientation: 0.7
+    rhetorical_independence: 0.6
+  vulnerability_sensitivity:
+    conceptual_clarity: 0.6
+    logical_leap: 0.5
+    overgeneralization: 0.6
+    emotional_appeal: 0.7
+    lack_of_concrete_evidence: 0.4
   strategy_weights:
     "Clipping": 0.1
     "Framing Shift": 0.2
@@ -163,6 +275,20 @@ camus:
     - "Revolt and solidarity"
     - "Affirmation of life"
   quote: "We must imagine Sisyphus happy"
+  rag_affinity: 0.3
+  # RAG 사용 판별 스탯
+  rag_stats:
+    data_respect: 0.3
+    conceptual_precision: 0.4
+    systematic_logic: 0.3
+    pragmatic_orientation: 0.6
+    rhetorical_independence: 0.8
+  vulnerability_sensitivity:
+    conceptual_clarity: 0.4
+    logical_leap: 0.3
+    overgeneralization: 0.5
+    emotional_appeal: 0.9
+    lack_of_concrete_evidence: 0.1
   strategy_weights:
     "Clipping": 0.1
     "Framing Shift": 0.3
@@ -182,6 +308,20 @@ beauvoir:
     - "Analysis of otherness"
     - "Liberation and equality"
   quote: "One is not born, but rather becomes, a woman"
+  rag_affinity: 0.7
+  # RAG 사용 판별 스탯
+  rag_stats:
+    data_respect: 0.7
+    conceptual_precision: 0.6
+    systematic_logic: 0.6
+    pragmatic_orientation: 0.9
+    rhetorical_independence: 0.3
+  vulnerability_sensitivity:
+    conceptual_clarity: 0.6
+    logical_leap: 0.7
+    overgeneralization: 0.8
+    emotional_appeal: 0.5
+    lack_of_concrete_evidence: 0.7
   strategy_weights:
     "Clipping": 0.2
     "Framing Shift": 0.3
@@ -201,6 +341,20 @@ rousseau:
     - "Concept of general will"
     - "Education and social reform"
   quote: "Man is born free, but everywhere he is in chains"
+  rag_affinity: 0.6
+  # RAG 사용 판별 스탯
+  rag_stats:
+    data_respect: 0.5
+    conceptual_precision: 0.5
+    systematic_logic: 0.6
+    pragmatic_orientation: 0.7
+    rhetorical_independence: 0.6
+  vulnerability_sensitivity:
+    conceptual_clarity: 0.5
+    logical_leap: 0.4
+    overgeneralization: 0.6
+    emotional_appeal: 0.8
+    lack_of_concrete_evidence: 0.3
   strategy_weights:
     "Clipping": 0.1
     "Framing Shift": 0.3
@@ -220,6 +374,20 @@ confucius:
     - "The way of the gentleman"
     - "Wisdom of the mean"
   quote: "Do not impose on others what you do not wish for yourself"
+  rag_affinity: 0.6
+  # RAG 사용 판별 스탯
+  rag_stats:
+    data_respect: 0.6
+    conceptual_precision: 0.6
+    systematic_logic: 0.5
+    pragmatic_orientation: 0.8
+    rhetorical_independence: 0.4
+  vulnerability_sensitivity:
+    conceptual_clarity: 0.6
+    logical_leap: 0.6
+    overgeneralization: 0.5
+    emotional_appeal: 0.6
+    lack_of_concrete_evidence: 0.5
   strategy_weights:
     "Clipping": 0.2
     "Framing Shift": 0.2
@@ -239,6 +407,20 @@ laozi:
     - "Harmony of yin and yang"
     - "Pursuit of the Dao (Way)"
   quote: "A journey of a thousand miles begins with a single step"
+  rag_affinity: 0.2
+  # RAG 사용 판별 스탯
+  rag_stats:
+    data_respect: 0.2
+    conceptual_precision: 0.3
+    systematic_logic: 0.2
+    pragmatic_orientation: 0.4
+    rhetorical_independence: 0.9
+  vulnerability_sensitivity:
+    conceptual_clarity: 0.3
+    logical_leap: 0.2
+    overgeneralization: 0.3
+    emotional_appeal: 0.8
+    lack_of_concrete_evidence: 0.1
   strategy_weights:
     "Clipping": 0.05
     "Framing Shift": 0.3
@@ -258,6 +440,20 @@ buddha:
     - "Middle Way principle"
     - "Compassion and wisdom"
   quote: "Peace comes from within. Do not seek it without"
+  rag_affinity: 0.5
+  # RAG 사용 판별 스탯
+  rag_stats:
+    data_respect: 0.4
+    conceptual_precision: 0.5
+    systematic_logic: 0.6
+    pragmatic_orientation: 0.7
+    rhetorical_independence: 0.5
+  vulnerability_sensitivity:
+    conceptual_clarity: 0.5
+    logical_leap: 0.4
+    overgeneralization: 0.7
+    emotional_appeal: 0.7
+    lack_of_concrete_evidence: 0.3
   strategy_weights:
     "Clipping": 0.1
     "Framing Shift": 0.3
@@ -277,6 +473,20 @@ wittgenstein:
     - "Conceptual analysis"
     - "Logical clarity"
   quote: "The limits of my language mean the limits of my world"
+  rag_affinity: 0.9
+  # RAG 사용 판별 스탯
+  rag_stats:
+    data_respect: 0.7
+    conceptual_precision: 0.9
+    systematic_logic: 0.8
+    pragmatic_orientation: 0.4
+    rhetorical_independence: 0.1
+  vulnerability_sensitivity:
+    conceptual_clarity: 0.9
+    logical_leap: 0.8
+    overgeneralization: 0.6
+    emotional_appeal: 0.1
+    lack_of_concrete_evidence: 0.3
   strategy_weights:
     "Clipping": 0.25
     "Framing Shift": 0.15

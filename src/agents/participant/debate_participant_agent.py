@@ -50,6 +50,7 @@ class DebateParticipantAgent(Agent):
         
         # 철학자 정보 동적 로드
         philosopher_key = config.get("philosopher_key", name.lower())
+        self.philosopher_key = philosopher_key  # 저장
         philosopher_data = self._load_philosopher_data(philosopher_key)
         
         # 철학자 고유 속성들 (동적 로드된 데이터 사용)
@@ -141,9 +142,18 @@ class DebateParticipantAgent(Agent):
             전략 스타일 딕셔너리
         """
         try:
-            # debate_strategies.json 파일 경로
+            # 프로젝트 루트에서 philosophers/debate_strategies.json 파일 경로 찾기
             current_dir = os.path.dirname(os.path.abspath(__file__))
-            json_path = os.path.join(current_dir, "debate_strategies.json")
+            project_root = current_dir
+            
+            # 프로젝트 루트 찾기 (src 폴더가 있는 상위 디렉토리)
+            while project_root and not os.path.exists(os.path.join(project_root, "philosophers")):
+                parent = os.path.dirname(project_root)
+                if parent == project_root:  # 루트에 도달
+                    break
+                project_root = parent
+            
+            json_path = os.path.join(project_root, "philosophers", "debate_strategies.json")
             
             if not os.path.exists(json_path):
                 logger.warning(f"Strategy JSON file not found at {json_path}")
@@ -158,6 +168,195 @@ class DebateParticipantAgent(Agent):
         except Exception as e:
             logger.error(f"Error loading strategy styles: {str(e)}")
             return self._get_default_strategy_styles()
+    
+    def _load_strategy_rag_weights(self) -> Dict[str, Any]:
+        """
+        YAML 파일에서 전략별 RAG 가중치 로드
+        
+        Returns:
+            전략별 RAG 가중치 딕셔너리
+        """
+        try:
+            # 프로젝트 루트에서 philosophers/strategy_rag_weights.yaml 파일 경로 찾기
+            current_dir = os.path.dirname(os.path.abspath(__file__))
+            project_root = current_dir
+            
+            # 프로젝트 루트 찾기 (src 폴더가 있는 상위 디렉토리)
+            while project_root and not os.path.exists(os.path.join(project_root, "philosophers")):
+                parent = os.path.dirname(project_root)
+                if parent == project_root:  # 루트에 도달
+                    break
+                project_root = parent
+            
+            yaml_path = os.path.join(project_root, "philosophers", "strategy_rag_weights.yaml")
+            
+            if not os.path.exists(yaml_path):
+                logger.warning(f"Strategy RAG weights YAML file not found at {yaml_path}")
+                return self._get_default_strategy_rag_weights()
+            
+            with open(yaml_path, 'r', encoding='utf-8') as f:
+                rag_weights_data = yaml.safe_load(f)
+            
+            logger.info(f"Loaded strategy RAG weights from: {yaml_path}")
+            return rag_weights_data.get("strategy_rag_weights", {})
+            
+        except Exception as e:
+            logger.error(f"Error loading strategy RAG weights: {str(e)}")
+            return self._get_default_strategy_rag_weights()
+    
+    def _get_default_strategy_rag_weights(self) -> Dict[str, Any]:
+        """
+        기본 전략별 RAG 가중치 반환 (파일 로드 실패 시)
+        
+        Returns:
+            기본 전략별 RAG 가중치 딕셔너리
+        """
+        return {
+            "Clipping": {
+                "data_respect": 0.5,
+                "conceptual_precision": 0.2,
+                "systematic_logic": 0.2,
+                "pragmatic_orientation": 0.4,
+                "rhetorical_independence": -0.2
+            },
+            "Framing Shift": {
+                "data_respect": 0.2,
+                "conceptual_precision": 0.5,
+                "systematic_logic": 0.3,
+                "pragmatic_orientation": 0.1,
+                "rhetorical_independence": -0.3
+            },
+            "Reductive Paradox": {
+                "data_respect": 0.3,
+                "conceptual_precision": 0.2,
+                "systematic_logic": 0.5,
+                "pragmatic_orientation": 0.1,
+                "rhetorical_independence": -0.3
+            },
+            "Conceptual Undermining": {
+                "data_respect": 0.1,
+                "conceptual_precision": 0.6,
+                "systematic_logic": 0.3,
+                "pragmatic_orientation": 0.05,
+                "rhetorical_independence": -0.2
+            },
+            "Ethical Reversal": {
+                "data_respect": 0.1,
+                "conceptual_precision": 0.2,
+                "systematic_logic": 0.2,
+                "pragmatic_orientation": 0.5,
+                "rhetorical_independence": -0.1
+            },
+            "Temporal Delay": {
+                "data_respect": 0.5,
+                "conceptual_precision": 0.2,
+                "systematic_logic": 0.2,
+                "pragmatic_orientation": 0.2,
+                "rhetorical_independence": -0.2
+            },
+            "Philosophical Reframing": {
+                "data_respect": 0.05,
+                "conceptual_precision": 0.4,
+                "systematic_logic": 0.5,
+                "pragmatic_orientation": 0.05,
+                "rhetorical_independence": -0.3
+            }
+        }
+    
+    def _determine_rag_usage_for_strategy(self, strategy_type: str) -> Dict[str, Any]:
+        """
+        특정 전략에 대한 RAG 사용 여부 판별
+        
+        Args:
+            strategy_type: 공격 전략 타입
+            
+        Returns:
+            RAG 사용 결정 결과
+        """
+        print(f"   🧮 [{self.philosopher_name}] RAG 사용 판별:")
+        print(f"      🎯 전략: {strategy_type}")
+        
+        try:
+            # 1. 전략별 RAG 가중치 로드
+            if not hasattr(self, 'strategy_rag_weights'):
+                self.strategy_rag_weights = self._load_strategy_rag_weights()
+            
+            strategy_weights = self.strategy_rag_weights.get(strategy_type, {})
+            if not strategy_weights:
+                print(f"      ❌ 전략 '{strategy_type}'에 대한 RAG 가중치 없음 - RAG 사용 안함")
+                return {
+                    "use_rag": False,
+                    "rag_score": 0.0,
+                    "threshold": 0.5,
+                    "reason": "no_strategy_weights",
+                    "calculation_details": {}
+                }
+            
+            # 2. 철학자 RAG 스탯 가져오기
+            philosopher_key = getattr(self, 'philosopher_key', self.name.lower())
+            philosopher_data = self._load_philosopher_data(philosopher_key)
+            rag_stats = philosopher_data.get("rag_stats", {})
+            
+            if not rag_stats:
+                print(f"      ❌ 철학자 '{philosopher_key}'에 대한 RAG 스탯 없음 - RAG 사용 안함")
+                return {
+                    "use_rag": False,
+                    "rag_score": 0.0,
+                    "threshold": 0.5,
+                    "reason": "no_philosopher_rag_stats",
+                    "calculation_details": {}
+                }
+            
+            # 3. 벡터 내적 계산: rag_score = Σ(strategy_weight[i] × philosopher_rag_stat[i])
+            print(f"      📊 전략 가중치: {strategy_weights}")
+            print(f"      🎭 철학자 스탯: {rag_stats}")
+            
+            rag_score = 0.0
+            calculation_details = {}
+            
+            print(f"      🔢 계산 과정:")
+            for stat_name in ["data_respect", "conceptual_precision", "systematic_logic", "pragmatic_orientation", "rhetorical_independence"]:
+                strategy_weight = strategy_weights.get(stat_name, 0.0)
+                philosopher_stat = rag_stats.get(stat_name, 0.0)
+                contribution = strategy_weight * philosopher_stat
+                rag_score += contribution
+                calculation_details[stat_name] = {
+                    "strategy_weight": strategy_weight,
+                    "philosopher_stat": philosopher_stat,
+                    "contribution": contribution
+                }
+                print(f"         • {stat_name}: {strategy_weight:.3f} × {philosopher_stat:.3f} = {contribution:.3f}")
+            
+            print(f"      📈 합계:")
+            print(f"         • RAG 점수: {rag_score:.3f}")
+            
+            # 4. 임계값 비교 (0.5로 설정)
+            threshold = 0.5
+            use_rag = rag_score >= threshold
+            
+            print(f"         • 임계값: {threshold}")
+            print(f"         • 결정: {'RAG 사용' if use_rag else 'RAG 사용 안함'} ({rag_score:.3f} {'≥' if use_rag else '<'} {threshold})")
+            print()
+            
+            return {
+                "use_rag": use_rag,
+                "rag_score": rag_score,
+                "threshold": threshold,
+                "reason": "calculated" if use_rag else "below_threshold",
+                "calculation_details": calculation_details
+            }
+            
+        except Exception as e:
+            logger.error(f"Error determining RAG usage for strategy '{strategy_type}': {str(e)}")
+            print(f"      ❌ RAG 판별 오류: {str(e)} - RAG 사용 안함")
+            return {
+                "use_rag": False,
+                "rag_score": 0.0,
+                "threshold": 0.5,
+                "reason": "error",
+                "error": str(e),
+                "calculation_details": {}
+            }
     
     def _get_default_philosopher_data(self, philosopher_key: str) -> Dict[str, Any]:
         """
@@ -440,33 +639,66 @@ class DebateParticipantAgent(Agent):
         Returns:
             생성된 응답 텍스트
         """
-        # 상대방 에이전트 정보 찾기
+        # 상대방 에이전트 정보 찾기 (개선된 로직)
         opposite_role = "con" if self.role == "pro" else "pro"
         target_agent_name = None
         target_agent_id = None
         
-        # 최근 메시지에서 상대방 에이전트 찾기
+        # 1. 최근 메시지에서 상대방 에이전트 찾기 (모더레이터 제외)
         for msg in reversed(recent_messages):
-            if msg.get('role') == opposite_role:
-                target_agent_id = msg.get('speaker_id', '')
-                # 철학자 이름 찾기
-                try:
-                    import yaml
-                    import os
-                    philosophers_file = os.path.join(os.getcwd(), "philosophers", "debate_optimized.yaml")
-                    with open(philosophers_file, 'r', encoding='utf-8') as file:
-                        philosophers = yaml.safe_load(file)
-                    
-                    if target_agent_id in philosophers:
-                        target_agent_name = philosophers[target_agent_id].get("name", target_agent_id)
-                    else:
-                        target_agent_name = target_agent_id
-                except:
-                    target_agent_name = target_agent_id or "상대방"
+            msg_role = msg.get('role', '')
+            msg_speaker_id = msg.get('speaker_id', '')
+            
+            # 오직 상대편 역할의 참가자만 찾기 (모더레이터 제외)
+            if msg_role == opposite_role and msg_speaker_id and msg_speaker_id != "moderator":
+                target_agent_id = msg_speaker_id
                 break
         
-        if not target_agent_name:
-            target_agent_name = "상대방"
+        # 2. target_agent_id가 없으면 dialogue_state에서 찾기
+        if not target_agent_id:
+            # dialogue_state의 구조 확인을 위한 디버깅
+            print(f"   🔍 디버깅: dialogue_state 키들: {list(dialogue_state.keys())}")
+            
+            # 여러 가능한 경로에서 참가자 정보 찾기
+            participants = None
+            
+            # 경로 1: dialogue_state['participants']
+            if 'participants' in dialogue_state:
+                participants = dialogue_state['participants']
+                print(f"   🔍 디버깅: participants 구조: {participants}")
+            
+            # 경로 2: dialogue_state에서 직접 pro/con 찾기
+            elif opposite_role in dialogue_state:
+                participants = {opposite_role: dialogue_state[opposite_role]}
+                print(f"   🔍 디버깅: 직접 찾은 {opposite_role}: {participants}")
+            
+            if participants:
+                opposite_participants = participants.get(opposite_role, [])
+                print(f"   🔍 디버깅: {opposite_role} 참가자들: {opposite_participants}")
+                
+                if opposite_participants:
+                    # 첫 번째 상대방 선택
+                    if isinstance(opposite_participants, list) and len(opposite_participants) > 0:
+                        target_agent_id = opposite_participants[0]
+                    elif isinstance(opposite_participants, str):
+                        target_agent_id = opposite_participants
+                    
+                    print(f"   🔍 디버깅: 선택된 target_agent_id: {target_agent_id}")
+        
+        # 3. 여전히 없으면 하드코딩된 기본값 설정 (1대1 토론용)
+        if not target_agent_id:
+            # 1대1 토론에서 상대방 하드코딩
+            if self.role == "pro":
+                target_agent_id = "camus"  # 찬성측이면 카뮈가 상대방
+            elif self.role == "con":
+                target_agent_id = "nietzsche"  # 반대측이면 니체가 상대방
+            else:
+                target_agent_id = "opponent"
+            
+            print(f"   🔍 디버깅: 하드코딩된 target_agent_id: {target_agent_id}")
+        
+        # 4. 철학자 이름 찾기 (개선된 로직)
+        target_agent_name = self._get_philosopher_name(target_agent_id)
         
         # 최근 메시지 텍스트 형식화
         recent_messages_text = "\n".join([
@@ -480,10 +712,40 @@ class DebateParticipantAgent(Agent):
         
         # 공격 전략 가져오기 (준비된 것이 있으면)
         attack_strategy = None
+        target_argument_info = None
+        
         if target_agent_id and hasattr(self, 'attack_strategies') and target_agent_id in self.attack_strategies:
             strategies = self.attack_strategies[target_agent_id]
             if strategies:
                 attack_strategy = strategies[0]  # 첫 번째 전략 사용
+                target_argument_info = attack_strategy.get('target_argument', {})
+                
+                # 🎯 상호논증 전략 정보 출력
+                strategy_type = attack_strategy.get('strategy_type', 'Unknown')
+                target_claim = target_argument_info.get('claim', 'Unknown claim')[:100] + "..." if len(target_argument_info.get('claim', '')) > 100 else target_argument_info.get('claim', 'Unknown claim')
+                vulnerability_score = attack_strategy.get('vulnerability_score', 0.0)
+                
+                print(f"🎯 [{self.philosopher_name}] 상호논증 전략:")
+                print(f"   📍 공격 대상: {target_agent_name}")
+                print(f"   🗡️  사용 전략: {strategy_type}")
+                print(f"   🎯 대상 논지: {target_claim}")
+                print(f"   ⚡ 취약성 점수: {vulnerability_score:.2f}")
+                
+                # 전략 세부 정보도 출력
+                attack_plan = attack_strategy.get('attack_plan', {})
+                if attack_plan:
+                    target_point = attack_plan.get('target_point', '')
+                    key_phrase = attack_plan.get('key_phrase', '')
+                    if target_point:
+                        print(f"   🔍 공격 포인트: {target_point[:80]}...")
+                    if key_phrase:
+                        print(f"   💬 핵심 공격구: {key_phrase[:60]}...")
+        else:
+            print(f"🎯 [{self.philosopher_name}] 상호논증 전략:")
+            print(f"   📍 공격 대상: {target_agent_name}")
+            print(f"   🗡️  사용 전략: 일반적 반박 (준비된 전략 없음)")
+            print(f"   🎯 대상 논지: 최근 발언 전체")
+            print(f"   💡 상대방 ID: {target_agent_id} (디버깅용)")
         
         # 시스템 프롬프트 구성 - 상호논증에 특화
         system_prompt = f"""
@@ -524,15 +786,29 @@ TASK: Generate a SHORT, DIRECT response (2-3 sentences max) that:
         # 공격 전략이 있으면 추가
         if attack_strategy:
             strategy_type = attack_strategy.get('strategy_type', '')
-            strategy_description = attack_strategy.get('description', '')
-            key_phrases = attack_strategy.get('key_phrases', [])
+            strategy_description = attack_strategy.get('attack_plan', {}).get('strategy_application', '')
+            key_phrases = [attack_strategy.get('attack_plan', {}).get('key_phrase', '')]
             
             user_prompt += f"""
 ATTACK STRATEGY: Use the "{strategy_type}" approach
 Strategy Description: {strategy_description}
 Key Phrases to Consider: {', '.join(key_phrases[:3])}
-
 """
+            
+            # RAG 결과가 있으면 추가
+            rag_decision = attack_strategy.get('rag_decision', {})
+            if rag_decision.get('use_rag') and rag_decision.get('results'):
+                rag_formatted = self._format_attack_rag_results(rag_decision['results'], strategy_type)
+                if rag_formatted:
+                    user_prompt += f"""
+{rag_formatted}
+INSTRUCTION: Incorporate this evidence naturally into your {strategy_type} attack.
+"""
+                    print(f"   📚 [{self.philosopher_name}] RAG 정보 프롬프트에 포함됨")
+                else:
+                    print(f"   📚 [{self.philosopher_name}] RAG 결과 포맷팅 실패")
+            else:
+                print(f"   📚 [{self.philosopher_name}] RAG 사용 안함 또는 결과 없음")
 
         user_prompt += f"""
 Remember: Be CONCISE, DIRECT, and CONFRONTATIONAL. This is rapid-fire debate, not a long speech.
@@ -548,10 +824,10 @@ Your response:"""
         try:
             # LLM 호출 - 짧은 응답을 위해 max_tokens 제한
             response = self.llm_manager.generate_response(
-                system_prompt=system_prompt,
-                user_prompt=user_prompt,
-                llm_model="gpt-4",
-                max_tokens=200  # 짧은 응답 강제
+                    system_prompt=system_prompt,
+                    user_prompt=user_prompt,
+                llm_model="gpt-4o",
+                max_tokens=10000  
             )
             
             if response:
@@ -562,6 +838,65 @@ Your response:"""
         except Exception as e:
             logger.error(f"Error generating interactive argument response: {str(e)}")
             return f"{target_agent_name}님, 그 주장에 대해 더 구체적인 근거를 제시해 주시기 바랍니다."
+    
+    def _get_philosopher_name(self, agent_id: str) -> str:
+        """
+        에이전트 ID로부터 철학자 이름 찾기
+        
+        Args:
+            agent_id: 에이전트 ID
+            
+        Returns:
+            철학자 이름
+        """
+        try:
+            import yaml
+            import os
+            
+            # 프로젝트 루트에서 philosophers/debate_optimized.yaml 파일 경로 찾기
+            current_dir = os.path.dirname(os.path.abspath(__file__))
+            project_root = current_dir
+            
+            # 프로젝트 루트 찾기 (src 폴더가 있는 상위 디렉토리)
+            while project_root and not os.path.exists(os.path.join(project_root, "philosophers")):
+                parent = os.path.dirname(project_root)
+                if parent == project_root:  # 루트에 도달
+                    break
+                project_root = parent
+            
+            yaml_path = os.path.join(project_root, "philosophers", "debate_optimized.yaml")
+            
+            if os.path.exists(yaml_path):
+                with open(yaml_path, 'r', encoding='utf-8') as file:
+                    philosophers = yaml.safe_load(file)
+                
+                if agent_id in philosophers:
+                    return philosophers[agent_id].get("name", agent_id)
+            
+            # YAML에서 찾지 못한 경우 기본 매핑
+            name_mapping = {
+                "nietzsche": "니체",
+                "camus": "카뮈", 
+                "hegel": "헤겔",
+                "socrates": "소크라테스",
+                "plato": "플라톤",
+                "aristotle": "아리스토텔레스"
+            }
+            
+            return name_mapping.get(agent_id.lower(), agent_id.capitalize())
+            
+        except Exception as e:
+            logger.warning(f"Error getting philosopher name for {agent_id}: {str(e)}")
+            # 기본 매핑으로 fallback
+            name_mapping = {
+                "nietzsche": "니체",
+                "camus": "카뮈", 
+                "hegel": "헤겔",
+                "socrates": "소크라테스",
+                "plato": "플라톤",
+                "aristotle": "아리스토텔레스"
+            }
+            return name_mapping.get(agent_id.lower(), agent_id.capitalize())
     
     def prepare_argument_with_rag(self, topic: str, stance_statement: str, context: Dict[str, Any] = None) -> None:
         """
@@ -711,8 +1046,8 @@ Format your response as JSON:
             response = self.llm_manager.generate_response(
                 system_prompt=system_prompt,
                 user_prompt=user_prompt,
-                llm_model="gpt-4o",
-                max_tokens=400
+                llm_model="gpt-4o",  # gpt-4 → gpt-4o
+                max_tokens=1200  # 800 → 1200 (JSON 파싱이 복잡함)
             )
             
             # JSON 파싱
@@ -1520,8 +1855,8 @@ Each key point should be:
             response = self.llm_manager.generate_response(
                 system_prompt=system_prompt,
                 user_prompt=user_prompt,
-                llm_model="gpt-4",
-                max_tokens=1000
+                llm_model="gpt-4o",  # gpt-4 → gpt-4o
+                max_tokens=1500  # 1000 → 1500 (상대방 논점 추출은 복잡할 수 있음)
             )
             
             # JSON 파싱
@@ -1717,7 +2052,7 @@ Each key point should be:
                 scored_arguments.append({
                     "argument": arg,
                     "scores": score_data,
-                    "vulnerability_rank": score_data.get("vulnerability", 0.0)
+                    "vulnerability_rank": score_data.get("final_vulnerability", 0.0)  # 개선된 취약성 사용
                 })
             
             # 3. 취약점 순으로 정렬
@@ -1729,6 +2064,7 @@ Each key point should be:
             self.opponent_arguments[speaker_id].extend(scored_arguments)
             
             return {
+                "status": "success",
                 "speaker_id": speaker_id,
                 "arguments_count": len(arguments),
                 "scored_arguments": scored_arguments[:3],  # 상위 3개만 반환
@@ -1779,8 +2115,8 @@ IMPORTANT: Return ONLY the JSON array, no other text.
             response_text = self.llm_manager.generate_response(
                 system_prompt=system_prompt,
                 user_prompt=user_prompt,
-                llm_model="gpt-4",
-                max_tokens=800
+                llm_model="gpt-4o",  # gpt-4 → gpt-4o
+                max_tokens=1200  # 800 → 1200 (JSON 파싱이 복잡함)
             )
             
             # JSON 파싱 개선
@@ -1852,22 +2188,234 @@ IMPORTANT: Return ONLY the JSON array, no other text.
     
     def _score_single_argument(self, argument: Dict[str, Any], full_context: str) -> Dict[str, float]:
         """
-        단일 논지에 대한 다차원 스코어링
+        단일 논지에 대한 다차원 스코어링 (개선된 취약성 분석 포함)
         
         Args:
             argument: 분석할 논지
             full_context: 전체 발언 맥락
             
         Returns:
-            스코어 데이터 (논리적 강도, 근거 품질, 취약성, 관련성)
+            스코어 데이터 (논리적 강도, 근거 품질, 세부 취약성, 관련성, 최종 취약성)
+        """
+        # 1. 세부 취약성 분석 (LLM 사용)
+        detailed_vulnerabilities = self._analyze_detailed_vulnerabilities(argument, full_context)
+        
+        # 2. 철학자별 민감도 적용한 최종 취약성 점수 계산
+        final_vulnerability = self._calculate_personalized_vulnerability(detailed_vulnerabilities)
+        
+        # 3. 기존 스코어링 (논리적 강도, 근거 품질, 관련성)
+        basic_scores = self._get_basic_argument_scores(argument, full_context)
+        
+        # 4. 통합 결과 반환
+        result = {
+            **basic_scores,
+            **detailed_vulnerabilities,
+            "final_vulnerability": final_vulnerability,
+            "overall_score": (
+                basic_scores.get("logical_strength", 0.5) * 0.3 +
+                basic_scores.get("evidence_quality", 0.5) * 0.25 +
+                (1.0 - final_vulnerability) * 0.25 +  # 개선된 취약성 사용
+                basic_scores.get("relevance", 0.5) * 0.2
+            )
+        }
+        
+        return result
+    
+    def _analyze_detailed_vulnerabilities(self, argument: Dict[str, Any], full_context: str) -> Dict[str, float]:
+        """
+        논지의 세부적인 취약성 분석
+        
+        Args:
+            argument: 분석할 논지
+            full_context: 전체 발언 맥락
+            
+        Returns:
+            세부 취약성 점수들
+        """
+        print(f"   🔍 [{self.philosopher_name}] 세부 취약성 분석 시작:")
+        print(f"      - 대상 논지: {argument.get('claim', '')[:100]}...")
+        
+        system_prompt = """
+You are an expert argument analyzer. Evaluate the vulnerabilities of debate arguments on specific dimensions.
+Be precise and objective in your assessment.
+"""
+
+        user_prompt = f"""
+Analyze this argument for specific vulnerabilities (scale 0.0-1.0, where higher = more vulnerable):
+
+ARGUMENT:
+- Claim: {argument.get('claim', '')}
+- Evidence: {argument.get('evidence', '')}
+- Reasoning: {argument.get('reasoning', '')}
+- Assumptions: {argument.get('assumptions', [])}
+
+FULL CONTEXT: "{full_context}"
+
+Evaluate these specific vulnerability dimensions:
+1. CONCEPTUAL_CLARITY (0.0-1.0): How unclear or ambiguous are the key concepts?
+2. LOGICAL_LEAP (0.0-1.0): How big are the logical gaps in reasoning?
+3. OVERGENERALIZATION (0.0-1.0): How much does it generalize beyond evidence?
+4. EMOTIONAL_APPEAL (0.0-1.0): How much does it rely on emotion over logic?
+5. LACK_OF_CONCRETE_EVIDENCE (0.0-1.0): How lacking is specific, concrete evidence?
+
+Return JSON format:
+{{
+  "conceptual_clarity": 0.0-1.0,
+  "logical_leap": 0.0-1.0,
+  "overgeneralization": 0.0-1.0,
+  "emotional_appeal": 0.0-1.0,
+  "lack_of_concrete_evidence": 0.0-1.0
+}}
+"""
+        
+        try:
+            print(f"      🤖 LLM 분석 요청 중...")
+            response_text = self.llm_manager.generate_response(
+                system_prompt=system_prompt,
+                user_prompt=user_prompt,
+                llm_model="gpt-4o",  # gpt-4 → gpt-4o
+                max_tokens=1200  # 800 → 1200 (JSON 파싱이 복잡함)
+            )
+            
+            print(f"      📝 LLM 응답: {response_text[:200]}...")
+            
+            # JSON 파싱
+            import json
+            import re
+            json_pattern = r'\{.*?\}'
+            json_match = re.search(json_pattern, response_text, re.DOTALL)
+            
+            if json_match:
+                vulnerabilities = json.loads(json_match.group(0))
+                # 키 이름 정규화
+                result = {
+                    "conceptual_clarity": vulnerabilities.get("conceptual_clarity", 0.5),
+                    "logical_leap": vulnerabilities.get("logical_leap", 0.5),
+                    "overgeneralization": vulnerabilities.get("overgeneralization", 0.5),
+                    "emotional_appeal": vulnerabilities.get("emotional_appeal", 0.5),
+                    "lack_of_concrete_evidence": vulnerabilities.get("lack_of_concrete_evidence", 0.5)
+                }
+                
+                print(f"      ✅ 세부 취약성 분석 완료:")
+                for vuln_type, score in result.items():
+                    print(f"         • {vuln_type}: {score:.3f}")
+                
+                return result
+            else:
+                # 기본값
+                print(f"      ❌ JSON 파싱 실패 - 기본값 사용")
+                return {
+                    "conceptual_clarity": 0.5,
+                    "logical_leap": 0.5,
+                    "overgeneralization": 0.5,
+                    "emotional_appeal": 0.5,
+                    "lack_of_concrete_evidence": 0.5
+                }
+                
+        except Exception as e:
+            logger.error(f"Error analyzing detailed vulnerabilities: {str(e)}")
+            print(f"      ❌ 분석 오류: {str(e)} - 기본값 사용")
+            return {
+                "conceptual_clarity": 0.5,
+                "logical_leap": 0.5,
+                "overgeneralization": 0.5,
+                "emotional_appeal": 0.5,
+                "lack_of_concrete_evidence": 0.5
+            }
+    
+    def _calculate_personalized_vulnerability(self, detailed_vulnerabilities: Dict[str, float]) -> float:
+        """
+        철학자별 민감도를 적용한 개인화된 취약성 점수 계산
+        
+        Args:
+            detailed_vulnerabilities: 세부 취약성 점수들
+            
+        Returns:
+            최종 개인화된 취약성 점수 (0.0-1.0)
+        """
+        try:
+            # 철학자 데이터에서 민감도 가져오기
+            philosopher_key = getattr(self, 'philosopher_key', self.name.lower())
+            philosopher_data = self._load_philosopher_data(philosopher_key)
+            vulnerability_sensitivity = philosopher_data.get("vulnerability_sensitivity", {})
+            
+            print(f"   🧮 [{self.philosopher_name}] 취약성 점수 계산 시작:")
+            print(f"      - 철학자 키: {philosopher_key}")
+            
+            if not vulnerability_sensitivity:
+                # 민감도 데이터가 없으면 평균값 반환
+                avg_score = sum(detailed_vulnerabilities.values()) / len(detailed_vulnerabilities)
+                print(f"      ❌ 민감도 데이터 없음 - 평균값 사용: {avg_score:.3f}")
+                return avg_score
+            
+            print(f"      ✅ 민감도 데이터 로드 완료")
+            print(f"      📊 세부 취약성:")
+            for vuln_type, score in detailed_vulnerabilities.items():
+                print(f"         • {vuln_type}: {score:.3f}")
+            
+            print(f"      🎯 철학자 민감도:")
+            for vuln_type, sensitivity in vulnerability_sensitivity.items():
+                print(f"         • {vuln_type}: {sensitivity:.3f}")
+            
+            # 벡터 내적 계산: 취약성 * 민감도
+            total_score = 0.0
+            total_weight = 0.0
+            
+            print(f"      🔢 계산 과정:")
+            for vuln_type, vuln_score in detailed_vulnerabilities.items():
+                sensitivity = vulnerability_sensitivity.get(vuln_type, 0.5)
+                weighted_score = vuln_score * sensitivity
+                total_score += weighted_score
+                total_weight += sensitivity
+                print(f"         • {vuln_type}: {vuln_score:.3f} × {sensitivity:.3f} = {weighted_score:.3f}")
+            
+            print(f"      📈 합계:")
+            print(f"         • 가중합: {total_score:.3f}")
+            print(f"         • 가중치합: {total_weight:.3f}")
+            
+            # 가중평균 계산
+            if total_weight > 0:
+                final_score = total_score / total_weight
+                print(f"         • 최종점수: {total_score:.3f} ÷ {total_weight:.3f} = {final_score:.3f}")
+            else:
+                final_score = sum(detailed_vulnerabilities.values()) / len(detailed_vulnerabilities)
+                print(f"         • 가중치합이 0 - 평균값 사용: {final_score:.3f}")
+            
+            # 0.0-1.0 범위로 클리핑
+            clipped_score = max(0.0, min(1.0, final_score))
+            if clipped_score != final_score:
+                print(f"         • 클리핑: {final_score:.3f} → {clipped_score:.3f}")
+            
+            print(f"      🎯 [{self.philosopher_name}] 최종 개인화된 취약성: {clipped_score:.3f}")
+            print()
+            
+            return clipped_score
+            
+        except Exception as e:
+            logger.error(f"Error calculating personalized vulnerability: {str(e)}")
+            # 오류 시 평균값 반환
+            avg_score = sum(detailed_vulnerabilities.values()) / len(detailed_vulnerabilities)
+            print(f"      ❌ 계산 오류 - 평균값 사용: {avg_score:.3f}")
+            return avg_score
+    
+    def _get_basic_argument_scores(self, argument: Dict[str, Any], full_context: str) -> Dict[str, float]:
+        """
+        기본 논지 스코어링 (논리적 강도, 근거 품질, 관련성)
+        
+        Args:
+            argument: 분석할 논지
+            full_context: 전체 발언 맥락
+            
+        Returns:
+            기본 스코어들
         """
         system_prompt = """
-You are a debate argument evaluator. Score arguments on multiple dimensions.
+You are a debate argument evaluator. Score arguments on basic dimensions.
 Be objective and analytical in your assessment.
 """
 
         user_prompt = f"""
-Evaluate this argument on the following criteria (scale 0.0-1.0):
+Evaluate this argument on the following basic criteria (scale 0.0-1.0):
 
 ARGUMENT:
 - Claim: {argument.get('claim', '')}
@@ -1880,16 +2428,13 @@ FULL CONTEXT: "{full_context}"
 Score on these dimensions:
 1. LOGICAL_STRENGTH (0.0-1.0): How logically sound is the argument?
 2. EVIDENCE_QUALITY (0.0-1.0): How strong is the supporting evidence?
-3. VULNERABILITY (0.0-1.0): How vulnerable is this to counterattack? (higher = more vulnerable)
-4. RELEVANCE (0.0-1.0): How relevant to the main debate topic?
+3. RELEVANCE (0.0-1.0): How relevant to the main debate topic?
 
 Return JSON format:
 {{
   "logical_strength": 0.0-1.0,
   "evidence_quality": 0.0-1.0,
-  "vulnerability": 0.0-1.0,
-  "relevance": 0.0-1.0,
-  "overall_score": 0.0-1.0
+  "relevance": 0.0-1.0
 }}
 """
         
@@ -1897,7 +2442,7 @@ Return JSON format:
             response_text = self.llm_manager.generate_response(
                 system_prompt=system_prompt,
                 user_prompt=user_prompt,
-                llm_model="gpt-4",
+                llm_model="gpt-4o",
                 max_tokens=300
             )
             
@@ -1909,33 +2454,25 @@ Return JSON format:
             
             if json_match:
                 scores = json.loads(json_match.group(0))
-                # overall_score 계산 (가중평균)
-                if "overall_score" not in scores:
-                    scores["overall_score"] = (
-                        scores.get("logical_strength", 0.5) * 0.3 +
-                        scores.get("evidence_quality", 0.5) * 0.25 +
-                        (1.0 - scores.get("vulnerability", 0.5)) * 0.25 +  # 취약성은 역산
-                        scores.get("relevance", 0.5) * 0.2
-                    )
-                return scores
+                return {
+                    "logical_strength": scores.get("logical_strength", 0.5),
+                    "evidence_quality": scores.get("evidence_quality", 0.5),
+                    "relevance": scores.get("relevance", 0.5)
+                }
             else:
                 # 기본 스코어
                 return {
                     "logical_strength": 0.5,
                     "evidence_quality": 0.5,
-                    "vulnerability": 0.5,
-                    "relevance": 0.5,
-                    "overall_score": 0.5
+                    "relevance": 0.5
                 }
                 
         except Exception as e:
-            logger.error(f"Error scoring argument: {str(e)}")
+            logger.error(f"Error getting basic argument scores: {str(e)}")
             return {
                 "logical_strength": 0.5,
                 "evidence_quality": 0.5,
-                "vulnerability": 0.5,
-                "relevance": 0.5,
-                "overall_score": 0.5
+                "relevance": 0.5
             }
     
     def prepare_attack_strategies_for_speaker(self, target_speaker_id: str) -> List[Dict[str, Any]]:
@@ -1948,12 +2485,27 @@ Return JSON format:
         Returns:
             준비된 공격 전략 목록
         """
+        # 디버깅: opponent_arguments 상태 확인
+        print(f"   🔍 [{self.philosopher_name}] 전략 준비 디버깅:")
+        print(f"      - 대상: {target_speaker_id}")
+        print(f"      - opponent_arguments 키들: {list(self.opponent_arguments.keys())}")
+        print(f"      - 각 키별 논지 수: {[(k, len(v)) for k, v in self.opponent_arguments.items()]}")
+        
         if target_speaker_id not in self.opponent_arguments:
-            return []
+            print(f"      ❌ {target_speaker_id}에 대한 논지가 없음 - 전략 준비 불가")
+            return {
+                "status": "failed",
+                "reason": "no_arguments_found",
+                "strategies": [],
+                "target_speaker_id": target_speaker_id,
+                "strategies_count": 0
+            }
         
         try:
             # 상대방의 취약한 논지들 가져오기 (상위 3개)
             target_arguments = self.opponent_arguments[target_speaker_id]
+            print(f"      ✅ {target_speaker_id}에 대한 논지 {len(target_arguments)}개 발견")
+            
             vulnerable_args = sorted(target_arguments, 
                                    key=lambda x: x["vulnerability_rank"], 
                                    reverse=True)[:3]
@@ -1968,22 +2520,56 @@ Return JSON format:
                 # 구체적인 공격 계획 생성
                 attack_plan = self._generate_attack_plan(argument, best_strategy)
                 
+                # RAG 사용 여부 판별
+                rag_decision = self._determine_rag_usage_for_strategy(best_strategy)
+                
+                # RAG 사용이 결정되면 쿼리 생성 및 검색 수행
+                if rag_decision["use_rag"]:
+                    attack_query = self._generate_attack_rag_query_for_strategy(argument, best_strategy)
+                    rag_results = self._perform_attack_rag_search(attack_query, best_strategy)
+                    rag_decision["query"] = attack_query
+                    rag_decision["results"] = rag_results
+                    rag_decision["results_count"] = len(rag_results)
+                else:
+                    rag_decision["query"] = ""
+                    rag_decision["results"] = []
+                    rag_decision["results_count"] = 0
+                
                 strategies.append({
                     "target_argument": argument,
                     "strategy_type": best_strategy,
                     "attack_plan": attack_plan,
                     "vulnerability_score": arg_data["vulnerability_rank"],
-                    "priority": len(strategies) + 1
+                    "priority": len(strategies) + 1,
+                    "rag_decision": rag_decision  # RAG 판별 결과 추가
                 })
             
             # 공격 전략 저장
             self.attack_strategies[target_speaker_id] = strategies
+            print(f"      ✅ {len(strategies)}개 공격 전략 준비 완료 (RAG 판별 포함)")
             
-            return strategies
+            # RAG 사용 통계 출력
+            rag_usage_count = sum(1 for s in strategies if s["rag_decision"]["use_rag"])
+            print(f"      📊 RAG 사용 통계: {rag_usage_count}/{len(strategies)}개 전략에서 RAG 사용")
+            
+            return {
+                "status": "success",
+                "strategies": strategies,
+                "target_speaker_id": target_speaker_id,
+                "strategies_count": len(strategies),
+                "rag_usage_count": rag_usage_count  # RAG 사용 통계 추가
+            }
             
         except Exception as e:
             logger.error(f"Error preparing attack strategies: {str(e)}")
-            return []
+            print(f"      ❌ 전략 준비 중 오류: {str(e)}")
+            return {
+                "status": "error",
+                "error": str(e),
+                "strategies": [],
+                "target_speaker_id": target_speaker_id,
+                "strategies_count": 0
+            }
     
     def _select_best_strategy_for_argument(self, argument: Dict[str, Any]) -> str:
         """
@@ -2081,8 +2667,8 @@ Return JSON format:
             response_text = self.llm_manager.generate_response(
                 system_prompt=system_prompt,
                 user_prompt=user_prompt,
-                llm_model="gpt-4",
-                max_tokens=600
+                llm_model="gpt-4o",
+                max_tokens=800
             )
             
             # JSON 파싱
@@ -2177,3 +2763,348 @@ Return JSON format:
             "core_arguments_count": len(self.core_arguments),
             "queries_count": len(self.argument_queries)
         }
+    
+    def _generate_attack_rag_query_for_strategy(self, target_argument: Dict[str, Any], strategy_type: str) -> str:
+        """
+        특정 논지를 특정 전략으로 공격하기 위한 RAG 쿼리 생성 (간소화된 버전)
+        
+        Args:
+            target_argument: 공격할 상대방 논지
+            strategy_type: 사용할 공격 전략
+            
+        Returns:
+            RAG 검색용 쿼리 문자열
+        """
+        print(f"   🔍 [{self.philosopher_name}] 공격용 RAG 쿼리 생성:")
+        print(f"      🎯 전략: {strategy_type}")
+        print(f"      📝 대상 논지: {target_argument.get('claim', '')[:80]}...")
+        
+        try:
+            # 간소화된 프롬프트
+            system_prompt = """Generate academic search queries for debate attacks. Focus on finding concrete evidence, statistics, and research data."""
+
+            # 전략별 키워드 매핑 (간단화)
+            strategy_keywords = {
+                "Clipping": "empirical evidence contradicting",
+                "Framing Shift": "alternative theoretical frameworks", 
+                "Reductive Paradox": "unintended consequences case studies",
+                "Conceptual Undermining": "definitional problems conceptual analysis",
+                "Ethical Reversal": "ethical implications moral philosophy",
+                "Temporal Delay": "long-term effects historical analysis",
+                "Philosophical Reframing": "philosophical critique theoretical foundations"
+            }
+            
+            strategy_prefix = strategy_keywords.get(strategy_type, "academic research on")
+            claim_keywords = self._extract_key_concept(target_argument.get('claim', ''))
+            
+            user_prompt = f"""
+ATTACK: {target_argument.get('claim', '')[:100]}
+STRATEGY: {strategy_type}
+PHILOSOPHER: {self.philosopher_name}
+
+Generate ONE academic search query (max 10 words) to find concrete evidence/statistics to attack this claim using {strategy_type}.
+
+Format: "{strategy_prefix} [specific topic keywords]"
+Focus on: statistics, research data, case studies, empirical evidence
+
+Query:"""
+            
+            response = self.llm_manager.generate_response(
+                system_prompt=system_prompt,
+                user_prompt=user_prompt,
+                llm_model="gpt-4o",
+                max_tokens=1500  # 원래대로 복원
+            )
+            
+            # 쿼리 정리
+            query = response.strip().strip('"').strip("'")
+            if len(query.split()) > 10:
+                query = ' '.join(query.split()[:10])
+            
+            # 기본 키워드가 없으면 추가
+            if not any(keyword in query.lower() for keyword in ['evidence', 'research', 'study', 'data', 'statistics']):
+                query = f"{strategy_prefix} {claim_keywords}"
+            
+            print(f"      ✅ 생성된 쿼리: '{query}'")
+            return query
+            
+        except Exception as e:
+            logger.error(f"Error generating attack RAG query: {str(e)}")
+            print(f"      ❌ 쿼리 생성 실패: {str(e)}")
+            
+            # 간소화된 fallback
+            strategy_keywords = {
+                "Clipping": "empirical evidence contradicting",
+                "Framing Shift": "alternative frameworks",
+                "Reductive Paradox": "unintended consequences",
+                "Conceptual Undermining": "definitional problems",
+                "Ethical Reversal": "ethical implications",
+                "Temporal Delay": "long-term effects",
+                "Philosophical Reframing": "philosophical critique"
+            }
+            
+            prefix = strategy_keywords.get(strategy_type, "research on")
+            concept = self._extract_key_concept(target_argument.get('claim', ''))
+            fallback_query = f"{prefix} {concept}"
+            
+            print(f"      🔄 간소화된 기본 쿼리 사용: '{fallback_query}'")
+            return fallback_query
+    
+    def _extract_key_concept(self, text: str) -> str:
+        """
+        텍스트에서 핵심 개념 추출 (3-4 단어로 제한)
+        
+        Args:
+            text: 원본 텍스트
+            
+        Returns:
+            핵심 개념 (3-4 단어)
+        """
+        if not text:
+            return "social development"
+        
+        # 불용어 제거 및 핵심 개념 추출
+        import re
+        
+        # 기본 정리
+        clean_text = re.sub(r'[^\w\s]', ' ', text.lower())
+        words = clean_text.split()
+        
+        # 불용어 목록
+        stop_words = {
+            'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 
+            'of', 'with', 'by', 'is', 'are', 'was', 'were', 'be', 'been', 'being',
+            'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'could',
+            'should', 'may', 'might', 'can', 'must', 'shall', 'this', 'that',
+            'these', 'those', 'i', 'you', 'he', 'she', 'it', 'we', 'they'
+        }
+        
+        # 의미있는 단어만 추출
+        meaningful_words = [word for word in words if word not in stop_words and len(word) > 2]
+        
+        # 상위 3-4개 단어 선택
+        key_concept = ' '.join(meaningful_words[:4])
+        
+        return key_concept if key_concept else "social development"
+    
+    def _perform_attack_rag_search(self, query: str, strategy_type: str) -> List[Dict[str, Any]]:
+        """
+        공격용 RAG 검색 수행 (개선된 버전 - 관련성 평가 및 필터링 포함)
+        
+        Args:
+            query: 검색 쿼리
+            strategy_type: 공격 전략 (로깅용)
+            
+        Returns:
+            검색 결과 목록 (관련성 순으로 정렬됨)
+        """
+        print(f"   🔍 [{self.philosopher_name}] 공격용 RAG 검색:")
+        print(f"      🎯 전략: {strategy_type}")
+        print(f"      🔍 쿼리: '{query}'")
+        
+        try:
+            # 1. 다양한 소스에서 검색 수행
+            all_results = []
+            
+            # 웹 검색 (기본)
+            web_results = self._web_search(query)
+            all_results.extend(web_results)
+            
+            # 벡터 검색 (사용자 컨텍스트)
+            if len(all_results) < 5:
+                vector_results = self._vector_search(query)
+                all_results.extend(vector_results)
+            
+            # 철학자 전문 검색 (철학적 내용)
+            if len(all_results) < 5:
+                philosopher_results = self._philosopher_search(query)
+                all_results.extend(philosopher_results)
+            
+            print(f"      📊 원본 검색 결과: {len(all_results)}개")
+            
+            # 2. 검색 결과 관련성 평가 및 필터링
+            if all_results:
+                filtered_results = self._filter_and_rank_search_results(all_results, query, strategy_type)
+                print(f"      ✅ 필터링 후: {len(filtered_results)}개 고품질 결과")
+                
+                for i, result in enumerate(filtered_results, 1):
+                    title = result.get('title', 'No title')[:50]
+                    relevance = result.get('relevance_score', 0.0)
+                    url = result.get('url', result.get('link', result.get('href', '')))
+                    print(f"         {i}. {title}... (관련성: {relevance:.2f})")
+                    if url:
+                        print(f"            🔗 URL: {url}")
+                    else:
+                        print(f"            🔗 URL: 없음")
+                
+                return filtered_results
+            else:
+                print(f"      ❌ 검색 결과 없음")
+                return []
+            
+        except Exception as e:
+            logger.error(f"Error in attack RAG search: {str(e)}")
+            print(f"      ❌ 검색 실패: {str(e)}")
+            return []
+    
+    def _filter_and_rank_search_results(self, results: List[Dict[str, Any]], query: str, strategy_type: str) -> List[Dict[str, Any]]:
+        """
+        검색 결과를 관련성에 따라 필터링하고 순위를 매김
+        
+        Args:
+            results: 원본 검색 결과
+            query: 검색 쿼리
+            strategy_type: 공격 전략
+            
+        Returns:
+            필터링되고 순위가 매겨진 결과 (상위 3개)
+        """
+        if not results:
+            return []
+        
+        print(f"      🔍 검색 결과 관련성 평가 중...")
+        
+        # 각 결과에 대해 관련성 점수 계산
+        scored_results = []
+        
+        for result in results:
+            try:
+                relevance_score = self._calculate_result_relevance(result, query, strategy_type)
+                
+                # 최소 관련성 임계값 (0.3 이상만 유지)
+                if relevance_score >= 0.3:
+                    result['relevance_score'] = relevance_score
+                    scored_results.append(result)
+                    
+            except Exception as e:
+                logger.warning(f"Error scoring result: {str(e)}")
+                # 오류 시 기본 점수 부여
+                result['relevance_score'] = 0.5
+                scored_results.append(result)
+        
+        # 관련성 점수 순으로 정렬
+        scored_results.sort(key=lambda x: x.get('relevance_score', 0), reverse=True)
+        
+        # 상위 3개만 반환
+        return scored_results[:3]
+    
+    def _calculate_result_relevance(self, result: Dict[str, Any], query: str, strategy_type: str) -> float:
+        """
+        개별 검색 결과의 관련성 점수 계산
+        
+        Args:
+            result: 검색 결과
+            query: 검색 쿼리
+            strategy_type: 공격 전략
+            
+        Returns:
+            관련성 점수 (0.0-1.0)
+        """
+        title = result.get('title', '').lower()
+        content = result.get('content', result.get('snippet', '')).lower()
+        combined_text = f"{title} {content}"
+        
+        if not combined_text.strip():
+            return 0.0
+        
+        relevance_score = 0.0
+        
+        # 1. 쿼리 키워드 매칭 (40%)
+        query_words = set(query.lower().split())
+        text_words = set(combined_text.split())
+        keyword_overlap = len(query_words.intersection(text_words)) / len(query_words) if query_words else 0
+        relevance_score += keyword_overlap * 0.4
+        
+        # 2. 학술적 품질 지표 (30%)
+        academic_indicators = [
+            'research', 'study', 'analysis', 'theory', 'evidence', 'empirical',
+            'journal', 'university', 'professor', 'scholar', 'academic',
+            'peer-reviewed', 'published', 'findings', 'methodology', 'data'
+        ]
+        academic_score = sum(1 for indicator in academic_indicators if indicator in combined_text)
+        academic_score = min(academic_score / 5, 1.0)  # 정규화 (최대 5개 지표)
+        relevance_score += academic_score * 0.3
+        
+        # 3. 전략별 특화 키워드 (20%)
+        strategy_keywords = {
+            "Clipping": ['evidence', 'contradicts', 'disproves', 'refutes', 'counter', 'against'],
+            "Framing Shift": ['alternative', 'perspective', 'framework', 'approach', 'different', 'reframe'],
+            "Reductive Paradox": ['consequences', 'extreme', 'unintended', 'problems', 'issues', 'risks'],
+            "Conceptual Undermining": ['definition', 'concept', 'meaning', 'unclear', 'ambiguous', 'problematic'],
+            "Ethical Reversal": ['ethics', 'moral', 'ethical', 'wrong', 'harmful', 'concerns'],
+            "Temporal Delay": ['long-term', 'future', 'later', 'eventually', 'time', 'delayed'],
+            "Philosophical Reframing": ['philosophy', 'philosophical', 'fundamental', 'deeper', 'underlying', 'essence']
+        }
+        
+        strategy_words = strategy_keywords.get(strategy_type, [])
+        strategy_score = sum(1 for word in strategy_words if word in combined_text)
+        strategy_score = min(strategy_score / 3, 1.0)  # 정규화 (최대 3개 키워드)
+        relevance_score += strategy_score * 0.2
+        
+        # 4. 철학자별 관심 분야 (10%)
+        philosopher_keywords = self._get_philosopher_domain_keywords()
+        philosopher_score = sum(1 for keyword in philosopher_keywords if keyword in combined_text)
+        philosopher_score = min(philosopher_score / 3, 1.0)  # 정규화
+        relevance_score += philosopher_score * 0.1
+        
+        # 최종 점수 정규화 (0.0-1.0)
+        return min(relevance_score, 1.0)
+    
+    def _get_philosopher_domain_keywords(self) -> List[str]:
+        """
+        현재 철학자의 전문 분야 키워드 반환
+        
+        Returns:
+            철학자별 도메인 키워드 목록
+        """
+        philosopher_domains = {
+            "marx": ['class', 'capitalism', 'labor', 'economic', 'social', 'collective', 'workers', 'society'],
+            "nietzsche": ['individual', 'power', 'will', 'strength', 'elite', 'superior', 'genius', 'creativity'],
+            "kant": ['duty', 'moral', 'categorical', 'imperative', 'rational', 'universal', 'ethics', 'reason'],
+            "aristotle": ['virtue', 'ethics', 'practical', 'wisdom', 'character', 'excellence', 'good', 'flourishing'],
+            "plato": ['ideal', 'forms', 'justice', 'truth', 'knowledge', 'reality', 'philosopher', 'wisdom'],
+            "socrates": ['knowledge', 'wisdom', 'questioning', 'examined', 'life', 'virtue', 'ignorance', 'truth'],
+            "hegel": ['dialectic', 'spirit', 'history', 'absolute', 'consciousness', 'development', 'synthesis'],
+            "camus": ['absurd', 'meaning', 'existence', 'revolt', 'freedom', 'authentic', 'human', 'condition']
+        }
+        
+        philosopher_key = getattr(self, 'philosopher_key', self.name.lower())
+        return philosopher_domains.get(philosopher_key, ['philosophy', 'thought', 'theory', 'concept'])
+    
+    def _format_attack_rag_results(self, rag_results: List[Dict[str, Any]], strategy_type: str) -> str:
+        """
+        공격용 RAG 검색 결과를 전략에 맞게 포맷팅
+        
+        Args:
+            rag_results: RAG 검색 결과
+            strategy_type: 공격 전략
+            
+        Returns:
+            포맷팅된 RAG 정보 문자열
+        """
+        if not rag_results:
+            return ""
+        
+        # 전략별 포맷팅 접두사
+        strategy_prefixes = {
+            "Clipping": "COUNTER-EVIDENCE",
+            "Framing Shift": "ALTERNATIVE PERSPECTIVES", 
+            "Reductive Paradox": "EXTREME CASES & CONSEQUENCES",
+            "Conceptual Undermining": "DEFINITIONAL ISSUES",
+            "Ethical Reversal": "ETHICAL CONCERNS",
+            "Temporal Delay": "LONG-TERM RISKS",
+            "Philosophical Reframing": "PHILOSOPHICAL CRITIQUES"
+        }
+        
+        prefix = strategy_prefixes.get(strategy_type, "SUPPORTING EVIDENCE")
+        
+        formatted_results = f"\n{prefix} (use strategically):\n"
+        
+        for i, result in enumerate(rag_results[:3], 1):  # 최대 3개 사용 (2개→3개)
+            title = result.get('title', 'Source')
+            content = result.get('content', result.get('snippet', ''))
+            
+            # 내용을 통째로 사용 (100자 제한 제거)
+            formatted_results += f"{i}. {title}: {content}\n"
+        
+        return formatted_results

@@ -1,425 +1,406 @@
+#!/usr/bin/env python3
 """
-새로운 DebateDialogue RAG 기능 테스트
+1대1 토론 테스트 (니체 vs 카뮈)
 
-주제: 트랜스휴머니즘 - 인간의 새로운 도약인가 아니면 종말인가?
-찬성: 니체 (Friedrich Nietzsche)
-반대: 카뮈 (Albert Camus)
+찬성측: 니체(AI)
+반대측: 카뮈(AI)
+
+빠른 테스트를 위한 1대1 구조
 """
 
 import sys
 import os
+import asyncio
 import time
-import logging
-from typing import Dict, Any, List
+from pathlib import Path
+import yaml
 import json
 
-# 로깅 설정
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler(f"logs/debate_test_new_{time.strftime('%Y%m%d_%H%M%S')}.log"),
-        logging.StreamHandler()
-    ]
-)
+# 프로젝트 루트 디렉토리를 Python 경로에 추가
+project_root = Path(__file__).parent.parent.parent
+sys.path.insert(0, str(project_root))
 
-# 프로젝트 루트 디렉토리를 sys.path에 추가
-current_dir = os.path.dirname(os.path.abspath(__file__))
-project_root = os.path.abspath(os.path.join(current_dir, "../.."))
-sys.path.insert(0, project_root)
+from src.dialogue.types.debate_dialogue import DebateDialogue
 
-# 필요한 모듈 import (dependency 문제 우회)
-try:
-    from src.dialogue.types.debate_dialogue import DebateDialogue, DebateStage, ParticipantRole
-    from src.agents.moderator.moderator_agent import ModeratorAgent
-    from src.agents.participant.debate_participant_agent import DebateParticipantAgent
-except ImportError as e:
-    print(f"Import error: {e}")
-    print("일부 의존성이 누락되었습니다. 패키지를 설치해주세요.")
-    sys.exit(1)
-
-
-class TranshumanismDebateTest:
-    """트랜스휴머니즘 토론 테스트 클래스"""
+def create_one_on_one_debate_data():
+    """1대1 토론방 데이터 생성"""
     
-    def __init__(self):
-        """트랜스휴머니즘 토론 테스트 초기화"""
-        # 대화 초기화
-        self.initialize_dialogue()
-        
-    def initialize_dialogue(self):
-        """토론 대화 및 에이전트 초기화"""
-        # 새로운 room_data 구조 사용
-        room_data = self.create_room_data()
-        
-        print(f"🎭 토론 초기화: {room_data['title']}")
-        print(f"📚 컨텍스트 길이: {len(room_data['context'])} 문자")
-        print(f"👥 참가자: {room_data['participants']['pro']['name']} vs {room_data['participants']['con']['name']}")
-        
-        # 대화 객체 생성 - 이제 room_data에서 자동으로 에이전트 생성됨
-        self.dialogue = DebateDialogue(room_id="transhumanism_debate_001", room_data=room_data)
-        
-        # 더 이상 별도의 에이전트 설정 불필요 - room_data에서 자동 처리
-        # self._setup_philosopher_agents() 제거됨
-        
-        # 초기화 상태 확인
-        print(f"📊 벡터 저장소: {'활성화됨' if self.dialogue.vector_store else '비활성화됨'}")
-        if self.dialogue.vector_store:
-            print(f"📄 저장된 문서 수: {len(self.dialogue.vector_store.documents)}")
-        print(f"🤖 생성된 에이전트:")
-        for role, agent in self.dialogue.agents.items():
-            print(f"   - {role}: {agent.name} ({agent.agent_id})")
-        print()
-    
-    def create_room_data(self):
-        """트랜스휴머니즘 토론을 위한 방 데이터 생성"""
-        return {
-            "title": "트랜스휴머니즘: 인간의 새로운 도약인가 아니면 종말인가?",
-            "context": """
-트랜스휴머니즘은 기술을 통해 인간의 신체적, 인지적 능력을 향상시키려는 철학적, 과학적 운동입니다.
+    return {
+        "title": "AI가 인간의 창의성을 대체할 수 있는가?",
+        "context": """
+인공지능과 창의성에 대한 철학적 토론입니다.
 
-## 주요 기술 영역:
-- 유전자 편집 (CRISPR-Cas9)
-- 신경 인터페이스 및 뇌-컴퓨터 연결
-- 인공 장기 및 사이보그 기술
-- 수명 연장 및 불멸 연구
-- 인공지능과의 융합
+## 주요 논점:
+- AI의 창의성 정의와 범위
+- 인간 창의성의 고유성
+- 기술과 예술의 관계
+- 미래 창작 활동의 변화
 
-## 찬성 논리:
-- 인간 능력의 근본적 향상 가능
-- 질병과 노화 극복
-- 우주 탐사 등 극한 환경 적응
-- 개인의 자유 선택권 확대
+## 찬성 논리 (니체):
+- AI는 이미 음악, 미술, 문학 분야에서 창작 활동
+- 패턴 인식과 조합을 통한 새로운 창작 가능
+- 인간의 한계를 뛰어넘는 무한한 가능성
+- 창의성은 결과물로 판단되어야 함
+- 권력의지를 통한 새로운 창조 형태
 
-## 반대 논리:
-- 인간 본질의 상실 우려
-- 사회적 불평등 심화 가능성
-- 예측 불가능한 부작용
-- 기술 의존성 증가
+## 반대 논리 (카뮈):
+- 창의성에는 감정과 경험이 필수
+- AI는 기존 데이터의 재조합일 뿐
+- 진정한 창조는 의식과 의도에서 나옴
+- 인간만이 가진 직관과 영감의 중요성
+- 부조리한 존재로서의 인간만이 진정한 창조 가능
 
-## 현재 발전 현황:
-- 일론 머스크의 뉴럴링크 뇌 임플란트 실험
-- 구글의 생명 연장 프로젝트 Calico
-- 중국의 유전자 편집 아기 실험 논란
-- AI와 인간 능력 비교 연구
-
-이 토론에서는 인간의 기술적 진화가 새로운 가능성인지, 아니면 위험한 길인지를 깊이 있게 논의합니다.
-            """,
-            "participants": {
-                "pro": {
+이 토론에서는 2명의 철학자가 AI의 창의성에 대해 깊이 있게 논의합니다.
+        """,
+        "participants": {
+            # 1대1 구조 - 철학자 키만 지정
+            "pro": [
+                {
                     "character_id": "nietzsche",
-                    "name": "프리드리히 니체",
+                    "philosopher_key": "nietzsche",  # YAML에서 로드할 키
+                    "name": "Nietzsche",  # 기본 이름 (YAML에서 덮어씀)
                     "personality": "passionate",
-                    "style": "poetic",
-                    "argumentation_style": "philosophical",
-                    "knowledge_areas": ["philosophy", "human_enhancement", "will_to_power"],
-                    "character_traits": {
-                        "core_philosophy": "위버멘쉬(Übermensch) - 인간은 극복되어야 할 존재",
-                        "key_concepts": ["권력에의 의지", "영원회귀", "가치의 재평가"],
-                        "famous_quotes": [
-                            "인간은 극복되어야 할 어떤 것이다",
-                            "신은 죽었다, 그리고 우리가 그를 죽였다"
-                        ]
-                    },
-                    "speaking_style": "열정적이고 시적인 표현, 강렬한 메타포 사용"
-                },
-                "con": {
+                    "style": "provocative"
+                }
+            ],
+            "con": [
+                {
                     "character_id": "camus",
-                    "name": "알베르 카뮈",
-                    "personality": "absurdist",
-                    "style": "existential",
-                    "argumentation_style": "absurdist",
-                    "knowledge_areas": ["existentialism", "absurdism", "human_condition"],
-                    "character_traits": {
-                        "core_philosophy": "부조리한 세계에서의 인간 조건",
-                        "key_concepts": ["부조리", "반항", "인간의 존엄"],
-                        "famous_quotes": [
-                            "진정한 철학적 문제는 단 하나, 자살이다",
-                            "부조리한 인간이란 자신의 조건을 생각하는 인간이다"
-                        ]
-                    },
-                    "speaking_style": "차분하고 성찰적인 어조, 실존적 질문 제기"
+                    "philosopher_key": "camus",  # YAML에서 로드할 키
+                    "name": "Camus",  # 기본 이름 (YAML에서 덮어씀)
+                    "personality": "existential",
+                    "style": "absurdist"
                 }
-            },
-            "moderator": {
-                "agent_id": "debate_moderator",
-                "name": "토론 진행자",
-                "style": 1
-            }
+            ],
+            "users": [],  # 사용자 없음
+            "user_configs": {}
+        },
+        "moderator": {
+            "agent_id": "debate_moderator",
+            "name": "토론 진행자",
+            "style_id": "0"  # moderator_style.json의 "0" (Casual Young Moderator)
         }
-    
-    def _setup_philosopher_agents(self):
-        """철학자 캐릭터 설정은 이제 room_data를 통해 자동으로 처리됨"""
-        # 더 이상 필요하지 않음 - room_data에서 자동으로 에이전트 생성
-        logger.info("Philosopher agents are now automatically created from room_data participants info")
-        pass
-    
-    def run_transhumanism_debate(self, max_turns: int = 5):
-        """
-        트랜스휴머니즘 토론 실행 (입론단계까지)
-        
-        Args:
-            max_turns: 최대 턴 수
-        """
-        print("🚀 트랜스휴머니즘 토론 시작!")
-        print("=" * 60)
-        
-        turn = 0
-        messages = []
-        rag_search_results = {}
-        
-        # 입론단계까지만 테스트
-        stages_to_test = [
-            DebateStage.OPENING,
-            DebateStage.PRO_ARGUMENT, 
-            DebateStage.CON_ARGUMENT
-        ]
-        
-        while turn < max_turns and self.dialogue.state["current_stage"] in stages_to_test:
-            current_stage = self.dialogue.state["current_stage"]
-            stage_display = self._get_stage_display(current_stage)
-            
-            print(f"\n🎯 [{stage_display}] 단계")
-            print("-" * 40)
-            
-            # 오프닝 처리 (이미 생성된 경우)
-            if current_stage == DebateStage.OPENING and len(self.dialogue.state["speaking_history"]) > 0:
-                opening_messages = [msg for msg in self.dialogue.state["speaking_history"] 
-                                  if msg.get("stage") == DebateStage.OPENING]
-                if opening_messages:
-                    latest_opening = opening_messages[-1]
-                    print(f"🎙️ 진행자:")
-                    print(f"{latest_opening.get('text', '')}\n")
-                    
-                    messages.append({
-                        "speaker_id": "moderator",
-                        "speaker_name": "진행자",
-                        "role": "moderator", 
-                        "message": latest_opening.get("text", ""),
-                        "stage": current_stage,
-                        "turn": turn
-                    })
-                    
-                    # 다음 단계로 전환
-                    self.dialogue.state["current_stage"] = DebateStage.PRO_ARGUMENT
-                    turn += 1
-                    continue
-            
-            # 응답 생성
-            try:
-                response = self.dialogue.generate_response()
-                
-                if response["status"] == "success":
-                    speaker_id = response["speaker_id"] 
-                    role = response["role"]
-                    message = response["message"]
-                    
-                    # 발언자 이름 결정
-                    if role == "moderator":
-                        speaker_name = "🎙️ 진행자"
-                    elif role == "pro":
-                        speaker_name = "🦅 니체"
-                    elif role == "con":
-                        speaker_name = "🌊 카뮈"
-                    else:
-                        speaker_name = speaker_id
-                    
-                    # 메시지 출력
-                    print(f"{speaker_name}:")
-                    print(f"{message}\n")
-                    
-                    # RAG 검색 결과 추출 및 실제 웹검색 확인
-                    if role in ["pro", "con"] and current_stage in [DebateStage.PRO_ARGUMENT, DebateStage.CON_ARGUMENT]:
-                        role_key = ParticipantRole.PRO if role == "pro" else ParticipantRole.CON
-                        agent = self.dialogue.agents.get(role_key)
-                        
-                        if agent:
-                            print(f"🔍 {speaker_name}의 RAG 분석:")
-                            print(f"   에이전트 ID: {agent.agent_id}")
-                            print(f"   핵심 주장: {len(getattr(agent, 'core_arguments', []))}")
-                            print(f"   검색 쿼리: {len(getattr(agent, 'argument_queries', []))}")
-                            print(f"   준비된 입론: {'예' if getattr(agent, 'prepared_argument', '') else '아니오'}")
-                            
-                            # 실제 웹검색 여부 확인
-                            if hasattr(agent, 'web_retriever'):
-                                print(f"   웹검색 도구: 활성화됨 ✅")
-                            else:
-                                print(f"   웹검색 도구: 비활성화됨 ❌")
-                            
-                            # RAG 결과 저장
-                            rag_search_results[f"{role}_arguments"] = {
-                                "speaker_id": speaker_id,
-                                "speaker_name": speaker_name.replace("🦅 ", "").replace("🌊 ", ""),
-                                "stage": current_stage,
-                                "core_arguments": getattr(agent, 'core_arguments', []),
-                                "argument_queries": getattr(agent, 'argument_queries', []),
-                                "prepared_argument": getattr(agent, 'prepared_argument', ''),
-                                "web_search_active": hasattr(agent, 'web_retriever')
-                            }
-                            
-                            # 검색 결과 상세 정보
-                            argument_queries = getattr(agent, 'argument_queries', [])
-                            for i, query_data in enumerate(argument_queries):
-                                for evidence in query_data.get("evidence", []):
-                                    query = evidence.get("query", "")
-                                    source = evidence.get("source", "")
-                                    results = evidence.get("results", [])
-                                    
-                                    print(f"   쿼리 {i+1}: '{query}'")
-                                    print(f"           출처: {source}")
-                                    print(f"           결과: {len(results)}개")
-                                    
-                                    # 실제 검색 결과가 있는지 확인
-                                    if results:
-                                        for j, result in enumerate(results[:2]):  # 처음 2개만 출력
-                                            title = result.get("title", "제목 없음")
-                                            content = result.get("content", "")[:100]
-                                            print(f"             {j+1}. {title}")
-                                            print(f"                {content}...")
-                            print()
-                    
-                    # 메시지 기록
-                    messages.append({
-                        "speaker_id": speaker_id,
-                        "speaker_name": speaker_name.replace("🦅 ", "").replace("🌊 ", "").replace("🎙️ ", ""),
-                        "role": role,
-                        "message": message,
-                        "stage": current_stage,
-                        "turn": turn
-                    })
-                    
-                    turn += 1
-                    time.sleep(1)  # 출력 간격
-                    
-                else:
-                    print(f"❌ 응답 생성 실패: {response}")
-                    break
-                    
-            except Exception as e:
-                print(f"💥 오류 발생: {str(e)}")
-                import traceback
-                traceback.print_exc()
-                break
-        
-        # 결과 저장
-        self._save_transhumanism_results(messages, rag_search_results)
-        
-        print("=" * 60)
-        print(f"✅ 트랜스휴머니즘 토론 완료: 총 {turn}턴")
-        print()
-    
-    def _get_stage_display(self, stage: str) -> str:
-        """단계 표시명 반환"""
-        stage_names = {
-            DebateStage.OPENING: "오프닝",
-            DebateStage.PRO_ARGUMENT: "니체의 입론",
-            DebateStage.CON_ARGUMENT: "카뮈의 입론",
-        }
-        return stage_names.get(stage, stage)
-    
-    def _save_transhumanism_results(self, messages: List[Dict[str, Any]], rag_search_results: Dict[str, Any]):
-        """트랜스휴머니즘 토론 결과 저장"""
-        # dialogue 객체에서 정보 가져오기
-        room_data = self.dialogue.room_data
-        topic = room_data.get('title', '트랜스휴머니즘 토론')
-        context = room_data.get('context', '')
-        stance_statements = self.dialogue.stance_statements
-        
-        result = {
-            "topic": topic,
-            "theme": "트랜스휴머니즘 철학 토론",
-            "participants": {
-                "pro": {
-                    "name": room_data.get('participants', {}).get('pro', {}).get('name', '프리드리히 니체'),
-                    "philosophy": "위버멘쉬, 힘에의 의지", 
-                    "stance": stance_statements.get("pro", "")
-                },
-                "con": {
-                    "name": room_data.get('participants', {}).get('con', {}).get('name', '알베르 카뮈'),
-                    "philosophy": "부조리주의, 실존주의",
-                    "stance": stance_statements.get("con", "")
-                }
-            },
-            "context": context,
-            "messages": messages,
-            "rag_search_results": rag_search_results,
-            "web_search_analysis": self._analyze_web_search_usage(rag_search_results),
-            "timestamp": time.strftime("%Y%m%d_%H%M%S")
-        }
-        
-        # 결과 저장 디렉토리 생성
-        os.makedirs("debate_results", exist_ok=True)
-        
-        # 전체 결과 저장
-        filename = f"debate_results/transhumanism_debate_{time.strftime('%Y%m%d_%H%M%S')}.json"
-        with open(filename, "w", encoding="utf-8") as f:
-            json.dump(result, f, ensure_ascii=False, indent=2)
-        
-        print(f"📄 토론 결과 저장: {filename}")
-        
-        # RAG 검색 결과만 별도 저장
-        rag_filename = f"debate_results/rag_analysis_{time.strftime('%Y%m%d_%H%M%S')}.json"
-        with open(rag_filename, "w", encoding="utf-8") as f:
-            json.dump({
-                "topic": topic,
-                "rag_search_results": rag_search_results,
-                "web_search_analysis": result["web_search_analysis"]
-            }, f, ensure_ascii=False, indent=2)
-        
-        print(f"🔍 RAG 분석 결과: {rag_filename}")
-    
-    def _analyze_web_search_usage(self, rag_search_results: Dict[str, Any]) -> Dict[str, Any]:
-        """웹검색 사용 분석"""
-        analysis = {
-            "total_queries": 0,
-            "web_queries": 0,
-            "other_queries": 0,
-            "actual_search_results": 0,
-            "search_sources": {},
-            "web_search_active": False
-        }
-        
-        for side, data in rag_search_results.items():
-            if "web_search_active" in data:
-                analysis["web_search_active"] = data["web_search_active"]
-            
-            argument_queries = data.get("argument_queries", [])
-            for query_data in argument_queries:
-                for evidence in query_data.get("evidence", []):
-                    analysis["total_queries"] += 1
-                    source = evidence.get("source", "unknown")
-                    
-                    if source == "web":
-                        analysis["web_queries"] += 1
-                    else:
-                        analysis["other_queries"] += 1
-                    
-                    analysis["search_sources"][source] = analysis["search_sources"].get(source, 0) + 1
-                    
-                    results = evidence.get("results", [])
-                    analysis["actual_search_results"] += len(results)
-        
-        return analysis
+    }
 
+def print_header(title):
+    """헤더 출력"""
+    print("\n" + "="*70)
+    print(f" {title}")
+    print("="*70)
 
-def main():
-    """메인 실행 함수"""
-    print("🤖 트랜스휴머니즘 철학 토론 시작")
-    print("   니체 vs 카뮈: 기술을 통한 인간 진화의 찬반")
+def print_message(speaker, message, is_user=False, is_waiting=False):
+    """메시지 출력 (1대1용)"""
+    if is_waiting:
+        print(f"\n🔄 [{speaker}] 입력을 기다리는 중...")
+    elif speaker in ["nietzsche", "Nietzsche", "니체"]:
+        print(f"\n⚡ [{speaker}]: {message}")
+    elif speaker in ["camus", "Camus", "카뮈"]:
+        print(f"\n🌊 [{speaker}]: {message}")
+    else:
+        print(f"\n🤖 [{speaker}]: {message}")
+
+def print_dialogue_state(dialogue):
+    """대화 상태 출력 (1대1용)"""
+    state = dialogue.get_dialogue_state()
+    participants = dialogue.participants
+    
+    print(f"\n📊 대화 상태:")
+    print(f"   - 현재 단계: {state['current_stage']}")
+    print(f"   - 턴 수: {state['turn_count']}")
+    print(f"   - 다음 발언자: {state.get('next_speaker', 'Unknown')}")
+    print(f"   - 진행 상태: {state['status']}")
+    print(f"   - 찬성측 참가자: {len(participants.get('pro', []))}명")
+    print(f"   - 반대측 참가자: {len(participants.get('con', []))}명")
+
+def print_participants_info():
+    """참가자 정보 출력"""
+    print("👥 토론 참가자:")
+    print("   📍 찬성측 (PRO):")
+    print("      ⚡ 니체 - 권력의지와 창조적 파괴의 철학자")
+    print("   📍 반대측 (CON):")
+    print("      🌊 카뮈 - 부조리와 반항의 철학자")
     print()
+    print("🎯 토론 주제:")
+    print("   - AI가 인간의 창의성을 대체할 수 있는가?")
+    print("   - 니체: 권력의지를 통한 창조적 혁신 지지")
+    print("   - 카뮈: 부조리한 인간 존재의 고유한 창조성 강조")
+
+def print_performance_analysis(dialogue):
+    """모든 에이전트의 성능 분석 결과 출력"""
+    print("\n" + "="*80)
+    print("🔍 성능 분석 결과")
+    print("="*80)
     
-    try:
-        # 토론 테스트 인스턴스 생성
-        test = TranshumanismDebateTest()
+    total_time = 0
+    agent_summaries = []
+    
+    # 모든 에이전트의 성능 요약 수집
+    for agent_id, agent in dialogue.agents.items():
+        if hasattr(agent, 'get_performance_summary'):
+            summary = agent.get_performance_summary()
+            agent_summaries.append(summary)
+            total_time += summary.get('total_time', 0)
+    
+    # 에이전트별 성능 출력
+    for summary in agent_summaries:
+        agent_name = summary.get('philosopher_name', summary.get('agent_name', summary.get('agent_id', 'Unknown')))
+        print(f"\n📊 {agent_name}")
+        print(f"   총 액션 수: {summary.get('total_actions', 0)}")
+        print(f"   총 소요 시간: {summary.get('total_time', 0):.2f}초")
         
-        # 입론단계까지 토론 실행
-        test.run_transhumanism_debate(max_turns=5)
+        actions = summary.get('actions', {})
+        for action_name, timing in actions.items():
+            print(f"   - {action_name}: {timing['duration']:.2f}초 ({timing['start_time']} ~ {timing['end_time']})")
+    
+    # 전체 요약
+    print(f"\n📈 전체 요약")
+    print(f"   총 에이전트 수: {len(agent_summaries)}")
+    print(f"   전체 소요 시간: {total_time:.2f}초")
+    print(f"   평균 에이전트당 시간: {total_time/len(agent_summaries):.2f}초" if agent_summaries else "   평균 계산 불가")
+    
+    # 가장 오래 걸린 액션들
+    all_actions = []
+    for summary in agent_summaries:
+        agent_name = summary.get('philosopher_name', summary.get('agent_name', summary.get('agent_id', 'Unknown')))
+        actions = summary.get('actions', {})
+        for action_name, timing in actions.items():
+            all_actions.append({
+                'agent': agent_name,
+                'action': action_name,
+                'duration': timing['duration']
+            })
+    
+    # 시간순 정렬
+    all_actions.sort(key=lambda x: x['duration'], reverse=True)
+    
+    print(f"\n⏱️  가장 오래 걸린 액션들 (Top 5)")
+    for i, action in enumerate(all_actions[:5]):
+        print(f"   {i+1}. {action['agent']} - {action['action']}: {action['duration']:.2f}초")
+    
+    print("="*80)
+
+def test_one_on_one_debate():
+    """1대1 토론 테스트"""
+    print_header("1대1 토론 테스트 (니체 vs 카뮈)")
+    
+    # 1. 토론방 데이터 생성
+    room_data = create_one_on_one_debate_data()
+    print(f"📝 토론 주제: {room_data['title']}")
+    print_participants_info()
+    
+    # 2. 토론 대화 초기화
+    try:
+        dialogue = DebateDialogue("test_one_on_one", room_data)
+        print(f"✅ 1대1 토론 대화 초기화 완료")
+        
+        # 참가자 확인
+        participants = dialogue.participants
+        print(f"✅ 참가자 확인:")
+        print(f"   - 찬성측: {participants.get('pro', [])}")
+        print(f"   - 반대측: {participants.get('con', [])}")
         
     except Exception as e:
-        print(f"💥 테스트 실행 중 오류: {str(e)}")
+        print(f"❌ 토론 초기화 실패: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return
+    
+    # 3. 초기 상태 확인
+    print_dialogue_state(dialogue)
+    
+    # 4. 토론 진행 시뮬레이션
+    max_turns = 15  # 1대1이므로 적은 턴
+    turn_count = 0
+    
+    print_header("1대1 토론 진행 시작")
+    
+    # 토론 안내 메시지
+    print("🎯 1대1 토론 안내:")
+    print("   - 니체 vs 카뮈의 철학적 대결")
+    print("   - 찬성측: 니체 (AI의 창조적 가능성 지지)")
+    print("   - 반대측: 카뮈 (인간 고유의 창조성 강조)")
+    print()
+    print("💡 토론 진행 순서:")
+    print("   1. 모더레이터 오프닝")
+    print("   2. 찬성측 입론 (니체)")
+    print("   3. 반대측 입론 (카뮈)")
+    print("   4. 상호논증 (자유 발언)")
+    print("   5. 최종 결론 (각자 순서대로)")
+    print()
+    
+    input("📍 준비가 되면 Enter를 눌러 1대1 토론을 시작하세요...")
+    print()
+    
+    while turn_count < max_turns and dialogue.playing:
+        turn_count += 1
+        print(f"\n🔄 턴 {turn_count}")
+        
+        try:
+            # 현재 발언자 확인
+            next_speaker_info = dialogue.get_next_speaker()
+            next_speaker = next_speaker_info.get("speaker_id")
+            speaker_role = next_speaker_info.get("role")
+            current_stage = dialogue.state.get("current_stage")
+            
+            print(f"📢 다음 발언자: {next_speaker} ({speaker_role})")
+            print(f"📍 현재 단계: {current_stage}")
+            
+            # AI 에이전트 차례
+            print(f"🤖 AI 에이전트 차례: {next_speaker}")
+            
+            # AI 응답 생성
+            result = dialogue.generate_response()
+            
+            if result.get("status") == "success":
+                speaker_name = result.get("speaker_id", next_speaker)
+                message = result.get("message", "")
+                
+                print_message(speaker_name, message)
+                
+                # 발언자별 특별 표시
+                if speaker_name in ["nietzsche", "Nietzsche"]:
+                    print("   💭 니체의 권력의지 철학이 드러나는 발언")
+                elif speaker_name in ["camus", "Camus"]:
+                    print("   💭 카뮈의 부조리 철학이 드러나는 발언")
+                    
+            elif result.get("status") == "paused":
+                print(f"⏸️ 토론이 일시정지되었습니다.")
+                break
+            else:
+                print(f"⚠️ AI 응답 생성 실패: {result.get('reason', 'Unknown error')}")
+            
+            # 상태 업데이트 확인
+            print_dialogue_state(dialogue)
+            
+            # 토론 완료 확인
+            if dialogue.state.get("current_stage") == "completed":
+                print("🎉 토론이 완료되었습니다!")
+                break
+            
+            # 잠시 대기 (실제 대화 속도 시뮬레이션)
+            time.sleep(1)
+            
+        except Exception as e:
+            print(f"❌ 턴 {turn_count} 처리 중 오류: {str(e)}")
+            import traceback
+            traceback.print_exc()
+            break
+    
+    # 5. 토론 종료 및 결과
+    print_header("1대1 토론 종료")
+    
+    # 전체 대화 기록 분석
+    speaking_history = dialogue.state.get("speaking_history", [])
+    speaker_counts = {}
+    for msg in speaking_history:
+        speaker = msg.get("speaker_id", "Unknown")
+        speaker_counts[speaker] = speaker_counts.get(speaker, 0) + 1
+    
+    print(f"\n📈 참가자별 발언 통계:")
+    for speaker, count in speaker_counts.items():
+        print(f"   🤖 {speaker}: {count}회 발언")
+    
+    print(f"\n📜 전체 대화 기록 ({len(speaking_history)}개 메시지):")
+    for i, msg in enumerate(speaking_history[-6:], 1):  # 마지막 6개 표시
+        speaker = msg.get("speaker_id", "Unknown")
+        stage = msg.get("stage", "unknown")
+        text = msg.get("text", "")[:150] + "..." if len(msg.get("text", "")) > 150 else msg.get("text", "")
+        
+        print(f"   {i}. 🤖 [{speaker}] ({stage}): {text}")
+
+    # 성능 분석 출력
+    print_performance_analysis(dialogue)
+
+def test_one_on_one_structure_validation():
+    """1대1 구조 검증 테스트"""
+    print_header("1대1 구조 검증 테스트")
+    
+    room_data = create_one_on_one_debate_data()
+    
+    try:
+        dialogue = DebateDialogue("test_structure", room_data)
+        
+        # 참가자 구조 확인
+        participants = dialogue.participants
+        print(f"✅ 참가자 구조 검증:")
+        print(f"   - PRO 측: {participants.get('pro', [])} ({len(participants.get('pro', []))}명)")
+        print(f"   - CON 측: {participants.get('con', [])} ({len(participants.get('con', []))}명)")
+        
+        # 에이전트 구조 확인
+        agents = dialogue.agents
+        print(f"\n✅ 에이전트 구조 검증:")
+        for agent_id, agent in agents.items():
+            agent_type = "AI"
+            print(f"   - {agent_id}: {agent_type} ({agent.name if hasattr(agent, 'name') else 'Unknown'})")
+        
+        # 발언 순서 시뮬레이션
+        print(f"\n✅ 발언 순서 시뮬레이션:")
+        for i in range(8):
+            next_speaker = dialogue.get_next_speaker()
+            speaker_id = next_speaker.get("speaker_id")
+            role = next_speaker.get("role")
+            stage = dialogue.state.get("current_stage")
+            
+            print(f"   턴 {i+1}: {speaker_id} ({role}) - {stage}")
+            
+            # 가상 메시지로 단계 진행
+            dialogue.state["speaking_history"].append({
+                "speaker_id": speaker_id,
+                "role": role,
+                "stage": stage,
+                "text": f"Test message from {speaker_id}",
+                "timestamp": time.time()
+            })
+            dialogue.state["turn_count"] += 1
+            
+            if dialogue.state.get("current_stage") == "completed":
+                break
+        
+        print(f"✅ 구조 검증 완료")
+        
+    except Exception as e:
+        print(f"❌ 구조 검증 실패: {str(e)}")
         import traceback
         traceback.print_exc()
 
+def main():
+    """메인 테스트 실행"""
+    print_header("1대1 토론 테스트 시스템 (니체 vs 카뮈)")
+    
+    print("🎮 테스트 옵션을 선택하세요:")
+    print("   1. 1대1 토론 실행")
+    print("   2. 1대1 구조 검증만")
+    print("   3. 전체 테스트 실행")
+    print()
+    
+    try:
+        choice = input("선택 (1-3): ").strip()
+        
+        if choice == "1":
+            # 1대1 토론만
+            test_one_on_one_debate()
+        elif choice == "2":
+            # 구조 검증만
+            test_one_on_one_structure_validation()
+        elif choice == "3":
+            # 전체 테스트
+            test_one_on_one_structure_validation()
+            print("\n" + "-"*70)
+            test_one_on_one_debate()
+        else:
+            print("❌ 잘못된 선택입니다. 전체 테스트를 실행합니다.")
+            test_one_on_one_structure_validation()
+            print("\n" + "-"*70)
+            test_one_on_one_debate()
+        
+        print_header("모든 테스트 완료")
+        
+    except KeyboardInterrupt:
+        print("\n\n⚠️ 사용자에 의해 테스트가 중단되었습니다.")
+    except Exception as e:
+        print(f"\n❌ 테스트 실행 중 오류 발생: {str(e)}")
+        import traceback
+        traceback.print_exc()
 
 if __name__ == "__main__":
     main() 
