@@ -1,0 +1,104 @@
+Clipping:                     # 1계층: 공격 전략
+  RAG_YES:
+    neutral:   [Refute, Clarify]
+    angry:     [Refute]
+    calm:      [Clarify, Accept]
+    confident: [Clarify, Reframe]
+    fearful:   [Accept, Clarify]
+
+  RAG_NO:
+    neutral:   [Clarify, Accept]
+    angry:     [Refute]
+    calm:      [Accept, Clarify]
+    confident: [Reframe, Clarify]
+    fearful:   [Clarify]
+
+FramingShift:
+  RAG_YES:
+    neutral:   [Clarify, Reframe]
+    angry:     [Refute, Clarify]
+    calm:      [Reframe, Accept]
+    confident: [Reframe, Counter-Challenge]
+    fearful:   [Accept, Clarify]
+
+  RAG_NO:
+    neutral:   [Reframe, Clarify]
+    angry:     [Clarify]
+    calm:      [Accept, Clarify]
+    confident: [Reframe, Counter-Challenge]
+    fearful:   [Clarify, Accept]
+
+ReductiveParadox:
+  RAG_YES:
+    neutral:   [Refute, Clarify]
+    angry:     [Refute]
+    calm:      [Clarify, Counter-Challenge]
+    confident: [Counter-Challenge, Reframe]
+    fearful:   [Clarify, Accept]
+
+  RAG_NO:
+    neutral:   [Clarify, Accept]
+    angry:     [Refute]
+    calm:      [Clarify, Accept]
+    confident: [Counter-Challenge, Clarify]
+    fearful:   [Accept, Clarify]
+
+ConceptualUndermining:
+  RAG_YES:
+    neutral:   [Clarify, Refute]
+    angry:     [Refute, Clarify]
+    calm:      [Clarify, Reframe]
+    confident: [Clarify, Counter-Challenge]
+    fearful:   [Clarify, Accept]
+
+  RAG_NO:
+    neutral:   [Clarify, Accept]
+    angry:     [Clarify, Refute]
+    calm:      [Clarify, Accept]
+    confident: [Clarify, Reframe]
+    fearful:   [Accept, Clarify]
+
+EthicalReversal:
+  RAG_YES:
+    neutral:   [Reframe, Clarify]
+    angry:     [Refute, Counter-Challenge]
+    calm:      [Reframe, Accept]
+    confident: [Counter-Challenge, Reframe]
+    fearful:   [Accept, Clarify]
+
+  RAG_NO:
+    neutral:   [Reframe, Accept]
+    angry:     [Refute, Clarify]
+    calm:      [Accept, Reframe]
+    confident: [Reframe, Counter-Challenge]
+    fearful:   [Accept, Clarify]
+
+TemporalDelay:
+  RAG_YES:
+    neutral:   [Clarify, Reframe]
+    angry:     [Refute, Clarify]
+    calm:      [Accept, Reframe]
+    confident: [Counter-Challenge, Reframe]
+    fearful:   [Accept, Clarify]
+
+  RAG_NO:
+    neutral:   [Accept, Clarify]
+    angry:     [Clarify, Refute]
+    calm:      [Accept, Clarify]
+    confident: [Reframe, Clarify]
+    fearful:   [Accept, Clarify]
+
+PhilosophicalReframing:
+  RAG_YES:
+    neutral:   [Reframe, Synthesis]
+    angry:     [Clarify, Refute]
+    calm:      [Synthesis, Reframe]
+    confident: [Reframe, Counter-Challenge]
+    fearful:   [Accept, Clarify]
+
+  RAG_NO:
+    neutral:   [Reframe, Accept]
+    angry:     [Clarify, Refute]
+    calm:      [Accept, Synthesis]
+    confident: [Reframe, Counter-Challenge]
+    fearful:   [Accept, Clarify] 

@@ -820,7 +820,7 @@ class DebateDialogue:
                 logger.error(f"Error initializing vector store: {str(e)}")
                 return None
         return None
-        
+    
     def _process_context_by_type(self, context: str) -> str:
         """컨텍스트 타입에 따라 적절히 처리"""
         context = context.strip()
@@ -975,8 +975,8 @@ class DebateDialogue:
         """대화에 필요한 에이전트 초기화 - 다중 참가자 지원"""
         try:
             # 직접 필요한 에이전트들 생성
-            from ...agents.moderator.moderator_agent import ModeratorAgent
-            from ...agents.participant.debate_participant_agent import DebateParticipantAgent
+            from ...agents.moderator.moderator_agent_ollama import ModeratorAgent
+            from ...agents.participant.debate_participant_agent_ollama import DebateParticipantAgent
             
             agents = {}
             
@@ -1314,13 +1314,28 @@ Important:
             stance_response = llm_manager.generate_response(
                 system_prompt=system_prompt,
                 user_prompt=user_prompt,
-                llm_model="gpt-4",
+                llm_provider="ollama",
+                llm_model="llama3.2-optimized",
                 max_tokens=1000
             )
+            
+            # 🔍 디버깅: 전체 응답 출력 (주석 처리)
+            # logger.info(f"[STANCE_DEBUG] Full Ollama response: {stance_response}")
+            # logger.info(f"[STANCE_DEBUG] Response type: {type(stance_response)}")
             
             # JSON 파싱
             import json
             import re
+            
+            # 🔧 Ollama JSON 수정: "pro" 뒤에 쉼표가 없는 경우 추가
+            if stance_response and '"pro":' in stance_response and '"con":' in stance_response:
+                # "pro": "..." 다음에 줄바꿈이 오고 "con":이 오는 패턴 찾기
+                fixed_response = re.sub(
+                    r'("pro":\s*"[^"]*")\s*\n\s*("con":)', 
+                    r'\1,\n  \2', 
+                    stance_response
+                )
+                stance_response = fixed_response
             
             # 만약 response가 JSON 형식이 아니라면 파싱을 위해 처리
             json_pattern = r'\{.*\}'
@@ -1328,25 +1343,31 @@ Important:
             
             if json_match:
                 json_str = json_match.group(0)
-                stance_json = json.loads(json_str)
                 
-                # 유효한 응답인지 확인
-                if "pro" in stance_json and "con" in stance_json:
-                    logger.info("Successfully generated stance statements using LLM")
-                    return stance_json
-            
-            # 파싱 실패 또는 필요한 키가 없는 경우
-            logger.warning(f"Failed to parse LLM response for stance statements: {stance_response[:100]}...")
+                try:
+                    stance_json = json.loads(json_str)
+                    
+                    # 유효한 응답인지 확인
+                    if "pro" in stance_json and "con" in stance_json:
+                        logger.info("Stance statements generated successfully")
+                        return stance_json
+                    else:
+                        logger.warning(f"Missing keys in JSON: {list(stance_json.keys())}")
+                        
+                except json.JSONDecodeError as e:
+                    logger.error(f"JSON decode error: {str(e)}")
+            else:
+                logger.warning("No JSON pattern found in response")
             
         except Exception as e:
             logger.error(f"Error generating stance statements with LLM: {str(e)}")
         
-            # 실패 시 기본값 반환
-            logger.warning("Using default stance statements due to LLM failure")
-            return {
-                "pro": f"{topic}에 찬성하는 입장",
-                "con": f"{topic}에 반대하는 입장"
-            }
+        # 실패 시 기본값 반환
+        logger.warning("Using default stance statements due to LLM failure")
+        return {
+            "pro": f"Supporting {topic}",
+            "con": f"Opposing {topic}"
+        }
     
     def _get_participants_by_role(self, role: str) -> List[str]:
         """채팅방 데이터에서 역할별 참가자 목록 추출 (다중 참가자 지원)"""
@@ -1421,7 +1442,7 @@ Important:
                 return {
                     "status": "completed",
                     "message": "토론이 완료되었습니다.",
-                    "current_stage": self.state["current_stage"]
+                "current_stage": self.state["current_stage"]
                 }
     
             speaker_id = next_speaker_info["speaker_id"]
@@ -1724,65 +1745,11 @@ Important:
         
         # 감정 컨텍스트 추가 (반론과 QA 단계에서만)
         emotion_enhancement = {}
-        if current_stage in [DebateStage.INTERACTIVE_ARGUMENT, DebateStage.MODERATOR_SUMMARY_2]:
-            logger.info(f"Attempting to add emotion enhancement for {speaker_id} in stage {current_stage}")
-            try:
-                # 상대측 발언 추출 (감정 추론에 사용)
-                opponent_role = ParticipantRole.CON if role == ParticipantRole.PRO else ParticipantRole.PRO
-                logger.info(f"Identified opponent role as {opponent_role} for speaker with role {role}")
-                
-                # 상대측 메시지 수집
-                if current_stage in [DebateStage.INTERACTIVE_ARGUMENT, DebateStage.MODERATOR_SUMMARY_2]:
-                    # 상호논증 단계에서는 상대측 입론 사용
-                    opponent_stage = DebateStage.CON_ARGUMENT if role == ParticipantRole.PRO else DebateStage.PRO_ARGUMENT
-                    logger.info(f"Using opponent messages from stage {opponent_stage} for rebuttal")
-                    opponent_messages = [
-                        msg for msg in self.state["speaking_history"] 
-                        if msg.get("stage") == opponent_stage and msg.get("role") == opponent_role
-                    ]
-                else:
-                    # QA 단계에서는 현재 QA 세션의 상대측 메시지 사용
-                    logger.info(f"Using opponent messages from current QA session stage {current_stage}")
-                    opponent_messages = [
-                        msg for msg in self.state["speaking_history"] 
-                        if msg.get("stage") == current_stage and msg.get("role") == opponent_role
-                    ]
-                
-                logger.info(f"Found {len(opponent_messages)} opponent messages for emotion inference")
-                
-                # 인스턴스 변수 사용 (중복 초기화 제거)
-                llm_manager = self.llm_manager
-                
-                # 화자의 입장 진술문 가져오기
-                speaker_stance = self.stance_statements.get(role.lower(), "") if role.lower() in ["pro", "con"] else ""
-                logger.info(f"Using speaker stance statement: {speaker_stance[:50]}...")
-                
-                # 감정 추론 호출
-                if opponent_messages and llm_manager:
-                    logger.info(f"Calling infer_debate_emotion for {speaker_id}")
-                    emotion_data = infer_debate_emotion(
-                        llm_manager=llm_manager,
-                        speaker_id=speaker_id,
-                        speaker_role=role.lower(),
-                        opponent_messages=opponent_messages,
-                        debate_topic=self.room_data.get('title', ''),
-                        debate_stage=current_stage,
-                        stance_statement=speaker_stance
-                    )
-                    
-                    # 결과에서 프롬프트 향상 정보 추출
-                    if "prompt_enhancement" in emotion_data:
-                        emotion_enhancement = emotion_data["prompt_enhancement"]
-                        logger.info(f"Applied emotion inference for {speaker_id} in {current_stage}. Emotion: {emotion_enhancement.get('emotion_state', 'unknown')}")
-                    else:
-                        logger.warning(f"No prompt_enhancement data found in emotion inference result")
-                else:
-                    logger.warning(f"Skipping emotion inference - No opponent messages or LLM manager available")
-            except Exception as e:
-                logger.error(f"Error inferring emotion: {str(e)}", exc_info=True)
-                
-        else:
-            logger.info(f"Skipping emotion inference for stage {current_stage} - Not a rebuttal or QA stage")
+        # if current_stage in [DebateStage.INTERACTIVE_ARGUMENT, DebateStage.MODERATOR_SUMMARY_2]:
+        #     logger.info(f"Attempting to add emotion enhancement for {speaker_id} in stage {current_stage}")
+        #     # 감정 추론 코드 주석 처리
+        # else:
+        #     logger.info(f"Skipping emotion inference for stage {current_stage} - Not a rebuttal or QA stage")
         
         return {
             "topic": self.room_data.get('title', ''),
@@ -1876,11 +1843,8 @@ Important:
             role = ParticipantRole.CON
             participants = self.participants.get(ParticipantRole.CON, [])
         
-        logger.info(f"[DEBUG] _get_next_argument_speaker - stage: {stage}, role: {role}, participants: {participants}")
-        
         if not participants:
             # 참가자가 없으면 다음 단계로
-            logger.warning(f"[DEBUG] No participants for {role} in {stage}, advancing to next stage")
             self._advance_to_next_stage()
             return self.get_next_speaker()
         
@@ -1891,23 +1855,16 @@ Important:
             msg_role = msg.get("role") 
             msg_speaker = msg.get("speaker_id")
             
-            logger.info(f"[DEBUG] History entry: speaker={msg_speaker}, stage={msg_stage}, role={msg_role}")
-            
             # 정확히 같은 stage와 role인 경우만 카운트
             if msg_stage == stage and msg_role == role and msg_speaker:
                 stage_speakers.append(msg_speaker)
         
-        logger.info(f"[DEBUG] Stage speakers for {stage}/{role}: {stage_speakers}")
-        logger.info(f"[DEBUG] All participants for {role}: {participants}")
-        
         # 아직 발언하지 않은 참가자 찾기 - 순서대로
         for participant in participants:
             if participant not in stage_speakers:
-                logger.info(f"[DEBUG] Found next speaker: {participant} (role: {role})")
                 return {"speaker_id": participant, "role": role}
         
         # 모든 참가자가 발언했으면 다음 단계로
-        logger.info(f"[DEBUG] All participants have spoken in {stage}, advancing to next stage")
         self._advance_to_next_stage()
         return self.get_next_speaker()
     
@@ -2384,11 +2341,11 @@ Important:
             if moderator_agent:
                 topic = self.room_data.get('title', '토론 주제')
                 
-                # 참가자 정보 수집 - 올바른 순서로
-                pro_participants = self._get_participants_by_role(ParticipantRole.PRO)
-                con_participants = self._get_participants_by_role(ParticipantRole.CON)
+                # 참가자 정보 수집
+                pro_participants = self.participants.get(ParticipantRole.PRO, [])
+                con_participants = self.participants.get(ParticipantRole.CON, [])
                 
-                logger.info(f"[DEBUG] Moderator opening - PRO: {pro_participants}, CON: {con_participants}")
+                # logger.info(f"[DEBUG] Moderator opening - PRO: {pro_participants}, CON: {con_participants}")
                 
                 # 모더레이터 오프닝 준비 - generate_introduction 액션 사용
                 result = moderator_agent.process({
@@ -2735,8 +2692,8 @@ Important:
         """대화에 필요한 에이전트 초기화 - 다중 참가자 지원"""
         try:
             # 직접 필요한 에이전트들 생성
-            from ...agents.moderator.moderator_agent import ModeratorAgent
-            from ...agents.participant.debate_participant_agent import DebateParticipantAgent
+            from ...agents.moderator.moderator_agent_ollama import ModeratorAgent
+            from ...agents.participant.debate_participant_agent_ollama import DebateParticipantAgent
             
             agents = {}
             

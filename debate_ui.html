@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>철학자 토론 - 트랜스휴머니즘</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .chat-container {
+            width: 500px;
+            height: 800px;
+            background: #f0f0f0;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: #075e54;
+            color: white;
+            padding: 15px 20px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .chat-subtitle {
+            font-size: 12px;
+            opacity: 0.8;
+            margin-top: 2px;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #e5ddd5;
+            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="%23ffffff" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="%23ffffff" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="%23ffffff" opacity="0.05"/><circle cx="10" cy="60" r="0.5" fill="%23ffffff" opacity="0.05"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+        }
+
+        .message {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .profile-pic {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+            border: 2px solid #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            flex-shrink: 0;
+        }
+
+        .message-content {
+            max-width: 380px;
+        }
+
+        .message-bubble {
+            background: #fff;
+            padding: 12px 16px;
+            border-radius: 18px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            position: relative;
+            word-wrap: break-word;
+            line-height: 1.4;
+        }
+
+        .message-bubble::before {
+            content: '';
+            position: absolute;
+            left: -8px;
+            top: 15px;
+            width: 0;
+            height: 0;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            border-right: 8px solid #fff;
+        }
+
+        .moderator .message-bubble {
+            background: #dcf8c6;
+        }
+
+        .moderator .message-bubble::before {
+            border-right-color: #dcf8c6;
+        }
+
+        .nietzsche .message-bubble {
+            background: #ffd6cc;
+        }
+
+        .nietzsche .message-bubble::before {
+            border-right-color: #ffd6cc;
+        }
+
+        .marx .message-bubble {
+            background: #cce5ff;
+        }
+
+        .marx .message-bubble::before {
+            border-right-color: #cce5ff;
+        }
+
+        .speaker-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 4px;
+        }
+
+        .moderator .speaker-name {
+            color: #2d5a27;
+        }
+
+        .nietzsche .speaker-name {
+            color: #8b4513;
+        }
+
+        .marx .speaker-name {
+            color: #1e3a8a;
+        }
+
+        .message-time {
+            font-size: 11px;
+            color: #999;
+            margin-top: 4px;
+            text-align: right;
+        }
+
+        .input-container {
+            background: #f0f0f0;
+            padding: 15px 20px;
+            border-top: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .input-field {
+            flex: 1;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            padding: 12px 20px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .input-field:focus {
+            border-color: #075e54;
+        }
+
+        .input-field::placeholder {
+            color: #999;
+        }
+
+        .send-button {
+            width: 45px;
+            height: 45px;
+            background: #075e54;
+            border: none;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+        }
+
+        .send-button:hover {
+            background: #064e45;
+        }
+
+        .send-button svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 스크롤바 스타일링 */
+        .chat-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 3px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 0, 0, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <div>철학자 토론</div>
+            <div class="chat-subtitle">Transhumanism: Human Evolution or Human Extinction?</div>
+        </div>
+        
+        <div class="chat-messages" id="chatMessages">
+            <!-- 모더레이터 메시지 -->
+            <div class="message moderator">
+                <img src="https://via.placeholder.com/40x40/4CAF50/white?text=M" alt="Moderator" class="profile-pic">
+                <div class="message-content">
+                    <div class="speaker-name">AI Moderator</div>
+                    <div class="message-bubble">
+                        <!-- 모더레이터 오프닝 메시지를 여기에 입력하세요 -->
+                        "자, 모두 안녕하세요—음… 그럼 이제 토론을 시작해볼까요? 하하.<br>
+                        오늘의 주제는요, '트랜스휴머니즘: 인간 진화인가, 인간 멸종인가?' 입니다.<br>
+                        좀 머리 아픈 주제죠? 마치 우리가 완전히 새로운 존재로 진화하게 될 미래를 이야기하는 건지,<br>
+                        아니면 스스로 만든 기술 때문에 멸망을 자초하는 건지를 묻는 건데요.<br><br>
+                        
+                        먼저 오늘 토론에 참여해 주신 연사들을 소개하겠습니다.<br>
+                        먼저, 인간의 변화를 향한 거침없는 진화를 주장하는 분,<br>
+                        초월의 힘을 대표하는 철학자… 니체 선생!<br><br>
+                        
+                        그리고, 그에 맞서<br>
+                        기술 발전이 인류를 구원하기보다 자본주의적 착취를 심화시킬 수 있다고 경고하는 분,<br>
+                        생산 수단과 계급 구조를 꿰뚫는 날카로운 시선의 철학자… 마르크스 선생!<br><br>
+                        
+                        그럼 본격적으로 들어가기 전에, 여러분은 어떻게 생각하시나요?<br>
+                        우리는 정말 초인적인 존재로 진화할 수 있을까요?<br>
+                        아니면 우리가 다루기엔 너무 위험한 불을 만지고 있는 걸까요?<br>
+                        진보일까요, 파멸의 설계도일까요?<br><br>
+                        
+                        그럼 이제 시작해보겠습니다.<br>
+                        먼저 니체 선생, 미래의 인간성에 대한 당신의 생각을 들려주시죠.
+                    </div>
+                    <div class="message-time">10:30 AM</div>
+                </div>
+            </div>
+
+            <!-- 니체 메시지 -->
+            <div class="message nietzsche">
+                <img src="https://via.placeholder.com/40x40/FF9800/white?text=N" alt="Nietzsche" class="profile-pic">
+                <div class="message-content">
+                    <div class="speaker-name">Friedrich Nietzsche</div>
+                    <div class="message-bubble">
+                        <!-- 니체의 첫 번째 메시지를 여기에 입력하세요 -->
+                        인류 절멸의 유령이 우리의 집단적 미래를 드리우고 있다.<br>
+                        그것은 우리 존재 그 자체를 위협하는 음산한 전조이자, 피할 수 없는 그림자다.<br><br>
+
+                        그럼에도, 나는 여러분께 다른 가능성을 제안하고 싶다.<br>
+                        트랜스휴머니즘은 멸망의 전령이 아니라, 인류가 새로운 고도로 도약할 수 있게 해주는 기폭제가 될 수 있다는 가능성 말이다.<br><br>
+
+                        우리는 끊임없는 자기 초월을 갈망하는 종족이다.<br>
+                        그 갈망은 문명이라는 긴 여정을 이끌어 온 가장 근원적인 충동이었다.<br>
+                        '권력 의지' — 우리를 초월하게 만들고, 한계를 뛰어넘게 하는 원초적 힘.<br>
+                        이 힘이야말로 인류 진화를 움직여 온 엔진이다.<br><br>
+
+                        그리고 그 의지를 가장 또렷하게 상징하는 것이 바로 트랜스휴머니즘의 혁신들이다.<br>
+                        인공지능과 인간 의식을 융합하고, 유전자를 조작해 시간의 침식을 거스르는 것.<br>
+                        이런 비전은 멸망의 설계도가 아니라, 변형과 진화를 위한 청사진이다.<br><br>
+
+                        생각해보라. 우리의 기술 진보는 어떤 경로를 걸어왔는가.<br>
+                        초창기의 유전자 조작에서부터 두뇌-컴퓨터 인터페이스라는 경이로운 진보에 이르기까지,<br>
+                        우리는 끊임없이 혁신해왔고, 스스로를 넘어서는 능력을 증명해 왔다.<br><br>
+
+                        이러한 발전이 인류를 파멸로 이끌 것이라는 믿음은<br>
+                        이제는 낡고 피로한 상투적인 클리셰에 불과하다.<br>
+                        한때 인간 강화라는 개념이 인간성을 위협한다고 여겨졌던 시대의 유물이다.<br><br>
+
+                        하지만 나는 여러분께 말한다.<br>
+                        이러한 비관주의는, 단지 미지의 세계를 두려워하는 이들이 만들어낸 신화에 불과하다.<br>
+                        우리가 만들어내는 빠른 진보는 파멸이 아니라,<br>
+                        인류의 무한한 성장 가능성과 진화 능력에 대한 증거다.<br><br>
+
+                        '인간'과 '기계' 사이의 낡은 이분법은 이제 버려야 한다.<br>
+                        우리는 고정된 존재가 아니라,<br>
+                        한계를 넘어서 진화할 수 있는 유기적이고 적응 가능한 시스템이다.<br><br>
+
+                        그래서 나는 여러분께 묻고 싶다.<br>
+                        우리 인간을 인간답게 만드는 것이 과연 무엇인가?<br>
+                        질병과 노화 앞의 나약함인가? 아니면 더 깊은 어떤 본질인가?<br><br>
+
+                        그것은 죽음을 향한 공포를 넘어, 더 근원적인 본성을 향한 열망이 아닐까?<br><br>
+
+                        나는 말한다 —<br>
+                        트랜스휴머니즘은 이 진화의 여정에서 다음으로 도약할 위대한 도약이며,<br>
+                        우리가 스스로의 한계를 초월하고 새로운 운명을 만들어나갈 수 있는 기회다.
+                    </div>
+                    <div class="message-time">10:32 AM</div>
+                </div>
+            </div>
+
+            <!-- 마르크스 메시지 -->
+            <div class="message marx">
+                <img src="https://via.placeholder.com/40x40/2196F3/white?text=M" alt="Marx" class="profile-pic">
+                <div class="message-content">
+                    <div class="speaker-name">Karl Marx</div>
+                    <div class="message-bubble">
+                        트랜스휴머니즘이라는 개념을 곱씹을 때마다,<br>
+                        나는 알 수 없는 불안감에 휩싸인다.<br>
+                        인간 향상과 진화를 향한 이 찬란한 열망은,<br>
+                        인류의 고통을 치유할 만병통치약으로 치켜세워지지만,<br>
+                        실상은 진보의 외피를 쓴 트로이 목마,<br>
+                        우리 존재의 기반을 위협하는 실존적 위험을 숨기고 있는 건 아닐까?<br><br>
+                        
+                        트랜스휴머니즘은 본질적으로,<br>
+                        인간이 스스로를 초월하려는 타고난 충동의 발현이다.<br>
+                        하지만 이 개선과 발전을 향한 욕망은,<br>
+                        결코 인류 공동체의 정체성을 지탱하는 근본적 가치를 대체할 수 없다.<br><br>
+                        
+                        기술 발전에 대한 끊임없는 집착은,<br>
+                        종종 윤리와 도덕을 희생시키며 진행되며,<br>
+                        이는 '진보'가 언제나 '인류의 이익'과 일치하지 않음을 일깨워준다.<br><br>
+                        
+                        실제로, 생물학적·인지적 '향상'에 집착하는 트랜스휴머니즘의 태도는<br>
+                        **"인간다움이란 무엇인가"**라는 가장 본질적인 질문을 던지게 만든다.<br><br>
+                        
+                        **불멸(immortality)**이라는 개념을 생각해보자.<br>
+                        일부 트랜스휴머니스트가 궁극적 목표로 내세우는 그것은<br>
+                        정말 실현 가능한 상태인가?<br>
+                        그건 오히려 신기루,<br>
+                        영원한 삶을 약속하는 듯 보이지만 결국에는<br>
+                        자원 고갈, 사회 정체, 인간 다양성의 침식으로 이어지지 않을까?<br><br>
+                        
+                        우리가 유한한 존재를 초월할 수 있다고 믿는 그 생각,<br>
+                        자연의 질서를 거스르려는 그 망상은,<br>
+                        오히려 우리 존재의 근간에 대한 모독이다.<br>
+                        그건 마치,<br>
+                        스스로의 파멸에서 부활하려는 오만한 불사조처럼<br>
+                        허영에서 비롯된 자기 기만적인 환상일 뿐이다.<br><br>
+                        
+                        또한, 트랜스휴머니즘이<br>
+                        개인의 자율성과 창의적 잠재력을 간과한다는 점도 무시할 수 없다.<br>
+                        생물학적·인지적 향상이라는 명분 아래,<br>
+                        우리는 오히려 인간 고유의 본질을 말살하고 있는 건 아닐까?<br><br>
+                        
+                        각자의 경험의 고유함, 관점의 다양성,<br>
+                        바로 그것이야말로 우리가 인간일 수 있는 이유다.<br>
+                        무관심한 우주 속에서 우리가 의미를 부여하는 방식이기도 하다.<br><br>
+                        
+                        이 주장을 마치며, 나는 내 존경하는 선배 철학자의 말을 떠올린다.<br><br>
+                        
+                        "철학자들은 세상을 여러 방식으로 해석해 왔다. 중요한 것은, 그것을 변화시키는 것이다."<br><br>
+                        
+                        트랜스휴머니즘은 해석된 세계를 제시할 뿐,<br>
+                        아직 변화된 세계는 아니다.<br><br>
+                        
+                        그러니 우리의 책무는, 철학자이자 시민으로서<br>
+                        이 해석을 비판하고 도전하는 일이다.<br>
+                        그 속에 감춰진 모순과 허상을 드러내는 것이다.<br><br>
+                        
+                        그리할 때 비로소,<br>
+                        우리는 진정한 인간성의 의미에 더 가까이 다가설 수 있을 것이다.
+                    </div>
+                    <div class="message-time">10:34 AM</div>
+                </div>
+            </div>
+
+            <!-- 추가 메시지들을 여기에 계속 추가할 수 있습니다 -->
+            <!--
+            <div class="message nietzsche">
+                <img src="Nietzsche.png" alt="Nietzsche" class="profile-pic">
+                <div class="message-content">
+                    <div class="speaker-name">Friedrich Nietzsche</div>
+                    <div class="message-bubble">
+                        니체의 다음 메시지를 여기에 입력하세요
+                    </div>
+                    <div class="message-time">10:36 AM</div>
+                </div>
+            </div>
+
+            <div class="message marx">
+                <img src="Marx.png" alt="Marx" class="profile-pic">
+                <div class="message-content">
+                    <div class="speaker-name">Karl Marx</div>
+                    <div class="message-bubble">
+                        마르크스의 다음 메시지를 여기에 입력하세요
+                    </div>
+                    <div class="message-time">10:38 AM</div>
+                </div>
+            </div>
+            -->
+        </div>
+
+        <div class="input-container">
+            <input type="text" class="input-field" placeholder="Your turn to speak..." readonly>
+            <button class="send-button">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // 자동 스크롤 (새 메시지가 추가될 때)
+        function scrollToBottom() {
+            const chatMessages = document.getElementById('chatMessages');
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // 페이지 로드 시 맨 아래로 스크롤
+        window.addEventListener('load', scrollToBottom);
+
+        // 입력창 클릭 시 효과 (실제 기능은 없음)
+        document.querySelector('.input-field').addEventListener('click', function() {
+            this.style.borderColor = '#075e54';
+        });
+
+        document.querySelector('.send-button').addEventListener('click', function() {
+            // 실제 전송 기능은 없지만 클릭 효과
+            this.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                this.style.transform = 'scale(1)';
+            }, 100);
+        });
+    </script>
+</body>
+</html> 

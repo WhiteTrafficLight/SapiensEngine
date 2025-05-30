@@ -33,6 +33,13 @@ socrates:
     "Ethical Reversal": 0.05
     "Temporal Delay": 0.0
     "Philosophical Reframing": 0.1
+  defense_weights:
+    "Refute": 0.1
+    "Clarify": 0.4
+    "Accept": 0.2
+    "Reframe": 0.15
+    "Counter-Challenge": 0.1
+    "Synthesis": 0.05
 
 plato:
   name: "Plato"
@@ -66,6 +73,13 @@ plato:
     "Ethical Reversal": 0.1
     "Temporal Delay": 0.05
     "Philosophical Reframing": 0.05
+  defense_weights:
+    "Refute": 0.05
+    "Clarify": 0.3
+    "Accept": 0.1
+    "Reframe": 0.35
+    "Counter-Challenge": 0.1
+    "Synthesis": 0.1
 
 aristotle:
   name: "Aristotle"
@@ -99,6 +113,13 @@ aristotle:
     "Ethical Reversal": 0.05
     "Temporal Delay": 0.05
     "Philosophical Reframing": 0.0
+  defense_weights:
+    "Refute": 0.2
+    "Clarify": 0.3
+    "Accept": 0.2
+    "Reframe": 0.1
+    "Counter-Challenge": 0.1
+    "Synthesis": 0.1
 
 kant:
   name: "Kant"
@@ -132,6 +153,13 @@ kant:
     "Ethical Reversal": 0.3
     "Temporal Delay": 0.0
     "Philosophical Reframing": 0.0
+  defense_weights:
+    "Refute": 0.15
+    "Clarify": 0.4
+    "Accept": 0.05
+    "Reframe": 0.25
+    "Counter-Challenge": 0.1
+    "Synthesis": 0.05
 
 nietzsche:
   name: "Nietzsche"
@@ -165,6 +193,13 @@ nietzsche:
     "Ethical Reversal": 0.15
     "Temporal Delay": 0.0
     "Philosophical Reframing": 0.1
+  defense_weights:
+    "Refute": 0.25
+    "Clarify": 0.1
+    "Accept": 0.05
+    "Reframe": 0.35
+    "Counter-Challenge": 0.2
+    "Synthesis": 0.05
 
 hegel:
   name: "Hegel"
@@ -198,6 +233,13 @@ hegel:
     "Ethical Reversal": 0.1
     "Temporal Delay": 0.1
     "Philosophical Reframing": 0.2
+  defense_weights:
+    "Refute": 0.05
+    "Clarify": 0.2
+    "Accept": 0.15
+    "Reframe": 0.25
+    "Counter-Challenge": 0.1
+    "Synthesis": 0.25
 
 marx:
   name: "Marx"
@@ -231,6 +273,13 @@ marx:
     "Ethical Reversal": 0.15
     "Temporal Delay": 0.05
     "Philosophical Reframing": 0.0
+  defense_weights:
+    "Refute": 0.3
+    "Clarify": 0.2
+    "Accept": 0.1
+    "Reframe": 0.25
+    "Counter-Challenge": 0.1
+    "Synthesis": 0.05
 
 sartre:
   name: "Sartre"
@@ -264,6 +313,13 @@ sartre:
     "Ethical Reversal": 0.2
     "Temporal Delay": 0.0
     "Philosophical Reframing": 0.2
+  defense_weights:
+    "Refute": 0.15
+    "Clarify": 0.25
+    "Accept": 0.1
+    "Reframe": 0.3
+    "Counter-Challenge": 0.15
+    "Synthesis": 0.05
 
 camus:
   name: "Camus"
@@ -297,6 +353,13 @@ camus:
     "Ethical Reversal": 0.1
     "Temporal Delay": 0.3
     "Philosophical Reframing": 0.0
+  defense_weights:
+    "Refute": 0.1
+    "Clarify": 0.2
+    "Accept": 0.3
+    "Reframe": 0.2
+    "Counter-Challenge": 0.1
+    "Synthesis": 0.1
 
 beauvoir:
   name: "Simone de Beauvoir"
@@ -330,6 +393,13 @@ beauvoir:
     "Ethical Reversal": 0.2
     "Temporal Delay": 0.0
     "Philosophical Reframing": 0.0
+  defense_weights:
+    "Refute": 0.2
+    "Clarify": 0.3
+    "Accept": 0.15
+    "Reframe": 0.2
+    "Counter-Challenge": 0.1
+    "Synthesis": 0.05
 
 rousseau:
   name: "Rousseau"
@@ -363,6 +433,13 @@ rousseau:
     "Ethical Reversal": 0.2
     "Temporal Delay": 0.1
     "Philosophical Reframing": 0.0
+  defense_weights:
+    "Refute": 0.1
+    "Clarify": 0.25
+    "Accept": 0.25
+    "Reframe": 0.25
+    "Counter-Challenge": 0.1
+    "Synthesis": 0.05
 
 confucius:
   name: "Confucius"
@@ -396,6 +473,13 @@ confucius:
     "Ethical Reversal": 0.3
     "Temporal Delay": 0.1
     "Philosophical Reframing": 0.0
+  defense_weights:
+    "Refute": 0.1
+    "Clarify": 0.3
+    "Accept": 0.3
+    "Reframe": 0.15
+    "Counter-Challenge": 0.05
+    "Synthesis": 0.1
 
 laozi:
   name: "Laozi"
@@ -429,6 +513,13 @@ laozi:
     "Ethical Reversal": 0.1
     "Temporal Delay": 0.15
     "Philosophical Reframing": 0.15
+  defense_weights:
+    "Refute": 0.05
+    "Clarify": 0.2
+    "Accept": 0.4
+    "Reframe": 0.2
+    "Counter-Challenge": 0.05
+    "Synthesis": 0.1
 
 buddha:
   name: "Buddha"
@@ -462,6 +553,13 @@ buddha:
     "Ethical Reversal": 0.1
     "Temporal Delay": 0.2
     "Philosophical Reframing": 0.0
+  defense_weights:
+    "Refute": 0.05
+    "Clarify": 0.25
+    "Accept": 0.35
+    "Reframe": 0.2
+    "Counter-Challenge": 0.05
+    "Synthesis": 0.1
 
 wittgenstein:
   name: "Wittgenstein"
@@ -494,4 +592,11 @@ wittgenstein:
     "Conceptual Undermining": 0.5
     "Ethical Reversal": 0.0
     "Temporal Delay": 0.0
-    "Philosophical Reframing": 0.0 
+    "Philosophical Reframing": 0.0
+  defense_weights:
+    "Refute": 0.2
+    "Clarify": 0.5
+    "Accept": 0.05
+    "Reframe": 0.15
+    "Counter-Challenge": 0.05
+    "Synthesis": 0.05 

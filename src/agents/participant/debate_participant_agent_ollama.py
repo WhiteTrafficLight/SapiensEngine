@@ -627,7 +627,7 @@ class DebateParticipantAgent(Agent):
     
     def _generate_interactive_argument_response(self, topic: str, recent_messages: List[Dict[str, Any]], dialogue_state: Dict[str, Any], stance_statements: Dict[str, str], emotion_enhancement: Dict[str, Any] = None) -> str:
         """
-        상호논증 단계에서 응답 생성 (공격 또는 방어)
+        상호논증 단계에서 응답 생성
         
         Args:
             topic: 토론 주제
@@ -638,77 +638,6 @@ class DebateParticipantAgent(Agent):
             
         Returns:
             생성된 응답 텍스트
-        """
-        # 최근 메시지에서 상대방 공격 여부 확인
-        is_defending = self._is_defending_against_attack(recent_messages)
-        
-        if is_defending:
-            return self._generate_defense_response(topic, recent_messages, dialogue_state, stance_statements, emotion_enhancement)
-        else:
-            return self._generate_attack_response(topic, recent_messages, dialogue_state, stance_statements, emotion_enhancement)
-    
-    def _is_defending_against_attack(self, recent_messages: List[Dict[str, Any]]) -> bool:
-        """
-        최근 메시지에서 상대방이 나를 공격했는지 확인
-        
-        Args:
-            recent_messages: 최근 메시지 목록
-            
-        Returns:
-            방어 상황 여부
-        """
-        if not recent_messages:
-            return False
-        
-        # 가장 최근 메시지가 상대방의 공격인지 확인
-        last_message = recent_messages[-1]
-        last_speaker = last_message.get('speaker_id', '')
-        last_role = last_message.get('role', '')
-        
-        # 내가 아닌 다른 참가자의 발언이고, 모더레이터가 아니면 공격으로 간주
-        opposite_role = "con" if self.role == "pro" else "pro"
-        
-        return (last_role == opposite_role and 
-                last_speaker != "moderator" and 
-                last_speaker != self.agent_id)
-    
-    def _generate_defense_response(self, topic: str, recent_messages: List[Dict[str, Any]], dialogue_state: Dict[str, Any], stance_statements: Dict[str, str], emotion_enhancement: Dict[str, Any] = None) -> str:
-        """
-        방어 응답 생성
-        
-        Args:
-            topic: 토론 주제
-            recent_messages: 최근 메시지 목록
-            dialogue_state: 현재 대화 상태
-            stance_statements: 찬반 입장 진술문
-            emotion_enhancement: 감정 강화 데이터 (선택적)
-            
-        Returns:
-            생성된 방어 응답
-        """
-        print(f"🛡️ [{self.philosopher_name}] 방어 응답 생성 시작")
-        
-        # 1. 상대방 공격 분석
-        attack_info = self._analyze_incoming_attack(recent_messages)
-        
-        # 2. 방어 전략 선택
-        defense_strategy = self._select_defense_strategy(attack_info, emotion_enhancement)
-        
-        # 3. 방어용 RAG 사용 여부 결정
-        defense_rag_decision = self._determine_defense_rag_usage(defense_strategy, attack_info)
-        
-        # 4. 방어 응답 생성
-        defense_response = self._generate_defense_response_with_strategy(
-            topic, recent_messages, stance_statements, defense_strategy, 
-            defense_rag_decision, emotion_enhancement
-        )
-        
-        print(f"🛡️ [{self.philosopher_name}] 방어 응답 생성 완료")
-        return defense_response
-    
-    def _generate_attack_response(self, topic: str, recent_messages: List[Dict[str, Any]], dialogue_state: Dict[str, Any], stance_statements: Dict[str, str], emotion_enhancement: Dict[str, Any] = None) -> str:
-        """
-        공격 응답 생성 (기존 로직)
         """
         # 상대방 에이전트 정보 찾기 (개선된 로직)
         opposite_role = "con" if self.role == "pro" else "pro"
@@ -831,9 +760,6 @@ This is the INTERACTIVE ARGUMENT phase of the debate. Your responses should be:
 4. Ask POINTED QUESTIONS that expose weaknesses
 5. Use your philosophical approach to challenge their logic
 
-CRITICAL: Write your ENTIRE response in the SAME LANGUAGE as the debate topic. 
-If the topic is in Korean, respond in Korean. If in English, respond in English.
-
 You are directly confronting {target_agent_name}. Address them by name and attack their specific arguments.
 """
 
@@ -854,9 +780,6 @@ TASK: Generate a SHORT, DIRECT response (2-3 sentences max) that:
 2. Attacks a specific point they made
 3. Asks a challenging question OR points out a logical flaw
 4. Uses your philosophical style to challenge them
-
-IMPORTANT: Write your response in the SAME LANGUAGE as the debate topic "{topic}".
-If the topic contains Korean text, write in Korean. If in English, write in English.
 
 """
 
@@ -890,7 +813,6 @@ INSTRUCTION: Incorporate this evidence naturally into your {strategy_type} attac
         user_prompt += f"""
 Remember: Be CONCISE, DIRECT, and CONFRONTATIONAL. This is rapid-fire debate, not a long speech.
 Address {target_agent_name} directly and challenge their specific arguments.
-Write in the SAME LANGUAGE as the topic "{topic}".
 
 Your response:"""
 
@@ -904,7 +826,8 @@ Your response:"""
             response = self.llm_manager.generate_response(
                     system_prompt=system_prompt,
                     user_prompt=user_prompt,
-                llm_model="gpt-4o",
+                llm_provider="ollama",
+                llm_model="llama3.2-optimized",
                 max_tokens=10000  
             )
             
@@ -916,711 +839,6 @@ Your response:"""
         except Exception as e:
             logger.error(f"Error generating interactive argument response: {str(e)}")
             return f"{target_agent_name}님, 그 주장에 대해 더 구체적인 근거를 제시해 주시기 바랍니다."
-    
-    def _analyze_incoming_attack(self, recent_messages: List[Dict[str, Any]]) -> Dict[str, Any]:
-        """
-        들어오는 공격 분석 - 공격자 에이전트의 실제 전략 정보 가져오기
-        
-        Args:
-            recent_messages: 최근 메시지 목록
-            
-        Returns:
-            공격 정보 분석 결과
-        """
-        if not recent_messages:
-            return {"attack_strategy": "Unknown", "rag_used": False, "attacker_id": "unknown"}
-        
-        last_message = recent_messages[-1]
-        attacker_id = last_message.get('speaker_id', 'unknown')
-        attack_text = last_message.get('text', '')
-        
-        print(f"   🔍 [{self.philosopher_name}] 공격 정보 분석:")
-        print(f"      👤 공격자: {attacker_id}")
-        
-        # 공격자 에이전트의 실제 전략 정보 가져오기
-        attack_info = self._get_attacker_strategy_info(attacker_id)
-        
-        if attack_info["attack_strategy"] != "Unknown":
-            print(f"      ✅ 실제 공격 전략 발견: {attack_info['attack_strategy']}")
-            print(f"      📚 공격 RAG 사용: {attack_info['rag_used']}")
-        else:
-            print(f"      ❌ 공격 전략 정보 없음 - 키워드 추정 사용")
-            # Fallback: 키워드 기반 추정 (기존 로직)
-            attack_info = self._estimate_attack_strategy_from_keywords(attack_text, attacker_id)
-        
-        attack_info["attacker_id"] = attacker_id
-        attack_info["attack_text"] = attack_text[:200]  # 분석용 일부 텍스트
-        
-        return attack_info
-    
-    def _get_attacker_strategy_info(self, attacker_id: str) -> Dict[str, Any]:
-        """
-        공격자 에이전트의 실제 사용한 전략 정보 가져오기
-        
-        Args:
-            attacker_id: 공격자 에이전트 ID
-            
-        Returns:
-            공격 전략 정보
-        """
-        try:
-            # 1. 토론 매니저나 글로벌 상태에서 공격자 에이전트 참조 가져오기
-            attacker_agent = self._get_attacker_agent_reference(attacker_id)
-            
-            if attacker_agent is None:
-                print(f"         ❌ 공격자 에이전트 참조 없음")
-                return {"attack_strategy": "Unknown", "rag_used": False}
-            
-            # 2. 공격자의 최근 사용한 전략 정보 가져오기
-            recent_attack_strategy = self._get_recent_attack_strategy(attacker_agent, attacker_id)
-            
-            if recent_attack_strategy:
-                strategy_type = recent_attack_strategy.get('strategy_type', 'Unknown')
-                rag_decision = recent_attack_strategy.get('rag_decision', {})
-                rag_used = rag_decision.get('use_rag', False)
-                
-                print(f"         ✅ 공격자 전략 정보:")
-                print(f"            🗡️ 전략: {strategy_type}")
-                print(f"            📚 RAG: {rag_used}")
-                print(f"            ⚡ 취약성 점수: {recent_attack_strategy.get('vulnerability_score', 0.0):.2f}")
-                
-                return {
-                    "attack_strategy": strategy_type,
-                    "rag_used": rag_used,
-                    "vulnerability_score": recent_attack_strategy.get('vulnerability_score', 0.0),
-                    "attack_plan": recent_attack_strategy.get('attack_plan', {}),
-                    "source": "actual_attacker_data"
-                }
-            else:
-                print(f"         ❌ 공격자의 최근 전략 정보 없음")
-                return {"attack_strategy": "Unknown", "rag_used": False}
-                
-        except Exception as e:
-            logger.error(f"Error getting attacker strategy info: {str(e)}")
-            print(f"         ❌ 공격자 전략 정보 조회 오류: {str(e)}")
-            return {"attack_strategy": "Unknown", "rag_used": False}
-    
-    def _get_attacker_agent_reference(self, attacker_id: str):
-        """
-        공격자 에이전트 참조 가져오기
-        
-        Args:
-            attacker_id: 공격자 ID
-            
-        Returns:
-            공격자 에이전트 객체 또는 None
-        """
-        try:
-            # 방법 1: 토론 대화 매니저에서 참가자 정보 가져오기 (가장 일반적)
-            if hasattr(self, '_debate_dialogue_manager'):
-                participants = getattr(self._debate_dialogue_manager, 'participants', {})
-                if attacker_id in participants:
-                    return participants[attacker_id]
-            
-            # 방법 2: 글로벌 에이전트 레지스트리에서 가져오기 (만약 있다면)
-            if hasattr(self, '_agent_registry'):
-                registry = getattr(self._agent_registry, 'agents', {})
-                if attacker_id in registry:
-                    return registry[attacker_id]
-            
-            # 방법 3: 부모 객체나 컨텍스트에서 가져오기
-            if hasattr(self, '_context') and self._context:
-                context_participants = self._context.get('participants', {})
-                if attacker_id in context_participants:
-                    return context_participants[attacker_id]
-            
-            # 방법 4: 클래스 레벨 레지스트리 (만약 구현되어 있다면)
-            if hasattr(self.__class__, '_agent_instances'):
-                instances = getattr(self.__class__, '_agent_instances', {})
-                if attacker_id in instances:
-                    return instances[attacker_id]
-            
-            return None
-            
-        except Exception as e:
-            logger.error(f"Error getting attacker agent reference: {str(e)}")
-            return None
-    
-    def _get_recent_attack_strategy(self, attacker_agent, target_speaker_id: str) -> Dict[str, Any]:
-        """
-        공격자 에이전트의 최근 사용한 공격 전략 가져오기
-        
-        Args:
-            attacker_agent: 공격자 에이전트 객체
-            target_speaker_id: 공격 대상 (나 자신)
-            
-        Returns:
-            최근 공격 전략 정보
-        """
-        try:
-            # 공격자의 attack_strategies에서 나에 대한 전략 가져오기
-            if hasattr(attacker_agent, 'attack_strategies'):
-                attack_strategies = getattr(attacker_agent, 'attack_strategies', {})
-                
-                # 나(target_speaker_id)에 대한 공격 전략들
-                my_id = getattr(self, 'agent_id', self.name.lower())
-                if my_id in attack_strategies:
-                    strategies = attack_strategies[my_id]
-                    if strategies and len(strategies) > 0:
-                        # 가장 최근 사용한 전략 (첫 번째 또는 가장 높은 우선순위)
-                        return strategies[0]
-            
-            # 최근 사용한 전략 기록이 있는지 확인 (만약 별도로 저장한다면)
-            if hasattr(attacker_agent, 'last_used_strategy'):
-                last_strategy = getattr(attacker_agent, 'last_used_strategy', None)
-                if last_strategy:
-                    return last_strategy
-            
-            return None
-            
-        except Exception as e:
-            logger.error(f"Error getting recent attack strategy: {str(e)}")
-            return None
-    
-    def _estimate_attack_strategy_from_keywords(self, attack_text: str, attacker_id: str) -> Dict[str, Any]:
-        """
-        키워드 기반 공격 전략 추정 (Fallback 방법)
-        
-        Args:
-            attack_text: 공격 텍스트
-            attacker_id: 공격자 ID
-            
-        Returns:
-            추정된 공격 정보
-        """
-        attack_text_lower = attack_text.lower()
-        
-        print(f"         🔄 키워드 기반 전략 추정 시작")
-        
-        # 공격 전략 추정 (키워드 기반)
-        attack_strategy = "Unknown"
-        if any(word in attack_text_lower for word in ['wrong', 'incorrect', 'false', 'error']):
-            attack_strategy = "Clipping"
-        elif any(word in attack_text_lower for word in ['assume', 'framework', 'perspective']):
-            attack_strategy = "FramingShift"
-        elif any(word in attack_text_lower for word in ['extreme', 'consequence', 'lead to']):
-            attack_strategy = "ReductiveParadox"
-        elif any(word in attack_text_lower for word in ['define', 'mean', 'concept']):
-            attack_strategy = "ConceptualUndermining"
-        elif any(word in attack_text_lower for word in ['ethical', 'moral', 'wrong']):
-            attack_strategy = "EthicalReversal"
-        elif any(word in attack_text_lower for word in ['future', 'long-term', 'eventually']):
-            attack_strategy = "TemporalDelay"
-        elif any(word in attack_text_lower for word in ['fundamental', 'real question', 'deeper']):
-            attack_strategy = "PhilosophicalReframing"
-        
-        # RAG 사용 여부 추정 (구체적 데이터/인용 있으면 RAG 사용으로 추정)
-        rag_used = any(indicator in attack_text_lower for indicator in [
-            'study', 'research', 'data', 'statistics', 'according to', 'evidence', 'findings'
-        ])
-        
-        print(f"         📊 추정 결과: {attack_strategy} (RAG: {rag_used})")
-        
-        return {
-            "attack_strategy": attack_strategy,
-            "rag_used": rag_used,
-            "source": "keyword_estimation"
-        }
-    
-    def _select_defense_strategy(self, attack_info: Dict[str, Any], emotion_enhancement: Dict[str, Any] = None) -> str:
-        """
-        방어 전략 선택
-        
-        Args:
-            attack_info: 공격 정보
-            emotion_enhancement: 감정 강화 정보
-            
-        Returns:
-            선택된 방어 전략명
-        """
-        print(f"   🛡️ [{self.philosopher_name}] 방어 전략 선택 시작")
-        
-        try:
-            # 1. defense_map.yaml에서 후보 전략 가져오기
-            defense_candidates = self._get_defense_candidates_from_map(attack_info, emotion_enhancement)
-            
-            if not defense_candidates:
-                print(f"   ❌ 방어 후보 전략 없음 - 기본 Clarify 사용")
-                return "Clarify"
-            
-            print(f"   📋 후보 전략들: {defense_candidates}")
-            
-            # 2. 철학자의 defense_weights 가져오기
-            philosopher_key = getattr(self, 'philosopher_key', self.name.lower())
-            philosopher_data = self._load_philosopher_data(philosopher_key)
-            defense_weights = philosopher_data.get("defense_weights", {})
-            
-            if not defense_weights:
-                print(f"   ❌ 철학자 방어 가중치 없음 - 첫 번째 후보 사용")
-                return defense_candidates[0]
-            
-            print(f"   ⚖️ 철학자 방어 가중치: {defense_weights}")
-            
-            # 3. 후보 전략들에 대한 가중치만 추출하고 정규화
-            candidate_weights = {}
-            total_weight = 0.0
-            
-            for strategy in defense_candidates:
-                weight = defense_weights.get(strategy, 0.1)  # 기본값 0.1
-                candidate_weights[strategy] = weight
-                total_weight += weight
-            
-            if total_weight == 0:
-                print(f"   ❌ 총 가중치가 0 - 첫 번째 후보 사용")
-                return defense_candidates[0]
-            
-            # 정규화
-            normalized_weights = {k: v/total_weight for k, v in candidate_weights.items()}
-            print(f"   📊 정규화된 가중치: {normalized_weights}")
-            
-            # 4. 확률적 선택
-            import random
-            rand_val = random.random()
-            cumulative = 0.0
-            
-            for strategy, prob in normalized_weights.items():
-                cumulative += prob
-                if rand_val <= cumulative:
-                    print(f"   ✅ 선택된 방어 전략: {strategy} (확률: {prob:.3f})")
-                    return strategy
-            
-            # 혹시나 하는 fallback
-            selected = defense_candidates[0]
-            print(f"   🔄 Fallback 방어 전략: {selected}")
-            return selected
-            
-        except Exception as e:
-            logger.error(f"Error selecting defense strategy: {str(e)}")
-            print(f"   ❌ 방어 전략 선택 오류: {str(e)} - 기본 Clarify 사용")
-            return "Clarify"
-    
-    def _get_defense_candidates_from_map(self, attack_info: Dict[str, Any], emotion_enhancement: Dict[str, Any] = None) -> List[str]:
-        """
-        defense_map.yaml에서 방어 후보 전략들 가져오기
-        
-        Args:
-            attack_info: 공격 정보
-            emotion_enhancement: 감정 정보
-            
-        Returns:
-            방어 후보 전략 목록
-        """
-        try:
-            # defense_map.yaml 로드
-            import yaml
-            import os
-            
-            current_dir = os.path.dirname(os.path.abspath(__file__))
-            project_root = current_dir
-            
-            # 프로젝트 루트 찾기
-            while project_root and not os.path.exists(os.path.join(project_root, "philosophers")):
-                parent = os.path.dirname(project_root)
-                if parent == project_root:
-                    break
-                project_root = parent
-            
-            yaml_path = os.path.join(project_root, "philosophers", "defense_map.yaml")
-            
-            if not os.path.exists(yaml_path):
-                print(f"   ❌ defense_map.yaml 없음: {yaml_path}")
-                return ["Clarify", "Accept"]  # 기본값
-            
-            with open(yaml_path, 'r', encoding='utf-8') as f:
-                defense_map = yaml.safe_load(f)
-            
-            # 공격 전략과 RAG 사용 여부
-            attack_strategy = attack_info.get("attack_strategy", "Unknown")
-            rag_used = attack_info.get("rag_used", False)
-            
-            # 감정 상태 (없으면 neutral)
-            emotion_state = "neutral"
-            if emotion_enhancement:
-                emotion_state = emotion_enhancement.get("emotion_type", "neutral")
-            
-            rag_key = "RAG_YES" if rag_used else "RAG_NO"
-            
-            print(f"   🔍 방어 맵 조회: {attack_strategy} -> {rag_key} -> {emotion_state}")
-            
-            # defense_map에서 후보 찾기
-            if attack_strategy in defense_map:
-                strategy_map = defense_map[attack_strategy]
-                if rag_key in strategy_map:
-                    emotion_map = strategy_map[rag_key]
-                    if emotion_state in emotion_map:
-                        candidates = emotion_map[emotion_state]
-                        print(f"   ✅ 후보 전략 발견: {candidates}")
-                        return candidates if isinstance(candidates, list) else [candidates]
-            
-            # 찾지 못한 경우 기본값
-            print(f"   ❌ 방어 맵에서 후보 못 찾음 - 기본값 사용")
-            return ["Clarify", "Accept"]
-            
-        except Exception as e:
-            logger.error(f"Error getting defense candidates: {str(e)}")
-            print(f"   ❌ 방어 후보 조회 오류: {str(e)}")
-            return ["Clarify", "Accept"]
-    
-    def _determine_defense_rag_usage(self, defense_strategy: str, attack_info: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        방어용 RAG 사용 여부 결정
-        
-        Args:
-            defense_strategy: 선택된 방어 전략
-            attack_info: 공격 정보
-            
-        Returns:
-            RAG 사용 결정 결과
-        """
-        print(f"   📚 [{self.philosopher_name}] 방어 RAG 사용 여부 판별:")
-        print(f"      🛡️ 방어 전략: {defense_strategy}")
-        
-        try:
-            # 1. defense_strategies.json에서 rag_weight 가져오기
-            defense_rag_weight = self._get_defense_strategy_rag_weight(defense_strategy)
-            
-            # 2. 철학자의 rag_affinity 가져오기
-            philosopher_key = getattr(self, 'philosopher_key', self.name.lower())
-            philosopher_data = self._load_philosopher_data(philosopher_key)
-            rag_affinity = philosopher_data.get("rag_affinity", 0.5)
-            
-            # 3. 공격의 RAG 사용 여부에 따른 가중치
-            attack_rag_weight = 1.0 if attack_info.get("rag_used", False) else 0.3
-            
-            # 4. 세 값의 곱
-            rag_score = defense_rag_weight * rag_affinity * attack_rag_weight
-            
-            # 5. 임계값 비교 (0.3으로 설정)
-            threshold = 0.3
-            use_rag = rag_score >= threshold
-            
-            print(f"      📊 계산:")
-            print(f"         • 방어 전략 가중치: {defense_rag_weight}")
-            print(f"         • 철학자 친화도: {rag_affinity}")
-            print(f"         • 공격 RAG 가중치: {attack_rag_weight}")
-            print(f"         • RAG 점수: {defense_rag_weight} × {rag_affinity} × {attack_rag_weight} = {rag_score:.3f}")
-            print(f"         • 임계값: {threshold}")
-            print(f"         • 결정: {'RAG 사용' if use_rag else 'RAG 사용 안함'}")
-            
-            return {
-                "use_rag": use_rag,
-                "rag_score": rag_score,
-                "threshold": threshold,
-                "defense_rag_weight": defense_rag_weight,
-                "rag_affinity": rag_affinity,
-                "attack_rag_weight": attack_rag_weight
-            }
-            
-        except Exception as e:
-            logger.error(f"Error determining defense RAG usage: {str(e)}")
-            print(f"      ❌ 방어 RAG 판별 오류: {str(e)} - RAG 사용 안함")
-            return {
-                "use_rag": False,
-                "rag_score": 0.0,
-                "threshold": 0.3,
-                "error": str(e)
-            }
-    
-    def _get_defense_strategy_rag_weight(self, defense_strategy: str) -> float:
-        """
-        defense_strategies.json에서 특정 방어 전략의 rag_weight 가져오기
-        
-        Args:
-            defense_strategy: 방어 전략명
-            
-        Returns:
-            RAG 가중치
-        """
-        try:
-            import json
-            import os
-            
-            current_dir = os.path.dirname(os.path.abspath(__file__))
-            project_root = current_dir
-            
-            # 프로젝트 루트 찾기
-            while project_root and not os.path.exists(os.path.join(project_root, "philosophers")):
-                parent = os.path.dirname(project_root)
-                if parent == project_root:
-                    break
-                project_root = parent
-            
-            json_path = os.path.join(project_root, "philosophers", "defense_strategies.json")
-            
-            if not os.path.exists(json_path):
-                print(f"         ❌ defense_strategies.json 없음 - 기본값 0.4 사용")
-                return 0.4
-            
-            with open(json_path, 'r', encoding='utf-8') as f:
-                defense_data = json.load(f)
-            
-            defense_styles = defense_data.get("defense_styles", {})
-            strategy_info = defense_styles.get(defense_strategy, {})
-            rag_weight = strategy_info.get("rag_weight", 0.4)
-            
-            print(f"         ✅ {defense_strategy} RAG 가중치: {rag_weight}")
-            return rag_weight
-            
-        except Exception as e:
-            logger.error(f"Error getting defense strategy rag weight: {str(e)}")
-            print(f"         ❌ 방어 전략 가중치 조회 오류: {str(e)} - 기본값 0.4 사용")
-            return 0.4
-    
-    def _generate_defense_response_with_strategy(self, topic: str, recent_messages: List[Dict[str, Any]], stance_statements: Dict[str, str], defense_strategy: str, defense_rag_decision: Dict[str, Any], emotion_enhancement: Dict[str, Any] = None) -> str:
-        """
-        방어 전략과 RAG 여부에 따라 방어 응답 생성
-        
-        Args:
-            topic: 토론 주제
-            recent_messages: 최근 메시지
-            stance_statements: 입장 진술문
-            defense_strategy: 선택된 방어 전략
-            defense_rag_decision: RAG 사용 결정
-            emotion_enhancement: 감정 강화
-            
-        Returns:
-            생성된 방어 응답
-        """
-        print(f"   💬 [{self.philosopher_name}] 방어 응답 생성:")
-        print(f"      🛡️ 전략: {defense_strategy}")
-        print(f"      📚 RAG 사용: {defense_rag_decision.get('use_rag', False)}")
-        
-        try:
-            # 방어 전략 정보 가져오기
-            defense_info = self._get_defense_strategy_info(defense_strategy)
-            
-            # 상대방 정보
-            attacker_name = self._get_philosopher_name(recent_messages[-1].get('speaker_id', 'unknown'))
-            attack_text = recent_messages[-1].get('text', '') if recent_messages else ''
-            
-            # 내 입장
-            my_stance = stance_statements.get(self.role, "")
-            
-            # 시스템 프롬프트
-            system_prompt = f"""
-You are {self.philosopher_name}, a philosopher with this essence: {self.philosopher_essence}
-Your debate style: {self.philosopher_debate_style}
-Your personality: {self.philosopher_personality}
-
-You are responding defensively using the "{defense_strategy}" strategy.
-Strategy description: {defense_info.get('description', '')}
-Strategy purpose: {defense_info.get('purpose', '')}
-Style prompt: {defense_info.get('style_prompt', '')}
-
-Your response should be:
-1. SHORT and DIRECT (2-3 sentences maximum)
-2. Use the {defense_strategy} approach
-3. Address {attacker_name} directly
-4. Maintain your philosophical character
-
-CRITICAL: Write your ENTIRE response in the SAME LANGUAGE as the debate topic.
-If the topic is in Korean, respond in Korean. If in English, respond in English.
-"""
-
-            # 유저 프롬프트
-            user_prompt = f"""
-DEBATE TOPIC: "{topic}"
-YOUR POSITION: {my_stance}
-
-{attacker_name} just attacked you with: "{attack_text}"
-
-DEFENSE STRATEGY: {defense_strategy}
-- Description: {defense_info.get('description', '')}
-- Style: {defense_info.get('style_prompt', '')}
-- Example approach: {defense_info.get('example', '')}
-
-TASK: Generate a SHORT defensive response (2-3 sentences max) that:
-1. Uses the {defense_strategy} approach
-2. Addresses {attacker_name} directly by name
-3. Responds to their specific attack
-4. Maintains your philosophical perspective
-
-IMPORTANT: Write your response in the SAME LANGUAGE as the debate topic "{topic}".
-If the topic contains Korean text, write in Korean. If in English, write in English.
-
-"""
-
-            # RAG 사용하는 경우 검색 수행
-            if defense_rag_decision.get('use_rag', False):
-                defense_rag_results = self._perform_defense_rag_search(attack_text, defense_strategy)
-                if defense_rag_results:
-                    rag_formatted = self._format_defense_rag_results(defense_rag_results, defense_strategy)
-                    user_prompt += f"""
-{rag_formatted}
-INSTRUCTION: Incorporate this supporting information naturally into your {defense_strategy} response.
-"""
-                    print(f"      📚 RAG 정보 추가됨 ({len(defense_rag_results)}개 결과)")
-
-            user_prompt += f"""
-Remember: Be CONCISE, DIRECT, and use the {defense_strategy} approach. 
-Address {attacker_name} directly and defend effectively.
-Write in the SAME LANGUAGE as the topic "{topic}".
-
-Your {defense_strategy} response:"""
-
-            # 감정 강화 적용
-            if emotion_enhancement:
-                from ...agents.utility.debate_emotion_inference import apply_debate_emotion_to_prompt
-                system_prompt, user_prompt = apply_debate_emotion_to_prompt(system_prompt, user_prompt, emotion_enhancement)
-
-        # LLM 호출
-            response = self.llm_manager.generate_response(
-            system_prompt=system_prompt,
-            user_prompt=user_prompt,
-                llm_model="gpt-4o",
-                max_tokens=1000
-            )
-            
-            if response:
-                print(f"      ✅ 방어 응답 생성 완료")
-                return response.strip()
-            else:
-                fallback = f"{attacker_name}님, {defense_info.get('style_prompt', 'Let me clarify')}: 제 입장은 여전히 유효합니다."
-                print(f"      🔄 Fallback 응답 사용")
-                return fallback
-                
-        except Exception as e:
-            logger.error(f"Error generating defense response: {str(e)}")
-            print(f"      ❌ 방어 응답 생성 오류: {str(e)}")
-            fallback = f"제 입장에 대해 명확히 설명드리겠습니다."
-            return fallback
-    
-    def _get_defense_strategy_info(self, defense_strategy: str) -> Dict[str, Any]:
-        """
-        defense_strategies.json에서 방어 전략 정보 가져오기
-        
-        Args:
-            defense_strategy: 방어 전략명
-            
-        Returns:
-            방어 전략 정보
-        """
-        try:
-            import json
-            import os
-            
-            current_dir = os.path.dirname(os.path.abspath(__file__))
-            project_root = current_dir
-            
-            while project_root and not os.path.exists(os.path.join(project_root, "philosophers")):
-                parent = os.path.dirname(project_root)
-                if parent == project_root:
-                    break
-                project_root = parent
-            
-            json_path = os.path.join(project_root, "philosophers", "defense_strategies.json")
-            
-            if os.path.exists(json_path):
-                with open(json_path, 'r', encoding='utf-8') as f:
-                    defense_data = json.load(f)
-                
-                defense_styles = defense_data.get("defense_styles", {})
-                return defense_styles.get(defense_strategy, {})
-            
-            # 기본값
-            return {
-                "description": f"Use {defense_strategy} approach",
-                "purpose": "Defend position",
-                "style_prompt": "Let me respond...",
-                "example": f"Example of {defense_strategy}"
-            }
-            
-        except Exception as e:
-            logger.error(f"Error getting defense strategy info: {str(e)}")
-            return {
-                "description": f"Use {defense_strategy} approach",
-                "purpose": "Defend position", 
-                "style_prompt": "Let me respond...",
-                "example": f"Example of {defense_strategy}"
-            }
-    
-    def _perform_defense_rag_search(self, attack_text: str, defense_strategy: str) -> List[Dict[str, Any]]:
-        """
-        방어용 RAG 검색 수행
-        
-        Args:
-            attack_text: 상대방 공격 텍스트
-            defense_strategy: 방어 전략
-            
-        Returns:
-            검색 결과
-        """
-        try:
-            # 방어용 쿼리 생성 (간단화)
-            defense_query = self._generate_defense_rag_query(attack_text, defense_strategy)
-            
-            # 검색 수행 (기존 메서드 재사용)
-            search_results = self._web_search(defense_query)
-            
-            print(f"      🔍 방어 RAG 쿼리: '{defense_query}'")
-            print(f"      📊 검색 결과: {len(search_results)}개")
-            
-            return search_results[:2]  # 방어는 2개만 사용
-            
-        except Exception as e:
-            logger.error(f"Error in defense RAG search: {str(e)}")
-            return []
-    
-    def _generate_defense_rag_query(self, attack_text: str, defense_strategy: str) -> str:
-        """
-        방어용 RAG 쿼리 생성
-        
-        Args:
-            attack_text: 공격 텍스트
-            defense_strategy: 방어 전략
-            
-        Returns:
-            검색 쿼리
-        """
-        # 공격 텍스트에서 핵심 키워드 추출
-        keywords = self._extract_key_concept(attack_text)
-        
-        # 방어 전략별 접두사
-        strategy_prefixes = {
-            "Refute": "evidence supporting",
-            "Clarify": "clarification examples",
-            "Accept": "balanced perspective",
-            "Reframe": "alternative framework",
-            "Counter-Challenge": "counter evidence",
-            "Synthesis": "comprehensive analysis"
-        }
-        
-        prefix = strategy_prefixes.get(defense_strategy, "information about")
-        return f"{prefix} {keywords}"
-    
-    def _format_defense_rag_results(self, rag_results: List[Dict[str, Any]], defense_strategy: str) -> str:
-        """
-        방어용 RAG 결과 포맷팅
-        
-        Args:
-            rag_results: RAG 검색 결과
-            defense_strategy: 방어 전략
-            
-        Returns:
-            포맷팅된 RAG 정보
-        """
-        if not rag_results:
-            return ""
-        
-        strategy_headers = {
-            "Refute": "SUPPORTING EVIDENCE",
-            "Clarify": "CLARIFICATION SOURCES",
-            "Accept": "BALANCED PERSPECTIVES", 
-            "Reframe": "ALTERNATIVE VIEWS",
-            "Counter-Challenge": "COUNTER-EVIDENCE",
-            "Synthesis": "COMPREHENSIVE ANALYSIS"
-        }
-        
-        header = strategy_headers.get(defense_strategy, "SUPPORTING INFORMATION")
-        
-        formatted = f"\n{header} (use strategically):\n"
-        
-        for i, result in enumerate(rag_results, 1):
-            title = result.get('title', 'Source')
-            content = result.get('content', result.get('snippet', ''))
-            formatted += f"{i}. {title}: {content}\n"
-        
-        return formatted
     
     def _get_philosopher_name(self, agent_id: str) -> str:
         """
@@ -1762,7 +980,8 @@ Respond in the SAME LANGUAGE as the debate topic.
         response = self.llm_manager.generate_response(
             system_prompt=system_prompt,
             user_prompt=user_prompt,
-            llm_model="gpt-4o",
+            llm_provider="ollama",
+            llm_model="llama3.2-optimized",
             max_tokens=1000
         )
         
@@ -1829,7 +1048,8 @@ Format your response as JSON:
             response = self.llm_manager.generate_response(
                 system_prompt=system_prompt,
                 user_prompt=user_prompt,
-                llm_model="gpt-4o",  # gpt-4 → gpt-4o
+                llm_provider="ollama",
+                llm_model="llama3.2-optimized",
                 max_tokens=1200  # 800 → 1200 (JSON 파싱이 복잡함)
             )
             
@@ -2165,7 +1385,8 @@ Balance: 70% your unique philosophical perspective + 30% strategic evidence (if 
         self.prepared_argument = self.llm_manager.generate_response(
             system_prompt=system_prompt,
             user_prompt=user_prompt,
-            llm_model="gpt-4o",
+            llm_provider="ollama",
+            llm_model="llama3.2-optimized",
             max_tokens=1300  # 약간 감소 (더 집중된 논증을 위해)
         )
         
@@ -2638,7 +1859,8 @@ Each key point should be:
             response = self.llm_manager.generate_response(
                 system_prompt=system_prompt,
                 user_prompt=user_prompt,
-                llm_model="gpt-4o",  # gpt-4 → gpt-4o
+                llm_provider="ollama",
+                llm_model="llama3.2-optimized",
                 max_tokens=1500  # 1000 → 1500 (상대방 논점 추출은 복잡할 수 있음)
             )
             
@@ -2898,7 +2120,8 @@ IMPORTANT: Return ONLY the JSON array, no other text.
             response_text = self.llm_manager.generate_response(
                 system_prompt=system_prompt,
                 user_prompt=user_prompt,
-                llm_model="gpt-4o",  # gpt-4 → gpt-4o
+                llm_provider="ollama",
+                llm_model="llama3.2-optimized",
                 max_tokens=1200  # 800 → 1200 (JSON 파싱이 복잡함)
             )
             
@@ -3056,7 +2279,8 @@ Return JSON format:
             response_text = self.llm_manager.generate_response(
                 system_prompt=system_prompt,
                 user_prompt=user_prompt,
-                llm_model="gpt-4o",  # gpt-4 → gpt-4o
+                llm_provider="ollama",
+                llm_model="llama3.2-optimized",
                 max_tokens=1200  # 800 → 1200 (JSON 파싱이 복잡함)
             )
             
@@ -3225,7 +2449,8 @@ Return JSON format:
             response_text = self.llm_manager.generate_response(
                 system_prompt=system_prompt,
                 user_prompt=user_prompt,
-                llm_model="gpt-4o",
+                llm_provider="ollama",
+                llm_model="llama3.2-optimized",
                 max_tokens=300
             )
             
@@ -3450,7 +2675,8 @@ Return JSON format:
             response_text = self.llm_manager.generate_response(
                 system_prompt=system_prompt,
                 user_prompt=user_prompt,
-                llm_model="gpt-4o",
+                llm_provider="ollama",
+                llm_model="llama3.2-optimized",
                 max_tokens=800
             )
             
@@ -3595,7 +2821,8 @@ Query:"""
             response = self.llm_manager.generate_response(
                 system_prompt=system_prompt,
                 user_prompt=user_prompt,
-                llm_model="gpt-4o",
+                llm_provider="ollama",
+                llm_model="llama3.2-optimized",
                 max_tokens=1500  # 원래대로 복원
             )
             

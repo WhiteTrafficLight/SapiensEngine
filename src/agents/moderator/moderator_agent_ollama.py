@@ -73,38 +73,38 @@ class ModeratorAgent(Agent):
         
         try:
             result = None
-        
+            
             # 액션별 처리 로직
             if action == "generate_introduction":
                 result = self._generate_introduction(input_data.get("dialogue_state", {}))
-            
+                
             elif action == "generate_response":
                 result = self._generate_response_for_stage(input_data)
-            
+                
             elif action == "determine_next_speaker":
                 result = self._determine_next_speaker(
                     input_data.get("dialogue_state", {}),
                     input_data.get("participants", {}),
                     input_data.get("current_stage", "")
                 )
-            
+                
             elif action == "check_if_intervention_needed":
                 # 단일 메시지 객체를 받아서 처리
                 result = self._moderate_qa_session(
                     input_data.get("dialogue_state", {}),
                     input_data.get("current_message", {})  # 리스트가 아닌 딕셔너리 객체
                 )
-        
+            
             # 이전 방식 지원 (호환성)
             else:
                 dialogue_state = input_data.get("dialogue_state")
-        
+                
                 # dict인 경우 직접 current_stage 필드 접근
                 if isinstance(dialogue_state, dict):
                     current_stage = dialogue_state.get("current_stage", "INITIALIZATION")
                 else:
                     current_stage = getattr(dialogue_state, "stage", "INITIALIZATION")
-        
+                
                 if current_stage == "INITIALIZATION":
                     result = self._generate_introduction(dialogue_state)
                 elif current_stage == "MAIN_DISCUSSION":
@@ -306,8 +306,9 @@ Important: Write your response in the SAME LANGUAGE as the debate topic. If the 
                 response = self.llm_manager.generate_response(
                     system_prompt=system_prompt,
                     user_prompt=user_prompt,
-                    llm_model="gpt-4",
-                    max_tokens=300
+                    llm_provider="ollama",
+                    llm_model="llama3.2-optimized",
+                    max_tokens=800
                 )
                 if response:
                     return {"status": "success", "message": response}
@@ -449,7 +450,8 @@ Important: Write your response in the SAME LANGUAGE as the debate topic. If the 
                     introduction = self.llm_manager.generate_response(
                         system_prompt=system_prompt, 
                         user_prompt=user_prompt,
-                        llm_model="gpt-4",
+                        llm_provider="ollama",
+                        llm_model="llama3.2-optimized",
                         max_tokens=1500
                     )
                     
@@ -502,7 +504,8 @@ Your opening introduction should be formal, neutral, and engaging. Ensure your r
             introduction = self.llm_manager.generate_response(
                 system_prompt=system_prompt, 
                 user_prompt=user_prompt,
-                llm_model="gpt-4",
+                llm_provider="ollama",
+                llm_model="llama3.2-optimized",
                 max_tokens=1500
             )
         except Exception as e:
@@ -606,7 +609,8 @@ Ensure your messages are complete and do not cut off mid-sentence.
             intervention_response = self.llm_manager.generate_response(
                 system_prompt=system_prompt, 
                 user_prompt=user_prompt,
-                llm_model="gpt-4",
+                llm_provider="ollama",
+                llm_model="llama3.2-optimized",
                 max_tokens=1500
             )
         except Exception as e:
@@ -721,7 +725,8 @@ Important: Write your summary in the SAME LANGUAGE as the debate topic. If the t
             summary = self.llm_manager.generate_response(
                 system_prompt=system_prompt, 
                 user_prompt=user_prompt,
-                llm_model="gpt-4",
+                llm_provider="ollama",
+                llm_model="llama3.2-optimized",
                 max_tokens=1500
             )
         except Exception as e:
@@ -830,7 +835,8 @@ Important: Write your conclusion in the SAME LANGUAGE as the debate topic. If th
             conclusion = self.llm_manager.generate_response(
                 system_prompt=system_prompt, 
                 user_prompt=user_prompt,
-                llm_model="gpt-4",
+                llm_provider="ollama",
+                llm_model="llama3.2-optimized",
                 max_tokens=1500
             )
         except Exception as e:
@@ -904,7 +910,8 @@ Important: If you decide to intervene, write your intervention message in the SA
             response = self.llm_manager.generate_response(
                 system_prompt=system_prompt,
                 user_prompt=user_prompt,
-                llm_model="gpt-4",
+                llm_provider="ollama",
+                llm_model="llama3.2-optimized",
                 max_tokens=300
             )
             

@@ -3,6 +3,7 @@ import json
 import time
 import logging
 import re
+import requests
 from typing import Dict, Any, List, Optional, Union, Tuple
 import openai
 import anthropic
@@ -189,6 +190,64 @@ class LLMManager:
                 except Exception as api_error:
                     logger.error(f"[LLM_DEBUG] OpenAI API 호출 오류: {str(api_error)}", exc_info=True)
                     return ""
+            
+            # Ollama 사용
+            elif llm_provider == "ollama":
+                # Ollama 엔드포인트 설정 (기본값: localhost:11434)
+                ollama_endpoint = os.getenv("OLLAMA_ENDPOINT", "http://localhost:11434")
+                
+                logger.info(f"[LLM_DEBUG] Ollama 엔드포인트: {ollama_endpoint}")
+                logger.info(f"[LLM_DEBUG] Ollama 모델: {llm_model}")
+                
+                try:
+                    # Ollama API 요청
+                    payload = {
+                        "model": llm_model,
+                        "messages": [
+                            {"role": "system", "content": system_prompt},
+                            {"role": "user", "content": user_prompt}
+                        ],
+                        "options": {
+                            "num_predict": max_tokens,
+                            "temperature": temperature
+                        },
+                        "stream": False
+                    }
+                    
+                    response = requests.post(
+                        f"{ollama_endpoint}/api/chat",
+                        json=payload,
+                        timeout=120  # 2분 타임아웃
+                    )
+                    
+                    if response.status_code != 200:
+                        logger.error(f"[LLM_DEBUG] Ollama API 오류: {response.status_code} - {response.text}")
+                        return ""
+                    
+                    result = response.json()
+                    
+                    if "message" not in result or "content" not in result["message"]:
+                        logger.error(f"[LLM_DEBUG] 유효하지 않은 Ollama 응답 형식: {result}")
+                        return ""
+                    
+                    content = result["message"]["content"]
+                    
+                    if not content:
+                        logger.error("[LLM_DEBUG] Ollama에서 빈 응답을 받았습니다")
+                        return ""
+                    
+                    logger.info(f"[LLM_DEBUG] Ollama 응답 길이: {len(content)}")
+                    logger.info(f"[LLM_DEBUG] Ollama 응답 내용: {content[:100]}..." if len(content) > 100 else f"[LLM_DEBUG] Ollama 응답 내용: {content}")
+                    
+                    return content
+                
+                except requests.exceptions.RequestException as req_error:
+                    logger.error(f"[LLM_DEBUG] Ollama 연결 오류: {str(req_error)}")
+                    return ""
+                except Exception as ollama_error:
+                    logger.error(f"[LLM_DEBUG] Ollama API 호출 오류: {str(ollama_error)}", exc_info=True)
+                    return ""
+            
             else:
                 logger.error(f"[LLM_DEBUG] 지원하지 않는 LLM 제공자: {llm_provider}")
                 return ""

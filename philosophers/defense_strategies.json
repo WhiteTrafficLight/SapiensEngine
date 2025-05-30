@@ -1,0 +1,46 @@
+{
+  "defense_styles": {
+    "Refute": {
+      "description": "Directly counter factual or logical errors in the opponent's argument.",
+      "purpose": "Neutralize opponent's position",
+      "style_prompt": "That's incorrect because...",
+      "example": "That's incorrect because studies show AI bias actually increases when training data isn't carefully curated, not decreases.",
+      "rag_weight": 0.6
+    },
+    "Clarify": {
+      "description": "Redefine and elaborate on your own claims or terminology to prevent misunderstanding.",
+      "purpose": "Resolve confusion and refine discussion points",
+      "style_prompt": "Let me clarify what I meant...",
+      "example": "Let me clarify what I meant by 'human enhancement' — I'm talking about augmenting our cognitive abilities, not replacing human judgment entirely.",
+      "rag_weight": 0.4
+    },
+    "Accept": {
+      "description": "Acknowledge partial or full validity of opponent's point, then present a new angle.",
+      "purpose": "Build credibility and expand discussion",
+      "style_prompt": "You're right on that point, yet...",
+      "example": "You're right that AI can replicate artistic techniques, yet the question remains whether technical skill alone constitutes true creativity.",
+      "rag_weight": 0.2
+    },
+    "Reframe": {
+      "description": "Shift the discussion focus to a more fundamental or alternative framework.",
+      "purpose": "Restructure the problem",
+      "style_prompt": "Perhaps the real issue is...",
+      "example": "Perhaps the real issue isn't whether AI can be creative, but whether we're asking the right questions about what creativity means to humanity.",
+      "rag_weight": 0.3
+    },
+    "Counter-Challenge": {
+      "description": "Defend while immediately launching a counterattack or probing question.",
+      "purpose": "Turn defense into offense",
+      "style_prompt": "If that's so, how do you explain...?",
+      "example": "If AI truly lacks consciousness, how do you explain its ability to generate novel solutions that even surprise its creators?",
+      "rag_weight": 0.5
+    },
+    "Synthesis": {
+      "description": "Combine elements from both sides to establish common ground or higher-level insight.",
+      "purpose": "Build consensus and bridge positions",
+      "style_prompt": "Both views suggest that... therefore...",
+      "example": "Both views suggest that human agency is central to this debate, therefore we should focus on how technology can preserve rather than replace human choice.",
+      "rag_weight": 0.3
+    }
+  }
+} 
