@@ -10,6 +10,7 @@ import os
 import yaml
 import json
 from typing import Dict, List, Any, Optional
+from datetime import datetime
 
 from ..base.agent import Agent
 from src.models.llm.llm_manager import LLMManager
@@ -596,6 +597,9 @@ class DebateParticipantAgent(Agent):
         dialogue_state = input_data.get("dialogue_state", {})
         stance_statements = input_data.get("stance_statements", {})
         
+        # dialogue_state를 인스턴스 변수에 저장하여 다른 메서드에서 접근 가능하도록 함
+        self._current_dialogue_state = dialogue_state
+        
         response = self._generate_response_internal(context, dialogue_state, stance_statements)
         return {"status": "success", "message": response}
     
@@ -611,6 +615,9 @@ class DebateParticipantAgent(Agent):
         Returns:
             생성된 응답 텍스트
         """
+        # 🎯 dialogue_state를 저장하여 다른 메서드들에서 접근 가능하도록 함
+        self._current_dialogue_state = dialogue_state
+        
         current_stage = context.get("current_stage", "")
         topic = context.get("topic", "")
         recent_messages = context.get("recent_messages", [])
@@ -627,7 +634,7 @@ class DebateParticipantAgent(Agent):
     
     def _generate_interactive_argument_response(self, topic: str, recent_messages: List[Dict[str, Any]], dialogue_state: Dict[str, Any], stance_statements: Dict[str, str], emotion_enhancement: Dict[str, Any] = None) -> str:
         """
-        상호논증 단계에서 응답 생성 (공격 또는 방어)
+        상호논증 단계에서 응답 생성 - 대화 관리자의 단계 관리에 의존
         
         Args:
             topic: 토론 주제
@@ -639,13 +646,53 @@ class DebateParticipantAgent(Agent):
         Returns:
             생성된 응답 텍스트
         """
-        # 최근 메시지에서 상대방 공격 여부 확인
-        is_defending = self._is_defending_against_attack(recent_messages)
+        # 대화 관리자가 이미 상황을 판단했으므로 단순히 응답 생성
+        # 최근 상황에 따라 공격/방어/팔로우업 결정
         
-        if is_defending:
+        # 최근 메시지 분석으로 현재 상황 간단 판단
+        situation = self._simple_situation_analysis(recent_messages)
+        
+        if situation == "defending":
             return self._generate_defense_response(topic, recent_messages, dialogue_state, stance_statements, emotion_enhancement)
-        else:
+        elif situation == "following_up":
+            return self._generate_followup_response(topic, recent_messages, dialogue_state, stance_statements, emotion_enhancement)
+        else:  # attacking (기본값)
             return self._generate_attack_response(topic, recent_messages, dialogue_state, stance_statements, emotion_enhancement)
+    
+    def _simple_situation_analysis(self, recent_messages: List[Dict[str, Any]]) -> str:
+        """
+        간단한 상황 분석 - 대화 관리자의 단계 관리를 보완
+        
+        Args:
+            recent_messages: 최근 메시지 목록
+            
+        Returns:
+            상황 ("attacking", "defending", "following_up")
+        """
+        if len(recent_messages) < 1:
+            return "attacking"
+        
+        # 마지막 메시지 분석
+        last_message = recent_messages[-1]
+        last_speaker = last_message.get('speaker_id', '')
+        my_agent_id = getattr(self, 'agent_id', self.name.lower())
+        
+        # 상대방이 마지막에 발언했고, 그 전에 내가 발언했으면 팔로우업
+        if len(recent_messages) >= 2:
+            second_last_message = recent_messages[-2]
+            second_last_speaker = second_last_message.get('speaker_id', '')
+            
+            # 상대방이 마지막 발언, 내가 그 전 발언 → 팔로우업
+            if (last_speaker != my_agent_id and 
+                second_last_speaker == my_agent_id):
+                return "following_up"
+        
+        # 상대방이 마지막에 발언했으면 방어
+        if last_speaker != my_agent_id and last_speaker != "moderator":
+            return "defending"
+        
+        # 기본적으로 공격
+        return "attacking"
     
     def _is_defending_against_attack(self, recent_messages: List[Dict[str, Any]]) -> bool:
         """
@@ -703,7 +750,28 @@ class DebateParticipantAgent(Agent):
             defense_rag_decision, emotion_enhancement
         )
         
-        print(f"🛡️ [{self.philosopher_name}] 방어 응답 생성 완료")
+        # 🎯 방어 전략 정보 저장 (팔로우업에서 사용할 수 있도록)
+        defense_strategy_info = {
+            'strategy_type': defense_strategy,
+            'rag_decision': defense_rag_decision,
+            'attack_info': attack_info,
+            'timestamp': time.time(),
+            'target_attacker': attack_info.get('attacker_id', 'unknown')
+        }
+        
+        # 방어 전략을 에이전트 속성에 저장
+        self.last_defense_strategy = defense_strategy_info
+        
+        # 방어 기록도 저장 (여러 방어 전략 히스토리)
+        if not hasattr(self, 'defense_history'):
+            self.defense_history = []
+        self.defense_history.append(defense_strategy_info)
+        
+        # 최대 5개까지만 유지
+        if len(self.defense_history) > 5:
+            self.defense_history = self.defense_history[-5:]
+        
+        print(f"🛡️ [{self.philosopher_name}] 방어 응답 생성 완료 - 전략: {defense_strategy} 저장됨")
         return defense_response
     
     def _generate_attack_response(self, topic: str, recent_messages: List[Dict[str, Any]], dialogue_state: Dict[str, Any], stance_statements: Dict[str, str], emotion_enhancement: Dict[str, Any] = None) -> str:
@@ -756,17 +824,41 @@ class DebateParticipantAgent(Agent):
                     
                     print(f"   🔍 디버깅: 선택된 target_agent_id: {target_agent_id}")
         
-        # 3. 여전히 없으면 하드코딩된 기본값 설정 (1대1 토론용)
+        # 3. 여전히 없으면 실제 참가자에서 상대방 찾기
         if not target_agent_id:
-            # 1대1 토론에서 상대방 하드코딩
-            if self.role == "pro":
-                target_agent_id = "camus"  # 찬성측이면 카뮈가 상대방
-            elif self.role == "con":
-                target_agent_id = "nietzsche"  # 반대측이면 니체가 상대방
-            else:
+            # 실제 참가자 목록에서 상대방 찾기
+            try:
+                # dialogue_state에서 모든 참가자 정보 가져오기
+                all_participants = []
+                
+                # speaking_history에서 실제 참가자들 추출
+                speaking_history = dialogue_state.get('speaking_history', [])
+                if speaking_history:
+                    for msg in speaking_history:
+                        speaker_id = msg.get('speaker_id', '')
+                        role = msg.get('role', '')
+                        if speaker_id and role in ['pro', 'con'] and speaker_id != self.agent_id:
+                            if role == opposite_role and speaker_id not in all_participants:
+                                all_participants.append(speaker_id)
+                
+                # 상대방 역할의 첫 번째 참가자 선택
+                if all_participants:
+                    target_agent_id = all_participants[0]
+                    print(f"   🔍 디버깅: speaking_history에서 찾은 상대방: {target_agent_id}")
+                else:
+                    # fallback: 기본 상대방 설정
+                    if self.role == "pro":
+                        target_agent_id = "con_participant"  # 찬성측의 상대방
+                    elif self.role == "con":
+                        target_agent_id = "pro_participant"  # 반대측의 상대방
+                    else:
+                        target_agent_id = "opponent"
+                    
+                    print(f"   🔍 디버깅: 기본값으로 설정된 target_agent_id: {target_agent_id}")
+                    
+            except Exception as e:
+                print(f"   ❌ 상대방 찾기 오류: {str(e)}")
                 target_agent_id = "opponent"
-            
-            print(f"   🔍 디버깅: 하드코딩된 target_agent_id: {target_agent_id}")
         
         # 4. 철학자 이름 찾기 (개선된 로직)
         target_agent_name = self._get_philosopher_name(target_agent_id)
@@ -1011,25 +1103,31 @@ Your response:"""
             공격자 에이전트 객체 또는 None
         """
         try:
-            # 방법 1: 토론 대화 매니저에서 참가자 정보 가져오기 (가장 일반적)
+            # 방법 1: dialogue_state에서 agents 정보 가져오기 (최우선)
+            if hasattr(self, '_current_dialogue_state') and self._current_dialogue_state:
+                agents = self._current_dialogue_state.get('agents', {})
+                if attacker_id in agents:
+                    return agents[attacker_id]
+            
+            # 방법 2: 토론 대화 매니저에서 참가자 정보 가져오기 (가장 일반적)
             if hasattr(self, '_debate_dialogue_manager'):
                 participants = getattr(self._debate_dialogue_manager, 'participants', {})
                 if attacker_id in participants:
                     return participants[attacker_id]
             
-            # 방법 2: 글로벌 에이전트 레지스트리에서 가져오기 (만약 있다면)
+            # 방법 3: 글로벌 에이전트 레지스트리에서 가져오기 (만약 있다면)
             if hasattr(self, '_agent_registry'):
                 registry = getattr(self._agent_registry, 'agents', {})
                 if attacker_id in registry:
                     return registry[attacker_id]
             
-            # 방법 3: 부모 객체나 컨텍스트에서 가져오기
+            # 방법 4: 부모 객체나 컨텍스트에서 가져오기
             if hasattr(self, '_context') and self._context:
                 context_participants = self._context.get('participants', {})
                 if attacker_id in context_participants:
                     return context_participants[attacker_id]
             
-            # 방법 4: 클래스 레벨 레지스트리 (만약 구현되어 있다면)
+            # 방법 5: 클래스 레벨 레지스트리 (만약 구현되어 있다면)
             if hasattr(self.__class__, '_agent_instances'):
                 instances = getattr(self.__class__, '_agent_instances', {})
                 if attacker_id in instances:
@@ -1251,6 +1349,12 @@ Your response:"""
                         candidates = emotion_map[emotion_state]
                         print(f"   ✅ 후보 전략 발견: {candidates}")
                         return candidates if isinstance(candidates, list) else [candidates]
+                    else:
+                        print(f"   ❌ 감정 상태 '{emotion_state}' 못 찾음 in {list(emotion_map.keys())}")
+                else:
+                    print(f"   ❌ RAG 키 '{rag_key}' 못 찾음 in {list(strategy_map.keys())}")
+            else:
+                print(f"   ❌ 공격 전략 '{attack_strategy}' 못 찾음 in {list(defense_map.keys())}")
             
             # 찾지 못한 경우 기본값
             print(f"   ❌ 방어 맵에서 후보 못 찾음 - 기본값 사용")
@@ -1463,7 +1567,7 @@ Your {defense_strategy} response:"""
                 from ...agents.utility.debate_emotion_inference import apply_debate_emotion_to_prompt
                 system_prompt, user_prompt = apply_debate_emotion_to_prompt(system_prompt, user_prompt, emotion_enhancement)
 
-        # LLM 호출
+            # LLM 호출
             response = self.llm_manager.generate_response(
             system_prompt=system_prompt,
             user_prompt=user_prompt,
@@ -3891,3 +3995,791 @@ Query:"""
             formatted_results += f"{i}. {title}: {content}\n"
         
         return formatted_results
+    
+    def _generate_followup_response(self, topic: str, recent_messages: List[Dict[str, Any]], dialogue_state: Dict[str, Any], stance_statements: Dict[str, str], emotion_enhancement: Dict[str, Any] = None) -> str:
+        """
+        팔로우업 응답 생성
+        
+        Args:
+            topic: 토론 주제
+            recent_messages: 최근 메시지 목록
+            dialogue_state: 현재 대화 상태
+            stance_statements: 찬반 입장 진술문
+            emotion_enhancement: 감정 강화 데이터 (선택적)
+            
+        Returns:
+            생성된 팔로우업 응답
+        """
+        print(f"🔄 [{self.philosopher_name}] 팔로우업 응답 생성 시작")
+        
+        # 1. 상대방 방어 응답 분석
+        defense_info = self._analyze_defense_response(recent_messages)
+        
+        # 2. 팔로우업 전략 선택
+        followup_strategy = self._select_followup_strategy(defense_info, emotion_enhancement)
+        
+        # 3. 팔로우업용 RAG 사용 여부 결정
+        followup_rag_decision = self._determine_followup_rag_usage(followup_strategy, defense_info)
+        
+        # 4. 팔로우업 응답 생성
+        followup_response = self._generate_followup_response_with_strategy(
+            topic, recent_messages, stance_statements, followup_strategy, 
+            followup_rag_decision, emotion_enhancement
+        )
+        
+        # 5. 팔로우업 전략 정보 저장
+        try:
+            if not hasattr(self, 'followup_strategies'):
+                self.followup_strategies = []
+                
+            defense_info_summary = {
+                "defense_strategy": defense_info.get("defense_strategy", "Unknown"),
+                "rag_used": defense_info.get("rag_used", False),
+                "defender_id": defense_info.get("defender_id", "unknown")
+            }
+            
+            # 팔로우업 정보 저장
+            self.followup_strategies.append({
+                "timestamp": datetime.now().isoformat(),
+                "followup_strategy": followup_strategy,
+                "rag_decision": followup_rag_decision,
+                "followup_plan": {
+                    "defense_info": defense_info_summary,
+                    "selected_strategy": followup_strategy,
+                    "emotion_state": emotion_enhancement.get("emotion_type", "neutral") if emotion_enhancement else "neutral",
+                    "source": "followup_system"
+                }
+            })
+            
+            # 팔로우업 전략 정보를 클래스 레벨에 저장 (다른 에이전트가 참조할 수 있도록)
+            self.last_followup_strategy = {
+                "followup_strategy": followup_strategy,
+                "rag_decision": followup_rag_decision,
+                "followup_plan": {
+                    "defense_info": defense_info_summary,
+                    "emotion_state": emotion_enhancement.get("emotion_type", "neutral") if emotion_enhancement else "neutral"
+                }
+            }
+            
+            print(f"🔄 [{self.philosopher_name}] 팔로우업 정보 저장 완료")
+        except Exception as e:
+            logger.error(f"Error storing followup strategy info: {str(e)}")
+            print(f"❌ [{self.philosopher_name}] 팔로우업 정보 저장 오류: {str(e)}")
+        
+        print(f"🔄 [{self.philosopher_name}] 팔로우업 응답 생성 완료")
+        return followup_response
+    
+    def _analyze_defense_response(self, recent_messages: List[Dict[str, Any]]) -> Dict[str, Any]:
+        """
+        상대방의 방어 응답 분석
+        
+        Args:
+            recent_messages: 최근 메시지 목록
+            
+        Returns:
+            방어 응답 분석 결과
+        """
+        if not recent_messages:
+            return {"defense_strategy": "Unknown", "rag_used": False, "defender_id": "unknown"}
+        
+        last_message = recent_messages[-1]
+        defender_id = last_message.get('speaker_id', 'unknown')
+        defense_text = last_message.get('text', '')
+        
+        print(f"   🔍 [{self.philosopher_name}] 방어 응답 분석:")
+        print(f"      👤 방어자: {defender_id}")
+        
+        # 방어자 에이전트의 실제 방어 전략 정보 가져오기 (가능하면)
+        defense_info = self._get_defender_strategy_info(defender_id)
+        
+        if defense_info["defense_strategy"] != "Unknown":
+            print(f"      ✅ 실제 방어 전략 발견: {defense_info['defense_strategy']}")
+            print(f"      📚 방어 RAG 사용: {defense_info['rag_used']}")
+        else:
+            print(f"      ❌ 방어 전략 정보 없음 - 키워드 추정 사용")
+            # Fallback: 키워드 기반 추정
+            defense_info = self._estimate_defense_strategy_from_keywords(defense_text, defender_id)
+        
+        defense_info["defender_id"] = defender_id
+        defense_info["defense_text"] = defense_text[:200]  # 분석용 일부 텍스트
+        
+        return defense_info
+    
+    def _get_defender_strategy_info(self, defender_id: str) -> Dict[str, Any]:
+        """
+        방어자 에이전트의 실제 사용한 방어 전략 정보 가져오기
+        공격자 전략 정보 가져오는 로직과 동일하게 작동
+        
+        Args:
+            defender_id: 방어자 에이전트 ID
+            
+        Returns:
+            방어 전략 정보
+        """
+        try:
+            print(f"      👤 방어자: {defender_id}")
+            
+            # 방어자 에이전트 참조 가져오기 (공격자 참조 가져오기 로직 재사용)
+            defender_agent = self._get_attacker_agent_reference(defender_id)
+            
+            if defender_agent is None:
+                print(f"         ❌ 방어자 에이전트 참조 없음")
+                # 키워드 기반 추정으로 폴백 
+                return self._estimate_defense_strategy_from_recent_messages(defender_id)
+            
+            # 방어자의 최근 사용한 방어 전략 정보 가져오기
+            recent_defense_strategy = self._get_recent_defense_strategy(defender_agent)
+            
+            if recent_defense_strategy:
+                strategy_type = recent_defense_strategy.get('strategy_type', 'Unknown')
+                rag_decision = recent_defense_strategy.get('rag_decision', {})
+                rag_used = rag_decision.get('use_rag', False)
+                
+                print(f"         ✅ 방어자 전략 정보:")
+                print(f"            🛡️ 전략: {strategy_type}")
+                print(f"            📚 RAG: {rag_used}")
+                
+                return {
+                    "defense_strategy": strategy_type,
+                    "rag_used": rag_used,
+                    "defense_plan": recent_defense_strategy.get('defense_plan', {}),
+                    "source": "actual_defender_data"
+                }
+            else:
+                print(f"         ❌ 방어자의 최근 전략 정보 없음")
+                # 키워드 기반 추정으로 폴백
+                return self._estimate_defense_strategy_from_recent_messages(defender_id)
+                
+        except Exception as e:
+            logger.error(f"Error getting defender strategy info: {str(e)}")
+            print(f"         ❌ 방어자 전략 정보 조회 오류: {str(e)}")
+            return {"defense_strategy": "Unknown", "rag_used": False}
+    
+    def _estimate_defense_strategy_from_recent_messages(self, defender_id: str) -> Dict[str, Any]:
+        """
+        최근 메시지에서 방어자의 방어 전략 추정
+        
+        Args:
+            defender_id: 방어자 ID
+            
+        Returns:
+            추정된 방어 전략 정보
+        """
+        try:
+            # _current_dialogue_state가 있으면 사용 (generate_response에서 저장)
+            if hasattr(self, '_current_dialogue_state'):
+                dialogue_state = self._current_dialogue_state
+                speaking_history = dialogue_state.get('speaking_history', [])
+                
+                # 방어자의 최근 방어 메시지 찾기
+                defense_messages = []
+                for msg in reversed(speaking_history):
+                    if (msg.get('speaker_id') == defender_id and 
+                        msg.get('stage') == 'interactive_argument'):
+                        defense_messages.append(msg)
+                        if len(defense_messages) >= 1:  # 최근 1개만
+                            break
+                
+                if defense_messages:
+                    defense_text = defense_messages[0].get('text', '')
+                    print(f"         🔄 키워드 기반 방어 전략 추정 시작")
+                    
+                    return self._estimate_defense_strategy_from_keywords(defense_text, defender_id)
+            
+            print(f"         ❌ 방어자의 최근 메시지 없음")
+            return {"defense_strategy": "Unknown", "rag_used": False}
+            
+        except Exception as e:
+            logger.error(f"Error estimating defense strategy from recent messages: {str(e)}")
+            return {"defense_strategy": "Unknown", "rag_used": False}
+    
+    def _estimate_defense_strategy_from_keywords(self, defense_text: str, defender_id: str) -> Dict[str, Any]:
+        """
+        키워드 기반 방어 전략 추정 (Fallback 방법)
+        
+        Args:
+            defense_text: 방어 텍스트
+            defender_id: 방어자 ID
+            
+        Returns:
+            추정된 방어 정보
+        """
+        defense_text_lower = defense_text.lower()
+        
+        print(f"         🔄 키워드 기반 방어 전략 추정 시작")
+        
+        # 방어 전략 추정 (키워드 기반)
+        defense_strategy = "Unknown"
+        if any(word in defense_text_lower for word in ['wrong', 'incorrect', 'false', 'disagree']):
+            defense_strategy = "Refute"
+        elif any(word in defense_text_lower for word in ['clarify', 'explain', 'mean', 'actually']):
+            defense_strategy = "Clarify"
+        elif any(word in defense_text_lower for word in ['agree', 'true', 'valid', 'point']):
+            defense_strategy = "Accept"
+        elif any(word in defense_text_lower for word in ['different', 'perspective', 'rather', 'instead']):
+            defense_strategy = "Reframe"
+        elif any(word in defense_text_lower for word in ['question', 'challenge', 'back', 'ask']):
+            defense_strategy = "Counter-Challenge"
+        elif any(word in defense_text_lower for word in ['both', 'combine', 'integrate', 'together']):
+            defense_strategy = "Synthesis"
+        
+        # RAG 사용 여부 추정 (구체적 데이터/인용 있으면 RAG 사용으로 추정)
+        rag_used = any(indicator in defense_text_lower for indicator in [
+            'study', 'research', 'data', 'statistics', 'according to', 'evidence', 'findings'
+        ])
+        
+        print(f"         📊 추정 결과: {defense_strategy} (RAG: {rag_used})")
+        
+        return {
+            "defense_strategy": defense_strategy,
+            "rag_used": rag_used,
+            "source": "keyword_estimation"
+        }
+    
+    def _select_followup_strategy(self, defense_info: Dict[str, Any], emotion_enhancement: Dict[str, Any] = None) -> str:
+        """
+        팔로우업 전략 선택
+        
+        Args:
+            defense_info: 방어 정보
+            emotion_enhancement: 감정 강화 정보
+            
+        Returns:
+            선택된 팔로우업 전략명
+        """
+        print(f"   🔄 [{self.philosopher_name}] 팔로우업 전략 선택 시작")
+        
+        try:
+            # 1. followup_map.yaml에서 후보 전략 가져오기
+            followup_candidates = self._get_followup_candidates_from_map(defense_info, emotion_enhancement)
+            
+            if not followup_candidates:
+                print(f"   ❌ 팔로우업 후보 전략 없음 - 기본 FollowUpQuestion 사용")
+                return "FollowUpQuestion"
+            
+            print(f"   📋 후보 전략들: {followup_candidates}")
+            
+            # 2. 철학자의 followup_weights 가져오기
+            philosopher_key = getattr(self, 'philosopher_key', self.name.lower())
+            philosopher_data = self._load_philosopher_data(philosopher_key)
+            followup_weights = philosopher_data.get("followup_weights", {})
+            
+            if not followup_weights:
+                print(f"   ❌ 철학자 팔로우업 가중치 없음 - 첫 번째 후보 사용")
+                return followup_candidates[0]
+            
+            print(f"   ⚖️ 철학자 팔로우업 가중치: {followup_weights}")
+            
+            # 3. 후보 전략들에 대한 가중치만 추출하고 정규화
+            candidate_weights = {}
+            total_weight = 0.0
+            
+            for strategy in followup_candidates:
+                weight = followup_weights.get(strategy, 0.1)  # 기본값 0.1
+                candidate_weights[strategy] = weight
+                total_weight += weight
+            
+            if total_weight == 0:
+                print(f"   ❌ 총 가중치가 0 - 첫 번째 후보 사용")
+                return followup_candidates[0]
+            
+            # 정규화
+            normalized_weights = {k: v/total_weight for k, v in candidate_weights.items()}
+            print(f"   📊 정규화된 가중치: {normalized_weights}")
+            
+            # 4. 확률적 선택
+            import random
+            rand_val = random.random()
+            cumulative = 0.0
+            
+            for strategy, prob in normalized_weights.items():
+                cumulative += prob
+                if rand_val <= cumulative:
+                    print(f"   ✅ 선택된 팔로우업 전략: {strategy} (확률: {prob:.3f})")
+                    return strategy
+            
+            # 혹시나 하는 fallback
+            selected = followup_candidates[0]
+            print(f"   🔄 Fallback 팔로우업 전략: {selected}")
+            return selected
+            
+        except Exception as e:
+            logger.error(f"Error selecting followup strategy: {str(e)}")
+            print(f"   ❌ 팔로우업 전략 선택 오류: {str(e)} - 기본 FollowUpQuestion 사용")
+            return "FollowUpQuestion"
+    
+    def _get_followup_candidates_from_map(self, defense_info: Dict[str, Any], emotion_enhancement: Dict[str, Any] = None) -> List[str]:
+        """
+        followup_map.yaml에서 팔로우업 후보 전략들 가져오기
+        
+        Args:
+            defense_info: 방어 정보
+            emotion_enhancement: 감정 정보
+            
+        Returns:
+            팔로우업 후보 전략 목록
+        """
+        try:
+            # followup_map.yaml 로드
+            import yaml
+            import os
+            
+            current_dir = os.path.dirname(os.path.abspath(__file__))
+            project_root = current_dir
+            
+            # 프로젝트 루트 찾기
+            while project_root and not os.path.exists(os.path.join(project_root, "philosophers")):
+                parent = os.path.dirname(project_root)
+                if parent == project_root:
+                    break
+                project_root = parent
+            
+            yaml_path = os.path.join(project_root, "philosophers", "followup_map.yaml")
+            
+            if not os.path.exists(yaml_path):
+                print(f"   ❌ followup_map.yaml 없음: {yaml_path}")
+                return ["FollowUpQuestion", "Pivot"]  # 기본값
+            
+            with open(yaml_path, 'r', encoding='utf-8') as f:
+                followup_map = yaml.safe_load(f)
+            
+            # 방어 전략과 RAG 사용 여부
+            defense_strategy = defense_info.get("defense_strategy", "Unknown")
+            rag_used = defense_info.get("rag_used", False)
+            
+            # 감정 상태 (없으면 neutral)
+            emotion_state = "neutral"
+            if emotion_enhancement:
+                emotion_state = emotion_enhancement.get("emotion_type", "neutral")
+            
+            rag_key = "RAG_YES" if rag_used else "RAG_NO"
+            
+            print(f"   🔍 팔로우업 맵 조회: {defense_strategy} -> {rag_key} -> {emotion_state}")
+            
+            # followup_map에서 후보 찾기
+            if defense_strategy in followup_map:
+                strategy_map = followup_map[defense_strategy]
+                if rag_key in strategy_map:
+                    emotion_map = strategy_map[rag_key]
+                    if emotion_state in emotion_map:
+                        candidates = emotion_map[emotion_state]
+                        print(f"   ✅ 후보 전략 발견: {candidates}")
+                        return candidates if isinstance(candidates, list) else [candidates]
+                    else:
+                        print(f"   ❌ 감정 상태 '{emotion_state}' 못 찾음 in {list(emotion_map.keys())}")
+                else:
+                    print(f"   ❌ RAG 키 '{rag_key}' 못 찾음 in {list(strategy_map.keys())}")
+            else:
+                print(f"   ❌ 공격 전략 '{defense_strategy}' 못 찾음 in {list(followup_map.keys())}")
+            
+            # 찾지 못한 경우 기본값
+            print(f"   ❌ 팔로우업 맵에서 후보 못 찾음 - 기본값 사용")
+            return ["FollowUpQuestion", "Pivot"]
+            
+        except Exception as e:
+            logger.error(f"Error getting followup candidates: {str(e)}")
+            print(f"   ❌ 팔로우업 후보 조회 오류: {str(e)}")
+            return ["FollowUpQuestion", "Pivot"]
+    
+    def _determine_followup_rag_usage(self, followup_strategy: str, defense_info: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        팔로우업용 RAG 사용 여부 결정
+        
+        Args:
+            followup_strategy: 선택된 팔로우업 전략
+            defense_info: 방어 정보
+            
+        Returns:
+            RAG 사용 결정 결과
+        """
+        print(f"   📚 [{self.philosopher_name}] 팔로우업 RAG 사용 여부 판별:")
+        print(f"      🔄 팔로우업 전략: {followup_strategy}")
+        
+        try:
+            # 1. followup_strategies.json에서 rag_weight 가져오기
+            followup_rag_weight = self._get_followup_strategy_rag_weight(followup_strategy)
+            
+            # 2. 철학자의 rag_affinity 가져오기
+            philosopher_key = getattr(self, 'philosopher_key', self.name.lower())
+            philosopher_data = self._load_philosopher_data(philosopher_key)
+            rag_affinity = philosopher_data.get("rag_affinity", 0.5)
+            
+            # 3. 방어의 RAG 사용 여부에 따른 가중치 (방어가 RAG 사용했으면 더 적극적으로 RAG 사용)
+            defense_rag_weight = 1.2 if defense_info.get("rag_used", False) else 0.8
+            
+            # 4. 세 값의 곱
+            rag_score = followup_rag_weight * rag_affinity * defense_rag_weight
+            
+            # 5. 임계값 비교 (0.4로 설정 - 팔로우업은 조금 더 관대하게)
+            threshold = 0.4
+            use_rag = rag_score >= threshold
+            
+            print(f"      📊 계산:")
+            print(f"         • 팔로우업 전략 가중치: {followup_rag_weight}")
+            print(f"         • 철학자 친화도: {rag_affinity}")
+            print(f"         • 방어 RAG 가중치: {defense_rag_weight}")
+            print(f"         • RAG 점수: {followup_rag_weight} × {rag_affinity} × {defense_rag_weight} = {rag_score:.3f}")
+            print(f"         • 임계값: {threshold}")
+            print(f"         • 결정: {'RAG 사용' if use_rag else 'RAG 사용 안함'}")
+            
+            return {
+                "use_rag": use_rag,
+                "rag_score": rag_score,
+                "threshold": threshold,
+                "followup_rag_weight": followup_rag_weight,
+                "rag_affinity": rag_affinity,
+                "defense_rag_weight": defense_rag_weight
+            }
+            
+        except Exception as e:
+            logger.error(f"Error determining followup RAG usage: {str(e)}")
+            print(f"      ❌ 팔로우업 RAG 판별 오류: {str(e)} - RAG 사용 안함")
+            return {
+                "use_rag": False,
+                "rag_score": 0.0,
+                "threshold": 0.4,
+                "error": str(e)
+            }
+    
+    def _get_followup_strategy_rag_weight(self, followup_strategy: str) -> float:
+        """
+        followup_strategies.json에서 특정 팔로우업 전략의 rag_weight 가져오기
+        
+        Args:
+            followup_strategy: 팔로우업 전략명
+            
+        Returns:
+            RAG 가중치
+        """
+        try:
+            import json
+            import os
+            
+            current_dir = os.path.dirname(os.path.abspath(__file__))
+            project_root = current_dir
+            
+            # 프로젝트 루트 찾기
+            while project_root and not os.path.exists(os.path.join(project_root, "philosophers")):
+                parent = os.path.dirname(project_root)
+                if parent == project_root:
+                    break
+                project_root = parent
+            
+            json_path = os.path.join(project_root, "philosophers", "followup_strategies.json")
+            
+            if not os.path.exists(json_path):
+                print(f"         ❌ followup_strategies.json 없음 - 기본값 0.5 사용")
+                return 0.5
+            
+            with open(json_path, 'r', encoding='utf-8') as f:
+                followup_data = json.load(f)
+            
+            followup_styles = followup_data.get("followup_styles", {})
+            strategy_info = followup_styles.get(followup_strategy, {})
+            rag_weight = strategy_info.get("rag_weight", 0.5)
+            
+            print(f"         ✅ {followup_strategy} RAG 가중치: {rag_weight}")
+            return rag_weight
+            
+        except Exception as e:
+            logger.error(f"Error getting followup strategy rag weight: {str(e)}")
+            print(f"         ❌ 팔로우업 전략 가중치 조회 오류: {str(e)} - 기본값 0.5 사용")
+            return 0.5
+    
+    def _generate_followup_response_with_strategy(self, topic: str, recent_messages: List[Dict[str, Any]], stance_statements: Dict[str, str], followup_strategy: str, followup_rag_decision: Dict[str, Any], emotion_enhancement: Dict[str, Any] = None) -> str:
+        """
+        팔로우업 전략과 RAG 여부에 따라 팔로우업 응답 생성
+        
+        Args:
+            topic: 토론 주제
+            recent_messages: 최근 메시지
+            stance_statements: 입장 진술문
+            followup_strategy: 선택된 팔로우업 전략
+            followup_rag_decision: RAG 사용 결정
+            emotion_enhancement: 감정 강화
+            
+        Returns:
+            생성된 팔로우업 응답
+        """
+        print(f"   💬 [{self.philosopher_name}] 팔로우업 응답 생성:")
+        print(f"      🔄 전략: {followup_strategy}")
+        print(f"      📚 RAG 사용: {followup_rag_decision.get('use_rag', False)}")
+        
+        try:
+            # 팔로우업 전략 정보 가져오기
+            followup_info = self._get_followup_strategy_info(followup_strategy)
+            
+            # 상대방 정보
+            defender_name = self._get_philosopher_name(recent_messages[-1].get('speaker_id', 'unknown'))
+            defense_text = recent_messages[-1].get('text', '') if recent_messages else ''
+            
+            # 내 입장
+            my_stance = stance_statements.get(self.role, "")
+            
+            # 내 원래 공격 (2개 전 메시지)
+            my_original_attack = ""
+            if len(recent_messages) >= 2:
+                my_original_attack = recent_messages[-2].get('text', '')
+            
+            # 시스템 프롬프트
+            system_prompt = f"""
+You are {self.philosopher_name}, a philosopher with this essence: {self.philosopher_essence}
+Your debate style: {self.philosopher_debate_style}
+Your personality: {self.philosopher_personality}
+
+You are following up using the "{followup_strategy}" strategy after {defender_name} defended against your attack.
+Strategy description: {followup_info.get('description', '')}
+Strategy purpose: {followup_info.get('purpose', '')}
+Style prompt: {followup_info.get('style_prompt', '')}
+
+Your response should be:
+1. SHORT and DIRECT (2-3 sentences maximum)
+2. Use the {followup_strategy} approach
+3. Address {defender_name} directly
+4. Maintain your philosophical character
+
+CRITICAL: Write your ENTIRE response in the SAME LANGUAGE as the debate topic.
+If the topic is in Korean, respond in Korean. If in English, respond in English.
+"""
+
+            # 유저 프롬프트
+            user_prompt = f"""
+DEBATE TOPIC: "{topic}"
+YOUR POSITION: {my_stance}
+
+YOUR ORIGINAL ATTACK: "{my_original_attack}"
+{defender_name}'S DEFENSE: "{defense_text}"
+
+FOLLOWUP STRATEGY: {followup_strategy}
+- Description: {followup_info.get('description', '')}
+- Style: {followup_info.get('style_prompt', '')}
+- Example approach: {followup_info.get('example', '')}
+
+TASK: Generate a SHORT followup response (2-3 sentences max) that:
+1. Uses the {followup_strategy} approach
+2. Addresses {defender_name} directly by name
+3. Responds to their defense strategically
+4. Maintains your philosophical perspective
+
+IMPORTANT: Write your response in the SAME LANGUAGE as the debate topic "{topic}".
+If the topic contains Korean text, write in Korean. If in English, write in English.
+
+"""
+
+            # RAG 사용하는 경우 검색 수행
+            if followup_rag_decision.get('use_rag', False):
+                followup_rag_results = self._perform_followup_rag_search(defense_text, followup_strategy, my_original_attack)
+                if followup_rag_results:
+                    rag_formatted = self._format_followup_rag_results(followup_rag_results, followup_strategy)
+                    user_prompt += f"""
+{rag_formatted}
+INSTRUCTION: Incorporate this supporting information naturally into your {followup_strategy} response.
+"""
+                    print(f"      📚 RAG 정보 추가됨 ({len(followup_rag_results)}개 결과)")
+
+            user_prompt += f"""
+Remember: Be CONCISE, DIRECT, and use the {followup_strategy} approach. 
+Address {defender_name} directly and follow up strategically.
+Write in the SAME LANGUAGE as the topic "{topic}".
+
+Your {followup_strategy} followup:"""
+
+            # 감정 강화 적용
+            if emotion_enhancement:
+                from ...agents.utility.debate_emotion_inference import apply_debate_emotion_to_prompt
+                system_prompt, user_prompt = apply_debate_emotion_to_prompt(system_prompt, user_prompt, emotion_enhancement)
+
+            # LLM 호출
+            response = self.llm_manager.generate_response(
+                system_prompt=system_prompt,
+                user_prompt=user_prompt,
+                llm_model="gpt-4o",
+                max_tokens=1000
+            )
+            
+            if response:
+                print(f"      ✅ 팔로우업 응답 생성 완료")
+                return response.strip()
+            else:
+                fallback = f"{defender_name}님, {followup_info.get('style_prompt', 'Let me follow up')}: 제 논점을 다시 생각해보시기 바랍니다."
+                print(f"      🔄 Fallback 응답 사용")
+                return fallback
+                
+        except Exception as e:
+            logger.error(f"Error generating followup response: {str(e)}")
+            print(f"      ❌ 팔로우업 응답 생성 오류: {str(e)}")
+            fallback = f"제 이전 지적에 대해 추가로 말씀드리겠습니다."
+            return fallback
+    
+    def _get_followup_strategy_info(self, followup_strategy: str) -> Dict[str, Any]:
+        """
+        followup_strategies.json에서 팔로우업 전략 정보 가져오기
+        
+        Args:
+            followup_strategy: 팔로우업 전략명
+            
+        Returns:
+            팔로우업 전략 정보
+        """
+        try:
+            import json
+            import os
+            
+            current_dir = os.path.dirname(os.path.abspath(__file__))
+            project_root = current_dir
+            
+            while project_root and not os.path.exists(os.path.join(project_root, "philosophers")):
+                parent = os.path.dirname(project_root)
+                if parent == project_root:
+                    break
+                project_root = parent
+            
+            json_path = os.path.join(project_root, "philosophers", "followup_strategies.json")
+            
+            if os.path.exists(json_path):
+                with open(json_path, 'r', encoding='utf-8') as f:
+                    followup_data = json.load(f)
+                
+                followup_styles = followup_data.get("followup_styles", {})
+                return followup_styles.get(followup_strategy, {})
+            
+            # 기본값
+            return {
+                "description": f"Use {followup_strategy} approach",
+                "purpose": "Follow up strategically",
+                "style_prompt": "Let me follow up...",
+                "example": f"Example of {followup_strategy}"
+            }
+            
+        except Exception as e:
+            logger.error(f"Error getting followup strategy info: {str(e)}")
+            return {
+                "description": f"Use {followup_strategy} approach",
+                "purpose": "Follow up strategically", 
+                "style_prompt": "Let me follow up...",
+                "example": f"Example of {followup_strategy}"
+            }
+    
+    def _perform_followup_rag_search(self, defense_text: str, followup_strategy: str, original_attack: str) -> List[Dict[str, Any]]:
+        """
+        팔로우업용 RAG 검색 수행
+        
+        Args:
+            defense_text: 상대방 방어 텍스트
+            followup_strategy: 팔로우업 전략
+            original_attack: 내 원래 공격
+            
+        Returns:
+            검색 결과
+        """
+        try:
+            # 팔로우업용 쿼리 생성
+            followup_query = self._generate_followup_rag_query(defense_text, followup_strategy, original_attack)
+            
+            # 검색 수행 (기존 메서드 재사용)
+            search_results = self._web_search(followup_query)
+            
+            print(f"      🔍 팔로우업 RAG 쿼리: '{followup_query}'")
+            print(f"      📊 검색 결과: {len(search_results)}개")
+            
+            return search_results[:2]  # 팔로우업은 2개만 사용
+            
+        except Exception as e:
+            logger.error(f"Error in followup RAG search: {str(e)}")
+            return []
+    
+    def _generate_followup_rag_query(self, defense_text: str, followup_strategy: str, original_attack: str) -> str:
+        """
+        팔로우업용 RAG 쿼리 생성
+        
+        Args:
+            defense_text: 방어 텍스트
+            followup_strategy: 팔로우업 전략
+            original_attack: 원래 공격
+            
+        Returns:
+            검색 쿼리
+        """
+        # 방어 텍스트와 원래 공격에서 핵심 키워드 추출
+        defense_keywords = self._extract_key_concept(defense_text)
+        attack_keywords = self._extract_key_concept(original_attack)
+        
+        # 팔로우업 전략별 접두사
+        strategy_prefixes = {
+            "Reattack": "additional evidence supporting",
+            "FollowUpQuestion": "questions about",
+            "Pivot": "related issues concerning",
+            "Deepen": "deeper analysis of",
+            "CounterChallenge": "challenges to",
+            "SynthesisProposal": "synthesis perspectives on"
+        }
+        
+        prefix = strategy_prefixes.get(followup_strategy, "follow up information about")
+        
+        # 방어와 공격 키워드 결합
+        combined_keywords = f"{attack_keywords} {defense_keywords}"
+        
+        return f"{prefix} {combined_keywords}"
+    
+    def _format_followup_rag_results(self, rag_results: List[Dict[str, Any]], followup_strategy: str) -> str:
+        """
+        팔로우업용 RAG 결과 포맷팅
+        
+        Args:
+            rag_results: RAG 검색 결과
+            followup_strategy: 팔로우업 전략
+            
+        Returns:
+            포맷팅된 RAG 정보
+        """
+        if not rag_results:
+            return ""
+        
+        strategy_headers = {
+            "Reattack": "ADDITIONAL EVIDENCE",
+            "FollowUpQuestion": "INQUIRY SUPPORT",
+            "Pivot": "RELATED PERSPECTIVES", 
+            "Deepen": "DEEPER ANALYSIS",
+            "CounterChallenge": "CHALLENGE SUPPORT",
+            "SynthesisProposal": "SYNTHESIS MATERIALS"
+        }
+        
+        header = strategy_headers.get(followup_strategy, "FOLLOWUP SUPPORT")
+        
+        formatted = f"\n{header} (use strategically):\n"
+        
+        for i, result in enumerate(rag_results, 1):
+            title = result.get('title', 'Source')
+            content = result.get('content', result.get('snippet', ''))
+            formatted += f"{i}. {title}: {content}\n"
+        
+        return formatted
+    
+    def _get_recent_defense_strategy(self, defender_agent) -> Dict[str, Any]:
+        """
+        방어자 에이전트의 최근 사용한 방어 전략 가져오기
+        
+        Args:
+            defender_agent: 방어자 에이전트 객체
+            
+        Returns:
+            최근 방어 전략 정보
+        """
+        try:
+            # 방어자의 최근 사용한 방어 전략 기록 확인 (만약 별도로 저장한다면)
+            if hasattr(defender_agent, 'last_defense_strategy'):
+                last_strategy = getattr(defender_agent, 'last_defense_strategy', None)
+                if last_strategy:
+                    return last_strategy
+            
+            # 방어 기록이 있는지 확인
+            if hasattr(defender_agent, 'defense_history'):
+                defense_history = getattr(defender_agent, 'defense_history', [])
+                if defense_history:
+                    return defense_history[-1]  # 가장 최근 방어
+            
+            return None
+            
+        except Exception as e:
+            logger.error(f"Error getting recent defense strategy: {str(e)}")
+            return None

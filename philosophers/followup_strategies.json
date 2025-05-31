@@ -1,0 +1,51 @@
+{
+  "followup_styles": {
+    "Reattack": {
+      "description": "Press the same weak point again with a sharper or newly-found piece of evidence.",
+      "purpose": "Intensify pressure and force a concession",
+      "style_prompt": "Let me underscore that flaw once more...",
+      "example": "Let me underscore that flaw once more: your data set was gathered before the 2022 regulatory changes, so your conclusion is already outdated.",
+      "rag_weight": 0.7
+    },
+
+    "FollowUpQuestion": {
+      "description": "Ask a pointed question that exposes gaps left by the defender’s answer.",
+      "purpose": "Keep the burden of proof on the opponent",
+      "style_prompt": "If that's true, then how do you explain…?",
+      "example": "If that's true, then how do you explain the sharp rise in worker displacement reported by the OECD last year?",
+      "rag_weight": 0.5
+    },
+
+    "Pivot": {
+      "description": "Shift the discussion to a related but strategically advantageous sub-topic.",
+      "purpose": "Regain initiative or enter stronger terrain",
+      "style_prompt": "Perhaps the more relevant issue is…",
+      "example": "Perhaps the more relevant issue is how AI-generated art will reshape cultural gatekeeping rather than its technical merit alone.",
+      "rag_weight": 0.3
+    },
+
+    "Deepen": {
+      "description": "Drill deeper into the conceptual or empirical basis of the defender’s clarification.",
+      "purpose": "Reveal hidden assumptions, raise the bar of rigor",
+      "style_prompt": "Let's examine that premise in detail...",
+      "example": "Let's examine that premise in detail: what specific metrics do you use to call an AI system ‘fair’?",
+      "rag_weight": 0.6
+    },
+
+    "CounterChallenge": {
+      "description": "Turn the defender’s point back on them with a direct challenge or dilemma.",
+      "purpose": "Reverse pressure and create a double bind",
+      "style_prompt": "Then would you also agree that…?",
+      "example": "Then would you also agree that if transparency is critical, black-box deep models should be banned outright?",
+      "rag_weight": 0.5
+    },
+
+    "SynthesisProposal": {
+      "description": "Offer a provisional middle-ground or synthesis based on both sides’ strongest points.",
+      "purpose": "Show intellectual generosity, steer toward resolution",
+      "style_prompt": "It seems both positions imply that…",
+      "example": "It seems both positions imply that human oversight is indispensable; perhaps the debate is how that oversight is structured, not whether it exists.",
+      "rag_weight": 0.2
+    }
+  }
+}

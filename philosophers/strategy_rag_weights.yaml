@@ -11,7 +11,7 @@ strategy_rag_weights:
     rhetorical_independence: -0.2  # 역가중치
     description: "상대방 논증의 특정 부분을 잘라내어 약점 지적 - 구체적 근거와 실용적 접근 중시"
     
-  "Framing Shift":
+  "FramingShift":
     data_respect: 0.2
     conceptual_precision: 0.5
     systematic_logic: 0.3
@@ -19,7 +19,7 @@ strategy_rag_weights:
     rhetorical_independence: -0.3  # 역가중치
     description: "논의의 프레임을 바꿔서 상대방을 불리한 위치에 놓기 - 개념적 정확성 중시"
     
-  "Reductive Paradox":
+  "ReductiveParadox":
     data_respect: 0.3
     conceptual_precision: 0.2
     systematic_logic: 0.5
@@ -27,7 +27,7 @@ strategy_rag_weights:
     rhetorical_independence: -0.3  # 역가중치
     description: "상대방 논리를 극단으로 밀어붙여 모순 드러내기 - 체계적 논리 중시"
     
-  "Conceptual Undermining":
+  "ConceptualUndermining":
     data_respect: 0.1
     conceptual_precision: 0.6
     systematic_logic: 0.3
@@ -35,7 +35,7 @@ strategy_rag_weights:
     rhetorical_independence: -0.2  # 역가중치
     description: "상대방이 사용한 개념 자체의 타당성 공격 - 개념적 정밀성 최우선"
     
-  "Ethical Reversal":
+  "EthicalReversal":
     data_respect: 0.1
     conceptual_precision: 0.2
     systematic_logic: 0.2
@@ -43,7 +43,7 @@ strategy_rag_weights:
     rhetorical_independence: -0.1  # 역가중치
     description: "윤리적 관점에서 상대방 논증의 문제점 지적 - 실용적 윤리 중시"
     
-  "Temporal Delay":
+  "TemporalDelay":
     data_respect: 0.5
     conceptual_precision: 0.2
     systematic_logic: 0.2
@@ -51,7 +51,7 @@ strategy_rag_weights:
     rhetorical_independence: -0.2  # 역가중치
     description: "시간적 관점에서 상대방 논증의 한계 지적 - 역사적 데이터와 근거 중시"
     
-  "Philosophical Reframing":
+  "PhilosophicalReframing":
     data_respect: 0.05
     conceptual_precision: 0.4
     systematic_logic: 0.5

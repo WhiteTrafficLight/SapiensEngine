@@ -1,0 +1,83 @@
+Refute:
+  RAG_YES:
+    neutral:   [Reattack, FollowUpQuestion]
+    angry:     [Reattack]
+    calm:      [FollowUpQuestion, Deepen]
+    confident: [Reattack, Counter-Challenge]
+    fearful:   [Pivot, SynthesisProposal]
+  RAG_NO:
+    neutral:   [FollowUpQuestion, Reattack]
+    angry:     [Reattack]
+    calm:      [Deepen, FollowUpQuestion]
+    confident: [Counter-Challenge, Reattack]
+    fearful:   [Pivot]
+
+Clarify:
+  RAG_YES:
+    neutral:   [FollowUpQuestion, Deepen]
+    angry:     [Reattack, Counter-Challenge]
+    calm:      [Deepen, Pivot]
+    confident: [FollowUpQuestion, Pivot]
+    fearful:   [Pivot, SynthesisProposal]
+  RAG_NO:
+    neutral:   [Deepen, FollowUpQuestion]
+    angry:     [Counter-Challenge]
+    calm:      [Pivot, SynthesisProposal]
+    confident: [Pivot, FollowUpQuestion]
+    fearful:   [SynthesisProposal, Pivot]
+
+Accept:
+  RAG_YES:
+    neutral:   [Pivot, SynthesisProposal]
+    angry:     [Counter-Challenge]
+    calm:      [SynthesisProposal]
+    confident: [Pivot, Counter-Challenge]
+    fearful:   [SynthesisProposal]
+  RAG_NO:
+    neutral:   [SynthesisProposal, Pivot]
+    angry:     [Counter-Challenge]
+    calm:      [SynthesisProposal]
+    confident: [Pivot]
+    fearful:   [SynthesisProposal]
+
+Reframe:
+  RAG_YES:
+    neutral:   [Deepen, FollowUpQuestion]
+    angry:     [Reattack, Counter-Challenge]
+    calm:      [Deepen, SynthesisProposal]
+    confident: [Counter-Challenge, Pivot]
+    fearful:   [Pivot, SynthesisProposal]
+  RAG_NO:
+    neutral:   [FollowUpQuestion, Deepen]
+    angry:     [Counter-Challenge]
+    calm:      [SynthesisProposal, Pivot]
+    confident: [Pivot, Counter-Challenge]
+    fearful:   [Pivot]
+
+Counter-Challenge:
+  RAG_YES:
+    neutral:   [Reattack, Deepen]
+    angry:     [Reattack]
+    calm:      [FollowUpQuestion, Deepen]
+    confident: [Reattack, Pivot]
+    fearful:   [Pivot]
+  RAG_NO:
+    neutral:   [FollowUpQuestion, Reattack]
+    angry:     [Reattack]
+    calm:      [Deepen]
+    confident: [Counter-Challenge, Pivot]
+    fearful:   [Pivot]
+
+SynthesisProposal:
+  RAG_YES:
+    neutral:   [Deepen, FollowUpQuestion]
+    angry:     [Counter-Challenge]
+    calm:      [Pivot]
+    confident: [FollowUpQuestion, Pivot]
+    fearful:   [Pivot]
+  RAG_NO:
+    neutral:   [FollowUpQuestion, Pivot]
+    angry:     [Counter-Challenge]
+    calm:      [Pivot]
+    confident: [Pivot]
+    fearful:   [Pivot]

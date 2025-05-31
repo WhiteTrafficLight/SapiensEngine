@@ -27,12 +27,12 @@ socrates:
     lack_of_concrete_evidence: 0.4
   strategy_weights:
     "Clipping": 0.35
-    "Framing Shift": 0.2
-    "Reductive Paradox": 0.1
-    "Conceptual Undermining": 0.2
-    "Ethical Reversal": 0.05
-    "Temporal Delay": 0.0
-    "Philosophical Reframing": 0.1
+    "FramingShift": 0.2
+    "ReductiveParadox": 0.1
+    "ConceptualUndermining": 0.2
+    "EthicalReversal": 0.05
+    "TemporalDelay": 0.0
+    "PhilosophicalReframing": 0.1
   defense_weights:
     "Refute": 0.1
     "Clarify": 0.4
@@ -40,6 +40,13 @@ socrates:
     "Reframe": 0.15
     "Counter-Challenge": 0.1
     "Synthesis": 0.05
+  followup_weights:
+    "Reattack": 0.05
+    "FollowUpQuestion": 0.35
+    "Pivot": 0.10
+    "Deepen": 0.25
+    "CounterChallenge": 0.20
+    "SynthesisProposal": 0.05
 
 plato:
   name: "Plato"
@@ -67,12 +74,12 @@ plato:
     lack_of_concrete_evidence: 0.7
   strategy_weights:
     "Clipping": 0.1
-    "Framing Shift": 0.4
-    "Reductive Paradox": 0.1
-    "Conceptual Undermining": 0.2
-    "Ethical Reversal": 0.1
-    "Temporal Delay": 0.05
-    "Philosophical Reframing": 0.05
+    "FramingShift": 0.4
+    "ReductiveParadox": 0.1
+    "ConceptualUndermining": 0.2
+    "EthicalReversal": 0.1
+    "TemporalDelay": 0.05
+    "PhilosophicalReframing": 0.05
   defense_weights:
     "Refute": 0.05
     "Clarify": 0.3
@@ -80,6 +87,13 @@ plato:
     "Reframe": 0.35
     "Counter-Challenge": 0.1
     "Synthesis": 0.1
+  followup_weights:
+    "Reattack": 0.05
+    "FollowUpQuestion": 0.15
+    "Pivot": 0.25
+    "Deepen": 0.30
+    "CounterChallenge": 0.05
+    "SynthesisProposal": 0.20
 
 aristotle:
   name: "Aristotle"
@@ -107,12 +121,12 @@ aristotle:
     lack_of_concrete_evidence: 0.9
   strategy_weights:
     "Clipping": 0.3
-    "Framing Shift": 0.2
-    "Reductive Paradox": 0.2
-    "Conceptual Undermining": 0.2
-    "Ethical Reversal": 0.05
-    "Temporal Delay": 0.05
-    "Philosophical Reframing": 0.0
+    "FramingShift": 0.2
+    "ReductiveParadox": 0.2
+    "ConceptualUndermining": 0.2
+    "EthicalReversal": 0.05
+    "TemporalDelay": 0.05
+    "PhilosophicalReframing": 0.0
   defense_weights:
     "Refute": 0.2
     "Clarify": 0.3
@@ -120,6 +134,13 @@ aristotle:
     "Reframe": 0.1
     "Counter-Challenge": 0.1
     "Synthesis": 0.1
+  followup_weights:
+    "Reattack": 0.05
+    "FollowUpQuestion": 0.25
+    "Pivot": 0.10
+    "Deepen": 0.30
+    "CounterChallenge": 0.10
+    "SynthesisProposal": 0.20
 
 kant:
   name: "Kant"
@@ -147,12 +168,12 @@ kant:
     lack_of_concrete_evidence: 0.05
   strategy_weights:
     "Clipping": 0.1
-    "Framing Shift": 0.1
-    "Reductive Paradox": 0.3
-    "Conceptual Undermining": 0.2
-    "Ethical Reversal": 0.3
-    "Temporal Delay": 0.0
-    "Philosophical Reframing": 0.0
+    "FramingShift": 0.1
+    "ReductiveParadox": 0.3
+    "ConceptualUndermining": 0.2
+    "EthicalReversal": 0.3
+    "TemporalDelay": 0.0
+    "PhilosophicalReframing": 0.0
   defense_weights:
     "Refute": 0.15
     "Clarify": 0.4
@@ -160,6 +181,13 @@ kant:
     "Reframe": 0.25
     "Counter-Challenge": 0.1
     "Synthesis": 0.05
+  followup_weights:
+    "Reattack": 0.05
+    "FollowUpQuestion": 0.15
+    "Pivot": 0.10
+    "Deepen": 0.35
+    "CounterChallenge": 0.25
+    "SynthesisProposal": 0.10
 
 nietzsche:
   name: "Nietzsche"
@@ -187,12 +215,12 @@ nietzsche:
     lack_of_concrete_evidence: 0.2
   strategy_weights:
     "Clipping": 0.2
-    "Framing Shift": 0.25
-    "Reductive Paradox": 0.2
-    "Conceptual Undermining": 0.1
-    "Ethical Reversal": 0.15
-    "Temporal Delay": 0.0
-    "Philosophical Reframing": 0.1
+    "FramingShift": 0.25
+    "ReductiveParadox": 0.2
+    "ConceptualUndermining": 0.1
+    "EthicalReversal": 0.15
+    "TemporalDelay": 0.0
+    "PhilosophicalReframing": 0.1
   defense_weights:
     "Refute": 0.25
     "Clarify": 0.1
@@ -200,6 +228,13 @@ nietzsche:
     "Reframe": 0.35
     "Counter-Challenge": 0.2
     "Synthesis": 0.05
+  followup_weights:
+    "Reattack": 0.35
+    "FollowUpQuestion": 0.05
+    "Pivot": 0.15
+    "Deepen": 0.15
+    "CounterChallenge": 0.25
+    "SynthesisProposal": 0.05
 
 hegel:
   name: "Hegel"
@@ -227,12 +262,12 @@ hegel:
     lack_of_concrete_evidence: 0.6
   strategy_weights:
     "Clipping": 0.05
-    "Framing Shift": 0.35
-    "Reductive Paradox": 0.05
-    "Conceptual Undermining": 0.15
-    "Ethical Reversal": 0.1
-    "Temporal Delay": 0.1
-    "Philosophical Reframing": 0.2
+    "FramingShift": 0.35
+    "ReductiveParadox": 0.05
+    "ConceptualUndermining": 0.15
+    "EthicalReversal": 0.1
+    "TemporalDelay": 0.1
+    "PhilosophicalReframing": 0.2
   defense_weights:
     "Refute": 0.05
     "Clarify": 0.2
@@ -240,6 +275,13 @@ hegel:
     "Reframe": 0.25
     "Counter-Challenge": 0.1
     "Synthesis": 0.25
+  followup_weights:
+    "Reattack": 0.05
+    "FollowUpQuestion": 0.10
+    "Pivot": 0.15
+    "Deepen": 0.30
+    "CounterChallenge": 0.10
+    "SynthesisProposal": 0.30
 
 marx:
   name: "Marx"
@@ -267,12 +309,12 @@ marx:
     lack_of_concrete_evidence: 0.8
   strategy_weights:
     "Clipping": 0.2
-    "Framing Shift": 0.3
-    "Reductive Paradox": 0.2
-    "Conceptual Undermining": 0.1
-    "Ethical Reversal": 0.15
-    "Temporal Delay": 0.05
-    "Philosophical Reframing": 0.0
+    "FramingShift": 0.3
+    "ReductiveParadox": 0.2
+    "ConceptualUndermining": 0.1
+    "EthicalReversal": 0.15
+    "TemporalDelay": 0.05
+    "PhilosophicalReframing": 0.0
   defense_weights:
     "Refute": 0.3
     "Clarify": 0.2
@@ -280,6 +322,13 @@ marx:
     "Reframe": 0.25
     "Counter-Challenge": 0.1
     "Synthesis": 0.05
+  followup_weights:
+    "Reattack": 0.30
+    "FollowUpQuestion": 0.15
+    "Pivot": 0.05
+    "Deepen": 0.20
+    "CounterChallenge": 0.25
+    "SynthesisProposal": 0.05
 
 sartre:
   name: "Sartre"
@@ -307,12 +356,12 @@ sartre:
     lack_of_concrete_evidence: 0.4
   strategy_weights:
     "Clipping": 0.1
-    "Framing Shift": 0.2
-    "Reductive Paradox": 0.1
-    "Conceptual Undermining": 0.2
-    "Ethical Reversal": 0.2
-    "Temporal Delay": 0.0
-    "Philosophical Reframing": 0.2
+    "FramingShift": 0.2
+    "ReductiveParadox": 0.1
+    "ConceptualUndermining": 0.2
+    "EthicalReversal": 0.2
+    "TemporalDelay": 0.0
+    "PhilosophicalReframing": 0.2
   defense_weights:
     "Refute": 0.15
     "Clarify": 0.25
@@ -320,6 +369,13 @@ sartre:
     "Reframe": 0.3
     "Counter-Challenge": 0.15
     "Synthesis": 0.05
+  followup_weights:
+    "Reattack": 0.10
+    "FollowUpQuestion": 0.20
+    "Pivot": 0.15
+    "Deepen": 0.20
+    "CounterChallenge": 0.25
+    "SynthesisProposal": 0.10
 
 camus:
   name: "Camus"
@@ -347,12 +403,12 @@ camus:
     lack_of_concrete_evidence: 0.1
   strategy_weights:
     "Clipping": 0.1
-    "Framing Shift": 0.3
-    "Reductive Paradox": 0.1
-    "Conceptual Undermining": 0.1
-    "Ethical Reversal": 0.1
-    "Temporal Delay": 0.3
-    "Philosophical Reframing": 0.0
+    "FramingShift": 0.3
+    "ReductiveParadox": 0.1
+    "ConceptualUndermining": 0.1
+    "EthicalReversal": 0.1
+    "TemporalDelay": 0.3
+    "PhilosophicalReframing": 0.0
   defense_weights:
     "Refute": 0.1
     "Clarify": 0.2
@@ -360,6 +416,13 @@ camus:
     "Reframe": 0.2
     "Counter-Challenge": 0.1
     "Synthesis": 0.1
+  followup_weights:
+    "Reattack": 0.05
+    "FollowUpQuestion": 0.25
+    "Pivot": 0.25
+    "Deepen": 0.15
+    "CounterChallenge": 0.10
+    "SynthesisProposal": 0.20
 
 beauvoir:
   name: "Simone de Beauvoir"
@@ -387,12 +450,12 @@ beauvoir:
     lack_of_concrete_evidence: 0.7
   strategy_weights:
     "Clipping": 0.2
-    "Framing Shift": 0.3
-    "Reductive Paradox": 0.1
-    "Conceptual Undermining": 0.2
-    "Ethical Reversal": 0.2
-    "Temporal Delay": 0.0
-    "Philosophical Reframing": 0.0
+    "FramingShift": 0.3
+    "ReductiveParadox": 0.1
+    "ConceptualUndermining": 0.2
+    "EthicalReversal": 0.2
+    "TemporalDelay": 0.0
+    "PhilosophicalReframing": 0.0
   defense_weights:
     "Refute": 0.2
     "Clarify": 0.3
@@ -400,6 +463,13 @@ beauvoir:
     "Reframe": 0.2
     "Counter-Challenge": 0.1
     "Synthesis": 0.05
+  followup_weights:
+    "Reattack": 0.05
+    "FollowUpQuestion": 0.25
+    "Pivot": 0.10
+    "Deepen": 0.20
+    "CounterChallenge": 0.25
+    "SynthesisProposal": 0.15
 
 rousseau:
   name: "Rousseau"
@@ -427,12 +497,12 @@ rousseau:
     lack_of_concrete_evidence: 0.3
   strategy_weights:
     "Clipping": 0.1
-    "Framing Shift": 0.3
-    "Reductive Paradox": 0.2
-    "Conceptual Undermining": 0.1
-    "Ethical Reversal": 0.2
-    "Temporal Delay": 0.1
-    "Philosophical Reframing": 0.0
+    "FramingShift": 0.3
+    "ReductiveParadox": 0.2
+    "ConceptualUndermining": 0.1
+    "EthicalReversal": 0.2
+    "TemporalDelay": 0.1
+    "PhilosophicalReframing": 0.0
   defense_weights:
     "Refute": 0.1
     "Clarify": 0.25
@@ -440,6 +510,13 @@ rousseau:
     "Reframe": 0.25
     "Counter-Challenge": 0.1
     "Synthesis": 0.05
+  followup_weights:
+    "Reattack": 0.05
+    "FollowUpQuestion": 0.15
+    "Pivot": 0.25
+    "Deepen": 0.20
+    "CounterChallenge": 0.05
+    "SynthesisProposal": 0.30
 
 confucius:
   name: "Confucius"
@@ -467,12 +544,12 @@ confucius:
     lack_of_concrete_evidence: 0.5
   strategy_weights:
     "Clipping": 0.2
-    "Framing Shift": 0.2
-    "Reductive Paradox": 0.1
-    "Conceptual Undermining": 0.1
-    "Ethical Reversal": 0.3
-    "Temporal Delay": 0.1
-    "Philosophical Reframing": 0.0
+    "FramingShift": 0.2
+    "ReductiveParadox": 0.1
+    "ConceptualUndermining": 0.1
+    "EthicalReversal": 0.3
+    "TemporalDelay": 0.1
+    "PhilosophicalReframing": 0.0
   defense_weights:
     "Refute": 0.1
     "Clarify": 0.3
@@ -480,6 +557,13 @@ confucius:
     "Reframe": 0.15
     "Counter-Challenge": 0.05
     "Synthesis": 0.1
+  followup_weights:
+    "Reattack": 0.05
+    "FollowUpQuestion": 0.15
+    "Pivot": 0.20
+    "Deepen": 0.15
+    "CounterChallenge": 0.10
+    "SynthesisProposal": 0.35
 
 laozi:
   name: "Laozi"
@@ -507,12 +591,12 @@ laozi:
     lack_of_concrete_evidence: 0.1
   strategy_weights:
     "Clipping": 0.05
-    "Framing Shift": 0.3
-    "Reductive Paradox": 0.1
-    "Conceptual Undermining": 0.15
-    "Ethical Reversal": 0.1
-    "Temporal Delay": 0.15
-    "Philosophical Reframing": 0.15
+    "FramingShift": 0.3
+    "ReductiveParadox": 0.1
+    "ConceptualUndermining": 0.15
+    "EthicalReversal": 0.1
+    "TemporalDelay": 0.15
+    "PhilosophicalReframing": 0.15
   defense_weights:
     "Refute": 0.05
     "Clarify": 0.2
@@ -520,6 +604,13 @@ laozi:
     "Reframe": 0.2
     "Counter-Challenge": 0.05
     "Synthesis": 0.1
+  followup_weights:
+    "Reattack": 0.05
+    "FollowUpQuestion": 0.15
+    "Pivot": 0.30
+    "Deepen": 0.10
+    "CounterChallenge": 0.10
+    "SynthesisProposal": 0.30
 
 buddha:
   name: "Buddha"
@@ -547,12 +638,12 @@ buddha:
     lack_of_concrete_evidence: 0.3
   strategy_weights:
     "Clipping": 0.1
-    "Framing Shift": 0.3
-    "Reductive Paradox": 0.1
-    "Conceptual Undermining": 0.2
-    "Ethical Reversal": 0.1
-    "Temporal Delay": 0.2
-    "Philosophical Reframing": 0.0
+    "FramingShift": 0.3
+    "ReductiveParadox": 0.1
+    "ConceptualUndermining": 0.2
+    "EthicalReversal": 0.1
+    "TemporalDelay": 0.2
+    "PhilosophicalReframing": 0.0
   defense_weights:
     "Refute": 0.05
     "Clarify": 0.25
@@ -560,6 +651,13 @@ buddha:
     "Reframe": 0.2
     "Counter-Challenge": 0.05
     "Synthesis": 0.1
+  followup_weights:
+    "Reattack": 0.05
+    "FollowUpQuestion": 0.15
+    "Pivot": 0.20
+    "Deepen": 0.15
+    "CounterChallenge": 0.10
+    "SynthesisProposal": 0.35
 
 wittgenstein:
   name: "Wittgenstein"
@@ -587,16 +685,23 @@ wittgenstein:
     lack_of_concrete_evidence: 0.3
   strategy_weights:
     "Clipping": 0.25
-    "Framing Shift": 0.15
-    "Reductive Paradox": 0.1
-    "Conceptual Undermining": 0.5
-    "Ethical Reversal": 0.0
-    "Temporal Delay": 0.0
-    "Philosophical Reframing": 0.0
+    "FramingShift": 0.15
+    "ReductiveParadox": 0.1
+    "ConceptualUndermining": 0.5
+    "EthicalReversal": 0.0
+    "TemporalDelay": 0.0
+    "PhilosophicalReframing": 0.0
   defense_weights:
     "Refute": 0.2
     "Clarify": 0.5
     "Accept": 0.05
     "Reframe": 0.15
     "Counter-Challenge": 0.05
-    "Synthesis": 0.05 
+    "Synthesis": 0.05
+  followup_weights:
+    "Reattack": 0.05
+    "FollowUpQuestion": 0.25
+    "Pivot": 0.10
+    "Deepen": 0.35
+    "CounterChallenge": 0.20
+    "SynthesisProposal": 0.05 

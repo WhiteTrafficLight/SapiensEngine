@@ -1478,10 +1478,17 @@ Important:
                 else:
                     # 일반 참가자인 경우
                     try:
+                        # dialogue_state에 participants 정보와 agents 참조 추가
+                        enhanced_dialogue_state = {
+                            **self.state,
+                            "participants": self.participants,  # 참가자 정보 추가
+                            "agents": self.agents  # 에이전트 참조 추가
+                        }
+                        
                         result = agent.process({
                             "action": "generate_response",
                             "context": context,
-                            "dialogue_state": self.state,
+                            "dialogue_state": enhanced_dialogue_state,
                             "stance_statements": self.stance_statements
                         })
                     except Exception as agent_error:
@@ -1512,6 +1519,82 @@ Important:
             
             # 발언 기록에 추가 (한 번만)
             self.state["speaking_history"].append(message_obj)
+            
+            # 상호논증 단계에서 사이클 상태 업데이트
+            if current_stage == DebateStage.INTERACTIVE_ARGUMENT and 'interactive_cycle_state' in self.state:
+                cycle_state = self.state['interactive_cycle_state']
+                current_step = cycle_state.get('cycle_step', 'unknown')
+                
+                # 단계별 사이클 상태 전환
+                if current_step == 'attack':
+                    # 공격 완료 → 방어로 전환
+                    cycle_state['cycle_step'] = 'defense'
+                    logger.info(f"Cycle state updated: attack → defense")
+                elif current_step == 'defense':
+                    # 방어 완료 → 팔로우업으로 전환
+                    cycle_state['cycle_step'] = 'followup'
+                    logger.info(f"Cycle state updated: defense → followup")
+                elif current_step == 'followup':
+                    # 팔로우업 완료 → 현재 사이클 완료하고 다음 사이클로 전환
+                    current_cycle = cycle_state.get('current_cycle', 0)
+                    attack_order = cycle_state.get('attack_order', [])
+                    
+                    # 현재 사이클 완료 기록
+                    cycle_state['cycles_completed'].append({
+                        'cycle': current_cycle,
+                        'attacker': cycle_state.get('current_attacker'),
+                        'defender': cycle_state.get('current_defender'),
+                        'completed_at': time.time()
+                    })
+                    
+                    logger.info(f"Cycle {current_cycle + 1} completed: {cycle_state.get('current_attacker')} → {cycle_state.get('current_defender')}")
+                    
+                    # 다음 사이클로 이동
+                    cycle_state['current_cycle'] += 1
+                    next_cycle_index = cycle_state['current_cycle']
+                    
+                    # 다음 사이클이 있는지 확인
+                    if next_cycle_index < len(attack_order):
+                        # 다음 공격자 정보 가져오기
+                        next_attack_info = attack_order[next_cycle_index]
+                        next_attacker_id = next_attack_info['attacker_id']
+                        next_attacker_role = next_attack_info['attacker_role']
+                        
+                        # 역할을 한국어로 변환
+                        role_korean = "찬성" if next_attacker_role == "pro" else "반대"
+                        
+                        # 다음 공격자 이름 가져오기
+                        next_attacker_name = "알 수 없음"
+                        if next_attacker_id in self.agents:
+                            agent = self.agents[next_attacker_id]
+                            next_attacker_name = getattr(agent, 'philosopher_name', getattr(agent, 'name', next_attacker_id))
+                        
+                        # 모더레이터 메시지 생성
+                        moderator_message = f"이제 {role_korean}측 {next_attacker_name}의 차례입니다. 발언해주시죠."
+                        
+                        # 모더레이터 메시지를 speaking_history에 추가
+                        moderator_msg_obj = {
+                            "speaker_id": "moderator",
+                            "role": ParticipantRole.MODERATOR,
+                            "text": moderator_message,
+                            "stage": current_stage,
+                            "timestamp": time.time(),
+                            "turn": self.state["turn_count"] + 1,
+                            "type": "cycle_transition"
+                        }
+                        
+                        self.state["speaking_history"].append(moderator_msg_obj)
+                        self.state["turn_count"] += 1
+                        
+                        logger.info(f"Moderator cycle transition message: {moderator_message}")
+                    
+                    cycle_state['cycle_step'] = 'attack'  # 다음 사이클의 공격 단계로
+                    
+                    logger.info(f"Cycle state updated: followup → attack (next cycle {cycle_state['current_cycle'] + 1})")
+                    
+                    # 모든 사이클이 완료되었는지 확인
+                    if cycle_state['current_cycle'] >= len(attack_order):
+                        logger.info(f"All {len(attack_order)} cycles completed, interactive argument phase will end")
             
             # 논지 분석 및 공격 전략 준비 (완전히 백그라운드에서 실행 - 결과를 기다리지 않음)
             if role in [ParticipantRole.PRO, ParticipantRole.CON] and current_stage in [
@@ -1912,49 +1995,135 @@ Important:
         return self.get_next_speaker()
     
     def _get_next_interactive_speaker(self) -> Dict[str, str]:
-        """상호논증 단계의 다음 발언자 결정 - 반대측부터 시작, 분석 완료 확인"""
-        # 간단한 번갈아가며 발언 로직 - 반대측부터 시작
+        """상호논증 단계의 다음 발언자 결정 - 공격-방어-팔로우업 사이클 관리"""
         stage_messages = [msg for msg in self.state["speaking_history"] 
                          if msg.get("stage") == DebateStage.INTERACTIVE_ARGUMENT]
         
-        # 발언 수에 따라 반대/찬성 번갈아가며 (반대측부터 시작)
-        turn_count = len(stage_messages)
+        # 상호논증 상태 초기화 (처음이면)
+        if 'interactive_cycle_state' not in self.state:
+            self.state['interactive_cycle_state'] = {
+                'current_cycle': 0,  # 현재 사이클 번호
+                'cycle_step': 'attack',  # attack, defense, followup
+                'current_attacker': None,
+                'current_defender': None,
+                'attack_order': self._generate_attack_order(),  # 공격 순서
+                'cycles_completed': []  # 완료된 사이클들
+            }
         
-        if turn_count % 2 == 0:  # 짝수 턴: 반대측 (첫 번째 턴 포함)
-            participants = self.participants.get(ParticipantRole.CON, [])
-            role = ParticipantRole.CON
-        else:  # 홀수 턴: 찬성측
-            participants = self.participants.get(ParticipantRole.PRO, [])
-            role = ParticipantRole.PRO
+        cycle_state = self.state['interactive_cycle_state']
+        attack_order = cycle_state['attack_order']
         
-        if participants:
-            # 해당 측에서 가장 적게 발언한 참가자 선택
-            participant_counts = {}
-            for p in participants:
-                count = len([msg for msg in stage_messages 
-                           if msg.get("speaker_id") == p and msg.get("role") == role])
-                participant_counts[p] = count
+        # 모든 사이클이 완료되었으면 다음 단계로
+        if cycle_state['current_cycle'] >= len(attack_order):
+            logger.info("All interactive argument cycles completed, advancing to next stage")
+            self._advance_to_next_stage()
+            return self.get_next_speaker()
+        
+        current_cycle = cycle_state['current_cycle']
+        current_step = cycle_state['cycle_step']
+        
+        # 현재 사이클의 공격자와 방어자 정보
+        if current_cycle < len(attack_order):
+            attacker_info = attack_order[current_cycle]
+            attacker_id = attacker_info['attacker_id']
+            attacker_role = attacker_info['attacker_role']
+            defender_role = 'con' if attacker_role == 'pro' else 'pro'
+            defender_participants = self.participants.get(defender_role, [])
             
-            # 가장 적게 발언한 참가자 선택
-            next_participant = min(participant_counts.keys(), key=lambda x: participant_counts[x])
+            # 방어자 선택 (해당 역할의 첫 번째 참가자)
+            defender_id = defender_participants[0] if defender_participants else None
+        else:
+            # 모든 사이클 완료
+            self._advance_to_next_stage()
+            return self.get_next_speaker()
+        
+        logger.info(f"Cycle {current_cycle + 1}/{len(attack_order)}: {current_step} step")
+        logger.info(f"Attacker: {attacker_id} ({attacker_role}), Defender: {defender_id} ({defender_role})")
+        
+        # 단계별 다음 발언자 결정
+        if current_step == 'attack':
+            # 공격 단계
+            cycle_state['current_attacker'] = attacker_id
+            cycle_state['current_defender'] = defender_id
             
-            # 🔍 분석 완료 여부 확인
-            if self._can_speaker_proceed_with_analysis(next_participant):
-                logger.info(f"[{next_participant}] ready for interactive argument - all analysis completed")
-                return {"speaker_id": next_participant, "role": role}
+            # 분석 완료 여부 확인
+            if self._can_speaker_proceed_with_analysis(attacker_id):
+                logger.info(f"[{attacker_id}] attacking - analysis completed")
+                # attack 단계에서는 공격자가 실제로 공격하고, 다음 턴에서 defense로 전환
+                return {"speaker_id": attacker_id, "role": attacker_role}
             else:
-                logger.info(f"[{next_participant}] waiting for opponent analysis completion - cannot proceed yet")
-                # 분석이 완료되지 않았으면 대기 상태 반환
-            return {
-                    "speaker_id": next_participant, 
-                    "role": role, 
+                logger.info(f"[{attacker_id}] waiting for analysis completion")
+                return {
+                    "speaker_id": attacker_id, 
+                    "role": attacker_role, 
                     "status": "waiting_for_analysis",
-                    "message": f"{next_participant}이(가) 상대방 논지 분석 완료를 기다리고 있습니다."
+                    "message": f"{attacker_id}이(가) 상대방 논지 분석 완료를 기다리고 있습니다."
                 }
         
-        # 참가자가 없으면 다음 단계로
-        self._advance_to_next_stage()
-        return self.get_next_speaker()
+        elif current_step == 'defense':
+            # 방어 단계
+            if defender_id:
+                return {"speaker_id": defender_id, "role": defender_role}
+            else:
+                # 방어자가 없으면 팔로우업으로 넘어감
+                cycle_state['cycle_step'] = 'followup'
+                return {"speaker_id": attacker_id, "role": attacker_role}
+        
+        elif current_step == 'followup':
+            # 팔로우업 단계 (공격자가 팔로우업 응답 생성)
+            return {"speaker_id": attacker_id, "role": attacker_role}
+        
+        # Fallback
+        logger.warning(f"Unexpected interactive argument state: {current_step}")
+        return {"speaker_id": None, "role": None}
+    
+    def _generate_attack_order(self) -> List[Dict[str, str]]:
+        """공격 순서 생성 - 반대측과 찬성측이 번갈아가며 공격"""
+        pro_participants = self.participants.get(ParticipantRole.PRO, [])
+        con_participants = self.participants.get(ParticipantRole.CON, [])
+        
+        attack_order = []
+        
+        # 최대 참가자 수만큼 사이클 생성
+        max_participants = max(len(pro_participants), len(con_participants))
+        
+        for i in range(max_participants):
+            # 반대측 공격 (CON이 먼저)
+            if i < len(con_participants):
+                attack_order.append({
+                    'attacker_id': con_participants[i],
+                    'attacker_role': 'con'
+                })
+            
+            # 찬성측 공격 (PRO가 다음)
+            if i < len(pro_participants):
+                attack_order.append({
+                    'attacker_id': pro_participants[i],
+                    'attacker_role': 'pro'
+                })
+        
+        # 공격 순서 로깅
+        order_description = []
+        for a in attack_order:
+            order_description.append(f"{a['attacker_id']}({a['attacker_role']})")
+        logger.info(f"Generated attack order: {order_description}")
+        return attack_order
+    
+    def get_interactive_cycle_status(self) -> Dict[str, Any]:
+        """상호논증 사이클 상태 조회 (디버깅용)"""
+        if 'interactive_cycle_state' not in self.state:
+            return {"status": "not_initialized"}
+        
+        cycle_state = self.state['interactive_cycle_state']
+        return {
+            "current_cycle": cycle_state.get('current_cycle', 0),
+            "total_cycles": len(cycle_state.get('attack_order', [])),
+            "cycle_step": cycle_state.get('cycle_step', 'unknown'),
+            "current_attacker": cycle_state.get('current_attacker'),
+            "current_defender": cycle_state.get('current_defender'),
+            "attack_order": cycle_state.get('attack_order', []),
+            "cycles_completed": cycle_state.get('cycles_completed', [])
+        }
     
     def _get_next_conclusion_speaker(self, stage: str) -> Dict[str, str]:
         """결론 단계의 다음 발언자 결정"""
@@ -2548,13 +2717,23 @@ Important:
             return True, DebateStage.INTERACTIVE_ARGUMENT
             
         elif current_stage == DebateStage.INTERACTIVE_ARGUMENT:
-            # 상호논증 단계에서 충분한 교환 후 다음 단계로
-            interactive_messages = [msg for msg in self.state["speaking_history"] 
-                        if msg.get("stage") == current_stage]
-        
-            if len(interactive_messages) >= 6:  # 최소 6번의 교환
-                return True, DebateStage.MODERATOR_SUMMARY_2
+            # 상호논증 단계에서 모든 사이클이 완료되었는지 확인
+            if 'interactive_cycle_state' in self.state:
+                cycle_state = self.state['interactive_cycle_state']
+                attack_order = cycle_state.get('attack_order', [])
+                cycles_completed = cycle_state.get('cycles_completed', [])
                 
+                # 실제로 완료된 사이클 수가 총 사이클 수와 같아야 다음 단계로
+                if len(cycles_completed) >= len(attack_order):
+                    logger.info(f"All {len(attack_order)} interactive cycles completed, advancing to next stage")
+                    return True, DebateStage.MODERATOR_SUMMARY_2
+                else:
+                    logger.info(f"Interactive cycles in progress: {len(cycles_completed)}/{len(attack_order)} completed")
+                    return False, current_stage
+            else:
+                # interactive_cycle_state가 없으면 초기화 필요 (일반적으로 발생하지 않음)
+                return False, current_stage
+        
         elif current_stage == DebateStage.MODERATOR_SUMMARY_2:
             # 두 번째 모더레이터 요약 완료 후 결론으로
             return True, DebateStage.PRO_CONCLUSION

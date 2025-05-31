@@ -685,17 +685,41 @@ class DebateParticipantAgent(Agent):
                     
                     print(f"   🔍 디버깅: 선택된 target_agent_id: {target_agent_id}")
         
-        # 3. 여전히 없으면 하드코딩된 기본값 설정 (1대1 토론용)
+        # 3. 여전히 없으면 실제 참가자에서 상대방 찾기
         if not target_agent_id:
-            # 1대1 토론에서 상대방 하드코딩
-            if self.role == "pro":
-                target_agent_id = "camus"  # 찬성측이면 카뮈가 상대방
-            elif self.role == "con":
-                target_agent_id = "nietzsche"  # 반대측이면 니체가 상대방
-            else:
+            # 실제 참가자 목록에서 상대방 찾기
+            try:
+                # dialogue_state에서 모든 참가자 정보 가져오기
+                all_participants = []
+                
+                # speaking_history에서 실제 참가자들 추출
+                speaking_history = dialogue_state.get('speaking_history', [])
+                if speaking_history:
+                    for msg in speaking_history:
+                        speaker_id = msg.get('speaker_id', '')
+                        role = msg.get('role', '')
+                        if speaker_id and role in ['pro', 'con'] and speaker_id != self.agent_id:
+                            if role == opposite_role and speaker_id not in all_participants:
+                                all_participants.append(speaker_id)
+                
+                # 상대방 역할의 첫 번째 참가자 선택
+                if all_participants:
+                    target_agent_id = all_participants[0]
+                    print(f"   🔍 디버깅: speaking_history에서 찾은 상대방: {target_agent_id}")
+                else:
+                    # fallback: 기본 상대방 설정
+                    if self.role == "pro":
+                        target_agent_id = "con_participant"  # 찬성측의 상대방
+                    elif self.role == "con":
+                        target_agent_id = "pro_participant"  # 반대측의 상대방
+                    else:
+                        target_agent_id = "opponent"
+                    
+                    print(f"   🔍 디버깅: 기본값으로 설정된 target_agent_id: {target_agent_id}")
+                    
+            except Exception as e:
+                print(f"   ❌ 상대방 찾기 오류: {str(e)}")
                 target_agent_id = "opponent"
-            
-            print(f"   🔍 디버깅: 하드코딩된 target_agent_id: {target_agent_id}")
         
         # 4. 철학자 이름 찾기 (개선된 로직)
         target_agent_name = self._get_philosopher_name(target_agent_id)

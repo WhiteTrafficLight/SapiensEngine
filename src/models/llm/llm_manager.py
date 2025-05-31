@@ -125,10 +125,10 @@ class LLMManager:
             생성된 응답 텍스트
         """
         try:
-            logger.info("[LLM_DEBUG] LLM 응답 생성 시작")
-            logger.info(f"[LLM_DEBUG] Provider: {llm_provider}, Model: {llm_model}")
-            logger.info(f"[LLM_DEBUG] System prompt 길이: {len(system_prompt)}")
-            logger.info(f"[LLM_DEBUG] User prompt 길이: {len(user_prompt)}")
+            # logger.info("[LLM_DEBUG] LLM 응답 생성 시작")
+            # logger.info(f"[LLM_DEBUG] Provider: {llm_provider}, Model: {llm_model}")
+            # logger.info(f"[LLM_DEBUG] System prompt 길이: {len(system_prompt)}")
+            # logger.info(f"[LLM_DEBUG] User prompt 길이: {len(user_prompt)}")
             
             # OpenAI 사용
             if llm_provider == "openai":
@@ -137,7 +137,7 @@ class LLMManager:
                     api_key = self.openai_api_key
                     if api_key:
                         os.environ["OPENAI_API_KEY"] = api_key
-                        logger.info("[LLM_DEBUG] OpenAI API 키를 환경 변수로 설정했습니다")
+                        # logger.info("[LLM_DEBUG] OpenAI API 키를 환경 변수로 설정했습니다")
                     else:
                         logger.error("[LLM_DEBUG] OpenAI API 키가 설정되지 않았습니다")
                         return "OpenAI API 키가 설정되지 않았습니다."
@@ -146,8 +146,8 @@ class LLMManager:
                 from openai import OpenAI
                 client = OpenAI()
                 
-                logger.info(f"[LLM_DEBUG] OpenAI 클라이언트 초기화 완료")
-                logger.info(f"[LLM_DEBUG] API 요청 시작 - max_tokens: {max_tokens}, temperature: {temperature}")
+                # logger.info(f"[LLM_DEBUG] OpenAI 클라이언트 초기화 완료")
+                # logger.info(f"[LLM_DEBUG] API 요청 시작 - max_tokens: {max_tokens}, temperature: {temperature}")
                 
                 # API 요청
                 try:
@@ -161,7 +161,7 @@ class LLMManager:
                         temperature=temperature
                     )
                     
-                    logger.info(f"[LLM_DEBUG] API 응답 받음")
+                    # logger.info(f"[LLM_DEBUG] API 응답 받음")
                     
                     if not response or not hasattr(response, 'choices') or not response.choices:
                         logger.error(f"[LLM_DEBUG] 유효하지 않은 응답 형식: {response}")
@@ -174,13 +174,13 @@ class LLMManager:
                         logger.error("[LLM_DEBUG] 빈 응답을 받았습니다")
                         return ""
                     
-                    logger.info(f"[LLM_DEBUG] 응답 길이: {len(content)}")
-                    logger.info(f"[LLM_DEBUG] 응답 내용: {content[:100]}..." if len(content) > 100 else f"[LLM_DEBUG] 응답 내용: {content}")
+                    # logger.info(f"[LLM_DEBUG] 응답 길이: {len(content)}")
+                    # logger.info(f"[LLM_DEBUG] 응답 내용: {content[:100]}..." if len(content) > 100 else f"[LLM_DEBUG] 응답 내용: {content}")
                     
                     # 오리지널 언어 감지
                     try:
                         detected_language = self.detect_language(content)
-                        logger.info(f"[LLM_DEBUG] 감지된 언어: {detected_language}")
+                        # logger.info(f"[LLM_DEBUG] 감지된 언어: {detected_language}")
                     except Exception as lang_error:
                         logger.error(f"[LLM_DEBUG] 언어 감지 오류: {str(lang_error)}")
                         detected_language = "en"  # 기본값으로 영어 설정
@@ -196,8 +196,8 @@ class LLMManager:
                 # Ollama 엔드포인트 설정 (기본값: localhost:11434)
                 ollama_endpoint = os.getenv("OLLAMA_ENDPOINT", "http://localhost:11434")
                 
-                logger.info(f"[LLM_DEBUG] Ollama 엔드포인트: {ollama_endpoint}")
-                logger.info(f"[LLM_DEBUG] Ollama 모델: {llm_model}")
+                # logger.info(f"[LLM_DEBUG] Ollama 엔드포인트: {ollama_endpoint}")
+                # logger.info(f"[LLM_DEBUG] Ollama 모델: {llm_model}")
                 
                 try:
                     # Ollama API 요청
@@ -236,8 +236,8 @@ class LLMManager:
                         logger.error("[LLM_DEBUG] Ollama에서 빈 응답을 받았습니다")
                         return ""
                     
-                    logger.info(f"[LLM_DEBUG] Ollama 응답 길이: {len(content)}")
-                    logger.info(f"[LLM_DEBUG] Ollama 응답 내용: {content[:100]}..." if len(content) > 100 else f"[LLM_DEBUG] Ollama 응답 내용: {content}")
+                    # logger.info(f"[LLM_DEBUG] Ollama 응답 길이: {len(content)}")
+                    # logger.info(f"[LLM_DEBUG] Ollama 응답 내용: {content[:100]}..." if len(content) > 100 else f"[LLM_DEBUG] Ollama 응답 내용: {content}")
                     
                     return content
                 
