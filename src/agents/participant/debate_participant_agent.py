@@ -4783,3 +4783,178 @@ Your {followup_strategy} followup:"""
         except Exception as e:
             logger.error(f"Error getting recent defense strategy: {str(e)}")
             return None
+    
+    def extract_arguments_from_user_input(self, user_response: str, speaker_id: str) -> List[Dict[str, Any]]:
+        """
+        유저 입력에서 LLM을 사용해 논지를 추출합니다.
+        
+        Args:
+            user_response: 유저의 입력 텍스트
+            speaker_id: 유저 ID
+            
+        Returns:
+            List[Dict]: 추출된 논지들 (최대 3개)
+        """
+        try:
+            logger.info(f"🔍 [{self.agent_id}] 유저 {speaker_id}의 논지 추출 시작")
+            
+            system_prompt = "You are an expert debate analyst. Extract key arguments from user input in Korean."
+            
+            user_prompt = f"""
+당신은 토론 분석 전문가입니다. 다음 사용자의 발언에서 핵심 논지들을 추출해주세요.
+
+사용자 발언:
+{user_response}
+
+요구사항:
+1. 핵심 논지를 최대 3개까지 추출
+2. 각 논지는 명확한 주장과 근거를 포함해야 함
+3. 너무 세부적이지 않고 토론에서 공격할 수 있는 수준의 논지여야 함
+
+다음 JSON 형식으로 반환해주세요:
+{{
+  "arguments": [
+    {{
+      "claim": "논지의 핵심 주장",
+      "evidence": "제시된 근거나 증거",
+      "reasoning": "논리적 추론 과정",
+      "assumptions": ["기본 가정들"]
+    }}
+  ]
+}}
+
+논지가 3개 미만이라면 실제 개수만 반환하세요.
+"""
+
+            # llm_manager 사용하여 응답 생성
+            response_text = self.llm_manager.generate_response(
+                system_prompt=system_prompt,
+                user_prompt=user_prompt,
+                llm_model="gpt-4o",
+                max_tokens=1000,
+                temperature=0.3
+            )
+            
+            # JSON 파싱
+            import json
+            try:
+                # 마크다운 코드 블록 제거 (간단한 방법)
+                cleaned_response = response_text.strip()
+                
+                # ```json과 ``` 제거
+                if '```json' in cleaned_response:
+                    cleaned_response = cleaned_response.replace('```json', '').replace('```', '').strip()
+                elif '```' in cleaned_response:
+                    cleaned_response = cleaned_response.replace('```', '').strip()
+                
+                parsed_data = json.loads(cleaned_response)
+                extracted_arguments = parsed_data.get("arguments", [])
+                
+                logger.info(f"✅ [{self.agent_id}] 유저 {speaker_id}의 논지 {len(extracted_arguments)}개 추출 완료")
+                
+                # 기존 포맷에 맞게 변환
+                formatted_arguments = []
+                for i, arg in enumerate(extracted_arguments):
+                    formatted_arg = {
+                        'claim': arg.get('claim', ''),
+                        'evidence': arg.get('evidence', ''),
+                        'reasoning': arg.get('reasoning', ''),
+                        'assumptions': arg.get('assumptions', []),
+                        'source_text': user_response,  # 원본 텍스트 보존
+                        'argument_id': f"user_arg_{i+1}"
+                    }
+                    formatted_arguments.append(formatted_arg)
+                
+                return formatted_arguments
+                
+            except json.JSONDecodeError as e:
+                logger.error(f"❌ [{self.agent_id}] JSON 파싱 실패: {e}")
+                logger.error(f"정리된 응답: {cleaned_response if 'cleaned_response' in locals() else response_text}")
+                return []
+                
+        except Exception as e:
+            logger.error(f"❌ [{self.agent_id}] 유저 논지 추출 실패: {e}")
+            return []
+    
+    def analyze_user_arguments(self, user_response: str, speaker_id: str) -> Dict[str, Any]:
+        """
+        유저 입력을 분석하여 논지를 추출하고 취약성을 평가합니다.
+        
+        Args:
+            user_response: 유저의 입력 텍스트  
+            speaker_id: 유저 ID
+            
+        Returns:
+            Dict: 분석 결과 (기존 analyze_and_score_arguments와 동일한 포맷)
+        """
+        try:
+            logger.info(f"🎯 [{self.agent_id}] 유저 {speaker_id} 논지 분석 시작")
+            
+            # 1단계: 유저 입력에서 논지 추출
+            extracted_arguments = self.extract_arguments_from_user_input(user_response, speaker_id)
+            
+            if not extracted_arguments:
+                logger.warning(f"⚠️ [{self.agent_id}] 유저 {speaker_id}에서 논지를 추출하지 못함")
+                return {
+                    'opponent_arguments': {speaker_id: []},
+                    'total_arguments': 0,
+                    'analysis_summary': f"유저 {speaker_id}의 논지 추출 실패"
+                }
+            
+            # 2단계: 각 추출된 논지에 대해 취약성 점수 계산
+            analyzed_arguments = []
+            total_vulnerability_score = 0.0
+            
+            for argument in extracted_arguments:
+                try:
+                    # 기존 _score_single_argument 메서드 활용 (올바른 파라미터 형태로)
+                    vulnerability_data = self._score_single_argument(argument, user_response)
+                    
+                    # 분석 결과 구성
+                    analyzed_arg = {
+                        'claim': argument['claim'],
+                        'evidence': argument['evidence'], 
+                        'reasoning': argument['reasoning'],
+                        'assumptions': argument['assumptions'],
+                        'vulnerability_score': vulnerability_data.get('final_vulnerability', 0.0),
+                        'scores': vulnerability_data,
+                        'source_text': argument.get('source_text', ''),
+                        'argument_id': argument.get('argument_id', f"user_arg_{len(analyzed_arguments)}")
+                    }
+                    
+                    analyzed_arguments.append(analyzed_arg)
+                    total_vulnerability_score += vulnerability_data.get('final_vulnerability', 0.0)
+                    
+                    logger.info(f"📊 [{self.agent_id}] 유저 논지 '{argument['claim'][:50]}...' 취약성: {vulnerability_data.get('final_vulnerability', 0.0):.2f}")
+                    
+                except Exception as e:
+                    logger.error(f"❌ [{self.agent_id}] 논지 분석 실패: {e}")
+                    continue
+            
+            # 3단계: 결과 포맷팅 (기존 analyze_and_score_arguments와 동일한 구조)
+            average_vulnerability = total_vulnerability_score / len(analyzed_arguments) if analyzed_arguments else 0.0
+            
+            analysis_result = {
+                'opponent_arguments': {speaker_id: analyzed_arguments},
+                'total_arguments': len(analyzed_arguments),
+                'average_vulnerability': average_vulnerability,
+                'analysis_summary': f"유저 {speaker_id}의 논지 {len(analyzed_arguments)}개 분석 완료 (평균 취약성: {average_vulnerability:.2f})"
+            }
+            
+            # 4단계: 분석 결과 저장 (기존 방식과 동일)
+            if hasattr(self, 'opponent_arguments'):
+                self.opponent_arguments[speaker_id] = analyzed_arguments
+            else:
+                self.opponent_arguments = {speaker_id: analyzed_arguments}
+            
+            logger.info(f"✅ [{self.agent_id}] 유저 {speaker_id} 논지 분석 완료: {len(analyzed_arguments)}개 논지, 평균 취약성 {average_vulnerability:.2f}")
+            
+            return analysis_result
+            
+        except Exception as e:
+            logger.error(f"❌ [{self.agent_id}] 유저 논지 분석 실패: {e}")
+            return {
+                'opponent_arguments': {speaker_id: []},
+                'total_arguments': 0,
+                'analysis_summary': f"유저 {speaker_id} 분석 중 오류 발생: {str(e)}"
+            }

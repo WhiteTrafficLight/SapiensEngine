@@ -5230,3 +5230,195 @@ INFO:api_server:🔧 ConversationManager 초기화됨: 토큰 제한 7000, 최�
 INFO:     Started server process [63211]
 INFO:     Waiting for application startup.
 INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'api/routers/debug.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [63211]
+WARNING:  WatchFiles detected changes in 'api/routers/debug.py'. Reloading...
+INFO:api_server:Loading philosophers from: /Users/jihoon/sapiens_engine/sapiens_engine/config/philosophers.yaml
+INFO:api_server:===== 시스템 환경 설정 =====
+INFO:api_server:NEXTJS_API_URL: http://localhost:3000
+INFO:api_server:OPENAI_API_KEY: 설정됨
+INFO:api_server:DEBUG 모드: True
+INFO:api_server:==================
+INFO:api_server:Current directory: /Users/jihoon/sapiens_engine
+INFO:api_server:BASE_DIR: /Users/jihoon/sapiens_engine
+INFO:api_server:Files in current directory: ['rag_experiment_report.md', 'simple_debug_test.py', 'tools', 'tailwind.config.js', '.DS_Store', 'test_rag_attack_flow.py', '.env.local', 'LLM_Usage_Documentation.md', 'requirements.txt', 'debate_results', 'experiments', 'requirements-web.txt', 'generated_audio', 'sapiens_engine', 'test_defense_response.py', 'node_modules', 'vectordb', 'tests', 'output', 'models', '__pycache__', 'nietzsche_vs_camus_debate.txt', '.gitmodules', 'README.md', 'transhumanism_debate_extracted.json', 'results', 'portraits', 'api_server.py', 'logs', '.gitignore', 'package-lock.json', 'package.json', '.env', 'SERVER_GUIDE.md', 'scripts', 'debate_ui.html', 'stop_servers.sh', 'api', 'marketing', 'agoramind', '.ipynb_checkpoints', 'nextjs.log', '.git', 'backup', 'restart_servers.sh', 'rag_data', 'postcss.config.js', 'data', '.cache', 'philosophers', 'Modelfile.llama3.2', 'next.config.ts', 'reports', 'python_api.log', 'src', 'deprecated', 'cost_optimization_plan.md']
+INFO:api_server:Portrait directory path: /Users/jihoon/sapiens_engine/portraits
+INFO:api_server:Mounted portraits from /Users/jihoon/sapiens_engine/portraits at /portraits
+INFO:sapiens_engine.core.llm_manager:Initialized LLM Manager with provider: openai, model: gpt-4-turbo
+INFO:sapiens_engine.core.llm_manager:Using OpenAI API key: sk-p************************************************************************************************************************************************************svYA
+INFO:api_server:Socket Manager initialized with Next.js URL: http://localhost:3000
+INFO:api_server:🔧 ConversationManager 초기화됨: 토큰 제한 7000, 최근 메시지 유지 10개
+INFO:     Started server process [64290]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:api_server:Loading philosophers from: /Users/jihoon/sapiens_engine/sapiens_engine/config/philosophers.yaml
+INFO:api_server:===== 시스템 환경 설정 =====
+INFO:api_server:NEXTJS_API_URL: http://localhost:3000
+INFO:api_server:OPENAI_API_KEY: 설정됨
+INFO:api_server:DEBUG 모드: True
+INFO:api_server:==================
+INFO:api_server:Current directory: /Users/jihoon/sapiens_engine
+INFO:api_server:BASE_DIR: /Users/jihoon/sapiens_engine
+INFO:api_server:Files in current directory: ['rag_experiment_report.md', 'simple_debug_test.py', 'tools', 'tailwind.config.js', '.DS_Store', 'test_rag_attack_flow.py', '.env.local', 'LLM_Usage_Documentation.md', 'requirements.txt', 'debate_results', 'experiments', 'requirements-web.txt', 'generated_audio', 'sapiens_engine', 'test_defense_response.py', 'node_modules', 'vectordb', 'tests', 'output', 'models', '__pycache__', 'nietzsche_vs_camus_debate.txt', '.gitmodules', 'README.md', 'transhumanism_debate_extracted.json', 'results', 'portraits', 'api_server.py', 'logs', '.gitignore', 'package-lock.json', 'package.json', '.env', 'SERVER_GUIDE.md', 'scripts', 'debate_ui.html', 'stop_servers.sh', 'api', 'marketing', 'agoramind', '.ipynb_checkpoints', 'nextjs.log', '.git', 'backup', 'restart_servers.sh', 'rag_data', 'postcss.config.js', 'data', '.cache', 'philosophers', 'Modelfile.llama3.2', 'next.config.ts', 'reports', 'python_api.log', 'src', 'deprecated', 'cost_optimization_plan.md']
+INFO:api_server:Portrait directory path: /Users/jihoon/sapiens_engine/portraits
+INFO:api_server:Mounted portraits from /Users/jihoon/sapiens_engine/portraits at /portraits
+INFO:sapiens_engine.core.llm_manager:Initialized LLM Manager with provider: openai, model: gpt-4-turbo
+INFO:sapiens_engine.core.llm_manager:Using OpenAI API key: sk-p************************************************************************************************************************************************************svYA
+INFO:api_server:Socket Manager initialized with Next.js URL: http://localhost:3000
+INFO:api_server:🔧 ConversationManager 초기화됨: 토큰 제한 7000, 최근 메시지 유지 10개
+INFO:     Started server process [64310]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'api/routers/philosophers.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [64310]
+WARNING:  WatchFiles detected changes in 'api/routers/philosophers.py'. Reloading...
+INFO:api_server:Loading philosophers from: /Users/jihoon/sapiens_engine/sapiens_engine/config/philosophers.yaml
+INFO:api_server:===== 시스템 환경 설정 =====
+INFO:api_server:NEXTJS_API_URL: http://localhost:3000
+INFO:api_server:OPENAI_API_KEY: 설정됨
+INFO:api_server:DEBUG 모드: True
+INFO:api_server:==================
+INFO:api_server:Current directory: /Users/jihoon/sapiens_engine
+INFO:api_server:BASE_DIR: /Users/jihoon/sapiens_engine
+INFO:api_server:Files in current directory: ['rag_experiment_report.md', 'simple_debug_test.py', 'tools', 'tailwind.config.js', '.DS_Store', 'test_rag_attack_flow.py', '.env.local', 'LLM_Usage_Documentation.md', 'requirements.txt', 'debate_results', 'experiments', 'requirements-web.txt', 'generated_audio', 'sapiens_engine', 'test_defense_response.py', 'node_modules', 'vectordb', 'tests', 'output', 'models', '__pycache__', 'nietzsche_vs_camus_debate.txt', '.gitmodules', 'README.md', 'transhumanism_debate_extracted.json', 'results', 'portraits', 'api_server.py', 'logs', '.gitignore', 'package-lock.json', 'package.json', '.env', 'SERVER_GUIDE.md', 'scripts', 'debate_ui.html', 'stop_servers.sh', 'api', 'marketing', 'agoramind', '.ipynb_checkpoints', 'nextjs.log', '.git', 'backup', 'restart_servers.sh', 'rag_data', 'postcss.config.js', 'data', '.cache', 'philosophers', 'Modelfile.llama3.2', 'next.config.ts', 'reports', 'python_api.log', 'src', 'deprecated', 'cost_optimization_plan.md']
+INFO:api_server:Portrait directory path: /Users/jihoon/sapiens_engine/portraits
+INFO:api_server:Mounted portraits from /Users/jihoon/sapiens_engine/portraits at /portraits
+INFO:sapiens_engine.core.llm_manager:Initialized LLM Manager with provider: openai, model: gpt-4-turbo
+INFO:sapiens_engine.core.llm_manager:Using OpenAI API key: sk-p************************************************************************************************************************************************************svYA
+INFO:api_server:Socket Manager initialized with Next.js URL: http://localhost:3000
+INFO:api_server:🔧 ConversationManager 초기화됨: 토큰 제한 7000, 최근 메시지 유지 10개
+INFO:     Started server process [64314]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:api_server:Loading philosophers from: /Users/jihoon/sapiens_engine/sapiens_engine/config/philosophers.yaml
+INFO:api_server:===== 시스템 환경 설정 =====
+INFO:api_server:NEXTJS_API_URL: http://localhost:3000
+INFO:api_server:OPENAI_API_KEY: 설정됨
+INFO:api_server:DEBUG 모드: True
+INFO:api_server:==================
+INFO:api_server:Current directory: /Users/jihoon/sapiens_engine
+INFO:api_server:BASE_DIR: /Users/jihoon/sapiens_engine
+INFO:api_server:Files in current directory: ['rag_experiment_report.md', 'simple_debug_test.py', 'tools', 'tailwind.config.js', '.DS_Store', 'test_rag_attack_flow.py', '.env.local', 'LLM_Usage_Documentation.md', 'requirements.txt', 'debate_results', 'experiments', 'requirements-web.txt', 'generated_audio', 'sapiens_engine', 'test_defense_response.py', 'node_modules', 'vectordb', 'tests', 'output', 'models', '__pycache__', 'nietzsche_vs_camus_debate.txt', '.gitmodules', 'README.md', 'transhumanism_debate_extracted.json', 'results', 'portraits', 'api_server.py', 'logs', '.gitignore', 'package-lock.json', 'package.json', '.env', 'SERVER_GUIDE.md', 'scripts', 'debate_ui.html', 'stop_servers.sh', 'api', 'marketing', 'agoramind', '.ipynb_checkpoints', 'nextjs.log', '.git', 'backup', 'restart_servers.sh', 'rag_data', 'postcss.config.js', 'data', '.cache', 'philosophers', 'Modelfile.llama3.2', 'next.config.ts', 'reports', 'python_api.log', 'src', 'deprecated', 'cost_optimization_plan.md']
+INFO:api_server:Portrait directory path: /Users/jihoon/sapiens_engine/portraits
+INFO:api_server:Mounted portraits from /Users/jihoon/sapiens_engine/portraits at /portraits
+INFO:sapiens_engine.core.llm_manager:Initialized LLM Manager with provider: openai, model: gpt-4-turbo
+INFO:sapiens_engine.core.llm_manager:Using OpenAI API key: sk-p************************************************************************************************************************************************************svYA
+INFO:api_server:Socket Manager initialized with Next.js URL: http://localhost:3000
+INFO:api_server:🔧 ConversationManager 초기화됨: 토큰 제한 7000, 최근 메시지 유지 10개
+INFO:     Started server process [64334]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'api/main.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [64334]
+WARNING:  WatchFiles detected changes in 'api/main.py'. Reloading...
+INFO:api_server:Loading philosophers from: /Users/jihoon/sapiens_engine/sapiens_engine/config/philosophers.yaml
+INFO:api_server:===== 시스템 환경 설정 =====
+INFO:api_server:NEXTJS_API_URL: http://localhost:3000
+INFO:api_server:OPENAI_API_KEY: 설정됨
+INFO:api_server:DEBUG 모드: True
+INFO:api_server:==================
+INFO:api_server:Current directory: /Users/jihoon/sapiens_engine
+INFO:api_server:BASE_DIR: /Users/jihoon/sapiens_engine
+INFO:api_server:Files in current directory: ['rag_experiment_report.md', 'simple_debug_test.py', 'tools', 'tailwind.config.js', '.DS_Store', 'test_rag_attack_flow.py', '.env.local', 'LLM_Usage_Documentation.md', 'requirements.txt', 'debate_results', 'experiments', 'requirements-web.txt', 'generated_audio', 'sapiens_engine', 'test_defense_response.py', 'node_modules', 'vectordb', 'tests', 'output', 'models', '__pycache__', 'nietzsche_vs_camus_debate.txt', '.gitmodules', 'README.md', 'transhumanism_debate_extracted.json', 'results', 'portraits', 'api_server.py', 'logs', '.gitignore', 'package-lock.json', 'package.json', '.env', 'SERVER_GUIDE.md', 'scripts', 'debate_ui.html', 'stop_servers.sh', 'api', 'marketing', 'agoramind', '.ipynb_checkpoints', 'nextjs.log', '.git', 'backup', 'restart_servers.sh', 'rag_data', 'postcss.config.js', 'data', '.cache', 'philosophers', 'Modelfile.llama3.2', 'next.config.ts', 'reports', 'python_api.log', 'src', 'deprecated', 'cost_optimization_plan.md']
+INFO:api_server:Portrait directory path: /Users/jihoon/sapiens_engine/portraits
+INFO:api_server:Mounted portraits from /Users/jihoon/sapiens_engine/portraits at /portraits
+INFO:sapiens_engine.core.llm_manager:Initialized LLM Manager with provider: openai, model: gpt-4-turbo
+INFO:sapiens_engine.core.llm_manager:Using OpenAI API key: sk-p************************************************************************************************************************************************************svYA
+INFO:api_server:Socket Manager initialized with Next.js URL: http://localhost:3000
+INFO:api_server:🔧 ConversationManager 초기화됨: 토큰 제한 7000, 최근 메시지 유지 10개
+INFO:     Started server process [64340]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'api/routers/__init__.py'. Reloading...
+INFO:api_server:Loading philosophers from: /Users/jihoon/sapiens_engine/sapiens_engine/config/philosophers.yaml
+INFO:api_server:===== 시스템 환경 설정 =====
+INFO:api_server:NEXTJS_API_URL: http://localhost:3000
+INFO:api_server:OPENAI_API_KEY: 설정됨
+INFO:api_server:DEBUG 모드: True
+INFO:api_server:==================
+INFO:api_server:Current directory: /Users/jihoon/sapiens_engine
+INFO:api_server:BASE_DIR: /Users/jihoon/sapiens_engine
+INFO:api_server:Files in current directory: ['rag_experiment_report.md', 'simple_debug_test.py', 'tools', 'tailwind.config.js', '.DS_Store', 'test_rag_attack_flow.py', '.env.local', 'LLM_Usage_Documentation.md', 'requirements.txt', 'debate_results', 'experiments', 'requirements-web.txt', 'generated_audio', 'sapiens_engine', 'test_defense_response.py', 'node_modules', 'vectordb', 'tests', 'output', 'models', '__pycache__', 'nietzsche_vs_camus_debate.txt', '.gitmodules', 'README.md', 'transhumanism_debate_extracted.json', 'results', 'portraits', 'api_server.py', 'logs', '.gitignore', 'package-lock.json', 'package.json', '.env', 'SERVER_GUIDE.md', 'scripts', 'debate_ui.html', 'stop_servers.sh', 'api', 'marketing', 'agoramind', '.ipynb_checkpoints', 'nextjs.log', '.git', 'backup', 'restart_servers.sh', 'rag_data', 'postcss.config.js', 'data', '.cache', 'philosophers', 'Modelfile.llama3.2', 'next.config.ts', 'reports', 'python_api.log', 'src', 'deprecated', 'cost_optimization_plan.md']
+INFO:api_server:Portrait directory path: /Users/jihoon/sapiens_engine/portraits
+INFO:api_server:Mounted portraits from /Users/jihoon/sapiens_engine/portraits at /portraits
+INFO:sapiens_engine.core.llm_manager:Initialized LLM Manager with provider: openai, model: gpt-4-turbo
+INFO:sapiens_engine.core.llm_manager:Using OpenAI API key: sk-p************************************************************************************************************************************************************svYA
+INFO:api_server:Socket Manager initialized with Next.js URL: http://localhost:3000
+INFO:api_server:🔧 ConversationManager 초기화됨: 토큰 제한 7000, 최근 메시지 유지 10개
+INFO:     Started server process [64360]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'api/routers/__init__.py'. Reloading...
+INFO:api_server:Loading philosophers from: /Users/jihoon/sapiens_engine/sapiens_engine/config/philosophers.yaml
+INFO:api_server:===== 시스템 환경 설정 =====
+INFO:api_server:NEXTJS_API_URL: http://localhost:3000
+INFO:api_server:OPENAI_API_KEY: 설정됨
+INFO:api_server:DEBUG 모드: True
+INFO:api_server:==================
+INFO:api_server:Current directory: /Users/jihoon/sapiens_engine
+INFO:api_server:BASE_DIR: /Users/jihoon/sapiens_engine
+INFO:api_server:Files in current directory: ['rag_experiment_report.md', 'simple_debug_test.py', 'tools', 'tailwind.config.js', '.DS_Store', 'test_rag_attack_flow.py', '.env.local', 'LLM_Usage_Documentation.md', 'requirements.txt', 'debate_results', 'experiments', 'requirements-web.txt', 'generated_audio', 'sapiens_engine', 'test_defense_response.py', 'node_modules', 'vectordb', 'tests', 'output', 'models', '__pycache__', 'nietzsche_vs_camus_debate.txt', '.gitmodules', 'README.md', 'transhumanism_debate_extracted.json', 'results', 'portraits', 'api_server.py', 'logs', '.gitignore', 'package-lock.json', 'package.json', '.env', 'SERVER_GUIDE.md', 'scripts', 'debate_ui.html', 'stop_servers.sh', 'api', 'marketing', 'agoramind', '.ipynb_checkpoints', 'nextjs.log', '.git', 'backup', 'restart_servers.sh', 'rag_data', 'postcss.config.js', 'data', '.cache', 'philosophers', 'Modelfile.llama3.2', 'next.config.ts', 'reports', 'python_api.log', 'src', 'deprecated', 'cost_optimization_plan.md']
+INFO:api_server:Portrait directory path: /Users/jihoon/sapiens_engine/portraits
+INFO:api_server:Mounted portraits from /Users/jihoon/sapiens_engine/portraits at /portraits
+INFO:sapiens_engine.core.llm_manager:Initialized LLM Manager with provider: openai, model: gpt-4-turbo
+INFO:sapiens_engine.core.llm_manager:Using OpenAI API key: sk-p************************************************************************************************************************************************************svYA
+INFO:api_server:Socket Manager initialized with Next.js URL: http://localhost:3000
+INFO:api_server:🔧 ConversationManager 초기화됨: 토큰 제한 7000, 최근 메시지 유지 10개
+INFO:     Started server process [64373]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:api_server:Loading philosophers from: /Users/jihoon/sapiens_engine/sapiens_engine/config/philosophers.yaml
+INFO:api_server:===== 시스템 환경 설정 =====
+INFO:api_server:NEXTJS_API_URL: http://localhost:3000
+INFO:api_server:OPENAI_API_KEY: 설정됨
+INFO:api_server:DEBUG 모드: True
+INFO:api_server:==================
+INFO:api_server:Current directory: /Users/jihoon/sapiens_engine
+INFO:api_server:BASE_DIR: /Users/jihoon/sapiens_engine
+INFO:api_server:Files in current directory: ['rag_experiment_report.md', 'simple_debug_test.py', 'tools', 'tailwind.config.js', '.DS_Store', 'test_rag_attack_flow.py', '.env.local', 'LLM_Usage_Documentation.md', 'requirements.txt', 'debate_results', 'experiments', 'requirements-web.txt', 'generated_audio', 'sapiens_engine', 'test_defense_response.py', 'node_modules', 'vectordb', 'tests', 'output', 'models', '__pycache__', 'nietzsche_vs_camus_debate.txt', '.gitmodules', 'README.md', 'transhumanism_debate_extracted.json', 'results', 'portraits', 'api_server.py', 'logs', '.gitignore', 'package-lock.json', 'package.json', '.env', 'SERVER_GUIDE.md', 'scripts', 'debate_ui.html', 'stop_servers.sh', 'api', 'marketing', 'agoramind', '.ipynb_checkpoints', 'nextjs.log', '.git', 'backup', 'restart_servers.sh', 'rag_data', 'postcss.config.js', 'data', '.cache', 'philosophers', 'Modelfile.llama3.2', 'next.config.ts', 'reports', 'python_api.log', 'src', 'deprecated', 'cost_optimization_plan.md']
+INFO:api_server:Portrait directory path: /Users/jihoon/sapiens_engine/portraits
+INFO:api_server:Mounted portraits from /Users/jihoon/sapiens_engine/portraits at /portraits
+INFO:sapiens_engine.core.llm_manager:Initialized LLM Manager with provider: openai, model: gpt-4-turbo
+INFO:sapiens_engine.core.llm_manager:Using OpenAI API key: sk-p************************************************************************************************************************************************************svYA
+INFO:api_server:Socket Manager initialized with Next.js URL: http://localhost:3000
+INFO:api_server:🔧 ConversationManager 초기화됨: 토큰 제한 7000, 최근 메시지 유지 10개
+INFO:     Started server process [64381]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'api/routers/philosophers.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [64381]
+INFO:api_server:Loading philosophers from: /Users/jihoon/sapiens_engine/sapiens_engine/config/philosophers.yaml
+INFO:api_server:===== 시스템 환경 설정 =====
+INFO:api_server:NEXTJS_API_URL: http://localhost:3000
+INFO:api_server:OPENAI_API_KEY: 설정됨
+INFO:api_server:DEBUG 모드: True
+INFO:api_server:==================
+INFO:api_server:Current directory: /Users/jihoon/sapiens_engine
+INFO:api_server:BASE_DIR: /Users/jihoon/sapiens_engine
+INFO:api_server:Files in current directory: ['rag_experiment_report.md', 'simple_debug_test.py', 'tools', 'tailwind.config.js', '.DS_Store', 'test_rag_attack_flow.py', '.env.local', 'LLM_Usage_Documentation.md', 'requirements.txt', 'debate_results', 'experiments', 'requirements-web.txt', 'generated_audio', 'sapiens_engine', 'test_defense_response.py', 'node_modules', 'vectordb', 'tests', 'output', 'models', '__pycache__', 'nietzsche_vs_camus_debate.txt', '.gitmodules', 'README.md', 'transhumanism_debate_extracted.json', 'results', 'portraits', 'api_server.py', 'logs', '.gitignore', 'package-lock.json', 'package.json', '.env', 'SERVER_GUIDE.md', 'scripts', 'debate_ui.html', 'stop_servers.sh', 'api', 'marketing', 'agoramind', '.ipynb_checkpoints', 'nextjs.log', '.git', 'backup', 'restart_servers.sh', 'rag_data', 'postcss.config.js', 'data', '.cache', 'philosophers', 'Modelfile.llama3.2', 'next.config.ts', 'reports', 'python_api.log', 'src', 'deprecated', 'cost_optimization_plan.md']
+INFO:api_server:Portrait directory path: /Users/jihoon/sapiens_engine/portraits
+INFO:api_server:Mounted portraits from /Users/jihoon/sapiens_engine/portraits at /portraits
+INFO:sapiens_engine.core.llm_manager:Initialized LLM Manager with provider: openai, model: gpt-4-turbo
+INFO:sapiens_engine.core.llm_manager:Using OpenAI API key: sk-p************************************************************************************************************************************************************svYA
+INFO:api_server:Socket Manager initialized with Next.js URL: http://localhost:3000
+INFO:api_server:🔧 ConversationManager 초기화됨: 토큰 제한 7000, 최근 메시지 유지 10개
+INFO:     Started server process [64751]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [64751]
+INFO:     Stopping reloader process [13569]

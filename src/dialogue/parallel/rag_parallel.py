@@ -17,9 +17,10 @@ logger = logging.getLogger(__name__)
 class RAGParallelProcessor:
     """RAG 작업 병렬 처리기"""
     
-    def __init__(self, max_workers: int = 4):
+    def __init__(self, max_workers: int = 4, sequential_search: bool = False):
         self.max_workers = max_workers
         self.executor = ThreadPoolExecutor(max_workers=max_workers)
+        self.sequential_search = sequential_search  # RAG 검색 직렬 처리 플래그
         
     async def process_argument_preparation_parallel(
         self, 
@@ -83,17 +84,36 @@ class RAGParallelProcessor:
             if progress_callback:
                 progress_callback("core_arguments", "completed", {"result": core_arguments})
             
-            # 4단계: 모든 검색 작업 병렬 실행
+            # 4단계: 검색 작업 실행 (직렬/병렬 선택)
             if progress_callback:
-                progress_callback("parallel_search", "started", {"search_count": len(search_tasks)})
+                search_mode = "sequential" if self.sequential_search else "parallel"
+                progress_callback("search_execution", "started", {
+                    "search_count": len(search_tasks),
+                    "mode": search_mode
+                })
             
             search_results = []
             if search_tasks:
-                search_results = await asyncio.gather(*search_tasks, return_exceptions=True)
+                if self.sequential_search:
+                    # 직렬 처리: 하나씩 순차적으로 실행
+                    logger.info(f"🔄 Sequential RAG search mode: processing {len(search_tasks)} searches one by one")
+                    for i, task in enumerate(search_tasks, 1):
+                        if progress_callback:
+                            progress_callback("search_execution", "progress", {
+                                "current": i,
+                                "total": len(search_tasks),
+                                "message": f"Executing search {i}/{len(search_tasks)}"
+                            })
+                        result = await task
+                        search_results.append(result)
+                else:
+                    # 병렬 처리: 모든 검색 동시 실행
+                    logger.info(f"⚡ Parallel RAG search mode: processing {len(search_tasks)} searches concurrently")
+                    search_results = await asyncio.gather(*search_tasks, return_exceptions=True)
             
             if progress_callback:
-                progress_callback("parallel_search", "completed", {"results_count": len(search_results)})
-            
+                progress_callback("search_execution", "completed", {"results_count": len(search_results)})
+
             # 5단계: 검색 결과 통합 및 필터링
             if progress_callback:
                 progress_callback("evidence_integration", "started", {"description": "증거 통합 및 필터링"})
@@ -119,7 +139,8 @@ class RAGParallelProcessor:
                 "core_arguments": core_arguments,
                 "evidence_results": evidence_results,
                 "final_argument": final_argument,
-                "search_results_count": len(search_results)
+                "search_results_count": len(search_results),
+                "search_mode": "sequential" if self.sequential_search else "parallel"
             }
             
         except Exception as e:

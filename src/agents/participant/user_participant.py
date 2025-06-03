@@ -100,6 +100,10 @@ class UserParticipant(Agent):
             # 사용자가 보낸 메시지 처리
             return self._process_user_message(input_data)
         
+        elif action == "analyze_opponent_arguments":
+            # 상대방 논지 분석 요청 (사용자는 분석하지 않음)
+            return self._handle_analyze_opponent_arguments(input_data)
+        
         elif action == "get_status":
             # 사용자 상태 정보 반환
             return self._get_user_status()
@@ -167,6 +171,32 @@ class UserParticipant(Agent):
             "message": message,
             "timestamp": timestamp,
             "message_count": self.message_count
+        }
+    
+    def _handle_analyze_opponent_arguments(self, input_data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        상대방 논지 분석 요청 처리 (사용자는 분석하지 않음)
+        
+        Args:
+            input_data: 분석 요청 데이터
+            
+        Returns:
+            성공 응답 (실제로는 아무것도 하지 않음)
+        """
+        opponent_response = input_data.get("opponent_response", "")
+        speaker_id = input_data.get("speaker_id", "")
+        
+        # 사용자는 실제 분석을 하지 않고 단순히 성공 응답만 반환
+        # 이는 AI 에이전트들이 유저의 논지를 분석할 수 있도록 하기 위함
+        logger.info(f"👤 [UserParticipant {self.user_id}] 논지 분석 요청 수신 (상대방: {speaker_id}) - 사용자는 분석 안함")
+        
+        return {
+            "status": "analysis_completed",
+            "user_id": self.user_id,
+            "opponent_id": speaker_id,
+            "message": "사용자는 논지 분석을 수행하지 않습니다.",
+            "arguments_analyzed": 0,
+            "timestamp": time.time()
         }
     
     def _get_user_status(self) -> Dict[str, Any]:
