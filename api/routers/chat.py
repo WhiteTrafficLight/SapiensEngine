@@ -1,10 +1,7 @@
 """
-실시간 토론 시스템 - 간단한 폴링 방식
+실시간 토론 시스템 - Socket.IO 통합
 
-기존 debate_test_transhumanism.py와 동일한 로직:
-1. 백그라운드에서 dialogue.generate_response() 호출
-2. 새 메시지 생성되면 즉시 웹소켓으로 전송
-3. 콜백 없이 단순한 구조
+Socket.IO를 사용하여 Next.js 서버와 통신
 """
 
 import asyncio
@@ -14,8 +11,9 @@ import time
 from typing import Dict, List, Optional, Any
 from datetime import datetime
 
-from fastapi import APIRouter, HTTPException, WebSocket, WebSocketDisconnect
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
+import socketio
 
 logger = logging.getLogger(__name__)
 
@@ -33,67 +31,79 @@ class CreateDebateRoomRequest(BaseModel):
     moderator_style: str = "Jamie the Host"
 
 # ========================================================================
+# Socket.IO 클라이언트 설정
+# ========================================================================
+
+# Socket.IO 클라이언트 인스턴스
+sio = socketio.AsyncClient()
+
+# Next.js 서버 URL
+NEXTJS_SERVER_URL = "http://localhost:3000"
+
+@sio.event
+async def connect():
+    logger.info("🔌 Socket.IO 클라이언트가 Next.js 서버에 연결되었습니다")
+
+@sio.event
+async def disconnect():
+    logger.info("🔌 Socket.IO 클라이언트 연결이 해제되었습니다")
+
+async def init_socketio_client():
+    """Socket.IO 클라이언트 초기화"""
+    try:
+        if not sio.connected:
+            await sio.connect(
+                url=NEXTJS_SERVER_URL,
+                socketio_path="/api/socket/io"
+            )
+            logger.info("✅ Socket.IO 클라이언트 초기화 완료")
+        return True
+    except Exception as e:
+        logger.error(f"❌ Socket.IO 클라이언트 초기화 실패: {str(e)}")
+        return False
+
+async def send_message_to_room(room_id: str, message_data: Dict[str, Any]):
+    """Socket.IO를 통해 특정 방에 메시지 전송"""
+    try:
+        # Socket.IO 클라이언트가 연결되어 있는지 확인
+        if not sio.connected:
+            await init_socketio_client()
+        
+        # Next.js Socket.IO 서버에 브로드캐스트 요청
+        await sio.emit('broadcast-to-room', {
+            'room_id': room_id,
+            'event': 'new-message',
+            'data': message_data
+        })
+        
+        logger.info(f"📤 Socket.IO로 메시지 전송 완료: {room_id}")
+        return True
+        
+    except Exception as e:
+        logger.error(f"❌ Socket.IO 메시지 전송 실패: {str(e)}")
+        return False
+
+# ========================================================================
 # 전역 상태 관리
 # ========================================================================
 
 # 활성 토론 인스턴스들
 active_debates: Dict[str, Any] = {}
 
-# WebSocket 연결들 (room_id -> Set[WebSocket])
-active_websockets: Dict[str, set] = {}
-
 # 메시지 히스토리 추적 (room_id -> last_message_count)
 message_trackers: Dict[str, int] = {}
-
-# ========================================================================
-# WebSocket 관리
-# ========================================================================
-
-class WebSocketManager:
-    def __init__(self):
-        self.connections: Dict[str, List[WebSocket]] = {}
-    
-    async def connect(self, websocket: WebSocket, room_id: str):
-        await websocket.accept()
-        if room_id not in self.connections:
-            self.connections[room_id] = []
-        self.connections[room_id].append(websocket)
-        logger.info(f"🔌 WebSocket connected to room {room_id}")
-    
-    def disconnect(self, websocket: WebSocket, room_id: str):
-        if room_id in self.connections:
-            self.connections[room_id].remove(websocket)
-            if not self.connections[room_id]:
-                del self.connections[room_id]
-        logger.info(f"🔌 WebSocket disconnected from room {room_id}")
-    
-    async def send_message_to_room(self, room_id: str, message: dict):
-        """특정 방의 모든 연결된 클라이언트에게 메시지 전송"""
-        if room_id not in self.connections:
-            logger.warning(f"📤 No WebSocket connections for room {room_id}")
-            return
-            
-        disconnected = []
-        for websocket in self.connections[room_id]:
-            try:
-                await websocket.send_text(json.dumps(message))
-                logger.info(f"📤 Message sent to room {room_id}: {message.get('speaker', 'unknown')}")
-            except Exception as e:
-                logger.error(f"❌ Failed to send message: {e}")
-                disconnected.append(websocket)
-        
-        # 끊어진 연결 정리
-        for ws in disconnected:
-            self.disconnect(ws, room_id)
-
-# 전역 WebSocket 매니저
-websocket_manager = WebSocketManager()
 
 # ========================================================================
 # API 라우터
 # ========================================================================
 
 router = APIRouter(prefix="/chat")
+
+# Socket.IO 클라이언트 초기화 (서버 시작 시)
+@router.on_event("startup")
+async def startup_event():
+    """서버 시작 시 Socket.IO 클라이언트 초기화"""
+    await init_socketio_client()
 
 @router.post("/create-debate-room")
 async def create_debate_room(request: CreateDebateRoomRequest):
@@ -182,16 +192,26 @@ async def get_next_message(room_id: str):
             
             logger.info(f"✅ Message generated: {speaker} - {len(message)} chars")
             
-            # 웹소켓으로 메시지 전송
-            await send_message_to_websockets(room_id, {
-                "event_type": "new_message",
-                "speaker": speaker,
-                "message": message,
-                "stage": current_stage,
-                "room_id": room_id
+            # Socket.IO로 메시지 전송 - 프론트엔드 형태에 맞게 수정
+            message_payload = {
+                "id": f"ai-{int(time.time() * 1000)}",  # 고유 ID 생성
+                "text": message,
+                "sender": speaker,
+                "senderType": "npc",
+                "isUser": False,
+                "timestamp": datetime.now().isoformat(),
+                "metadata": {
+                    "stage": current_stage,
+                    "event_type": "debate_message"
+                }
+            }
+            
+            await send_message_to_room(room_id, {
+                "roomId": room_id,  # room_id -> roomId로 변경
+                "message": message_payload
             })
             
-            logger.info(f"📤 Message sent to WebSocket room {room_id}")
+            logger.info(f"📤 Message sent via Socket.IO to room {room_id}")
             
             return {
                 "status": "success",
@@ -204,7 +224,7 @@ async def get_next_message(room_id: str):
             logger.info(f"🏁 Debate completed for room {room_id}")
             
             # 토론 완료 알림
-            await send_message_to_websockets(room_id, {
+            await send_message_to_room(room_id, {
                 "event_type": "debate_completed",
                 "message": "토론이 완료되었습니다."
             })
@@ -222,45 +242,6 @@ async def get_next_message(room_id: str):
         logger.error(f"❌ Error generating next message: {str(e)}")
         raise HTTPException(status_code=500, detail=f"메시지 생성 실패: {str(e)}")
 
-@router.websocket("/ws/{room_id}")
-async def websocket_endpoint(websocket: WebSocket, room_id: str):
-    """룸별 WebSocket 연결"""
-    await websocket.accept()
-    logger.info(f"🔌 WebSocket connected to room {room_id}")
-    
-    # 룸에 WebSocket 추가
-    if room_id not in active_websockets:
-        active_websockets[room_id] = set()
-    active_websockets[room_id].add(websocket)
-    
-    try:
-        while True:
-            data = await websocket.receive_text()
-            # 클라이언트에서 메시지 수신 시 처리 (필요시)
-            logger.info(f"📨 Received from WebSocket in room {room_id}: {data}")
-    except WebSocketDisconnect:
-        # WebSocket 연결 해제
-        active_websockets[room_id].discard(websocket)
-        if not active_websockets[room_id]:
-            del active_websockets[room_id]
-        logger.info(f"🔌 WebSocket disconnected from room {room_id}")
-
-@router.get("/debate/{room_id}/status")
-async def get_debate_status(room_id: str):
-    """토론 상태 조회"""
-    if room_id not in active_debates:
-        raise HTTPException(status_code=404, detail="토론방을 찾을 수 없습니다")
-    
-    dialogue = active_debates[room_id]
-    speaking_history = dialogue.state.get("speaking_history", [])
-    
-    return {
-        "room_id": room_id,
-        "current_stage": dialogue.state.get("current_stage", "unknown"),
-        "total_messages": len(speaking_history),
-        "is_active": True
-    }
-
 @router.delete("/debate/{room_id}")
 async def cleanup_debate_room(room_id: str):
     """토론방 정리"""
@@ -270,9 +251,6 @@ async def cleanup_debate_room(room_id: str):
         
         if room_id in message_trackers:
             del message_trackers[room_id]
-        
-        if room_id in websocket_manager.connections:
-            del websocket_manager.connections[room_id]
             
         return {"status": "success", "message": f"토론방 {room_id} 정리 완료"}
         
@@ -281,122 +259,19 @@ async def cleanup_debate_room(room_id: str):
         raise HTTPException(status_code=500, detail=f"토론방 정리 실패: {str(e)}")
 
 # ========================================================================
-# 백그라운드 자동 진행 (debate_test_transhumanism.py와 동일한 로직) - 주석처리
+# Socket.IO 정리 함수
 # ========================================================================
 
-# async def auto_progress_debate(room_id: str):
-#     """백그라운드에서 토론 자동 진행 - debate_test_transhumanism.py 로직 그대로"""
-#     try:
-#         logger.info(f"🚀 Auto-progress started for room {room_id}")
-#         print(f"🚀 AUTO-PROGRESS: 토론방 {room_id} 자동 진행 시작")
-#         
-#         dialogue = active_debates.get(room_id)
-#         
-#         if not dialogue:
-#             logger.error(f"❌ No dialogue found for room {room_id}")
-#             print(f"❌ ERROR: 토론방 {room_id}를 찾을 수 없음")
-#             return
-#         
-#         print(f"✅ DIALOGUE: 토론 인스턴스 확인됨 - {type(dialogue)}")
-#         
-#         # debate_test_transhumanism.py와 동일한 로직
-#         max_turns = 15  # 최대 턴 수 제한
-#         turn_count = 0
-#         
-#         while room_id in active_debates and turn_count < max_turns:
-#             turn_count += 1
-#             print(f"🎭 TURN {turn_count}: 시작")
-#             
-#             try:
-#                 # 다음 발언자 확인 (debate_test_transhumanism.py와 동일)
-#                 print(f"🔍 STEP 1: get_next_speaker() 호출")
-#                 next_speaker_info = dialogue.get_next_speaker()
-#                 print(f"🔍 NEXT_SPEAKER: {next_speaker_info}")
-#                 
-#                 if next_speaker_info.get("status") == "waiting":
-#                     # 분석 대기 상태 (debate_test_transhumanism.py와 동일)
-#                     speaker_id = next_speaker_info.get("speaker_id")
-#                     logger.info(f"⏳ [{speaker_id}] 분석 완료 대기 중...")
-#                     print(f"⏳ WAITING: {speaker_id} 분석 완료 대기 중...")
-#                     
-#                     # 분석 완료 강제 설정 (debate_test_transhumanism.py와 동일)
-#                     if speaker_id in ["nietzsche", "hegel"]:  # marx → hegel로 변경
-#                         print(f"force_analysis_completion 호출")
-#                         dialogue.force_analysis_completion(speaker_id)
-#                         logger.info(f"✅ [{speaker_id}] 분석 완료 처리")
-#                         print(f"✅ FORCED: {speaker_id} 분석 완료 강제 처리됨")
-#                     
-#                     # ⭐ 핵심: waiting 상태라도 continue 하지 말고 generate_response() 호출
-#                     # continue 제거!
-#                 
-#                 if not next_speaker_info.get("can_proceed", True):
-#                     print(f"❌ 토론 진행 불가: {next_speaker_info}")
-#                     break
-#                 
-#                 speaker_id = next_speaker_info.get("speaker_id")
-#                 if not speaker_id:
-#                     print(f"✅ 토론 완료!")
-#                     break
-#                 
-#                 # ⭐ 핵심: 항상 generate_response() 호출 (debate_test_transhumanism.py와 동일)
-#                 print(f"🔍 STEP 2: generate_response() 호출")
-#                 response = await asyncio.to_thread(dialogue.generate_response)
-#                 print(f"🔍 RESPONSE: {response.get('status')} - {response.get('speaker_id')}")
-#                 
-#                 if response.get("status") == "success":
-#                     speaker = response.get("speaker_id", "unknown")
-#                     message = response.get("message", "")
-#                     current_stage = response.get("current_stage", "unknown")
-#                     
-#                     print(f"✅ SUCCESS: {speaker} 메시지 생성됨 (길이: {len(message)})")
-#                     
-#                     # 웹소켓으로 메시지 전송
-#                     await send_message_to_websockets(room_id, {
-#                         "event_type": "new_message",
-#                         "speaker": speaker,
-#                         "message": message,
-#                         "stage": current_stage,
-#                         "turn": turn_count
-#                     })
-#                     
-#                     # 단계별 대기 시간 (debate_test_transhumanism.py와 동일)
-#                     if current_stage in ["pro_argument", "con_argument"]:
-#                         await asyncio.sleep(1)  # 입론 단계
-#                     elif current_stage == "interactive_argument":
-#                         await asyncio.sleep(0.5)  # 상호논증 단계
-#                     else:
-#                         await asyncio.sleep(0.5)  # 기타 단계
-#                     
-#                 elif response.get("status") == "completed":
-#                     print(f"🏁 토론 완료!")
-#                     await send_message_to_websockets(room_id, {
-#                         "event_type": "debate_completed"
-#                     })
-#                     break
-#                 else:
-#                     print(f"❌ 응답 생성 실패: {response}")
-#                     break
-#                     
-#             except Exception as e:
-#                 print(f"❌ TURN {turn_count} 실패: {str(e)}")
-#                 logger.error(f"Error in turn {turn_count}: {str(e)}")
-#                 break
-#         
-#         print(f"🏁 AUTO-PROGRESS 완료: {turn_count} 턴 진행")
-#         
-#     except Exception as e:
-#         logger.error(f"❌ Auto-progress failed for room {room_id}: {str(e)}")
-#         print(f"❌ AUTO-PROGRESS 실패: {str(e)}")
+async def cleanup_socketio_client():
+    """Socket.IO 클라이언트 정리"""
+    try:
+        if sio.connected:
+            await sio.disconnect()
+            logger.info("🔌 Socket.IO 클라이언트 연결 해제됨")
+    except Exception as e:
+        logger.error(f"❌ Socket.IO 클라이언트 정리 실패: {str(e)}")
 
-async def send_message_to_websockets(room_id: str, message_data: Dict[str, Any]):
-    """룸의 모든 WebSocket 연결에 메시지 전송"""
-    if room_id in active_websockets:
-        websockets_in_room = active_websockets[room_id].copy()
-        for websocket in websockets_in_room:
-            try:
-                await websocket.send_text(json.dumps(message_data))
-                logger.info(f"📤 Sent message to WebSocket in room {room_id}")
-            except Exception as e:
-                logger.error(f"Error sending to WebSocket: {str(e)}")
-                # 연결이 끊어진 WebSocket 제거
-                active_websockets[room_id].discard(websocket) 
+@router.on_event("shutdown")
+async def shutdown_event():
+    """서버 종료 시 Socket.IO 클라이언트 정리"""
+    await cleanup_socketio_client() 
