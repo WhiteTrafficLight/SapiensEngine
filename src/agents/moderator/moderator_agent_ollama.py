@@ -410,7 +410,7 @@ Important: Write your response in the SAME LANGUAGE as the debate topic. If the 
             
             # 지정된 스타일 ID의 템플릿 가져오기
             if style_id in moderator_styles:
-                style_template = moderator_styles[style_id]["text"]
+                style_template = moderator_styles[style_id]["opening"]
                 style_name = moderator_styles[style_id]["name"]
                 
                 # 템플릿을 현재 토론 주제에 맞게 수정
@@ -686,7 +686,88 @@ Ensure your messages are complete and do not cut off mid-sentence.
         for msg in recent_con_messages:
             con_arguments += msg + "\n"
         
-        # 프롬프트 작성
+        # 1차 요약의 경우 모더레이터 스타일의 transition 속성 참조
+        if "summary_1" in current_stage.lower():
+            style_id = self.config.get("style_id", "0")  # 기본값은 "0" (Casual Young Moderator)
+            
+            try:
+                import json
+                import os
+                
+                # moderator_style.json 파일 경로
+                style_file_path = os.path.join(
+                    os.path.dirname(__file__), 
+                    "moderator_style.json"
+                )
+                
+                # 스타일 파일 로드
+                with open(style_file_path, 'r', encoding='utf-8') as f:
+                    moderator_styles = json.load(f)
+                
+                # 지정된 스타일 ID의 transition 템플릿 가져오기
+                if style_id in moderator_styles:
+                    transition_template = moderator_styles[style_id]["transition"]
+                    style_name = moderator_styles[style_id]["name"]
+                    
+                    # transition 스타일을 참조하는 프롬프트 작성
+                    system_prompt = f"""
+You are a debate moderator with the style: "{style_name}".
+Your task is to create a balanced, fair summary of the arguments presented so far, following the style and tone of the provided transition template.
+You should not show any bias toward either side of the debate and should accurately represent both positions.
+Adapt the template style to create a summary while maintaining the same personality and speaking style.
+Write a complete, comprehensive summary without cutting off in the middle.
+"""
+
+                    user_prompt = f"""
+You are the moderator of a debate on: "{topic}".
+
+TRANSITION STYLE TEMPLATE (adapt this style to create your summary):
+{transition_template}
+
+TASK: Create a summary {summary_type} following the style and tone of the template. You should:
+1. Summarize the key points made by both sides
+2. Highlight areas of agreement and disagreement  
+3. Remain completely neutral and objective
+4. Maintain the same personality and speaking style as shown in the template
+5. Transition the debate to the next phase (rebuttal stage)
+
+PRO side arguments:
+{pro_arguments}
+
+CON side arguments:
+{con_arguments}
+
+Create a summary that matches the template's style while fulfilling all the requirements above. Ensure your response is complete - do not stop mid-sentence.
+
+Important: Write your summary in the SAME LANGUAGE as the debate topic. If the topic is in Korean, write in Korean. If in English, write in English, etc.
+"""
+                    
+                    # LLM 호출
+                    try:
+                        summary = self.llm_manager.generate_response(
+                            system_prompt=system_prompt, 
+                            user_prompt=user_prompt,
+                            llm_provider="ollama",
+                            llm_model="llama3.2-optimized",
+                            max_tokens=1500
+                        )
+                        
+                        if summary:
+                            return {
+                                "status": "success",
+                                "message": summary
+                            }
+                            
+                    except Exception as e:
+                        logger.error(f"Error generating styled summary: {str(e)}")
+                        
+                else:
+                    logger.warning(f"Style ID '{style_id}' not found in moderator_style.json")
+                    
+            except Exception as e:
+                logger.error(f"Error loading moderator style for summary: {str(e)}")
+        
+        # 스타일 로드 실패 시 또는 1차 요약이 아닌 경우 기본 프롬프트 사용
         system_prompt = """
 You are the moderator of a formal debate. Your task is to create a balanced, fair summary of the arguments presented so far.
 You should not show any bias toward either side of the debate and should accurately represent both positions.

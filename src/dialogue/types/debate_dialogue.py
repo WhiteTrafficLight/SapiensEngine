@@ -1301,50 +1301,8 @@ Important:
             }
     
     def _get_participants_by_role(self, role: str) -> List[str]:
-        """채팅방 데이터에서 역할별 참가자 목록 추출 (다중 참가자 지원)"""
-        if not self.room_data:
-            return []
-        
-        participants = []
-        if 'participants' in self.room_data:
-            participants_data = self.room_data['participants']
-            
-            # 새로운 다중 참가자 구조 지원
-            if role == ParticipantRole.PRO and 'pro' in participants_data:
-                pro_data = participants_data['pro']
-                
-                # 단일 참가자인 경우
-                if isinstance(pro_data, dict) and 'character_id' in pro_data:
-                    character_id = pro_data.get('character_id', 'pro_agent')
-                    participants.append(character_id)
-                
-                # 다중 참가자인 경우
-                elif isinstance(pro_data, list):
-                    for i, participant in enumerate(pro_data):
-                        character_id = participant.get('character_id', f'pro_agent_{i+1}')
-                        participants.append(character_id)
-                        
-            elif role == ParticipantRole.CON and 'con' in participants_data:
-                con_data = participants_data['con']
-                
-                # 단일 참가자인 경우
-                if isinstance(con_data, dict) and 'character_id' in con_data:
-                    character_id = con_data.get('character_id', 'con_agent')
-                    participants.append(character_id)
-                
-                # 다중 참가자인 경우
-                elif isinstance(con_data, list):
-                    for i, participant in enumerate(con_data):
-                        character_id = participant.get('character_id', f'con_agent_{i+1}')
-                        participants.append(character_id)
-            
-            # 기존 NPC 구조도 지원 (하위 호환성)
-            if 'npcs' in participants_data:
-                for npc in participants_data['npcs']:
-                    if npc.get('role') == role:
-                        participants.append(npc.get('id'))
-        
-        return participants
+        """역할별 참가자 목록 반환 (이미 초기화된 데이터 사용)"""
+        return self.participants.get(role, [])
     
     # ========================================================================
     # CORE DEBATE RESPONSE GENERATION
