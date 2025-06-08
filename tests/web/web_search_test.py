@@ -253,7 +253,7 @@ def main():
     # 쿼리가 제공되었으면 명령줄 모드, 아니면 대화형 모드
     if args.query:
         # 명령줄 모드
-    run_web_search_test(
+        run_web_search_test(
         query=args.query,
         search_provider=args.provider,
         max_results=args.num_results,

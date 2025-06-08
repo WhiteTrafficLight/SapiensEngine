@@ -283,6 +283,21 @@ async def generate_message_async(room_id: str, dialogue, speaker_id: str, speake
             logger.info(f"✅ Message generated: {speaker_id} - {len(message)} chars")
             logger.info(f"📍 Message stage: {original_stage}")
             
+            # RAG 정보 추출 (speaking_history의 마지막 메시지에서)
+            rag_info = {}
+            if hasattr(dialogue, 'state') and 'speaking_history' in dialogue.state:
+                speaking_history = dialogue.state['speaking_history']
+                if speaking_history:
+                    last_message = speaking_history[-1]
+                    if last_message.get('speaker_id') == speaker_id:
+                        rag_info = {
+                            "rag_used": last_message.get("rag_used", False),
+                            "rag_source_count": last_message.get("rag_source_count", 0),
+                            "rag_sources": last_message.get("rag_sources", [])
+                        }
+                        if rag_info["rag_used"]:
+                            logger.info(f"🔍 RAG was used: {rag_info['rag_source_count']} sources")
+            
             # Socket.IO로 완성된 메시지 전송
             message_payload = {
                 "id": f"ai-{int(time.time() * 1000)}",  # 고유 ID 생성
@@ -295,7 +310,8 @@ async def generate_message_async(room_id: str, dialogue, speaker_id: str, speake
                 "stage": original_stage,
                 "metadata": {
                     "stage": original_stage,
-                    "event_type": "debate_message_complete"  # 완성된 메시지임을 표시
+                    "event_type": "debate_message_complete",  # 완성된 메시지임을 표시
+                    **rag_info  # RAG 정보 포함
                 }
             }
             
@@ -379,7 +395,13 @@ async def process_user_message(room_id: str, request: dict):
                 "timestamp": time.time(),
                 "role": result.get("role", "user"),
                 "stage": result.get("stage", "unknown"),
-                "skipAnimation": False  # 사용자 메시지는 애니메이션 없이 즉시 표시
+                "skipAnimation": False,  # 사용자 메시지는 애니메이션 없이 즉시 표시
+                "metadata": {
+                    "event_type": "user_message",
+                    "rag_used": False,  # 사용자 메시지는 RAG 사용 안함
+                    "rag_source_count": 0,
+                    "rag_sources": []
+                }
             }
             
             await send_message_to_room(room_id, {

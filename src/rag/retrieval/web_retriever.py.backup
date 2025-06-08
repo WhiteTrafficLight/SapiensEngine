@@ -63,7 +63,7 @@ class WebSearchRetriever:
     def __init__(
         self,
         embedding_model: str = "BAAI/bge-large-en-v1.5",  # 기본 모델을 더 좋은 모델로 변경
-        search_provider: str = "serpapi",  # 'serpapi', 'google', 'bing'
+        search_provider: str = "google",  # 'serpapi', 'google', 'bing' - Google을 기본값으로 변경
         api_key: Optional[str] = None,
         max_results: int = 5,
         cache_dir: str = "./.cache/web_search",
@@ -427,7 +427,7 @@ class WebSearchRetriever:
 
     def _extract_page_content(self, url: str, search_result: Dict[str, Any]) -> Tuple[str, Dict[str, Any]]:
         """
-        웹 페이지 내용 추출 및 정제
+        Playwright를 사용한 고급 웹 페이지 내용 추출 및 정제
         
         Args:
             url: 웹 페이지 URL
@@ -445,113 +445,184 @@ class WebSearchRetriever:
                 logger.info(f"캐시에서 페이지 콘텐츠 로드: {url}")
                 return cached_data.get("content", ""), cached_data.get("metadata", {})
             
-            # 페이지 요청
-            headers = {
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
-            }
-            response = requests.get(url, headers=headers, timeout=10)
-            response.raise_for_status()
+            # Playwright로 페이지 로드
+            from playwright.sync_api import sync_playwright
             
-            # HTML 파싱
-            soup = BeautifulSoup(response.text, 'html.parser')
+            with sync_playwright() as p:
+                # 브라우저 시작 (헤드리스 모드)
+                browser = p.chromium.launch(
+                    headless=True,
+                    args=[
+                        '--no-sandbox',
+                        '--disable-blink-features=AutomationControlled',
+                        '--disable-web-security',
+                        '--disable-features=VizDisplayCompositor'
+                    ]
+                )
+                
+                # 새 페이지 생성
+                page = browser.new_page(
+                    user_agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+                    viewport={"width": 1920, "height": 1080}
+                )
+                
+                # 추가 헤더 설정
+                page.set_extra_http_headers({
+                    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+                    "Accept-Language": "en-US,en;q=0.9,ko;q=0.8",
+                    "Accept-Encoding": "gzip, deflate, br",
+                    "DNT": "1",
+                    "Connection": "keep-alive",
+                    "Upgrade-Insecure-Requests": "1",
+                })
+                
+                try:
+                    # 페이지 로드 (타임아웃 15초)
+                    logger.info(f"Playwright로 페이지 로드 시작: {url}")
+                    page.goto(url, wait_until="domcontentloaded", timeout=15000)
+                    
+                    # JavaScript 실행 대기 (추가 콘텐츠 로딩)
+                    page.wait_for_timeout(2000)  # 2초 대기
+                    
+                    # HTML 콘텐츠 가져오기
+                    html_content = page.content()
+                    
+                    # 페이지 제목 추출
+                    title = page.title()
+                    
+                except Exception as e:
+                    logger.error(f"Playwright 페이지 로드 실패: {url} - {str(e)}")
+                    browser.close()
+                    return "", {"url": url, "error": f"page_load_failed: {str(e)}"}
+                
+                finally:
+                    browser.close()
             
-            # 불필요한 요소 제거 - 향상된 필터링
-            for element in soup(["script", "style", "nav", "footer", "header", "aside", "iframe"]):
+            # BeautifulSoup으로 HTML 파싱
+            soup = BeautifulSoup(html_content, 'html.parser')
+            
+            # 불필요한 요소 제거 - 향상된 필터링 (Wikipedia 호환성을 위해 완화)
+            for element in soup(["script", "style", "noscript"]):  # nav, footer, header 등 제거 완화
                 element.decompose()
                 
-            # 광고, 구독, 소셜 미디어, 메뉴 등 필터링 강화
+            # 광고, 구독, 소셜 미디어, 메뉴 등 필터링 강화 (Wikipedia 호환성을 위해 완화)
             for selector in [
-                ".menu", ".navigation", ".nav", ".sidebar", ".footer", ".header", 
                 ".ad", ".advertisement", ".banner", ".subscribe", ".newsletter",
-                ".social", ".share", ".comment", ".cookie", ".popup", ".modal",
-                ".widget", ".related", ".recommendation", "[role=navigation]",
-                "[id*=menu]", "[class*=menu]", "[id*=nav]", "[class*=nav]",
-                "[id*=sidebar]", "[class*=sidebar]"
+                ".social", ".share", ".comment", ".cookie", ".popup", ".modal"
+                # Wikipedia 호환성을 위해 .menu, .navigation 등 제거 완화
             ]:
                 for element in soup.select(selector):
                     element.decompose()
             
-            # 텍스트 추출
-            title = soup.title.string if soup.title else ""
-            
-            # 메인 콘텐츠 추출 (여러 방법 시도)
+            # 메인 콘텐츠 추출 (여러 방법 시도, 우선순위별)
             main_content = ""
             
-            # 1. article 태그 확인
-            articles = soup.find_all("article")
-            if articles:
-                for article in articles:
-                    # 짧은 텍스트가 아닌 실제 콘텐츠만 추출
-                    article_text = article.get_text(separator=' ', strip=True)
-                    if len(article_text) > 150:  # 충분히 긴 콘텐츠만 유지
-                        main_content += article_text + "\n\n"
+            # 1. JSON-LD structured data 확인 (뉴스 사이트에서 많이 사용)
+            json_ld_scripts = soup.find_all("script", {"type": "application/ld+json"})
+            for script in json_ld_scripts:
+                try:
+                    import json
+                    data = json.loads(script.string)
+                    if isinstance(data, dict):
+                        article_body = data.get("articleBody", "")
+                        if article_body and len(article_body) > 200:
+                            main_content = article_body
+                            logger.info(f"JSON-LD에서 article body 추출: {len(article_body)} 자")
+                            break
+                    elif isinstance(data, list):
+                        for item in data:
+                            if isinstance(item, dict) and item.get("articleBody"):
+                                article_body = item.get("articleBody", "")
+                                if len(article_body) > 200:
+                                    main_content = article_body
+                                    logger.info(f"JSON-LD 배열에서 article body 추출: {len(article_body)} 자")
+                                    break
+                        if main_content:
+                            break
+                except:
+                    continue
             
-            # 2. main 태그 확인
+            # 2. article 태그 확인 (우선순위 높음)
+            if not main_content:
+                articles = soup.find_all("article")
+                if articles:
+                    for article in articles:
+                        article_text = article.get_text(separator=' ', strip=True)
+                        if len(article_text) > 300:  # 충분히 긴 콘텐츠만 선택
+                            main_content = article_text
+                            logger.info(f"Article 태그에서 콘텐츠 추출: {len(article_text)} 자")
+                            break
+            
+            # 3. main 태그 확인
             if not main_content:
                 main = soup.find("main")
                 if main:
-                    main_content = main.get_text(separator=' ', strip=True)
+                    main_text = main.get_text(separator=' ', strip=True)
+                    if len(main_text) > 200:
+                        main_content = main_text
+                        logger.info(f"Main 태그에서 콘텐츠 추출: {len(main_text)} 자")
             
-            # 3. 콘텐츠 관련 div 확인 (일반적인 콘텐츠 컨테이너)
+            # 4. 콘텐츠 관련 div 확인 (더 포괄적인 선택자 + Wikipedia 지원)
             if not main_content:
-                for id_class in ["content", "main", "article", "post", "entry", "blog", "text", "body", "page"]:
-                    # ID로 검색
-                    content_div = soup.find("div", {"id": id_class})
-                    if content_div:
-                        content_text = content_div.get_text(separator=' ', strip=True)
-                        if len(content_text) > 200:  # 충분히 긴 콘텐츠만 유지
-                            main_content = content_text
+                content_selectors = [
+                    # Wikipedia 전용 선택자들 (우선순위 높음)
+                    ".mw-parser-output", "#mw-content-text", "#bodyContent", ".vector-body",
+                    # 일반 뉴스/블로그 선택자들
+                    ".post-content", ".entry-content", ".article-content", ".content-body",
+                    ".story-body", ".article-body", ".post-body", ".content-area",
+                    ".main-content", ".primary-content", ".page-content", 
+                    "[class*='content']", "[class*='article']", "[class*='post']",
+                    "[class*='story']", "[class*='text']", "[class*='body']"
+                ]
+                
+                for selector in content_selectors:
+                    elements = soup.select(selector)
+                    for element in elements:
+                        element_text = element.get_text(separator=' ', strip=True)
+                        if len(element_text) > 300:  # 충분히 긴 콘텐츠만 선택
+                            main_content = element_text
+                            logger.info(f"CSS 선택자 '{selector}'에서 콘텐츠 추출: {len(element_text)} 자")
                             break
-                    
-                    # 클래스로 검색
-                    for div in soup.find_all("div", {"class": lambda c: c and id_class in c.lower()}):
-                        content_text = div.get_text(separator=' ', strip=True)
-                        if len(content_text) > 200:  # 충분히 긴 콘텐츠만 유지
-                            main_content = content_text
+                    if main_content:
+                        break
+            
+            # 5. ID 기반 검색
+            if not main_content:
+                for content_id in ["content", "main", "article", "post", "entry", "story", "text", "body"]:
+                    element = soup.find(id=content_id)
+                    if element:
+                        element_text = element.get_text(separator=' ', strip=True)
+                        if len(element_text) > 300:
+                            main_content = element_text
+                            logger.info(f"ID '{content_id}'에서 콘텐츠 추출: {len(element_text)} 자")
                             break
             
-            # 4. 모든 단락(p) 추출 - 길이 기준 필터링 강화
+            # 6. 단락(p) 태그들 수집 - 마지막 방법
             if not main_content:
                 paragraphs = []
                 for p in soup.find_all("p"):
                     p_text = p.get_text(strip=True)
                     
                     # 충분히 길고, 의미 있는 텍스트만 포함
-                    if len(p_text) > 80 and not any(x in p_text.lower() for x in [
+                    if len(p_text) > 50 and not any(x in p_text.lower() for x in [
                         "subscribe", "newsletter", "sign up", "cookie", "privacy policy", 
-                        "terms of service", "all rights reserved", "copyright"
+                        "terms of service", "all rights reserved", "copyright", "follow us",
+                        "contact us", "click here", "read more", "learn more"
                     ]):
                         paragraphs.append(p_text)
                 
                 # 단락이 충분히 있으면 내용 결합
-                if len(paragraphs) >= 2:
+                if len(paragraphs) >= 3:
                     main_content = "\n\n".join(paragraphs)
-            
-            # 5. 최후의 방법: 본문에서 짧은 텍스트와 메뉴 관련 내용 제외
-            if not main_content and soup.body:
-                body_text = soup.body.get_text(separator='\n', strip=True)
-                # 줄 단위로 분할하여 의미 있는 텍스트만 유지
-                lines = []
-                for line in body_text.split('\n'):
-                    line = line.strip()
-                    # 충분히 길고 링크/메뉴 텍스트가 아닌 경우만 포함
-                    if (len(line) > 60 and 
-                        not any(x in line.lower() for x in [
-                            "click here", "read more", "learn more", "sign up", "log in", "subscribe",
-                            "follow us", "contact us", "about us", "privacy", "terms", "copyright"
-                        ])):
-                        lines.append(line)
-                
-                if lines:
-                    main_content = "\n".join(lines)
+                    logger.info(f"{len(paragraphs)}개 단락에서 콘텐츠 추출: {len(main_content)} 자")
             
             # 텍스트 정제
             main_content = self._clean_text(main_content)
             
-            # 콘텐츠 최소 길이 체크 - 의미 있는 콘텐츠가 없으면 빈 문자열 반환
-            if len(main_content.split()) < 100:  # 최소 100단어 필요
-                logger.warning(f"추출된 콘텐츠가 너무 짧습니다: {url}")
-                return "", {"url": url, "error": "insufficient content"}
+            # 콘텐츠 최소 길이 체크 - 원래 기준 유지 (100단어)
+            if len(main_content.split()) < 100:
+                logger.warning(f"추출된 콘텐츠가 너무 짧습니다: {url} ({len(main_content.split())} 단어)")
+                return "", {"url": url, "error": "insufficient content", "word_count": len(main_content.split())}
             
             # 메타데이터 추출
             metadata = {
@@ -563,14 +634,19 @@ class WebSearchRetriever:
                 "search_position": search_result.get("position", 0),
                 "snippet": search_result.get("snippet", ""),
                 "content_length": len(main_content),
-                "word_count": len(main_content.split())
+                "word_count": len(main_content.split()),
+                "extraction_method": "playwright"
             }
             
-            # 발행일 추출 시도
+            # 발행일 추출 시도 (메타태그에서)
             try:
                 meta_date = soup.find("meta", {"property": "article:published_time"})
+                if not meta_date:
+                    meta_date = soup.find("meta", {"name": "publishdate"})
+                if not meta_date:
+                    meta_date = soup.find("meta", {"name": "date"})
                 if meta_date:
-                    metadata["published_date"] = meta_date["content"]
+                    metadata["published_date"] = meta_date.get("content", "")
             except:
                 pass
             
@@ -581,17 +657,16 @@ class WebSearchRetriever:
                     "metadata": metadata
                 }
                 self._save_to_cache(cache_key, cache_data)
+                logger.info(f"콘텐츠 캐시에 저장: {url}")
             
-            # 메모리 정리
-            del soup
-            import gc
-            gc.collect()
-
+            logger.info(f"Playwright 콘텐츠 추출 성공: {url} ({len(main_content)} 자, {len(main_content.split())} 단어)")
             return main_content, metadata
             
         except Exception as e:
-            logger.error(f"{url} 콘텐츠 추출 실패: {str(e)}")
-            return "", {"url": url, "error": str(e)}
+            logger.error(f"Playwright 콘텐츠 추출 실패 {url}: {str(e)}")
+            import traceback
+            logger.debug(f"상세 에러: {traceback.format_exc()}")
+            return "", {"url": url, "error": str(e), "extraction_method": "playwright_failed"}
 
     def _clean_text(self, text: str) -> str:
         """
@@ -664,108 +739,93 @@ class WebSearchRetriever:
 
     def _split_into_chunks(self, text: str, chunk_size: int, chunk_overlap: int, max_chunks: Optional[int] = None) -> List[str]:
         """
-        텍스트를 청크로 분할 - 문장 단위 분할 및 완전한 문장 시작 보장
+        하이브리드 청킹: 문장 단위 + 슬라이딩 윈도우
+        정보 손실을 최소화하면서 의미 있는 단위로 텍스트 분할
         
         Args:
-            text: 원본 텍스트
-            chunk_size: 청크 크기 (문자 수)
-            chunk_overlap: 청크 간 중첩 크기
+            text: 청크화할 텍스트
+            chunk_size: 목표 청크 크기 (문자 수)
+            chunk_overlap: 오버랩 크기 (문자 수)
             max_chunks: 최대 청크 수
             
         Returns:
-            텍스트 청크 목록
+            청크 리스트
         """
-        if not text:
+        import re
+        
+        if not text or not text.strip():
             return []
         
-        # 문장 단위로 텍스트 먼저 분할
-        sentences = []
-        # 문장 단위 분할을 위한 패턴 - 마침표, 물음표, 느낌표 등으로 끝나는 문장
-        pattern = r'(?<=[.!?])\s+'
-        raw_sentences = re.split(pattern, text)
+        # 문장 단위로 분리 (개선된 패턴)
+        # 마침표, 느낌표, 물음표 뒤에 공백과 대문자가 오는 경우를 문장 경계로 인식
+        sentence_pattern = r'(?<=[.!?])\s+(?=[A-Z])'
+        sentences = re.split(sentence_pattern, text.strip())
         
-        # 빈 문장 제거 및 정리
-        for sentence in raw_sentences:
-            sentence = sentence.strip()
-            if sentence:
-                sentences.append(sentence)
+        if not sentences:
+            return [text]
         
-        # 청크 조합
-        chunks = []
-        current_chunk = []
-        current_length = 0
-        
+        # 단일 문장이 chunk_size보다 큰 경우 처리
+        processed_sentences = []
         for sentence in sentences:
-            # 너무 긴 문장은 chunk_size 기준으로 분할
-            if len(sentence) > chunk_size:
-                if current_chunk:
-                    chunks.append(' '.join(current_chunk))
-                    current_chunk = []
-                    current_length = 0
-                
-                # 긴 문장 처리 - 단어 단위로 분할
-                words = sentence.split()
-                sub_chunk = []
-                sub_length = 0
-                
-                for word in words:
-                    if sub_length + len(word) + 1 <= chunk_size:
-                        sub_chunk.append(word)
-                        sub_length += len(word) + 1
-                    else:
-                        if sub_chunk:
-                            chunks.append(' '.join(sub_chunk))
-                            if max_chunks and len(chunks) >= max_chunks:
-                                return chunks
-                        sub_chunk = [word]
-                        sub_length = len(word)
-                
-                if sub_chunk:
-                    chunks.append(' '.join(sub_chunk))
-                    if max_chunks and len(chunks) >= max_chunks:
-                        return chunks
-            
-            # 일반적인 문장 처리
-            elif current_length + len(sentence) + 1 <= chunk_size:
-                current_chunk.append(sentence)
-                current_length += len(sentence) + 1  # 공백 포함
+            if len(sentence) <= chunk_size:
+                processed_sentences.append(sentence)
             else:
+                # 긴 문장을 단어 단위로 분할
+                words = sentence.split()
+                current_part = ""
+                for word in words:
+                    if len(current_part + " " + word) <= chunk_size:
+                        current_part = current_part + " " + word if current_part else word
+                    else:
+                        if current_part:
+                            processed_sentences.append(current_part)
+                        current_part = word
+                if current_part:
+                    processed_sentences.append(current_part)
+        
+        chunks = []
+        current_chunk = ""
+        overlap_ratio = chunk_overlap / chunk_size if chunk_size > 0 else 0.2
+        
+        for sentence in processed_sentences:
+            # 현재 청크에 문장을 추가했을 때의 길이 확인
+            potential_chunk = current_chunk + " " + sentence if current_chunk else sentence
+            
+            if len(potential_chunk) <= chunk_size:
+                current_chunk = potential_chunk
+            else:
+                # 현재 청크가 비어있지 않으면 저장
                 if current_chunk:
-                    chunks.append(' '.join(current_chunk))
+                    chunks.append(current_chunk.strip())
                     
-                    # 청크 수 제한 확인
+                    # 최대 청크 수 제한 확인
                     if max_chunks and len(chunks) >= max_chunks:
-                        return chunks
+                        break
                 
-                # 오버랩 구현 - 마지막 문장 수를 기준으로
-                overlap_sentences = []
-                overlap_length = 0
-                
-                # 청크 중첩을 위해 이전 청크의 일부 문장 재사용
-                overlap_count = min(3, len(current_chunk))  # 최대 3개 문장 중첩
-                if overlap_count > 0:
-                    overlap_sentences = current_chunk[-overlap_count:]
-                    overlap_length = sum(len(s) for s in overlap_sentences) + overlap_count
-                
-                # 새 청크 시작
-                if overlap_length <= chunk_overlap:
-                    current_chunk = overlap_sentences + [sentence]
-                    current_length = overlap_length + len(sentence) + 1
+                    # 오버랩을 위해 현재 청크의 마지막 부분 유지
+                    if len(current_chunk) > chunk_overlap:
+                        # 마지막 chunk_overlap 문자에서 문장 경계 찾기
+                        overlap_text = current_chunk[-chunk_overlap:]
+                        # 문장 시작점 찾기 (마침표 다음 공백 후)
+                        sentence_start = overlap_text.find('. ')
+                        if sentence_start != -1 and sentence_start < len(overlap_text) - 10:
+                            current_chunk = overlap_text[sentence_start + 2:]
+                    else:
+                            # 단어 경계에서 자르기
+                            words = overlap_text.split()
+                            if len(words) > 1:
+                                current_chunk = ' '.join(words[len(words)//2:])
+                            else:
+                                current_chunk = overlap_text
                 else:
-                    current_chunk = [sentence]
-                    current_length = len(sentence)
+                    current_chunk = ""
+                
+                # 새로운 문장으로 시작
+                current_chunk = current_chunk + " " + sentence if current_chunk else sentence
         
         # 마지막 청크 추가
-        if current_chunk:
-            chunks.append(' '.join(current_chunk))
-        
-        # 불완전한 시작 문장 감지 및 수정
-        for i in range(len(chunks)):
-            # 첫 글자가 소문자이며 단어 중간인지 확인 (불완전한 문장 시작 흔적)
-            if chunks[i] and chunks[i][0].islower() and not chunks[i][0].isalpha():
-                words = chunks[i].split()
-                if words and len(words[0]) <= 3:  # 짧은 단어라면 시작 단어 제거 가능성
-                    chunks[i] = ' '.join(words[1:]) if len(words) > 1 else ""
+        if current_chunk and (not max_chunks or len(chunks) < max_chunks):
+            chunks.append(current_chunk.strip())
         
         # 빈 청크 제거
         chunks = [chunk for chunk in chunks if chunk.strip()]

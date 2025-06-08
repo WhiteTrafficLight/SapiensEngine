@@ -1416,6 +1416,19 @@ Important:
             self.state["turn_count"] += 1
             self.state["last_update_time"] = time.time()
             
+            # RAG 정보 추출 (participant agents에서만)
+            rag_info = {}
+            if role in [ParticipantRole.PRO, ParticipantRole.CON] and hasattr(agent, 'process'):
+                # result가 없으면 빈 result 객체 사용
+                if 'result' not in locals():
+                    result = {}
+                
+                rag_info = {
+                    "rag_used": result.get("rag_used", False),
+                    "rag_source_count": result.get("rag_source_count", 0),
+                    "rag_sources": result.get("rag_sources", [])
+                }
+            
             # 메시지 생성 및 저장
             message_obj = {
                 "id": f"{speaker_id}-{int(time.time())}",
@@ -1424,7 +1437,8 @@ Important:
                 "role": role,
                 "stage": current_stage,
                 "timestamp": time.time(),
-                "turn_number": self.state["turn_count"]
+                "turn_number": self.state["turn_count"],
+                **rag_info  # RAG 정보 포함
             }
             
             # 발언 기록에 추가 (한 번만)
