@@ -472,13 +472,6 @@ class DebateParticipantAgent(Agent):
         Returns:
             처리 결과
         """
-        # RAG 정보 초기화 (모든 액션 시작 전)
-        self.rag_info = {
-            "rag_used": False,
-            "rag_source_count": 0,
-            "rag_sources": []
-        }
-        
         action = input_data.get("action", "")
         
         # 성능 측정 시작
@@ -515,10 +508,6 @@ class DebateParticipantAgent(Agent):
                 )
             else:
                 result = {"status": "error", "message": f"Unknown action: {action}"}
-            
-            # 결과에 RAG 정보 포함
-            if result and isinstance(result, dict) and result.get("status") == "success":
-                result.update(self.rag_info)
             
             # 성능 측정 종료
             end_time = time.time()
@@ -2012,10 +2001,6 @@ Format your response as JSON:
         """
         logger.info(f"[{self.agent_id}] Starting RAG search and argument strengthening...")
         
-        # RAG 정보 수집을 위한 변수들
-        all_rag_sources = []
-        total_rag_searches = 0
-        
         try:
             # 모든 쿼리에 대해 검색 수행
             for query_data in self.argument_queries:
@@ -2024,7 +2009,6 @@ Format your response as JSON:
                     source = evidence.get("source", "web")
                     
                     logger.info(f"[{self.agent_id}] Processing query: '{query}' from source: '{source}'")
-                    total_rag_searches += 1
                     
                     # 소스별 검색 수행
                     if source == "web":
@@ -2039,39 +2023,10 @@ Format your response as JSON:
                         results = self._web_search(query)  # 기본값
                     
                     evidence["results"] = results
-                    
-                    # RAG 정보 수집: 관련도 높은 결과들만 포함
-                    for result in results:
-                        if result.get("relevance", 0) > 0.5:  # 관련도 0.5 이상만
-                            all_rag_sources.append({
-                                "content": result.get("content", "")[:200],  # 미리보기용 200자만
-                                "url": result.get("url", ""),
-                                "title": result.get("title", ""),
-                                "source": source,
-                                "relevance_score": result.get("relevance", 0),
-                                "query_used": query
-                            })
-                    
                     logger.info(f"[{self.agent_id}] Found {len(results)} results for query from {source}")
             
             # 이제 각 핵심 주장을 RAG 결과로 실제 강화
             self._actually_strengthen_arguments()
-            
-            # self.rag_info 업데이트 (입론단계에서 사용된 RAG 정보)
-            if all_rag_sources:
-                self.rag_info = {
-                    "rag_used": True,
-                    "rag_source_count": len(all_rag_sources),
-                    "rag_sources": all_rag_sources
-                }
-                logger.info(f"[{self.agent_id}] Updated rag_info: {len(all_rag_sources)} sources used from {total_rag_searches} searches")
-            else:
-                self.rag_info = {
-                    "rag_used": False,
-                    "rag_source_count": 0,
-                    "rag_sources": []
-                }
-                logger.info(f"[{self.agent_id}] No relevant RAG sources found from {total_rag_searches} searches")
                     
         except Exception as e:
             logger.error(f"[{self.agent_id}] Error in RAG search: {str(e)}")
@@ -3029,7 +2984,7 @@ Each key point should be:
         finally:
             self.is_preparing_argument = False
     
-    def get_prepared_argument_or_generate(self, topic: str, stance_statement: str, context: Dict[str, Any] = None) -> tuple[str, Dict[str, Any]]:
+    def get_prepared_argument_or_generate(self, topic: str, stance_statement: str, context: Dict[str, Any] = None) -> str:
         """
         준비된 입론을 반환하거나, 없으면 즉시 생성
         
@@ -3039,12 +2994,12 @@ Each key point should be:
             context: 추가 컨텍스트
             
         Returns:
-            (입론 텍스트, RAG 정보)
+            입론 텍스트
         """
         # 준비된 입론이 있고 유효하면 반환
         if self.is_argument_ready() and self._is_same_context(context):
             logger.info(f"[{self.agent_id}] Using cached prepared argument")
-            return self.prepared_argument, self.rag_info
+            return self.prepared_argument
         
         # 없으면 즉시 생성
         logger.info(f"[{self.agent_id}] No cached argument available, generating immediately")
@@ -3052,8 +3007,7 @@ Each key point should be:
         self.argument_cache_valid = True
         self.last_preparation_context = context
         
-        message = self.prepared_argument if self.prepared_argument else "입론 생성에 실패했습니다."
-        return message, self.rag_info
+        return self.prepared_argument if self.prepared_argument else "입론 생성에 실패했습니다."
     
     def invalidate_argument_cache(self):
         """입론 캐시 무효화"""
@@ -3801,7 +3755,7 @@ Return JSON format:
             input_data: 입론 준비에 필요한 데이터
             
         Returns:
-            준비 결과 (RAG 정보 포함)
+            준비 결과
         """
         topic = input_data.get("topic", "")
         stance_statement = input_data.get("stance_statement", "")
@@ -3811,14 +3765,9 @@ Return JSON format:
         
         return {
             "status": "success" if self.argument_prepared else "failed",
-            "message": self.prepared_argument if self.prepared_argument else "입론 생성에 실패했습니다.",
             "prepared": self.argument_prepared,
             "core_arguments_count": len(self.core_arguments),
-            "queries_count": len(self.argument_queries),
-            # RAG 정보 추가
-            "rag_used": self.rag_info.get("rag_used", False),
-            "rag_source_count": self.rag_info.get("rag_source_count", 0),
-            "rag_sources": self.rag_info.get("rag_sources", [])
+            "queries_count": len(self.argument_queries)
         }
     
     def _generate_attack_rag_query_for_strategy(self, target_argument: Dict[str, Any], strategy_type: str) -> str:

@@ -1351,7 +1351,7 @@ Important:
             # 응답 생성
             if current_stage in [DebateStage.PRO_ARGUMENT, DebateStage.CON_ARGUMENT]:
                 # 입론 단계: Option 2 로직 적용
-                message = self._get_argument_for_speaker(speaker_id, role)
+                message, rag_info = self._get_argument_for_speaker(speaker_id, role)
                 
                 # 다음 발언자 백그라운드 준비 시작
                 self._start_next_speaker_preparation()
@@ -1411,23 +1411,19 @@ Important:
                     error_msg = result.get("message", "Unknown error")
                     logger.error(f"Agent process failed: {error_msg}")
                     message = f"응답 생성 중 오류가 발생했습니다: {error_msg}"
+                
+                # 다른 단계에서 RAG 정보 추출 (participant agents에서만)
+                rag_info = {}
+                if role in [ParticipantRole.PRO, ParticipantRole.CON] and hasattr(agent, 'process'):
+                    rag_info = {
+                        "rag_used": result.get("rag_used", False),
+                        "rag_source_count": result.get("rag_source_count", 0),
+                        "rag_sources": result.get("rag_sources", [])
+                    }
             
             # 대화 상태 업데이트
             self.state["turn_count"] += 1
             self.state["last_update_time"] = time.time()
-            
-            # RAG 정보 추출 (participant agents에서만)
-            rag_info = {}
-            if role in [ParticipantRole.PRO, ParticipantRole.CON] and hasattr(agent, 'process'):
-                # result가 없으면 빈 result 객체 사용
-                if 'result' not in locals():
-                    result = {}
-                
-                rag_info = {
-                    "rag_used": result.get("rag_used", False),
-                    "rag_source_count": result.get("rag_source_count", 0),
-                    "rag_sources": result.get("rag_sources", [])
-                }
             
             # 메시지 생성 및 저장
             message_obj = {
@@ -2654,7 +2650,7 @@ Important:
         except Exception as e:
             logger.error(f"Error starting background preparation: {str(e)}")
     
-    def _get_argument_for_speaker(self, speaker_id: str, role: str) -> str:
+    def _get_argument_for_speaker(self, speaker_id: str, role: str) -> tuple[str, Dict[str, Any]]:
         """
         발언자의 입론을 가져오기 (준비된 것이 있으면 사용, 없으면 즉시 생성)
         
@@ -2663,11 +2659,11 @@ Important:
             role: 발언자 역할
             
         Returns:
-            입론 텍스트
+            (입론 텍스트, RAG 정보)
         """
         agent = self.agents.get(speaker_id)
         if not agent:
-            return "에이전트를 찾을 수 없습니다."
+            return "에이전트를 찾을 수 없습니다.", {}
         
         topic = self.room_data.get('title', '토론 주제')
         stance_statement = self.stance_statements.get(role, '')
@@ -2679,9 +2675,17 @@ Important:
         
         # 새로운 메서드 사용 (준비된 것이 있으면 사용, 없으면 즉시 생성)
         if hasattr(agent, 'get_prepared_argument_or_generate'):
-            return agent.get_prepared_argument_or_generate(topic, stance_statement, context)
+            # 새로운 메서드가 RAG 정보도 함께 반환하는지 확인
+            result = agent.get_prepared_argument_or_generate(topic, stance_statement, context)
+            if isinstance(result, tuple) and len(result) == 2:
+                message, rag_info = result
+                return message, rag_info
+            else:
+                # 기존 방식 (문자열만 반환)
+                message = result if isinstance(result, str) else str(result)
+                return message, {}
         else:
-            # 기존 방식 fallback
+            # 기존 방식 fallback - agent.process() 호출하여 딕셔너리 받기
             result = agent.process({
                 "action": "prepare_argument",
                 "topic": topic,
@@ -2689,10 +2693,17 @@ Important:
                 "context": context
             })
             
-            if result.get("status") == "success" and hasattr(agent, 'prepared_argument'):
-                return agent.prepared_argument
+            if result.get("status") == "success":
+                message = result.get("message", "입론 생성에 실패했습니다.")
+                # RAG 정보 추출
+                rag_info = {
+                    "rag_used": result.get("rag_used", False),
+                    "rag_source_count": result.get("rag_source_count", 0),
+                    "rag_sources": result.get("rag_sources", [])
+                }
+                return message, rag_info
             else:
-                return "입론 생성에 실패했습니다."
+                return "입론 생성에 실패했습니다.", {}
     
     def _should_advance_stage(self, current_stage: str) -> tuple[bool, str]:
         """
