@@ -1,0 +1,61 @@
+# Sapiens Engine Configuration
+
+# LLM Configuration
+llm:
+  provider: "openai"  # options: "openai", "anthropic"
+  model: "gpt-4-turbo"  # or "claude-3-opus-20240229" for Anthropic
+  temperature: 0.7
+  max_tokens: 1000
+  streaming: true
+
+# Simulation Environment
+environment:
+  name: "Modern Western Society"
+  era: "21st Century"
+  dominant_ideologies:
+    - "Capitalism"
+    - "Individualism"
+    - "Technological Solutionism"
+    - "Secular Humanism"
+  current_crises:
+    - "Climate Change"
+    - "AI Ethics"
+    - "Wealth Inequality"
+    - "Post-Truth Politics"
+  historical_context: "Post-Cold War, Digital Age, Globalization"
+
+# Simulation Parameters
+simulation:
+  num_turns: 5
+  dialogue_rounds_per_turn: 3
+  max_tokens_per_response: 800
+  time_between_turns: 1.0  # seconds
+  log_level: "info"
+  save_logs: true
+  visualization: true
+
+# Source Material
+source_material:
+  enabled: true
+  content:
+    - name: "Sapiens"
+      author: "Yuval Noah Harari"
+      path: "data/sources/sapiens_excerpts.txt"
+      weight: 1.0
+    - name: "Guns, Germs, and Steel"
+      author: "Jared Diamond"
+      path: "data/sources/guns_germs_steel_excerpts.txt"
+      weight: 0.8
+    - name: "Phenomenology"
+      author: "Edmund Husserl"
+      path: "data/sources/husserl_phenomenology.txt"
+      weight: 0.7
+    - name: "Dialectics"
+      author: "G.W.F. Hegel"
+      path: "data/sources/hegel_dialectics.txt"
+      weight: 0.9
+    - name: "Dependent Origination"
+      author: "Buddhist Philosophy"
+      path: "data/sources/buddhist_dependent_origination.txt"
+      weight: 0.8 
+ 

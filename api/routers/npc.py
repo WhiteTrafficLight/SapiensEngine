@@ -26,7 +26,7 @@ def load_philosophers_data() -> Dict[str, Any]:
     """철학자 데이터 로드"""
     try:
         import yaml
-        philosophers_path = os.path.join(BASE_DIR, 'sapiens_engine', 'config', 'philosophers.yaml')
+        philosophers_path = os.path.join(BASE_DIR, 'config', 'philosophers.yaml')
         
         if not os.path.exists(philosophers_path):
             logger.warning(f"Philosophers file not found: {philosophers_path}")

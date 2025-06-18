@@ -18,7 +18,7 @@ def load_philosophers_data():
     """철학자 데이터를 YAML 파일에서 로드"""
     try:
         BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-        PHILOSOPHERS_FILE = os.path.join(BASE_DIR, "sapiens_engine/config/philosophers.yaml")
+        PHILOSOPHERS_FILE = os.path.join(BASE_DIR, "config/philosophers.yaml")
         
         with open(PHILOSOPHERS_FILE, 'r', encoding='utf-8') as file:
             return yaml.safe_load(file)

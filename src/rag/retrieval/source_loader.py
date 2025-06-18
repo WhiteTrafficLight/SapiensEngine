@@ -5,11 +5,11 @@ from typing import Dict, List, Optional, Tuple
 import pdfminer.high_level as pdf_extract
 from pdfminer.layout import LAParams
 
-from sapiens_engine.core.config_loader import ConfigLoader
+from src.core.config_loader import ConfigLoader
 
 # Try to import VectorDB, but don't fail if not available
 try:
-    from sapiens_engine.utils.vector_db import VectorDB
+    from src.utils.vector_db import VectorDB
     VECTOR_DB_AVAILABLE = True
 except ImportError:
     logging.warning("VectorDB not available. Some features will be limited.")

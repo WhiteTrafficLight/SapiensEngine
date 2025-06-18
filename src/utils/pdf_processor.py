@@ -250,39 +250,57 @@ class PDFProcessor:
             # 초록 추출
             abstract = soup.find('abstract')
             if abstract:
-                text_parts.append("\n## 초록")
-                text_parts.append(abstract.get_text().strip())
+                abstract_text = abstract.get_text().strip()
+                if abstract_text:
+                    text_parts.append("## 초록")
+                    text_parts.append(abstract_text)
             
             # 본문 추출
             body = soup.find('body')
             if body:
-                # 각 섹션 처리
-                for div in body.find_all('div'):
-                    # 섹션 헤더 추출
+                # 섹션별 처리
+                for div in body.find_all(['div', 'head']):
+                    # 섹션 제목
                     head = div.find('head')
                     if head:
-                        section_title = head.get_text().strip()
-                        if section_title:
-                            level = min(len(div.find_parents('div')) + 2, 6)  # 중첩 레벨에 따라 헤딩 레벨 결정
-                            text_parts.append(f"\n{'#' * level} {section_title}")
+                        head_text = head.get_text().strip()
+                        if head_text:
+                            text_parts.append(f"## {head_text}")
                     
-                    # 단락 추출
+                    # 문단 추출
                     for p in div.find_all('p'):
-                        para_text = p.get_text().strip()
-                        if para_text:
-                            text_parts.append(para_text)
+                        p_text = p.get_text().strip()
+                        if p_text:
+                            text_parts.append(p_text)
+                
+                # 문단 직접 추출 (섹션 구조가 없는 경우)
+                if not text_parts or len(text_parts) <= 2:  # 제목과 초록만 있는 경우
+                    paragraphs = body.find_all('p')
+                    for p in paragraphs:
+                        p_text = p.get_text().strip()
+                        if p_text:
+                            text_parts.append(p_text)
             
-            # 참고문헌 추출
-            biblio = soup.find('listBibl')
-            if biblio:
-                text_parts.append("\n## 참고문헌")
-                for ref in biblio.find_all('biblStruct'):
-                    ref_text = ref.get_text().strip()
-                    if ref_text:
-                        text_parts.append(f"- {ref_text}")
+            # 표와 그림 캡션 추출
+            figures = soup.find_all('figure')
+            for fig in figures:
+                caption = fig.find('figDesc')
+                if caption:
+                    fig_text = caption.get_text().strip()
+                    if fig_text:
+                        text_parts.append(f"[그림: {fig_text}]")
             
-            # 최종 텍스트 조합
-            return "\n\n".join(text_parts)
+            tables = soup.find_all('table')
+            for table in tables:
+                caption = table.find('head')
+                if caption:
+                    table_text = caption.get_text().strip()
+                    if table_text:
+                        text_parts.append(f"[표: {table_text}]")
+            
+            # 텍스트 조합
+            result = "\n\n".join(text_parts)
+            return result
             
         except Exception as e:
             logger.error(f"Grobid XML 콘텐츠 파싱 실패: {str(e)}")
@@ -290,7 +308,7 @@ class PDFProcessor:
     
     def _extract_text_basic(self, pdf_path: str) -> str:
         """
-        기본적인 방법으로 PDF에서 텍스트 추출
+        기본 방식으로 PDF에서 텍스트 추출
         
         Args:
             pdf_path: PDF 파일 경로
@@ -298,50 +316,60 @@ class PDFProcessor:
         Returns:
             추출된 텍스트
         """
-        logger.info(f"기본 방식으로 텍스트 추출 시작: {pdf_path}, 방법: {self.extraction_method}")
+        logger.info(f"기본 방식으로 텍스트 추출 시작: {pdf_path} (방식: {self.extraction_method})")
         
-        text = ""
+        # PyMuPDF 방식 사용
+        if self.extraction_method == "pymupdf" and PYMUPDF_AVAILABLE:
+            try:
+                text = ""
+                with fitz.open(pdf_path) as doc:
+                    for page in doc:
+                        # 블록 단위로 텍스트 추출 (레이아웃 보존)
+                        blocks = page.get_text("blocks")
+                        for block in blocks:
+                            # 이미지 블록은 건너뜀 (인덱스 6이 0이 아닌 경우)
+                            if block[6] == 0:  # 텍스트 블록
+                                block_text = block[4]
+                                if block_text.strip():
+                                    text += block_text + "\n\n"
+                
+                # 여러 줄바꿈 정리
+                text = re.sub(r'\n{3,}', '\n\n', text)
+                return text
+                
+            except Exception as e:
+                logger.error(f"PyMuPDF 텍스트 추출 실패: {str(e)}")
+                if PDFPLUMBER_AVAILABLE:
+                    logger.info("pdfplumber로 전환합니다.")
+                else:
+                    return ""
         
-        try:
-            # PyMuPDF 사용
-            if self.extraction_method == "pymupdf" and PYMUPDF_AVAILABLE:
-                doc = fitz.open(pdf_path)
-                text_parts = []
-                
-                for page_num in range(len(doc)):
-                    page = doc.load_page(page_num)
-                    text_parts.append(page.get_text())
-                
-                text = "\n".join(text_parts)
-                doc.close()
-            
-            # pdfplumber 사용
-            elif self.extraction_method == "pdfplumber" and PDFPLUMBER_AVAILABLE:
+        # PDFPlumber 방식 사용
+        if PDFPLUMBER_AVAILABLE:
+            try:
+                text = ""
                 with pdfplumber.open(pdf_path) as pdf:
-                    text_parts = []
                     for page in pdf.pages:
-                        text_parts.append(page.extract_text() or "")
-                    text = "\n".join(text_parts)
-            
-            # 추출 실패
-            else:
-                logger.error(f"텍스트 추출 실패: 지원되는 라이브러리 없음")
+                        page_text = page.extract_text() or ""
+                        text += page_text + "\n\n"
+                
+                # 여러 줄바꿈 정리
+                text = re.sub(r'\n{3,}', '\n\n', text)
+                return text
+                
+            except Exception as e:
+                logger.error(f"PDFPlumber 텍스트 추출 실패: {str(e)}")
                 return ""
-            
-            # 기본 정리
-            text = text.strip()
-            return text
-            
-        except Exception as e:
-            logger.error(f"기본 텍스트 추출 실패: {str(e)}")
-            return ""
+        
+        logger.error("적합한 PDF 텍스트 추출 방법이 없습니다.")
+        return ""
     
     def _preprocess_text(self, text: str) -> str:
         """
         추출된 텍스트 전처리
         
         Args:
-            text: 원본 텍스트
+            text: 추출된 원본 텍스트
             
         Returns:
             전처리된 텍스트
@@ -349,103 +377,260 @@ class PDFProcessor:
         if not text:
             return ""
         
-        # 1. 여러 줄 바꿈 정리
-        text = re.sub(r'\n{3,}', '\n\n', text)
+        # 0. 줄바꿈 정리 (문장 중간의 줄바꿈은 공백으로 변환, 문단 구분은 유지)
+        # 먼저, 여러 개의 연속된 줄바꿈을 임시 표시자로 변환 (문단 구분으로 유지하기 위함)
+        text = re.sub(r'\n{2,}', ' __PARAGRAPH_BREAK__ ', text)
         
-        # 2. 불필요한 공백 제거 (줄 시작과 끝)
-        text = re.sub(r'^ +| +$', '', text, flags=re.MULTILINE)
+        # PDF에서 단어가 줄바꿈으로 하이픈으로 분리된 경우 처리 (예: exam- ple → example)
+        # 특히 "- " 패턴 (하이픈 뒤에 공백)이 있는 경우를 처리
+        text = re.sub(r'(\w+)-\s+(\w+)', r'\1\2', text)
         
-        # 3. 하이픈으로 나뉜 단어 결합
-        text = re.sub(r'(\w)-\n(\w)', r'\1\2', text)
+        # 줄바꿈을 공백으로 변환 (문장 중간의 줄바꿈)
+        text = re.sub(r'\n', ' ', text)
         
-        # 4. 잘린 문장 결합 (단, 문단 구분은 유지)
-        text = re.sub(r'([^.\n])\n([a-z가-힣])', r'\1 \2', text)
+        # 임시 표시자를 두 개의 줄바꿈으로 다시 변환 (문단 구분 복원)
+        text = re.sub(r'__PARAGRAPH_BREAK__', '\n\n', text)
         
-        # 5. 페이지 번호 및 헤더/푸터 패턴 제거
-        # 일반적인 페이지 번호 패턴
-        text = re.sub(r'\n\s*\d+\s*\n', '\n', text)
+        # 1. 이메일 주소와 웹사이트 제거
+        text = re.sub(r'\S+@\S+\.\S+', '', text)
+        text = re.sub(r'emails?\s*:\s*\S+@\S+\.\S+', '', text, flags=re.IGNORECASE)
+        text = re.sub(r'https?://\S+|www\.\S+', '', text)
         
-        # 일반적인 헤더/푸터 패턴 (반복되는 짧은 라인)
+        # 2. 학술 논문 특수 패턴 제거
+        # DOI 제거
+        text = re.sub(r'doi\s*:\s*[\d\.]+\/[\w\.]+', '', text, flags=re.IGNORECASE)
+        
+        # 2-1. 페이지 번호 패턴 제거 
+        text = re.sub(r'Page\s+\d+\s+of\s+\d+', '', text)
+        text = re.sub(r'-\s*\d+\s*-', '', text)
+        text = re.sub(r'\b\d+\s*[-–]\s*\d+\b', '', text)  # 페이지 범위
+        
+        # 2-2. 학술지 정보 제거
+        journal_patterns = [
+            r'©\s*\w+\s*\w+\s*\w+\s*\d{4}',  # © COPYRIGHT INFO
+            r'article reuse guidelines\s*:.*$',
+            r'journals?\.\s*sagepub\.com.*$',
+            r'the linacre quarterly.*$',
+            r'\d{4}\s*by\s*\w+\s*\w+\s*association',
+        ]
+        for pattern in journal_patterns:
+            text = re.sub(pattern, '', text, flags=re.IGNORECASE | re.MULTILINE)
+        
+        # 2-3. 저자 정보 및 기관 정보 정리
+        # 괄호 안의 기관 정보
+        text = re.sub(r'\(\s*university\s+of\s+[\w\s,]+\)', '', text, flags=re.IGNORECASE)
+        text = re.sub(r'\(\s*[\w\s]+\s+university[\w\s,]*\)', '', text, flags=re.IGNORECASE)
+        text = re.sub(r'corresponding\s+author\s*:.*?\.', '', text, flags=re.IGNORECASE | re.DOTALL)
+        
+        # 3. 학위 정보 제거
+        degree_patterns = [
+            r'\b[A-Za-z]{2,5}\s*\(\s*[\w\s,]+\s*\)',  # PhD (Harvard University)
+            r'\b[A-Za-z]{2,5}\s+hons\.',  # BSc hons.
+        ]
+        for pattern in degree_patterns:
+            text = re.sub(pattern, '', text)
+        
+        # 4. 주소 정보 제거
+        address_pattern = r'\d+\s*[–-]\s*\d+\s*[\w\s]+,\s*\w+,\s*\w+\s*\d{4,5},\s*\w+'
+        text = re.sub(address_pattern, '', text)
+        
+        # 5. 헤더/푸터로 의심되는 반복 패턴 제거
         lines = text.split('\n')
         filtered_lines = []
-        header_footer_pattern = re.compile(r'^[\d\s\-_]{1,20}$|^[^a-zA-Z가-힣0-9]{1,5}$')
+        header_footer_candidates = set()
         
-        for i, line in enumerate(lines):
-            # 짧은 줄이고 숫자나 특수 기호만 있는 경우 제외
-            if header_footer_pattern.match(line):
-                continue
-                
-            # 상단/하단 5줄 내에서 반복되는 라인 제외
-            repeats_in_doc = sum(1 for l in lines if l == line)
-            if repeats_in_doc > 3 and len(line) < 50:
-                page_positions = [j for j, l in enumerate(lines) if l == line]
-                # 첫 페이지와 마지막 페이지에 나타나면 헤더/푸터로 간주
-                if page_positions and (page_positions[0] < 5 or (len(lines) - page_positions[-1]) < 5):
-                    continue
-            
-            filtered_lines.append(line)
+        # 반복되는 줄 식별
+        for line in lines:
+            line = line.strip()
+            if line and len(line) > 5:  # 짧은 줄 무시
+                if lines.count(line) > 2:  # 3번 이상 반복되면 헤더/푸터로 간주
+                    header_footer_candidates.add(line)
         
+        # 헤더/푸터가 아닌 줄만 유지
+        for line in lines:
+            line = line.strip()
+            if line and line not in header_footer_candidates:
+                filtered_lines.append(line)
+        
+        # 6. 연속된 공백 정리
         text = '\n'.join(filtered_lines)
-        
-        # 6. URL 및 이메일 주소 형식 보존
-        # (특별한 처리 없이도 일반적으로 보존됨)
-        
-        # 7. 텍스트 인코딩 이슈 수정 (특수문자 복원)
-        text = text.replace('â', "'")
-        text = text.replace('â', '"')
-        text = text.replace('â', '"')
-        
-        # 8. 한글 문장에서 영어, 숫자와 한글 사이에 공백 추가
-        text = self._insert_spaces(text)
-        
-        # 9. 최종 정리 (중복 공백 제거)
         text = re.sub(r' {2,}', ' ', text)
+        
+        # 7. 단어 사이에 공백이 없는 경우 처리 (뭉개진 단어 탐지 및 수정)
+        text = re.sub(r'([a-zA-Z]{15,})', lambda m: self._insert_spaces(m.group(1)), text)
+        
+        # 8. 하이픈으로 분리된 단어 결합
+        # 8.1 줄바꿈과 함께 하이픈으로 분리된 단어 결합
+        text = re.sub(r'(\w+)-\n(\w+)', r'\1\2', text)
+        
+        # 8.2 하이픈과 공백으로 분리된 단어 결합 (예: trans- humanist → transhumanist)
+        text = re.sub(r'(\w+)-\s+(\w+)', r'\1\2', text)
+        
+        # 8.3 하이픈으로 분리된 단어 중 명확한 패턴 결합 (문장 중간에 있는 하이픈으로 분리된 단어)
+        # 학술 논문에서 자주 사용되는 복합어 패턴
+        compound_patterns = [
+            r'(trans|post|pre|non|anti|pro|inter|intra|multi|over|under|sub|super|re|co|de)\s*-\s*([\w]+)',
+            r'(human|self|world|mind|body|life|time|space|based|centered|like|related)\s*-\s*([\w]+)',
+            r'([\w]+)\s*-\s*(based|like|specific|oriented|centered|driven|related|free)'
+        ]
+        
+        for pattern in compound_patterns:
+            text = re.sub(pattern, r'\1\2', text)
+        
+        # 9. 특수 유니코드 문자 정규화
+        special_chars = {
+            'ﬁ': 'fi', 'ﬂ': 'fl', 'ﬀ': 'ff', 'ﬃ': 'ffi', 'ﬄ': 'ffl',
+            ''': "'", ''': "'", '"': '"', '"': '"', '–': '-', '—': '-',
+            '…': '...', '′': "'", '″': '"', '„': '"', '‟': '"', '−': '-',
+            '·': '.', '•': '-', '´': "'", '`': "'", '′': "'", '″': '"',
+        }
+        for char, replacement in special_chars.items():
+            text = text.replace(char, replacement)
+        
+        # 10. 문단 경계 복원 (빈 줄로 구분)
+        text = re.sub(r'([.!?])\s+([A-Z])', r'\1\n\n\2', text)
+        
+        # 11. 참고문헌 섹션 제거
+        references_patterns = [
+            r'References\s*\n+.*$',
+            r'Bibliography\s*\n+.*$',
+            r'참고문헌\s*\n+.*$',
+            r'REFERENCES\s*\n+.*$',
+            r'Works Cited\s*\n+.*$',
+        ]
+        for pattern in references_patterns:
+            if re.search(pattern, text, re.IGNORECASE | re.DOTALL):
+                text = re.sub(pattern, '', text, flags=re.IGNORECASE | re.DOTALL)
+        
+        # 12. 각주 및 미주 번호 정리
+        text = re.sub(r'\[\d+\]|\(\d+\)', '', text)
+        text = re.sub(r'\b\d+\s*\)', '', text)  # 숫자) 형태 제거
+        text = re.sub(r'\b\d+\s*\.', '', text)  # 숫자. 형태 제거 (번호 목록)
+        
+        # 13. 인용 정보 정리 (핵심 인용은 유지, 부가 정보만 제거)
+        # 페이지 번호, 출판사 정보 등 부가 정보는 제거하되 기본 저자-연도 인용은 유지
+        text = re.sub(r'\(\s*([\w\s]+\s+\d{4})\s*,\s*\d+(?:\s*[-–]\s*\d+)?\s*\)', r'(\1)', text)  # (Author 2020, 10-15) -> (Author 2020)
+        text = re.sub(r'\(\s*(?:cf|see|e\.g\.|i\.e\.|viz)\.\s+([\w\s]+\s+\d{4})\s*\)', r'(\1)', text)  # (cf. Smith 2020) -> (Smith 2020)
+        
+        # 인용 중복 정리 (같은 문장에 여러 개 인용이 있는 경우)
+        text = re.sub(r'\(([\w\s]+\s+\d{4})\)\s*\(([\w\s]+\s+\d{4})\)', r'(\1, \2)', text)  # (Smith 2020)(Jones 2021) -> (Smith 2020, Jones 2021)
+        
+        # 14. 키워드 섹션에 대한 특별 처리 (Keywords를 별도 문단으로)
+        text = re.sub(r'([.!?])\s+Keywords\b', r'\1\n\nKeywords', text, flags=re.IGNORECASE)
+        
+        # 15. 공백 라인 정리
+        text = re.sub(r'\n{3,}', '\n\n', text)
+        
+        # 16. 의미없는 짧은 줄 제거
+        lines = text.split('\n')
+        meaningful_lines = []
+        for line in lines:
+            line = line.strip()
+            if len(line) > 5 or (line and line[-1] in '.!?'):  # 의미있는 길이이거나 문장 끝인 경우
+                meaningful_lines.append(line)
+        
+        # 17. 학술 용어 두문자어 정리 (예: i . e. -> i.e.)
+        text = '\n'.join(meaningful_lines)
+        text = re.sub(r'(\b[a-z])\s+\.\s+([a-z])\s+\.', r'\1.\2.', text)
+        
+        # 18. 키워드 섹션 제거
+        text = re.sub(r'keywords\s*:.*?\n\n', '', text, flags=re.IGNORECASE | re.DOTALL)
+        
+        # 19. 한 번 더 연속된 공백 정리
+        text = re.sub(r'\s{2,}', ' ', text)
+        
+        # 20. 최종 문장 정리 (줄바꿈이 포함된 문장을 일관되게 처리)
+        sentences = []
+        for paragraph in text.split('\n\n'):
+            # 각 문단 내의 문장 결합
+            clean_paragraph = re.sub(r'\n', ' ', paragraph)
+            # 문단별로 구분하여 추가
+            sentences.append(clean_paragraph)
+        
+        # 문단 구분은 빈 줄로 유지
+        text = '\n\n'.join(sentences)
         
         return text.strip()
     
     def _insert_spaces(self, text: str) -> str:
         """
-        한글과 영어/숫자 사이에 공백 추가
+        긴 단어 문자열에 공백 삽입 시도
         
         Args:
-            text: 원본 텍스트
+            text: 공백 없는 긴 문자열
             
         Returns:
-            공백이 추가된 텍스트
+            공백이 삽입된 문자열
         """
-        # 한글 유니코드 범위: [가-힣]
-        # 영어: [a-zA-Z]
-        # 숫자: [0-9]
+        # 대문자로 시작하는 패턴 찾기
+        result = re.sub(r'([a-z])([A-Z])', r'\1 \2', text)
         
-        # 1. 한글 뒤에 영어/숫자가 오는 경우 공백 추가
-        text = re.sub(r'([가-힣])([a-zA-Z0-9])', r'\1 \2', text)
+        # 여전히 너무 긴 단어가 있다면 휴리스틱 적용
+        words = result.split()
+        final_result = []
         
-        # 2. 영어/숫자 뒤에 한글이 오는 경우 공백 추가
-        text = re.sub(r'([a-zA-Z0-9])([가-힣])', r'\1 \2', text)
+        for word in words:
+            if len(word) > 15:  # 여전히 긴 단어
+                # 자주 사용되는 접두사 분리
+                prefixes = ['trans', 'inter', 'intra', 'super', 'hyper', 'under', 'over', 'anti', 'auto', 'bio', 'geo', 'neo']
+                for prefix in prefixes:
+                    if word.startswith(prefix) and len(word) > len(prefix) + 3:
+                        word = prefix + ' ' + word[len(prefix):]
+                        break
+                
+                # 자주 사용되는 접미사 분리
+                suffixes = ['tion', 'sion', 'ment', 'ness', 'ship', 'able', 'ible', 'ance', 'ence', 'ism', 'ist', 'ity', 'ing', 'ology']
+                for suffix in suffixes:
+                    if word.endswith(suffix) and len(word) > len(suffix) + 3:
+                        word = word[:-len(suffix)] + ' ' + suffix
+                        break
+            
+            final_result.append(word)
         
-        # 예외 케이스: 괄호, 쉼표, 마침표 등의 문장 부호는 공백을 추가하지 않음
-        text = re.sub(r' (?=[.,;:!?)\]}])', '', text)
-        text = re.sub(r'(?<=[({[\s]) ', '', text)
-        
-        return text
+        return ' '.join(final_result)
 
 
 def process_pdf(pdf_path: str, use_grobid: bool = False, grobid_url: str = "http://localhost:8070", extraction_method: str = "pymupdf") -> str:
     """
-    PDF 파일을 처리하여 텍스트 추출 및 전처리하는 간편 함수
+    PDF 처리 유틸리티 함수 (간편 사용)
     
     Args:
         pdf_path: PDF 파일 경로
         use_grobid: Grobid 사용 여부
         grobid_url: Grobid 서버 URL
         extraction_method: 텍스트 추출 방법 ('pymupdf', 'pdfplumber')
-        
+    
     Returns:
-        추출 및 전처리된 텍스트
+        처리된 텍스트
     """
-    processor = PDFProcessor(
-        use_grobid=use_grobid,
-        grobid_url=grobid_url,
-        extraction_method=extraction_method
+    processor = PDFProcessor(use_grobid=use_grobid, grobid_url=grobid_url, extraction_method=extraction_method)
+    return processor.process_pdf(pdf_path)
+
+
+if __name__ == "__main__":
+    import argparse
+    
+    parser = argparse.ArgumentParser(description="PDF 텍스트 추출 및 전처리")
+    parser.add_argument("pdf_path", help="PDF 파일 경로")
+    parser.add_argument("--output", "-o", help="출력 파일 경로 (지정하지 않으면 표준 출력)")
+    parser.add_argument("--grobid", "-g", action="store_true", help="Grobid 사용")
+    parser.add_argument("--grobid-url", default="http://localhost:8070", help="Grobid 서버 URL")
+    parser.add_argument("--method", "-m", choices=["pymupdf", "pdfplumber"], default="pymupdf", help="텍스트 추출 방법")
+    
+    args = parser.parse_args()
+    
+    # PDF 처리
+    processed_text = process_pdf(
+        args.pdf_path, 
+        use_grobid=args.grobid, 
+        grobid_url=args.grobid_url,
+        extraction_method=args.method
     )
-    return processor.process_pdf(pdf_path) 
+    
+    # 결과 출력
+    if args.output:
+        with open(args.output, 'w', encoding='utf-8') as f:
+            f.write(processed_text)
+        print(f"처리 결과가 {args.output}에 저장되었습니다.")
+    else:
+        print(processed_text) 

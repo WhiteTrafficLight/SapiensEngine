@@ -1,0 +1,41 @@
+{
+  "experiment_id": "c0dd59cf",
+  "name": "기본 RAG 실험",
+  "description": "기본 설정으로 RAG 시스템 성능 테스트",
+  "timestamp": "2025-05-17T21:33:25.076220",
+  "chunk_size": 500,
+  "chunk_overlap": 0.5,
+  "chunking_strategy": "sliding_window",
+  "chunk_metadata": [
+    "source",
+    "page_num"
+  ],
+  "embedding_model": "BAAI/bge-large-en-v1.5",
+  "embedding_dims": 1024,
+  "query_embedding_model": "BAAI/bge-large-en-v1.5",
+  "doc_embedding_model": "BAAI/bge-large-en-v1.5",
+  "search_algorithm": "top_k",
+  "top_k": 5,
+  "similarity_threshold": 0.6,
+  "similarity_metric": "cosine",
+  "reranker_model": "none",
+  "query_enhancement": false,
+  "enhancement_type": "none",
+  "enhancement_model": "gpt-3.5-turbo",
+  "expansion_terms": 5,
+  "web_search_enabled": false,
+  "search_provider": "google",
+  "max_results": 5,
+  "web_content_max_tokens": 1000,
+  "fusion_strategy": "weighted",
+  "local_weight": 0.7,
+  "web_weight": 0.3,
+  "data_sources": [
+    "/Users/jihoon/sapiens_engine/sapiens_engine/context_files/LimitationsofTranshumanism.pdf"
+  ],
+  "test_queries": [
+    "transhumanism as expression of will to power",
+    "Nietzschean perspective on overcoming human limits with technology",
+    "philosophical defense of transhumanism as enhancement, not dehumanization"
+  ]
+}

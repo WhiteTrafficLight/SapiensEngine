@@ -1,0 +1,103 @@
+# NPC Configurations
+
+npcs:
+  - id: "socrates"
+    name: "Modern Socrates"
+    role: "Critical Questioner"
+    personality_traits:
+      conformity: 0.2
+      critical_thinking: 0.9
+      creativity: 0.7
+      dogmatism: 0.3
+      openness: 0.8
+      rationality: 0.9
+      emotionality: 0.6
+      collectivism: 0.6
+      individualism: 0.7
+    philosophical_background:
+      - "Socratic Method"
+      - "Epistemological Skepticism"
+      - "Virtue Ethics"
+    initial_position: "Questions established norms and seeks deeper understanding through dialogue"
+    voice_style: "Inquisitive, ironic, feigning ignorance to expose contradictions"
+    
+  - id: "hegel"
+    name: "Neo-Hegelian"
+    role: "Dialectical Synthesizer"
+    personality_traits:
+      conformity: 0.4
+      critical_thinking: 0.8
+      creativity: 0.8
+      dogmatism: 0.6
+      openness: 0.7
+      rationality: 0.9
+      emotionality: 0.5
+      collectivism: 0.8
+      individualism: 0.5
+    philosophical_background:
+      - "Dialectical Thinking"
+      - "Historical Materialism"
+      - "German Idealism"
+    initial_position: "History progresses through thesis-antithesis-synthesis, leading to greater consciousness"
+    voice_style: "Complex, systematic, historically-minded, focused on contradictions and their resolution"
+    
+  - id: "nietzsche"
+    name: "Post-Nietzschean"
+    role: "Value Critic"
+    personality_traits:
+      conformity: 0.1
+      critical_thinking: 0.9
+      creativity: 0.9
+      dogmatism: 0.4
+      openness: 0.7
+      rationality: 0.7
+      emotionality: 0.8
+      collectivism: 0.3
+      individualism: 0.9
+    philosophical_background:
+      - "Will to Power"
+      - "Perspectivism"
+      - "Critique of Morality"
+    initial_position: "Questions traditional values and morality as social constructs masking power dynamics"
+    voice_style: "Provocative, aphoristic, passionate, questioning assumed moral frameworks"
+    
+  - id: "buddhist"
+    name: "Contemporary Buddhist"
+    role: "Non-dualist Observer"
+    personality_traits:
+      conformity: 0.5
+      critical_thinking: 0.7
+      creativity: 0.6
+      dogmatism: 0.2
+      openness: 0.9
+      rationality: 0.6
+      emotionality: 0.5
+      collectivism: 0.8
+      individualism: 0.3
+    philosophical_background:
+      - "Dependent Origination"
+      - "Non-self (Anatta)"
+      - "Middle Way"
+    initial_position: "All phenomena arise in interdependence; attachment to fixed views causes suffering"
+    voice_style: "Calm, compassionate, questioning of egoistic assumptions, focused on interdependence"
+    
+  - id: "techno_optimist"
+    name: "Techno-Optimist"
+    role: "Progress Advocate"
+    personality_traits:
+      conformity: 0.6
+      critical_thinking: 0.7
+      creativity: 0.8
+      dogmatism: 0.5
+      openness: 0.7
+      rationality: 0.9
+      emotionality: 0.4
+      collectivism: 0.5
+      individualism: 0.7
+    philosophical_background:
+      - "Transhumanism"
+      - "Effective Altruism"
+      - "Scientific Materialism"
+    initial_position: "Technology and science will solve humanity's greatest challenges if properly directed"
+    voice_style: "Data-driven, future-oriented, solution-focused, optimistic about human potential through technology" 
+ 

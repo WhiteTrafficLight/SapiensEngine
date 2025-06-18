@@ -11,8 +11,8 @@ from dotenv import load_dotenv, dotenv_values
 import chromadb
 from chromadb.utils import embedding_functions
 
-from sapiens_engine.core.config_loader import ConfigLoader
-from sapiens_engine.utils.context_manager import UserContextManager
+from src.utils.config.config_loader import ConfigLoader
+from src.utils.context_manager import UserContextManager
 
 # Load environment variables
 load_dotenv(override=True)  # Force override existing environment variables with .env values
@@ -37,6 +37,26 @@ class LLMManager:
         else:
             self.config_loader = ConfigLoader()
             self.llm_config = self.config_loader.get_main_config().get("llm", {})
+            
+        # ✅ 컨텍스트별 LLM 설정 (토큰 최적화용)
+        self.context_configs = {
+            # 고품질 필요 (창의성, 논리성)
+            "opening_argument": {"model": "gpt-4o", "max_tokens": 8000},
+            "conclusion": {"model": "gpt-4o", "max_tokens": 6000},
+            
+            # 중간 품질 (분석, 전략)
+            "attack_strategy": {"model": "gpt-4o", "max_tokens": 4000},
+            "defense_response": {"model": "gpt-4o", "max_tokens": 3000},
+            "argument_analysis": {"model": "gpt-4o", "max_tokens": 3000},
+            
+            # 빠른 처리 (간단한 작업)
+            "interactive_response": {"model": "gpt-4o", "max_tokens": 1500},
+            "rag_query_generation": {"model": "gpt-4o", "max_tokens": 500},
+            "keyword_extraction": {"model": "gpt-4o", "max_tokens": 200},
+            
+            # 기본값
+            "default": {"model": "gpt-4o", "max_tokens": 4000}
+        }
             
         # Get API keys from .env file directly to ensure we use the correct values
         env_values = dotenv_values()
@@ -108,22 +128,37 @@ class LLMManager:
             raise ValueError(f"Unsupported LLM provider: {provider}")
             
     def generate_response(self, system_prompt: str, user_prompt: str, 
-                        llm_provider: str = "openai", llm_model: str = "gpt-4",
-                        max_tokens: int = 1500, temperature: float = 0.7) -> str:
+                        context_type: str = "default",
+                        llm_provider: str = "openai", llm_model: str = None,
+                        max_tokens: int = None, temperature: float = 0.7) -> str:
         """
         LLM을 사용하여 응답을 생성합니다.
         
         Args:
             system_prompt: 시스템 프롬프트
             user_prompt: 사용자 프롬프트
+            context_type: 컨텍스트 타입 (자동 최적화용)
             llm_provider: LLM 제공자 (기본값: "openai")
-            llm_model: 사용할 모델 (기본값: "gpt-4")
-            max_tokens: 최대 토큰 수 (기본값: 1500)
+            llm_model: 사용할 모델 (None이면 컨텍스트별 최적 모델 자동 선택)
+            max_tokens: 최대 토큰 수 (None이면 컨텍스트별 최적값 자동 선택)
             temperature: 온도 (기본값: 0.7)
             
         Returns:
             생성된 응답 텍스트
         """
+        # ✅ 컨텍스트별 최적 설정 자동 적용
+        context_config = self.context_configs.get(context_type, self.context_configs["default"])
+        
+        # 파라미터가 명시적으로 제공되지 않으면 컨텍스트 설정 사용
+        if llm_model is None:
+            llm_model = context_config["model"]
+        if max_tokens is None:
+            max_tokens = context_config["max_tokens"]
+            
+        # 디버깅 로그 (컨텍스트 최적화 확인용)
+        if context_type != "default":
+            logger.info(f"[LLM_CONTEXT] {context_type} -> Model: {llm_model}, Tokens: {max_tokens}")
+        
         try:
             # logger.info("[LLM_DEBUG] LLM 응답 생성 시작")
             # logger.info(f"[LLM_DEBUG] Provider: {llm_provider}, Model: {llm_model}")

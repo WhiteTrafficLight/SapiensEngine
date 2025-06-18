@@ -12,7 +12,7 @@ import logging
 import time
 from typing import Dict, List, Any, Tuple, Optional
 
-from sapiens_engine.utils.local_llm import LocalLLM
+from src.utils.local_llm import LocalLLM
 
 logger = logging.getLogger(__name__)
 

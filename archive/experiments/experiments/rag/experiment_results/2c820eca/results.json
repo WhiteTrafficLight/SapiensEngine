@@ -1,0 +1,300 @@
+{
+  "experiment_id": "2c820eca",
+  "name": "기본 RAG 실험",
+  "description": "기본 설정으로 RAG 시스템 성능 테스트",
+  "timestamp": "2025-05-17T22:10:00.194859",
+  "config": {
+    "experiment_id": "2c820eca",
+    "name": "기본 RAG 실험",
+    "description": "기본 설정으로 RAG 시스템 성능 테스트",
+    "timestamp": "2025-05-17T22:10:00.194034",
+    "chunk_size": 500,
+    "chunk_overlap": 0.5,
+    "chunking_strategy": "hybrid",
+    "chunk_metadata": [
+      "source",
+      "page_num"
+    ],
+    "embedding_model": "BAAI/bge-large-en-v1.5",
+    "embedding_dims": 1024,
+    "query_embedding_model": "BAAI/bge-large-en-v1.5",
+    "doc_embedding_model": "BAAI/bge-large-en-v1.5",
+    "search_algorithm": "top_k",
+    "top_k": 5,
+    "similarity_threshold": 0.6,
+    "similarity_metric": "cosine",
+    "reranker_model": "none",
+    "query_enhancement": false,
+    "enhancement_type": "none",
+    "enhancement_model": "gpt-3.5-turbo",
+    "expansion_terms": 5,
+    "web_search_enabled": false,
+    "search_provider": "google",
+    "max_results": 5,
+    "web_content_max_tokens": 1000,
+    "fusion_strategy": "weighted",
+    "local_weight": 0.7,
+    "web_weight": 0.3,
+    "data_sources": [
+      "/Users/jihoon/sapiens_engine/sapiens_engine/context_files/LimitationsofTranshumanism.pdf"
+    ],
+    "test_queries": [
+      "transhumanism as expression of will to power",
+      "Nietzschean perspective on overcoming human limits with technology",
+      "philosophical defense of transhumanism as enhancement, not dehumanization"
+    ]
+  },
+  "query_results": [
+    {
+      "query": "transhumanism as expression of will to power",
+      "enhanced_query": "transhumanism as expression of will to power",
+      "retrieval_results": [
+        {
+          "text": "as to risk everything should not be trusted with its future. transhumanists, with their negative attitude toward the given, should be the last to offer counsel on what is good for the future of humanity. only those who are truly human, who love and appreciate the giftedness of human life, can be trusted to use technology in a way that fosters integral human development. conclusion transhumanism, contemporary prospects for human enhancement, offers itself as hope for the future ; to “ relieve ” humanity of its limitations ( mckenny 1997, through the application of biotechnology. however, as traced in this paper, the philosophical foundations of transhumanism in scientific positivism render it incapable of understanding the human novelty. in its narrow conception of reality, its limitation of meaning to praxis, and its reduction of the human essence to rationality ( mind ) or materi -, it fundamentally changes our anthropology, strips it of normative value, and distorts the essence of our humanity. capacity to know what is good for humanity is, therefore, extremely doubtful. furthermore, through the secularization of hope, characterized by an absolute belief in progress through science and technology, the future of humanity is firmly placed within the hands of biotechnology. with unrestrained confidence in the powers of technology, the transhumanist cause is projected as the “ new frontier ” of exploration - the aspiration and hope for the future. however, from its origins, such optimistic aspirations are rooted in negativity and frustration over humanity ’ s current lot. this sense of dissatisfaction for the present human condition - the sense that we are “ not good enough ” - is the foundation of the transhumanist dream that opens towards a posthuman future. this facade of hope, therefore, can offer no real reassurance. transhumanist dream, despite its veneer of hope, is in reality a manifestation of a deep despair. declaration of conflicting interests the author declared no potential conflicts of interest with respect to the research, authorship, and / or publication of this article. funding the author received no financial support for the research, authorship, and / or publication of this article. orcid id paschal m.",
+          "metadata": {
+            "chunk_id": 24,
+            "chunk_text": "as to risk everything should not be trusted with its future. transhumanists, with their negative att...",
+            "type": "pdf",
+            "source": "/Users/jihoon/sapiens_engine/sapiens_engine/context_files/LimitationsofTranshumanism.pdf"
+          },
+          "score": 0.6068221926689148,
+          "source": "local",
+          "similarity": 0.6068221926689148
+        },
+        {
+          "text": "##s such as new threats to life, the unjust distribution of healthcare resources, and the perennial issues surrounding life at its beginning and end, devoting time to an improbable possibility might appear to be a distraction or a luxury that we can ill afford. yet the prospect of transhumanism has caught the imagination of not just a few contemporary bioethicists and philosophers, inspiring centers of research, and sparking a lively debate between its supporters and critics. and this interest seems to only increase. transhumanist ideas have moved from the fringes of philosophical inquiry into the mainstream. however, beyond the demands of public interest, the transhumanist proposal demands a response since it touches on the very meaning of human life and hope. in asking why one should take seriously the proposals of transhumanists, american bioethicist leon kass writes : it raises the weightiest questions of bioethics, touching on the ends and goals of the biomedical enterprise, the nature and meaning of human flourishing, and the intrinsic threat of dehumanization ( or the promise of super humaniza tion ). compels attention to what it means to be a human being and to be active as a human being. ( kass 2003, in their pursuit to enhance and even transcend the current human condition, transhumanists cast shadows over the goodness of life while raising hopes for a bright and better future. thus, even if many of its imaginative prospects do not eventuate, it demands a reflective response, for our hopes and aspirations define who we are. “ what we hope for tells us a great gilbert meilaender ( 2013,. even if the quest for transcending our humanity turns out in the end to be no more than a “ pipe dream, ” the fact that it is even proposed is significant. the object of transhumanist hope and its philosophical foundations encouraged by the possibilities of technology, the transhumanist cause is characteristically hopeful. however, the nature of such hope is of a particular kind. in essence it is an immanent, this - worldly described as a “ future - oriented ideology ” ( burdett lorrimar aspires to a “ brave new world ” ( a la julian huxley ’ s more famous brother, aldous ). that which was once confided in god or is now firmly placed within the sphere of the human capacity to know and act, and increasingly finds its solace in a rationality that is the product",
+          "metadata": {
+            "source": "/Users/jihoon/sapiens_engine/sapiens_engine/context_files/LimitationsofTranshumanism.pdf",
+            "chunk_id": 6,
+            "type": "pdf",
+            "chunk_text": "##s such as new threats to life, the unjust distribution of healthcare resources, and the perennial ..."
+          },
+          "score": 0.5864565968513489,
+          "source": "local",
+          "similarity": 0.5864565968513489
+        },
+        {
+          "text": "end of humanity ” ( ratzinger 2009, ; that it “ is adequate in the technical domain, ” but that when it is universalized it “ mutilates man ” ( ratzinger 2005,. as symptomatic of this “ mutilation, ” transhumanism radically underestimates the human person ’ s capacity for spiritual transcendence. it is, therefore, incapable of grasping the goods of man, nor of comprehending the sublime object of his hope. informed by a negative anthropology, it values human life so little that it is willing to gamble away its uniqueness, surrendering humanity to the whims of technology on the chance that it might be enhanced. whether flowing from callous disregard, unfounded optimism or dark despair, it would seem madness to allow technological power to be wielded by those who possess such a negative conception of human nature. hans jonas makes a similar point. in response to the charge of pessimism over his caution of the destructive power of technology, he suggests that “ the greater pessimism is on the side of those who consider the given to be so bad or worthless that every gamble for its possible improvement is defensible ” ( jonas 1985,. in other words, those who consider the human condition so lightly as to risk everything should not be trusted with its future. transhumanists, with their negative attitude toward the given, should be the last to offer counsel on what is good for the future of humanity. only those who are truly human, who love and appreciate the giftedness of human life, can be trusted to use technology in a way that fosters integral human development. conclusion transhumanism, contemporary prospects for human enhancement, offers itself as hope for the future ; to “ relieve ” humanity of its limitations ( mckenny 1997, through the application of biotechnology. however, as traced in this paper, the philosophical foundations of transhumanism in scientific positivism render it incapable of understanding the human novelty. in its narrow conception of reality, its limitation of meaning to praxis, and its reduction of the human essence to rationality ( mind ) or materi -, it fundamentally changes our anthropology, strips it of normative value, and distorts the essence of our humanity. capacity to know what is good for humanity is, therefore, extremely doubtful. furthermore, through the secularization of hope, characterized by an absolute belief in progress through science and technology, the future of humanity is firmly placed within the hands of",
+          "metadata": {
+            "chunk_text": "end of humanity ” ( ratzinger 2009, ; that it “ is adequate in the technical domain, ” but that when...",
+            "source": "/Users/jihoon/sapiens_engine/sapiens_engine/context_files/LimitationsofTranshumanism.pdf",
+            "type": "pdf",
+            "chunk_id": 23
+          },
+          "score": 0.5765076279640198,
+          "source": "local",
+          "similarity": 0.5765076279640198
+        },
+        {
+          "text": "its main outlines have become clear ; but the exploration of human nature and its possibilities has scarcely begun. a vast new world of uncharted possibilities awaits its columbus ( huxley 1957,. from these initial aspirations, contemporary proponents of the transhumanist cause, encouraged by advances in science and technology, are confident of its realization. but in doing so, they refine huxley ’ s end, making a distinction between a transhuman and a posthuman state. the distinction between the two is not fixed. generally speaking, the transhuman ( or “ transitional ” human ) is one whose physical, intellectual, psychological capacities are enhanced with respect to the present human experience, but not to the point of creating a new species. the posthuman, on the other hand, refers to a radically new state characterized by an amplification of one ’ s capacities that would constitute a new kind of being. in seeking to enhance humanity beyond its natural limitations, the transhumanist project embraces a wide range of proposals, from simple and achievable measures to the scientifically technical bizarre. between scientific fact and science fiction. light of its more futuristic aspirations, transhumanism might not seem to warrant serious reflection. before the presence of real, existent bioethical dilemmas such as new threats to life, the unjust distribution of healthcare resources, and the perennial issues surrounding life at its beginning and end, devoting time to an improbable possibility might appear to be a distraction or a luxury that we can ill afford. yet the prospect of transhumanism has caught the imagination of not just a few contemporary bioethicists and philosophers, inspiring centers of research, and sparking a lively debate between its supporters and critics. and this interest seems to only increase. transhumanist ideas have moved from the fringes of philosophical inquiry into the mainstream. however, beyond the demands of public interest, the transhumanist proposal demands a response since it touches on the very meaning of human life and hope. in asking why one should take seriously the proposals of transhumanists, american bioethicist leon kass writes : it raises the weightiest questions of bioethics, touching on the ends and goals of the biomedical enterprise, the nature and meaning of human flourishing, and the intrinsic threat of dehumanization ( or the promise of super humaniza tion ). compels attention to what it means to be a human being and to be active as a human being.",
+          "metadata": {
+            "chunk_text": "its main outlines have become clear ; but the exploration of human nature and its possibilities has ...",
+            "source": "/Users/jihoon/sapiens_engine/sapiens_engine/context_files/LimitationsofTranshumanism.pdf",
+            "type": "pdf",
+            "chunk_id": 5
+          },
+          "score": 0.5663341879844666,
+          "source": "local",
+          "similarity": 0.5663341879844666
+        },
+        {
+          "text": "an innate despair : the philosophical limitations of transhumanism and its misplaced hope in human enhancement paschal m. corby, std, stl, btheol hons., mbbs hons. 1 abstract this paper sets forth some philosophical foundations of the transhumanist project, drawing on its roots in philosophical positivism and its confidence in the liberating power of technology. confidence is interpreted within the sphere of hope, departing from transhumanism ’ s negative presumptions regarding the human condition, and embracing its aspirations for a humanity without limits. however, it is the claim of this paper that such hope is deceptive. since transhumanism is incapable of grasping the depths of the human person, limited by its own philosophical categories, it both underestimates the human capacity for interior transformation and misunderstands the real nature of hope. thus, transhumanism is marked by a deeply rooted despair that wears the mask of an insufficient hope. keywords anthropology, despair, enhancement, hope, philosophical positivism, transhumanism introduction much has been written about transhumanism over the past twenty years, such that it is difficult to add anything new to the debate. present paper does not presume to be novel in this regard. instead, its main purpose is to draw out the philosophical foundations of the transhumanist project, setting forth its roots in philosophical positivism and its confidence in the liberating power of technology, and to consider the implications for anthropology, the determination of human purpose, and object of human hope. in this regard, it may provide a platform to critique other contemporary prospects of “ enhancement ” that share transhumanist tendencies, such as artificial intelligence and neuralink, gender fluidity, as well as attempts at hybridization through 1 university of notre dame australia ( sydney campus ), chippendale, nsw, australia,, btheol hons., mbbs hons.. corby, university of notre dame australia ( sydney campus ), broadway, chippendale, nsw 2008, australia. emails : paschal. corby @ nd. edu. au article sagepub. com / journals - permissions transgenesis or xenotransplanta tion. this paper chooses to focus specifically on transhumanism, limitations exposed could equally be applied to these other proposals that threaten to profoundly change humanity, compromise its uniqueness, and mutate the nature of human hope",
+          "metadata": {
+            "source": "/Users/jihoon/sapiens_engine/sapiens_engine/context_files/LimitationsofTranshumanism.pdf",
+            "chunk_id": 0,
+            "chunk_text": "an innate despair : the philosophical limitations of transhumanism and its misplaced hope in human e...",
+            "type": "pdf"
+          },
+          "score": 0.5613377690315247,
+          "source": "local",
+          "similarity": 0.5613377690315247
+        }
+      ],
+      "metrics": {
+        "avg_similarity": 0.5794916749000549,
+        "top_chunk_similarity": 0.6068221926689148,
+        "min_similarity": 0.5613377690315247,
+        "max_similarity": 0.6068221926689148,
+        "median_similarity": 0.5765076279640198,
+        "execution_time": -1747512622.6764314,
+        "memory_usage": 705.796875
+      },
+      "timing": {
+        "start_to_query_enhancement": 0.0005309581756591797,
+        "query_enhancement_to_retrieval": 3.5007598400115967
+      }
+    },
+    {
+      "query": "Nietzschean perspective on overcoming human limits with technology",
+      "enhanced_query": "Nietzschean perspective on overcoming human limits with technology",
+      "retrieval_results": [
+        {
+          "text": "end of humanity ” ( ratzinger 2009, ; that it “ is adequate in the technical domain, ” but that when it is universalized it “ mutilates man ” ( ratzinger 2005,. as symptomatic of this “ mutilation, ” transhumanism radically underestimates the human person ’ s capacity for spiritual transcendence. it is, therefore, incapable of grasping the goods of man, nor of comprehending the sublime object of his hope. informed by a negative anthropology, it values human life so little that it is willing to gamble away its uniqueness, surrendering humanity to the whims of technology on the chance that it might be enhanced. whether flowing from callous disregard, unfounded optimism or dark despair, it would seem madness to allow technological power to be wielded by those who possess such a negative conception of human nature. hans jonas makes a similar point. in response to the charge of pessimism over his caution of the destructive power of technology, he suggests that “ the greater pessimism is on the side of those who consider the given to be so bad or worthless that every gamble for its possible improvement is defensible ” ( jonas 1985,. in other words, those who consider the human condition so lightly as to risk everything should not be trusted with its future. transhumanists, with their negative attitude toward the given, should be the last to offer counsel on what is good for the future of humanity. only those who are truly human, who love and appreciate the giftedness of human life, can be trusted to use technology in a way that fosters integral human development. conclusion transhumanism, contemporary prospects for human enhancement, offers itself as hope for the future ; to “ relieve ” humanity of its limitations ( mckenny 1997, through the application of biotechnology. however, as traced in this paper, the philosophical foundations of transhumanism in scientific positivism render it incapable of understanding the human novelty. in its narrow conception of reality, its limitation of meaning to praxis, and its reduction of the human essence to rationality ( mind ) or materi -, it fundamentally changes our anthropology, strips it of normative value, and distorts the essence of our humanity. capacity to know what is good for humanity is, therefore, extremely doubtful. furthermore, through the secularization of hope, characterized by an absolute belief in progress through science and technology, the future of humanity is firmly placed within the hands of",
+          "metadata": {
+            "type": "pdf",
+            "chunk_text": "end of humanity ” ( ratzinger 2009, ; that it “ is adequate in the technical domain, ” but that when...",
+            "source": "/Users/jihoon/sapiens_engine/sapiens_engine/context_files/LimitationsofTranshumanism.pdf",
+            "chunk_id": 23
+          },
+          "score": 0.48072922229766846,
+          "source": "local",
+          "similarity": 0.48072922229766846
+        },
+        {
+          "text": "as to risk everything should not be trusted with its future. transhumanists, with their negative attitude toward the given, should be the last to offer counsel on what is good for the future of humanity. only those who are truly human, who love and appreciate the giftedness of human life, can be trusted to use technology in a way that fosters integral human development. conclusion transhumanism, contemporary prospects for human enhancement, offers itself as hope for the future ; to “ relieve ” humanity of its limitations ( mckenny 1997, through the application of biotechnology. however, as traced in this paper, the philosophical foundations of transhumanism in scientific positivism render it incapable of understanding the human novelty. in its narrow conception of reality, its limitation of meaning to praxis, and its reduction of the human essence to rationality ( mind ) or materi -, it fundamentally changes our anthropology, strips it of normative value, and distorts the essence of our humanity. capacity to know what is good for humanity is, therefore, extremely doubtful. furthermore, through the secularization of hope, characterized by an absolute belief in progress through science and technology, the future of humanity is firmly placed within the hands of biotechnology. with unrestrained confidence in the powers of technology, the transhumanist cause is projected as the “ new frontier ” of exploration - the aspiration and hope for the future. however, from its origins, such optimistic aspirations are rooted in negativity and frustration over humanity ’ s current lot. this sense of dissatisfaction for the present human condition - the sense that we are “ not good enough ” - is the foundation of the transhumanist dream that opens towards a posthuman future. this facade of hope, therefore, can offer no real reassurance. transhumanist dream, despite its veneer of hope, is in reality a manifestation of a deep despair. declaration of conflicting interests the author declared no potential conflicts of interest with respect to the research, authorship, and / or publication of this article. funding the author received no financial support for the research, authorship, and / or publication of this article. orcid id paschal m.",
+          "metadata": {
+            "source": "/Users/jihoon/sapiens_engine/sapiens_engine/context_files/LimitationsofTranshumanism.pdf",
+            "chunk_id": 24,
+            "chunk_text": "as to risk everything should not be trusted with its future. transhumanists, with their negative att...",
+            "type": "pdf"
+          },
+          "score": 0.45751428604125977,
+          "source": "local",
+          "similarity": 0.45751428604125977
+        },
+        {
+          "text": "co - edited work, human enhancement, julian savulescu and nick bostrom, both adherents to the transhumanist project, ask a fundamental question : “ are we good enough? ” presuming a negative response, immediately follow another : “ if not, how may we improve ourselves? ” ( savulescu and bostrom 2009,. as the narrative unfolds, it appears that humans are not good enough, and there is reason - indeed, a moral duty - to enhance ourselves through the ingenuity of science and technology. at the root of this imperative for enhancement is a profound sense of despondency and frustration with our human condition. in this, transhumanists clearly respond to a valid human experience. discontentment and disappointment are part of every life. before our limitations, we all yearn for something more, desire to go further, strive to improve ourselves in one way or another. the human spirit has always striven towards self - improvement, and the historical advances in human culture unthinkable without towards enhancement. question, however, whether transhumanists savulescu and bostrom interpret the experience of human dissatisfaction correctly, and whether their confidence in the methods of human enhancement, especially through biotechnology, corresponds to genuine human hope or masks an underlying despair. transhumanism can be defined as a project of enhancement through the application of biotechnology beings beyond their natural limitations : to make them smarter and stronger ; to assist them to be happier and morally responsible ; and / or to enable them to live longer. the novelty of the transhumanist project does not lie in the biotechnologies that it advances. many of the technologies proposed are already on - line and used therapeutically. pharmaceuticals, genetic manipulation, nanotechnology, brain - computer interfaces ( e. g., cochlear implants for the hearing impaired ) already exist in clinical practice and promise further advances to treat and cure disability and disease. the difference lies in transhumanism ’ s desire to engage such technologies toward surpassing therapeutic. transhumanists seek to enhance the human condition beyond any notion of “ normal ” functioning ( which, as shall be seen below, they fundamentally deny ) ; to make us, in the words of michael sandel, “ better than well ” ( sandel 2009,. in so doing, they purposefully disregard the therapy - enhancement distinction with its presumption of normative function and render any improvement as an enhancement, that is, an “ improvement ” of",
+          "metadata": {
+            "chunk_id": 2,
+            "source": "/Users/jihoon/sapiens_engine/sapiens_engine/context_files/LimitationsofTranshumanism.pdf",
+            "type": "pdf",
+            "chunk_text": "co - edited work, human enhancement, julian savulescu and nick bostrom, both adherents to the transh..."
+          },
+          "score": 0.43428099155426025,
+          "source": "local",
+          "similarity": 0.43428099155426025
+        },
+        {
+          "text": "man does not live on the bread of practicability alone ; he lives as man and, precisely in the intrinsically human part of his being, on the word, on love, on meaning ” ( ratzinger ). meaning, and other realities like the transcendentals of truth, goodness, and beauty, constitute what is truly human and cannot be reduced to positive categories. to take just one example, ratzinger highlights the impossibility of the mathematical mind to comprehend the “ superfluous wonder ” of beauty, its extravagance surpassing explanation by calculation ( ratzinger 2004,. in the end, he insists that positivism is incapable of extinguishing belief, that it cannot annihilate the human search for meaning and the yearning transcendence, because faith, seeking for understanding, corresponds to the truth of human nature. a deep despair philosophically restricted to positive categories, transhumanism is incapable of grasping the depths of the human person. while not hesitating in his acknowledgement that, as a scientific method, positivism “ is unbelievably useful absolutely necessary mastery of the problems of ever - developing humanity, ” ratzinger insists that “ as a philosophy of life [ it ] is intolerable and the end of humanity ” ( ratzinger 2009, ; that it “ is adequate in the technical domain, ” but that when it is universalized it “ mutilates man ” ( ratzinger 2005,. as symptomatic of this “ mutilation, ” transhumanism radically underestimates the human person ’ s capacity for spiritual transcendence. it is, therefore, incapable of grasping the goods of man, nor of comprehending the sublime object of his hope. informed by a negative anthropology, it values human life so little that it is willing to gamble away its uniqueness, surrendering humanity to the whims of technology on the chance that it might be enhanced. whether flowing from callous disregard, unfounded optimism or dark despair, it would seem madness to allow technological power to be wielded by those who possess such a negative conception of human nature. hans jonas makes a similar point. in response to the charge of pessimism over his caution of the destructive power of technology, he suggests that “ the greater pessimism is on the side of those who consider the given to be so bad or worthless that every gamble for its possible improvement is defensible ” ( jonas 1985,.",
+          "metadata": {
+            "chunk_text": "man does not live on the bread of practicability alone ; he lives as man and, precisely in the intri...",
+            "chunk_id": 22,
+            "source": "/Users/jihoon/sapiens_engine/sapiens_engine/context_files/LimitationsofTranshumanism.pdf",
+            "type": "pdf"
+          },
+          "score": 0.42706215381622314,
+          "source": "local",
+          "similarity": 0.42706215381622314
+        },
+        {
+          "text": "##s such as new threats to life, the unjust distribution of healthcare resources, and the perennial issues surrounding life at its beginning and end, devoting time to an improbable possibility might appear to be a distraction or a luxury that we can ill afford. yet the prospect of transhumanism has caught the imagination of not just a few contemporary bioethicists and philosophers, inspiring centers of research, and sparking a lively debate between its supporters and critics. and this interest seems to only increase. transhumanist ideas have moved from the fringes of philosophical inquiry into the mainstream. however, beyond the demands of public interest, the transhumanist proposal demands a response since it touches on the very meaning of human life and hope. in asking why one should take seriously the proposals of transhumanists, american bioethicist leon kass writes : it raises the weightiest questions of bioethics, touching on the ends and goals of the biomedical enterprise, the nature and meaning of human flourishing, and the intrinsic threat of dehumanization ( or the promise of super humaniza tion ). compels attention to what it means to be a human being and to be active as a human being. ( kass 2003, in their pursuit to enhance and even transcend the current human condition, transhumanists cast shadows over the goodness of life while raising hopes for a bright and better future. thus, even if many of its imaginative prospects do not eventuate, it demands a reflective response, for our hopes and aspirations define who we are. “ what we hope for tells us a great gilbert meilaender ( 2013,. even if the quest for transcending our humanity turns out in the end to be no more than a “ pipe dream, ” the fact that it is even proposed is significant. the object of transhumanist hope and its philosophical foundations encouraged by the possibilities of technology, the transhumanist cause is characteristically hopeful. however, the nature of such hope is of a particular kind. in essence it is an immanent, this - worldly described as a “ future - oriented ideology ” ( burdett lorrimar aspires to a “ brave new world ” ( a la julian huxley ’ s more famous brother, aldous ). that which was once confided in god or is now firmly placed within the sphere of the human capacity to know and act, and increasingly finds its solace in a rationality that is the product",
+          "metadata": {
+            "source": "/Users/jihoon/sapiens_engine/sapiens_engine/context_files/LimitationsofTranshumanism.pdf",
+            "chunk_text": "##s such as new threats to life, the unjust distribution of healthcare resources, and the perennial ...",
+            "chunk_id": 6,
+            "type": "pdf"
+          },
+          "score": 0.4169251322746277,
+          "source": "local",
+          "similarity": 0.4169251322746277
+        }
+      ],
+      "metrics": {
+        "avg_similarity": 0.4433023571968079,
+        "top_chunk_similarity": 0.48072922229766846,
+        "min_similarity": 0.4169251322746277,
+        "max_similarity": 0.48072922229766846,
+        "median_similarity": 0.43428099155426025,
+        "execution_time": -1747512626.444728,
+        "memory_usage": 914.96875
+      },
+      "timing": {
+        "start_to_query_enhancement": 0.00013184547424316406,
+        "query_enhancement_to_retrieval": 3.243856191635132
+      }
+    },
+    {
+      "query": "philosophical defense of transhumanism as enhancement, not dehumanization",
+      "enhanced_query": "philosophical defense of transhumanism as enhancement, not dehumanization",
+      "retrieval_results": [
+        {
+          "text": "co - edited work, human enhancement, julian savulescu and nick bostrom, both adherents to the transhumanist project, ask a fundamental question : “ are we good enough? ” presuming a negative response, immediately follow another : “ if not, how may we improve ourselves? ” ( savulescu and bostrom 2009,. as the narrative unfolds, it appears that humans are not good enough, and there is reason - indeed, a moral duty - to enhance ourselves through the ingenuity of science and technology. at the root of this imperative for enhancement is a profound sense of despondency and frustration with our human condition. in this, transhumanists clearly respond to a valid human experience. discontentment and disappointment are part of every life. before our limitations, we all yearn for something more, desire to go further, strive to improve ourselves in one way or another. the human spirit has always striven towards self - improvement, and the historical advances in human culture unthinkable without towards enhancement. question, however, whether transhumanists savulescu and bostrom interpret the experience of human dissatisfaction correctly, and whether their confidence in the methods of human enhancement, especially through biotechnology, corresponds to genuine human hope or masks an underlying despair. transhumanism can be defined as a project of enhancement through the application of biotechnology beings beyond their natural limitations : to make them smarter and stronger ; to assist them to be happier and morally responsible ; and / or to enable them to live longer. the novelty of the transhumanist project does not lie in the biotechnologies that it advances. many of the technologies proposed are already on - line and used therapeutically. pharmaceuticals, genetic manipulation, nanotechnology, brain - computer interfaces ( e. g., cochlear implants for the hearing impaired ) already exist in clinical practice and promise further advances to treat and cure disability and disease. the difference lies in transhumanism ’ s desire to engage such technologies toward surpassing therapeutic. transhumanists seek to enhance the human condition beyond any notion of “ normal ” functioning ( which, as shall be seen below, they fundamentally deny ) ; to make us, in the words of michael sandel, “ better than well ” ( sandel 2009,. in so doing, they purposefully disregard the therapy - enhancement distinction with its presumption of normative function and render any improvement as an enhancement, that is, an “ improvement ” of",
+          "metadata": {
+            "type": "pdf",
+            "chunk_text": "co - edited work, human enhancement, julian savulescu and nick bostrom, both adherents to the transh...",
+            "chunk_id": 2,
+            "source": "/Users/jihoon/sapiens_engine/sapiens_engine/context_files/LimitationsofTranshumanism.pdf"
+          },
+          "score": 0.6624970436096191,
+          "source": "local",
+          "similarity": 0.6624970436096191
+        },
+        {
+          "text": "its main outlines have become clear ; but the exploration of human nature and its possibilities has scarcely begun. a vast new world of uncharted possibilities awaits its columbus ( huxley 1957,. from these initial aspirations, contemporary proponents of the transhumanist cause, encouraged by advances in science and technology, are confident of its realization. but in doing so, they refine huxley ’ s end, making a distinction between a transhuman and a posthuman state. the distinction between the two is not fixed. generally speaking, the transhuman ( or “ transitional ” human ) is one whose physical, intellectual, psychological capacities are enhanced with respect to the present human experience, but not to the point of creating a new species. the posthuman, on the other hand, refers to a radically new state characterized by an amplification of one ’ s capacities that would constitute a new kind of being. in seeking to enhance humanity beyond its natural limitations, the transhumanist project embraces a wide range of proposals, from simple and achievable measures to the scientifically technical bizarre. between scientific fact and science fiction. light of its more futuristic aspirations, transhumanism might not seem to warrant serious reflection. before the presence of real, existent bioethical dilemmas such as new threats to life, the unjust distribution of healthcare resources, and the perennial issues surrounding life at its beginning and end, devoting time to an improbable possibility might appear to be a distraction or a luxury that we can ill afford. yet the prospect of transhumanism has caught the imagination of not just a few contemporary bioethicists and philosophers, inspiring centers of research, and sparking a lively debate between its supporters and critics. and this interest seems to only increase. transhumanist ideas have moved from the fringes of philosophical inquiry into the mainstream. however, beyond the demands of public interest, the transhumanist proposal demands a response since it touches on the very meaning of human life and hope. in asking why one should take seriously the proposals of transhumanists, american bioethicist leon kass writes : it raises the weightiest questions of bioethics, touching on the ends and goals of the biomedical enterprise, the nature and meaning of human flourishing, and the intrinsic threat of dehumanization ( or the promise of super humaniza tion ). compels attention to what it means to be a human being and to be active as a human being.",
+          "metadata": {
+            "type": "pdf",
+            "chunk_id": 5,
+            "chunk_text": "its main outlines have become clear ; but the exploration of human nature and its possibilities has ...",
+            "source": "/Users/jihoon/sapiens_engine/sapiens_engine/context_files/LimitationsofTranshumanism.pdf"
+          },
+          "score": 0.6575041711330414,
+          "source": "local",
+          "similarity": 0.6575041711330414
+        },
+        {
+          "text": "in this regard. instead, its main purpose is to draw out the philosophical foundations of the transhumanist project, setting forth its roots in philosophical positivism and its confidence in the liberating power of technology, and to consider the implications for anthropology, the determination of human purpose, and object of human hope. in this regard, it may provide a platform to critique other contemporary prospects of “ enhancement ” that share transhumanist tendencies, such as artificial intelligence and neuralink, gender fluidity, as well as attempts at hybridization through 1 university of notre dame australia ( sydney campus ), chippendale, nsw, australia,, btheol hons., mbbs hons.. corby, university of notre dame australia ( sydney campus ), broadway, chippendale, nsw 2008, australia. emails : paschal. corby @ nd. edu. au article sagepub. com / journals - permissions transgenesis or xenotransplanta tion. this paper chooses to focus specifically on transhumanism, limitations exposed could equally be applied to these other proposals that threaten to profoundly change humanity, compromise its uniqueness, and mutate the nature of human hope. why transhumanism? in the introduction to their co - edited work, human enhancement, julian savulescu and nick bostrom, both adherents to the transhumanist project, ask a fundamental question : “ are we good enough? ” presuming a negative response, immediately follow another : “ if not, how may we improve ourselves? ” ( savulescu and bostrom 2009,. as the narrative unfolds, it appears that humans are not good enough, and there is reason - indeed, a moral duty - to enhance ourselves through the ingenuity of science and technology. at the root of this imperative for enhancement is a profound sense of despondency and frustration with our human condition. in this, transhumanists clearly respond to a valid human experience. discontentment and disappointment are part of every life. before our limitations, we all yearn for something more, desire to go further, strive to improve ourselves in one way or another. the human spirit has always striven towards self - improvement, and the historical advances in human culture unthinkable without towards enhancement. question, however, whether transhumanists savulescu and bostrom interpret the experience of human dissatisfaction correctly, and whether their confidence in the methods of human enhancement",
+          "metadata": {
+            "type": "pdf",
+            "chunk_id": 1,
+            "chunk_text": "in this regard. instead, its main purpose is to draw out the philosophical foundations of the transh...",
+            "source": "/Users/jihoon/sapiens_engine/sapiens_engine/context_files/LimitationsofTranshumanism.pdf"
+          },
+          "score": 0.6532046496868134,
+          "source": "local",
+          "similarity": 0.6532046496868134
+        },
+        {
+          "text": "as to risk everything should not be trusted with its future. transhumanists, with their negative attitude toward the given, should be the last to offer counsel on what is good for the future of humanity. only those who are truly human, who love and appreciate the giftedness of human life, can be trusted to use technology in a way that fosters integral human development. conclusion transhumanism, contemporary prospects for human enhancement, offers itself as hope for the future ; to “ relieve ” humanity of its limitations ( mckenny 1997, through the application of biotechnology. however, as traced in this paper, the philosophical foundations of transhumanism in scientific positivism render it incapable of understanding the human novelty. in its narrow conception of reality, its limitation of meaning to praxis, and its reduction of the human essence to rationality ( mind ) or materi -, it fundamentally changes our anthropology, strips it of normative value, and distorts the essence of our humanity. capacity to know what is good for humanity is, therefore, extremely doubtful. furthermore, through the secularization of hope, characterized by an absolute belief in progress through science and technology, the future of humanity is firmly placed within the hands of biotechnology. with unrestrained confidence in the powers of technology, the transhumanist cause is projected as the “ new frontier ” of exploration - the aspiration and hope for the future. however, from its origins, such optimistic aspirations are rooted in negativity and frustration over humanity ’ s current lot. this sense of dissatisfaction for the present human condition - the sense that we are “ not good enough ” - is the foundation of the transhumanist dream that opens towards a posthuman future. this facade of hope, therefore, can offer no real reassurance. transhumanist dream, despite its veneer of hope, is in reality a manifestation of a deep despair. declaration of conflicting interests the author declared no potential conflicts of interest with respect to the research, authorship, and / or publication of this article. funding the author received no financial support for the research, authorship, and / or publication of this article. orcid id paschal m.",
+          "metadata": {
+            "chunk_id": 24,
+            "chunk_text": "as to risk everything should not be trusted with its future. transhumanists, with their negative att...",
+            "source": "/Users/jihoon/sapiens_engine/sapiens_engine/context_files/LimitationsofTranshumanism.pdf",
+            "type": "pdf"
+          },
+          "score": 0.641745537519455,
+          "source": "local",
+          "similarity": 0.641745537519455
+        },
+        {
+          "text": "an innate despair : the philosophical limitations of transhumanism and its misplaced hope in human enhancement paschal m. corby, std, stl, btheol hons., mbbs hons. 1 abstract this paper sets forth some philosophical foundations of the transhumanist project, drawing on its roots in philosophical positivism and its confidence in the liberating power of technology. confidence is interpreted within the sphere of hope, departing from transhumanism ’ s negative presumptions regarding the human condition, and embracing its aspirations for a humanity without limits. however, it is the claim of this paper that such hope is deceptive. since transhumanism is incapable of grasping the depths of the human person, limited by its own philosophical categories, it both underestimates the human capacity for interior transformation and misunderstands the real nature of hope. thus, transhumanism is marked by a deeply rooted despair that wears the mask of an insufficient hope. keywords anthropology, despair, enhancement, hope, philosophical positivism, transhumanism introduction much has been written about transhumanism over the past twenty years, such that it is difficult to add anything new to the debate. present paper does not presume to be novel in this regard. instead, its main purpose is to draw out the philosophical foundations of the transhumanist project, setting forth its roots in philosophical positivism and its confidence in the liberating power of technology, and to consider the implications for anthropology, the determination of human purpose, and object of human hope. in this regard, it may provide a platform to critique other contemporary prospects of “ enhancement ” that share transhumanist tendencies, such as artificial intelligence and neuralink, gender fluidity, as well as attempts at hybridization through 1 university of notre dame australia ( sydney campus ), chippendale, nsw, australia,, btheol hons., mbbs hons.. corby, university of notre dame australia ( sydney campus ), broadway, chippendale, nsw 2008, australia. emails : paschal. corby @ nd. edu. au article sagepub. com / journals - permissions transgenesis or xenotransplanta tion. this paper chooses to focus specifically on transhumanism, limitations exposed could equally be applied to these other proposals that threaten to profoundly change humanity, compromise its uniqueness, and mutate the nature of human hope",
+          "metadata": {
+            "type": "pdf",
+            "chunk_text": "an innate despair : the philosophical limitations of transhumanism and its misplaced hope in human e...",
+            "source": "/Users/jihoon/sapiens_engine/sapiens_engine/context_files/LimitationsofTranshumanism.pdf",
+            "chunk_id": 0
+          },
+          "score": 0.6287687718868256,
+          "source": "local",
+          "similarity": 0.6287687718868256
+        }
+      ],
+      "metrics": {
+        "avg_similarity": 0.6487440347671509,
+        "top_chunk_similarity": 0.6624970436096191,
+        "min_similarity": 0.6287687718868256,
+        "max_similarity": 0.6624970436096191,
+        "median_similarity": 0.6532046496868134,
+        "execution_time": -1747512628.754612,
+        "memory_usage": 416.109375
+      },
+      "timing": {
+        "start_to_query_enhancement": 7.796287536621094e-05,
+        "query_enhancement_to_retrieval": 4.17870306968689
+      }
+    }
+  ],
+  "metrics": {
+    "avg_top_similarity": 0.5833494861920675,
+    "min_top_similarity": 0.48072922229766846,
+    "max_top_similarity": 0.6624970436096191,
+    "avg_similarity": 0.5571793556213379,
+    "avg_exec_time": -1747512625.9585905,
+    "total_queries": 3,
+    "total_execution_time": 36.92272710800171
+  },
+  "token_usage": {},
+  "timing": {
+    "start_to_initialization": 25.98096799850464,
+    "initialization_to_end": 10.94175910949707
+  }
+}

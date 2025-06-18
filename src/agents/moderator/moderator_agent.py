@@ -54,6 +54,16 @@ class ModeratorAgent(Agent):
         # LLM 관리자 초기화
         self.llm_manager = LLMManager()
     
+    def set_llm_manager(self, llm_manager: Any) -> None:
+        """
+        LLM 관리자 설정
+        
+        Args:
+            llm_manager: LLM 관리자 인스턴스
+        """
+        self.llm_manager = llm_manager
+        logger.info(f"[{self.agent_id}] LLM Manager set for ModeratorAgent")
+    
     def process(self, input_data: Dict[str, Any]) -> Dict[str, Any]:
         """
         에이전트로 요청 처리

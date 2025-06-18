@@ -1,0 +1,300 @@
+{
+  "experiment_id": "0c4823dc",
+  "name": "기본 RAG 실험",
+  "description": "기본 설정으로 RAG 시스템 성능 테스트",
+  "timestamp": "2025-05-17T19:59:07.847140",
+  "config": {
+    "experiment_id": "0c4823dc",
+    "name": "기본 RAG 실험",
+    "description": "기본 설정으로 RAG 시스템 성능 테스트",
+    "timestamp": "2025-05-17T19:59:07.846628",
+    "chunk_size": 500,
+    "chunk_overlap": 0.5,
+    "chunking_strategy": "sliding_window",
+    "chunk_metadata": [
+      "source",
+      "page_num"
+    ],
+    "embedding_model": "BAAI/bge-large-en-v1.5",
+    "embedding_dims": 1024,
+    "query_embedding_model": "BAAI/bge-large-en-v1.5",
+    "doc_embedding_model": "BAAI/bge-large-en-v1.5",
+    "search_algorithm": "top_k",
+    "top_k": 5,
+    "similarity_threshold": 0.6,
+    "similarity_metric": "cosine",
+    "reranker_model": "none",
+    "query_enhancement": false,
+    "enhancement_type": "none",
+    "enhancement_model": "gpt-3.5-turbo",
+    "expansion_terms": 5,
+    "web_search_enabled": false,
+    "search_provider": "google",
+    "max_results": 5,
+    "web_content_max_tokens": 1000,
+    "fusion_strategy": "weighted",
+    "local_weight": 0.7,
+    "web_weight": 0.3,
+    "data_sources": [
+      "/Users/jihoon/sapiens_engine/sapiens_engine/context_files/LimitationsofTranshumanism.pdf"
+    ],
+    "test_queries": [
+      "transhumanism as expression of will to power",
+      "Nietzschean perspective on overcoming human limits with technology",
+      "philosophical defense of transhumanism as enhancement, not dehumanization"
+    ]
+  },
+  "query_results": [
+    {
+      "query": "transhumanism as expression of will to power",
+      "enhanced_query": "transhumanism as expression of will to power",
+      "retrieval_results": [
+        {
+          "text": "initial aspirations, contempo - rary proponents of the transhumanist cause, it raises the weightiest questions of bioethics, encouraged by advances in science and tech - touchingontheendsandgoalsofthebiomedical nology, areconfidentofitsrealization. butin enterprise, the nature and meaning of human doing so, they refine huxley ’ s end, making a flourishing, andtheintrinsicthreatofdehuman - distinctionbetweenatranshumanandapost - ization ( orthepromiseofsuperhumanization ). it humanstate. thedistinctionbetweenthetwo compels attention to what it means to be a is not fixed. generallyspeaking, the transhu - human being and to be active as a human man ( or “ transitional ” human ) is one whose being. ( kass2003, 10 ) physical, intellectual, and psychological capacities are enhanced with respect to the intheirpursuittoenhanceandeventranscend present human experience, but not to the the current human condition, transhumanists point of creating a new species. the posthu - cast shadows over the goodness of life while man, on the other hand, refers to a radically raising hopes for a bright and better future. new state characterized by an amplification thus, even if many of its imaginative pros - of one ’ s capacities that would constitute a pectsdonoteventuate, itdemandsareflective newkindofbeing. response, forourhopesandaspirationsdefine inseekingtoenhancehumanitybeyondits whoweare. “ whatwehopefortellsusagreat natural limitations, the transhumanist project deal about who we are, ” says gilbert embraces a wide range of proposals, from meilaender ( 2013, 23 ). even if the quest for simple and achievable measures to the scien - transcending our humanity turns out in the tifically technical and bizarre. it moves end to be no more than a “ pipe dream, ” the between scientific fact and science fiction. in factthatitisevenproposedissignificant. lightofitsmorefuturisticaspirations, transhu - manism might not seem to warrant serious the object of transhumanist reflection. beforethepresenceofreal, existent hope and its philosophical bioeth",
+          "metadata": {
+            "type": "pdf",
+            "chunk_text": "initial aspirations, contempo - rary proponents of the transhumanist cause, it raises the weightiest...",
+            "source": "/Users/jihoon/sapiens_engine/sapiens_engine/context_files/LimitationsofTranshumanism.pdf",
+            "chunk_id": 7
+          },
+          "score": 0.6061365604400635,
+          "source": "local",
+          "similarity": 0.6061365604400635
+        },
+        {
+          "text": "##go - ries, itbothunderestimatesthehumancapacityforinteriortransformationandmisunderstands therealnatureofhope. thus, transhumanismismarkedbyadeeplyrooteddespairthatwearsthe maskofaninsufficienthope. keywords anthropology, despair, enhancement, hope, philosophicalpositivism, transhumanism introduction transhumanist tendencies, such as artificial intelligence and neuralink, gender fluidity, much has been written about transhumanism as well as attempts at hybridization through overthepasttwentyyears, suchthatitisdiffi - cult to add anything new to the debate. this present paper does not presume to be novel 1universityofnotredameaustralia ( sydneycampus ), in this regard. instead, its main purpose is to chippendale, nsw, australia drawoutthephilosophicalfoundationsofthe std ( lateran, rome ), stl ( lateran, rome ), btheolhons. transhumanist project, setting forth its roots ( universityofdivinity, melbourne, australia ), mbbs inphilosophicalpositivismanditsconfidence hons. ( monashuniversity, melbourne, australia ). in the liberating power of technology, and to consider the implications for anthropology, correspondingauthor : the determination of human purpose, and paschalm. corby, universityofnotredameaustralia ( sydneycampus ), 128 – 140broadway, chippendale, object of human hope. in this regard, it may nsw2008, australia. provideaplatformtocritiqueothercontempo - emails : friarpaschal @ hotmail. com ; paschal. corby @ nd. rary prospects of “ enhancement ” that share edu. au 2 thelinacrequarterly0 ( 0 ) transgenesis or xenotransplantation. while the transhumanist project does not lie in the this paper chooses to focus specifically on biotechnologiesthatitadvances. manyofthe transhumanism, the limitations exposed technologiesproposedarealreadyon - lineand couldequallybeappliedtotheseotherpropos - usedtherapeutically. pharmaceuticals, genetic alstha",
+          "metadata": {
+            "type": "pdf",
+            "source": "/Users/jihoon/sapiens_engine/sapiens_engine/context_files/LimitationsofTranshumanism.pdf",
+            "chunk_id": 1,
+            "chunk_text": "##go - ries, itbothunderestimatesthehumancapacityforinteriortransformationandmisunderstands therealn..."
+          },
+          "score": 0.5798806250095367,
+          "source": "local",
+          "similarity": 0.5798806250095367
+        },
+        {
+          "text": "to a radically raising hopes for a bright and better future. new state characterized by an amplification thus, even if many of its imaginative pros - of one ’ s capacities that would constitute a pectsdonoteventuate, itdemandsareflective newkindofbeing. response, forourhopesandaspirationsdefine inseekingtoenhancehumanitybeyondits whoweare. “ whatwehopefortellsusagreat natural limitations, the transhumanist project deal about who we are, ” says gilbert embraces a wide range of proposals, from meilaender ( 2013, 23 ). even if the quest for simple and achievable measures to the scien - transcending our humanity turns out in the tifically technical and bizarre. it moves end to be no more than a “ pipe dream, ” the between scientific fact and science fiction. in factthatitisevenproposedissignificant. lightofitsmorefuturisticaspirations, transhu - manism might not seem to warrant serious the object of transhumanist reflection. beforethepresenceofreal, existent hope and its philosophical bioethical dilemmas such as new threats to foundations life, the unjust distribution of healthcare resources, and the perennial issues surround - encouragedbythepossibilitiesoftechnology, ing life at its beginning and end, devoting the transhumanist cause is characteristically time to an improbable possibility might hopeful. however, the nature of such hope is appear to be a distraction or a luxury that we ofaparticularkind. inessenceitisanimma - canillafford. yettheprospectoftranshuman - nent, this - worldly hope : what may be ism has caught the imagination of not just a described as a “ future - oriented ideology ” few contemporary bioethicists and philoso - ( burdett and lorrimar 2019, 243 ) that phers, inspiringcentersofresearch, andspark - aspires to a “ brave new world ” ( a la julian ingalivelydebatebetweenitssupportersand huxley ’ s more famous brother, aldous ). critics. and this interest seems to only thatwhichwasonceconfidedingodorfate increase. in a short space of time, ( for the relief of suffering and hope of 4 thelinacre",
+          "metadata": {
+            "source": "/Users/jihoon/sapiens_engine/sapiens_engine/context_files/LimitationsofTranshumanism.pdf",
+            "type": "pdf",
+            "chunk_id": 8,
+            "chunk_text": "to a radically raising hopes for a bright and better future. new state characterized by an amplifica..."
+          },
+          "score": 0.5793465971946716,
+          "source": "local",
+          "similarity": 0.5793465971946716
+        },
+        {
+          "text": "##s, physical has always striven towards self - improvement, limitations, and suffering. to this end, they and the historical advances in human culture favor morphological freedom — the right to would be unthinkable without this drive modify and enhance one ’ s body, cognition, towards enhancement. the real question, and emotions. this freedom includes the however, is whether transhumanists like right to use techniques and technologies to savulescuandbostrominterprettheexperience extendlife ; preservetheselfthroughcryonics, ofhumandissatisfactioncorrectly, andwhether uploading, and other means ; and to choose their confidence in the methods of human furthermodificationsandenhancements. enhancement, especiallythroughbiotechnology, theterm “ transhumanism ” wasfirstusedin correspondstogenuinehumanhopeormasksan 1957byjulianhuxleyinhisbooknewbottles underlyingdespair. fornewwine. huxleyenvisagedatranshuman transhumanismcanbedefinedasaproject state at the end of an evolutionary process of enhancement through the application of guided by science and technology. he con - biotechnology to move human beings ceivesof “ manremainingman, buttranscend - beyond their natural limitations : to make ing himself, by realizing new possibilities of them smarter and stronger ; to assist them to and for his human nature ” ( huxley 1957, behappierandmorallyresponsible ; and / orto 17 ). huxley envisions humanity as the final enable them to live longer. the novelty of frontierforexploration. corby 3 we have pretty well finished the geographical transhumanist ideas have moved from the explorationoftheearth ; wehavepushedthesci - fringes of philosophical inquiry into the entific exploration of nature, both lifeless and mainstream. living, to a point at which its main outlines however, beyond the demands of public have become clear ; but the exploration of interest, the transhumanist proposal demands human nature and its possibilities has scarcely a response since it touches on the very begun. avastnewworldofunchartedpossibil - meaning of human life and hope. in asking itiesawaitsitscolumbus ( huxley1957, 14 ). why one should take seriously the proposals oftranshumanists, american",
+          "metadata": {
+            "chunk_id": 5,
+            "chunk_text": "##s, physical has always striven towards self - improvement, limitations, and suffering. to this end...",
+            "type": "pdf",
+            "source": "/Users/jihoon/sapiens_engine/sapiens_engine/context_files/LimitationsofTranshumanism.pdf"
+          },
+          "score": 0.5723544359207153,
+          "source": "local",
+          "similarity": 0.5723544359207153
+        },
+        {
+          "text": "unjust distribution of healthcare resources, and the perennial issues surround - encouragedbythepossibilitiesoftechnology, ing life at its beginning and end, devoting the transhumanist cause is characteristically time to an improbable possibility might hopeful. however, the nature of such hope is appear to be a distraction or a luxury that we ofaparticularkind. inessenceitisanimma - canillafford. yettheprospectoftranshuman - nent, this - worldly hope : what may be ism has caught the imagination of not just a described as a “ future - oriented ideology ” few contemporary bioethicists and philoso - ( burdett and lorrimar 2019, 243 ) that phers, inspiringcentersofresearch, andspark - aspires to a “ brave new world ” ( a la julian ingalivelydebatebetweenitssupportersand huxley ’ s more famous brother, aldous ). critics. and this interest seems to only thatwhichwasonceconfidedingodorfate increase. in a short space of time, ( for the relief of suffering and hope of 4 thelinacrequarterly0 ( 0 ) prospering ) is now firmly placed within the enlightenmentrationalism, andheirtoanevo - sphere of the human capacity to know and lutionaryphilosophy, transhumanismholdsto act, andincreasinglyfindsitssolaceinaratio - the conviction that human beings in their nalitythatistheproductoftechnicalscience. current form are incomplete but improvable ; this immanentization of hope is rooted in a “ a work - in - progress, a half - baked being that deeper philosophical ideology, drawing spe - we can learn to remold in desirable ways ” cifically on the enlightenment ’ s confidence ( bostrom 2003, 493 ). they consider human that human enhancement comes by way of enhancement to be in continuity with evolu - rational knowledge alone, with knowledge tion, either by giving it a helping hand or by itselfreducedtopositivecategoriesofthever - correcting its shortcomings, to move human ifiable and demonstrable, especially in the beings further along evolution ’ s trajectory by fields of science, mathematics, and history replacing natural selection with technological ( ratzinger2004, 61",
+          "metadata": {
+            "chunk_id": 9,
+            "source": "/Users/jihoon/sapiens_engine/sapiens_engine/context_files/LimitationsofTranshumanism.pdf",
+            "type": "pdf",
+            "chunk_text": "unjust distribution of healthcare resources, and the perennial issues surround - encouragedbytheposs..."
+          },
+          "score": 0.5498266816139221,
+          "source": "local",
+          "similarity": 0.5498266816139221
+        }
+      ],
+      "metrics": {
+        "avg_similarity": 0.5775089800357819,
+        "top_chunk_similarity": 0.6061365604400635,
+        "min_similarity": 0.5498266816139221,
+        "max_similarity": 0.6061365604400635,
+        "median_similarity": 0.5793465971946716,
+        "execution_time": -1747504796.5511858,
+        "memory_usage": 1256.78125
+      },
+      "timing": {
+        "start_to_query_enhancement": 8.702278137207031e-05,
+        "query_enhancement_to_retrieval": 1.7006909847259521
+      }
+    },
+    {
+      "query": "Nietzschean perspective on overcoming human limits with technology",
+      "enhanced_query": "Nietzschean perspective on overcoming human limits with technology",
+      "retrieval_results": [
+        {
+          "text": ", humanbeingsrisklosingthemselvesand callous disregard, unfounded optimism or the reason for their existence. as ratzinger dark despair, it would seem madness to writes, “ man does not live on the bread of allow technological power to be wielded by practicabilityalone ; helivesasmanand, pre - thosewhopossesssuchanegativeconception cisely in the intrinsically human part of his ofhumannature. hansjonasmakesasimilar being, on the word, on love, on meaning ” point. inresponsetothechargeofpessimism ( ratzinger 2004, 72 – 3 ). love, word, over his caution of the destructive power of meaning, andotherrealitieslikethetranscen - technology, hesuggeststhat “ thegreaterpessi - dentalsoftruth, goodness, andbeauty, consti - mismisonthesideofthosewhoconsiderthe tute what is truly human and cannot be given to be so bad or worthless that every reduced to positive categories. to take just gambleforitspossibleimprovementisdefen - oneexample, ratzingerhighlightstheimpos - sible ” ( jonas1985, 34 ). inotherwords, those sibility of the mathematical mind to compre - who consider the human condition so lightly hend the “ superfluous wonder ” of beauty, its as to risk everything should not be trusted extravagancesurpassingexplanationbycalcu - withitsfuture. transhumanists, withtheirneg - lation ( ratzinger 2004, 154 ). in the end, he ative attitude toward the given, should be the insists that positivism is incapable of extin - last to offer counsel on what is good for the guishing belief, that it cannot annihilate the future of humanity. only those who are truly corby 9 human, wholoveandappreciatethegiftednessof funding humanlife, canbetrustedtousetechnologyina the author received no financial support for the waythatfostersintegralhumandevelopment. research, authorship, and / orpublicationofthisarticle. conclusion orcidid transhumanism, like other contemporary paschalm. corby",
+          "metadata": {
+            "source": "/Users/jihoon/sapiens_engine/sapiens_engine/context_files/LimitationsofTranshumanism.pdf",
+            "chunk_text": ", humanbeingsrisklosingthemselvesand callous disregard, unfounded optimism or the reason for their e...",
+            "chunk_id": 28,
+            "type": "pdf"
+          },
+          "score": 0.47712886333465576,
+          "source": "local",
+          "similarity": 0.47712886333465576
+        },
+        {
+          "text": "manipulation, nanotechnology, and some ity, compromiseitsuniqueness, andmutatethe brain – computer interfaces ( e. g., cochlear natureofhumanhope. implants for the hearing impaired ) already exist in clinical practice and promise further advances to treat and cure disability and why transhumanism? disease. the difference lies in transhuman - in the introduction to their co - edited work, ism ’ s desire to engage such technologies human enhancement, julian savulescu and toward ends surpassing the therapeutic. nick bostrom, both adherents to the transhu - transhumanists seek to enhance the human manist project, ask a fundamental question : condition beyond any notion of “ normal ” “ arewegoodenough? ” presuminganegative functioning ( which, as shall be seen below, response, they immediately follow with they fundamentally deny ) ; to make us, in the another : “ if not, how may we improve our - words of michael sandel, “ better than well ” selves? ” ( savulescu and bostrom 2009, 1 ). ( sandel2009, 71 ). insodoing, theypurpose - as the narrative unfolds, it appears that fully disregard the therapy - enhancement dis - humans are not good enough, and there is tinction with its presumption of normative reason — indeed, a moral duty — to enhance function and render any improvement as an ourselves through the ingenuity of science enhancement, that is, an “ improvement ” of a andtechnology. attherootofthisimperative person ’ sliferelativetotheirformercondition. forenhancementisaprofoundsenseofdespond - from this perspective, the prospects for encyandfrustrationwithourhumancondition. enhancement are limitless. according to the in this, transhumanists clearly respond to a transhumanist declaration, first drafted in valid human experience. discontentment and 1988, humanity ’ spotentialisstillmostlyunre - disappointment are part of every life. before alized. signatoriesofthisdeclarationenvision our limitations, we all yearn for something thepossibilityofharnessingthehumanpoten - more, desiretogofurther, strivetoimproveour - tialtotranscenditscurrentformbyovercom - selvesinonewayoranother",
+          "metadata": {
+            "source": "/Users/jihoon/sapiens_engine/sapiens_engine/context_files/LimitationsofTranshumanism.pdf",
+            "chunk_id": 3,
+            "chunk_text": "manipulation, nanotechnology, and some ity, compromiseitsuniqueness, andmutatethe brain – computer i...",
+            "type": "pdf"
+          },
+          "score": 0.4651913642883301,
+          "source": "local",
+          "similarity": 0.4651913642883301
+        },
+        {
+          "text": "##go - ries, itbothunderestimatesthehumancapacityforinteriortransformationandmisunderstands therealnatureofhope. thus, transhumanismismarkedbyadeeplyrooteddespairthatwearsthe maskofaninsufficienthope. keywords anthropology, despair, enhancement, hope, philosophicalpositivism, transhumanism introduction transhumanist tendencies, such as artificial intelligence and neuralink, gender fluidity, much has been written about transhumanism as well as attempts at hybridization through overthepasttwentyyears, suchthatitisdiffi - cult to add anything new to the debate. this present paper does not presume to be novel 1universityofnotredameaustralia ( sydneycampus ), in this regard. instead, its main purpose is to chippendale, nsw, australia drawoutthephilosophicalfoundationsofthe std ( lateran, rome ), stl ( lateran, rome ), btheolhons. transhumanist project, setting forth its roots ( universityofdivinity, melbourne, australia ), mbbs inphilosophicalpositivismanditsconfidence hons. ( monashuniversity, melbourne, australia ). in the liberating power of technology, and to consider the implications for anthropology, correspondingauthor : the determination of human purpose, and paschalm. corby, universityofnotredameaustralia ( sydneycampus ), 128 – 140broadway, chippendale, object of human hope. in this regard, it may nsw2008, australia. provideaplatformtocritiqueothercontempo - emails : friarpaschal @ hotmail. com ; paschal. corby @ nd. rary prospects of “ enhancement ” that share edu. au 2 thelinacrequarterly0 ( 0 ) transgenesis or xenotransplantation. while the transhumanist project does not lie in the this paper chooses to focus specifically on biotechnologiesthatitadvances. manyofthe transhumanism, the limitations exposed technologiesproposedarealreadyon - lineand couldequallybeappliedtotheseotherpropos - usedtherapeutically. pharmaceuticals, genetic alstha",
+          "metadata": {
+            "type": "pdf",
+            "chunk_id": 1,
+            "source": "/Users/jihoon/sapiens_engine/sapiens_engine/context_files/LimitationsofTranshumanism.pdf",
+            "chunk_text": "##go - ries, itbothunderestimatesthehumancapacityforinteriortransformationandmisunderstands therealn..."
+          },
+          "score": 0.4633183479309082,
+          "source": "local",
+          "similarity": 0.4633183479309082
+        },
+        {
+          "text": "##s, physical has always striven towards self - improvement, limitations, and suffering. to this end, they and the historical advances in human culture favor morphological freedom — the right to would be unthinkable without this drive modify and enhance one ’ s body, cognition, towards enhancement. the real question, and emotions. this freedom includes the however, is whether transhumanists like right to use techniques and technologies to savulescuandbostrominterprettheexperience extendlife ; preservetheselfthroughcryonics, ofhumandissatisfactioncorrectly, andwhether uploading, and other means ; and to choose their confidence in the methods of human furthermodificationsandenhancements. enhancement, especiallythroughbiotechnology, theterm “ transhumanism ” wasfirstusedin correspondstogenuinehumanhopeormasksan 1957byjulianhuxleyinhisbooknewbottles underlyingdespair. fornewwine. huxleyenvisagedatranshuman transhumanismcanbedefinedasaproject state at the end of an evolutionary process of enhancement through the application of guided by science and technology. he con - biotechnology to move human beings ceivesof “ manremainingman, buttranscend - beyond their natural limitations : to make ing himself, by realizing new possibilities of them smarter and stronger ; to assist them to and for his human nature ” ( huxley 1957, behappierandmorallyresponsible ; and / orto 17 ). huxley envisions humanity as the final enable them to live longer. the novelty of frontierforexploration. corby 3 we have pretty well finished the geographical transhumanist ideas have moved from the explorationoftheearth ; wehavepushedthesci - fringes of philosophical inquiry into the entific exploration of nature, both lifeless and mainstream. living, to a point at which its main outlines however, beyond the demands of public have become clear ; but the exploration of interest, the transhumanist proposal demands human nature and its possibilities has scarcely a response since it touches on the very begun. avastnewworldofunchartedpossibil - meaning of human life and hope. in asking itiesawaitsitscolumbus ( huxley1957, 14 ). why one should take seriously the proposals oftranshumanists, american",
+          "metadata": {
+            "type": "pdf",
+            "chunk_text": "##s, physical has always striven towards self - improvement, limitations, and suffering. to this end...",
+            "chunk_id": 5,
+            "source": "/Users/jihoon/sapiens_engine/sapiens_engine/context_files/LimitationsofTranshumanism.pdf"
+          },
+          "score": 0.4591755270957947,
+          "source": "local",
+          "similarity": 0.4591755270957947
+        },
+        {
+          "text": "now firmly placed within the enlightenmentrationalism, andheirtoanevo - sphere of the human capacity to know and lutionaryphilosophy, transhumanismholdsto act, andincreasinglyfindsitssolaceinaratio - the conviction that human beings in their nalitythatistheproductoftechnicalscience. current form are incomplete but improvable ; this immanentization of hope is rooted in a “ a work - in - progress, a half - baked being that deeper philosophical ideology, drawing spe - we can learn to remold in desirable ways ” cifically on the enlightenment ’ s confidence ( bostrom 2003, 493 ). they consider human that human enhancement comes by way of enhancement to be in continuity with evolu - rational knowledge alone, with knowledge tion, either by giving it a helping hand or by itselfreducedtopositivecategoriesofthever - correcting its shortcomings, to move human ifiable and demonstrable, especially in the beings further along evolution ’ s trajectory by fields of science, mathematics, and history replacing natural selection with technological ( ratzinger2004, 61 ). enhancement. in the process, however, critics point out however, while transhumanism finds its thattheobjectofrationalistichopeisnarrowed rationale in the evolutionary process, it and the significance of man diminished. as assumes a novel stance in relation to the end josephratzingerwrites : of evolution, and its concept of the human personissomewhatremovedfromthehuman - the criterion of rationality is taken exclusively istanthropologywhichoriginallyguidedevo - fromtheexperienceoftechnologicalproduction lutionary theory. the difference lies in the basedonscience. rationalityisorientedtofunc - human person ’ s relation to, or distinction tionality, to effectiveness, and to an increase in from, nature. italian philosopher maurizio the quality of life for all. this entails a use — faggioni ( 2009, 406 – 7 ) explains that while indeedadomination — ofnaturethatisproblem - classical evolutionary theory regards human aticinviewofthedramaticenvironmentalprob - beings as “ the point of arrival and the apex lemsourworldnowfaces. butman ’ sdomination of",
+          "metadata": {
+            "source": "/Users/jihoon/sapiens_engine/sapiens_engine/context_files/LimitationsofTranshumanism.pdf",
+            "chunk_text": "now firmly placed within the enlightenmentrationalism, andheirtoanevo - sphere of the human capacity...",
+            "type": "pdf",
+            "chunk_id": 10
+          },
+          "score": 0.45450258255004883,
+          "source": "local",
+          "similarity": 0.45450258255004883
+        }
+      ],
+      "metrics": {
+        "avg_similarity": 0.46386333703994753,
+        "top_chunk_similarity": 0.47712886333465576,
+        "min_similarity": 0.45450258255004883,
+        "max_similarity": 0.47712886333465576,
+        "median_similarity": 0.4633183479309082,
+        "execution_time": -1747504799.023693,
+        "memory_usage": 1260.625
+      },
+      "timing": {
+        "start_to_query_enhancement": 0.00014209747314453125,
+        "query_enhancement_to_retrieval": 0.9479098320007324
+      }
+    },
+    {
+      "query": "philosophical defense of transhumanism as enhancement, not dehumanization",
+      "enhanced_query": "philosophical defense of transhumanism as enhancement, not dehumanization",
+      "retrieval_results": [
+        {
+          "text": "##go - ries, itbothunderestimatesthehumancapacityforinteriortransformationandmisunderstands therealnatureofhope. thus, transhumanismismarkedbyadeeplyrooteddespairthatwearsthe maskofaninsufficienthope. keywords anthropology, despair, enhancement, hope, philosophicalpositivism, transhumanism introduction transhumanist tendencies, such as artificial intelligence and neuralink, gender fluidity, much has been written about transhumanism as well as attempts at hybridization through overthepasttwentyyears, suchthatitisdiffi - cult to add anything new to the debate. this present paper does not presume to be novel 1universityofnotredameaustralia ( sydneycampus ), in this regard. instead, its main purpose is to chippendale, nsw, australia drawoutthephilosophicalfoundationsofthe std ( lateran, rome ), stl ( lateran, rome ), btheolhons. transhumanist project, setting forth its roots ( universityofdivinity, melbourne, australia ), mbbs inphilosophicalpositivismanditsconfidence hons. ( monashuniversity, melbourne, australia ). in the liberating power of technology, and to consider the implications for anthropology, correspondingauthor : the determination of human purpose, and paschalm. corby, universityofnotredameaustralia ( sydneycampus ), 128 – 140broadway, chippendale, object of human hope. in this regard, it may nsw2008, australia. provideaplatformtocritiqueothercontempo - emails : friarpaschal @ hotmail. com ; paschal. corby @ nd. rary prospects of “ enhancement ” that share edu. au 2 thelinacrequarterly0 ( 0 ) transgenesis or xenotransplantation. while the transhumanist project does not lie in the this paper chooses to focus specifically on biotechnologiesthatitadvances. manyofthe transhumanism, the limitations exposed technologiesproposedarealreadyon - lineand couldequallybeappliedtotheseotherpropos - usedtherapeutically. pharmaceuticals, genetic alstha",
+          "metadata": {
+            "chunk_id": 1,
+            "type": "pdf",
+            "chunk_text": "##go - ries, itbothunderestimatesthehumancapacityforinteriortransformationandmisunderstands therealn...",
+            "source": "/Users/jihoon/sapiens_engine/sapiens_engine/context_files/LimitationsofTranshumanism.pdf"
+          },
+          "score": 0.682956874370575,
+          "source": "local",
+          "similarity": 0.682956874370575
+        },
+        {
+          "text": "now firmly placed within the enlightenmentrationalism, andheirtoanevo - sphere of the human capacity to know and lutionaryphilosophy, transhumanismholdsto act, andincreasinglyfindsitssolaceinaratio - the conviction that human beings in their nalitythatistheproductoftechnicalscience. current form are incomplete but improvable ; this immanentization of hope is rooted in a “ a work - in - progress, a half - baked being that deeper philosophical ideology, drawing spe - we can learn to remold in desirable ways ” cifically on the enlightenment ’ s confidence ( bostrom 2003, 493 ). they consider human that human enhancement comes by way of enhancement to be in continuity with evolu - rational knowledge alone, with knowledge tion, either by giving it a helping hand or by itselfreducedtopositivecategoriesofthever - correcting its shortcomings, to move human ifiable and demonstrable, especially in the beings further along evolution ’ s trajectory by fields of science, mathematics, and history replacing natural selection with technological ( ratzinger2004, 61 ). enhancement. in the process, however, critics point out however, while transhumanism finds its thattheobjectofrationalistichopeisnarrowed rationale in the evolutionary process, it and the significance of man diminished. as assumes a novel stance in relation to the end josephratzingerwrites : of evolution, and its concept of the human personissomewhatremovedfromthehuman - the criterion of rationality is taken exclusively istanthropologywhichoriginallyguidedevo - fromtheexperienceoftechnologicalproduction lutionary theory. the difference lies in the basedonscience. rationalityisorientedtofunc - human person ’ s relation to, or distinction tionality, to effectiveness, and to an increase in from, nature. italian philosopher maurizio the quality of life for all. this entails a use — faggioni ( 2009, 406 – 7 ) explains that while indeedadomination — ofnaturethatisproblem - classical evolutionary theory regards human aticinviewofthedramaticenvironmentalprob - beings as “ the point of arrival and the apex lemsourworldnowfaces. butman ’ sdomination of",
+          "metadata": {
+            "chunk_id": 10,
+            "type": "pdf",
+            "source": "/Users/jihoon/sapiens_engine/sapiens_engine/context_files/LimitationsofTranshumanism.pdf",
+            "chunk_text": "now firmly placed within the enlightenmentrationalism, andheirtoanevo - sphere of the human capacity..."
+          },
+          "score": 0.680850088596344,
+          "source": "local",
+          "similarity": 0.680850088596344
+        },
+        {
+          "text": "manipulation, nanotechnology, and some ity, compromiseitsuniqueness, andmutatethe brain – computer interfaces ( e. g., cochlear natureofhumanhope. implants for the hearing impaired ) already exist in clinical practice and promise further advances to treat and cure disability and why transhumanism? disease. the difference lies in transhuman - in the introduction to their co - edited work, ism ’ s desire to engage such technologies human enhancement, julian savulescu and toward ends surpassing the therapeutic. nick bostrom, both adherents to the transhu - transhumanists seek to enhance the human manist project, ask a fundamental question : condition beyond any notion of “ normal ” “ arewegoodenough? ” presuminganegative functioning ( which, as shall be seen below, response, they immediately follow with they fundamentally deny ) ; to make us, in the another : “ if not, how may we improve our - words of michael sandel, “ better than well ” selves? ” ( savulescu and bostrom 2009, 1 ). ( sandel2009, 71 ). insodoing, theypurpose - as the narrative unfolds, it appears that fully disregard the therapy - enhancement dis - humans are not good enough, and there is tinction with its presumption of normative reason — indeed, a moral duty — to enhance function and render any improvement as an ourselves through the ingenuity of science enhancement, that is, an “ improvement ” of a andtechnology. attherootofthisimperative person ’ sliferelativetotheirformercondition. forenhancementisaprofoundsenseofdespond - from this perspective, the prospects for encyandfrustrationwithourhumancondition. enhancement are limitless. according to the in this, transhumanists clearly respond to a transhumanist declaration, first drafted in valid human experience. discontentment and 1988, humanity ’ spotentialisstillmostlyunre - disappointment are part of every life. before alized. signatoriesofthisdeclarationenvision our limitations, we all yearn for something thepossibilityofharnessingthehumanpoten - more, desiretogofurther, strivetoimproveour - tialtotranscenditscurrentformbyovercom - selvesinonewayoranother",
+          "metadata": {
+            "chunk_text": "manipulation, nanotechnology, and some ity, compromiseitsuniqueness, andmutatethe brain – computer i...",
+            "source": "/Users/jihoon/sapiens_engine/sapiens_engine/context_files/LimitationsofTranshumanism.pdf",
+            "chunk_id": 3,
+            "type": "pdf"
+          },
+          "score": 0.6723666191101074,
+          "source": "local",
+          "similarity": 0.6723666191101074
+        },
+        {
+          "text": "initial aspirations, contempo - rary proponents of the transhumanist cause, it raises the weightiest questions of bioethics, encouraged by advances in science and tech - touchingontheendsandgoalsofthebiomedical nology, areconfidentofitsrealization. butin enterprise, the nature and meaning of human doing so, they refine huxley ’ s end, making a flourishing, andtheintrinsicthreatofdehuman - distinctionbetweenatranshumanandapost - ization ( orthepromiseofsuperhumanization ). it humanstate. thedistinctionbetweenthetwo compels attention to what it means to be a is not fixed. generallyspeaking, the transhu - human being and to be active as a human man ( or “ transitional ” human ) is one whose being. ( kass2003, 10 ) physical, intellectual, and psychological capacities are enhanced with respect to the intheirpursuittoenhanceandeventranscend present human experience, but not to the the current human condition, transhumanists point of creating a new species. the posthu - cast shadows over the goodness of life while man, on the other hand, refers to a radically raising hopes for a bright and better future. new state characterized by an amplification thus, even if many of its imaginative pros - of one ’ s capacities that would constitute a pectsdonoteventuate, itdemandsareflective newkindofbeing. response, forourhopesandaspirationsdefine inseekingtoenhancehumanitybeyondits whoweare. “ whatwehopefortellsusagreat natural limitations, the transhumanist project deal about who we are, ” says gilbert embraces a wide range of proposals, from meilaender ( 2013, 23 ). even if the quest for simple and achievable measures to the scien - transcending our humanity turns out in the tifically technical and bizarre. it moves end to be no more than a “ pipe dream, ” the between scientific fact and science fiction. in factthatitisevenproposedissignificant. lightofitsmorefuturisticaspirations, transhu - manism might not seem to warrant serious the object of transhumanist reflection. beforethepresenceofreal, existent hope and its philosophical bioeth",
+          "metadata": {
+            "source": "/Users/jihoon/sapiens_engine/sapiens_engine/context_files/LimitationsofTranshumanism.pdf",
+            "chunk_text": "initial aspirations, contempo - rary proponents of the transhumanist cause, it raises the weightiest...",
+            "chunk_id": 7,
+            "type": "pdf"
+          },
+          "score": 0.6593246161937714,
+          "source": "local",
+          "similarity": 0.6593246161937714
+        },
+        {
+          "text": "##alpositivismanditsconfidence hons. ( monashuniversity, melbourne, australia ). in the liberating power of technology, and to consider the implications for anthropology, correspondingauthor : the determination of human purpose, and paschalm. corby, universityofnotredameaustralia ( sydneycampus ), 128 – 140broadway, chippendale, object of human hope. in this regard, it may nsw2008, australia. provideaplatformtocritiqueothercontempo - emails : friarpaschal @ hotmail. com ; paschal. corby @ nd. rary prospects of “ enhancement ” that share edu. au 2 thelinacrequarterly0 ( 0 ) transgenesis or xenotransplantation. while the transhumanist project does not lie in the this paper chooses to focus specifically on biotechnologiesthatitadvances. manyofthe transhumanism, the limitations exposed technologiesproposedarealreadyon - lineand couldequallybeappliedtotheseotherpropos - usedtherapeutically. pharmaceuticals, genetic alsthatthreatentoprofoundlychangehuman - manipulation, nanotechnology, and some ity, compromiseitsuniqueness, andmutatethe brain – computer interfaces ( e. g., cochlear natureofhumanhope. implants for the hearing impaired ) already exist in clinical practice and promise further advances to treat and cure disability and why transhumanism? disease. the difference lies in transhuman - in the introduction to their co - edited work, ism ’ s desire to engage such technologies human enhancement, julian savulescu and toward ends surpassing the therapeutic. nick bostrom, both adherents to the transhu - transhumanists seek to enhance the human manist project, ask a fundamental question : condition beyond any notion of “ normal ” “ arewegoodenough? ” presuminganegative functioning ( which, as shall be seen below, response, they immediately follow with they fundamentally deny ) ; to make us, in the another : “ if not, how may we improve our - words of michael sandel, “ better than well ” selves? ” ( savulescu and bostrom 2009, 1 ). ( sandel2009, 71 ). insodoing, theypurpose - as the",
+          "metadata": {
+            "source": "/Users/jihoon/sapiens_engine/sapiens_engine/context_files/LimitationsofTranshumanism.pdf",
+            "chunk_text": "##alpositivismanditsconfidence hons. ( monashuniversity, melbourne, australia ). in the liberating p...",
+            "chunk_id": 2,
+            "type": "pdf"
+          },
+          "score": 0.6575585901737213,
+          "source": "local",
+          "similarity": 0.6575585901737213
+        }
+      ],
+      "metrics": {
+        "avg_similarity": 0.6706113576889038,
+        "top_chunk_similarity": 0.682956874370575,
+        "min_similarity": 0.6575585901737213,
+        "max_similarity": 0.682956874370575,
+        "median_similarity": 0.6723666191101074,
+        "execution_time": -1747504800.768057,
+        "memory_usage": 1264.609375
+      },
+      "timing": {
+        "start_to_query_enhancement": 9.179115295410156e-05,
+        "query_enhancement_to_retrieval": 0.15189313888549805
+      }
+    }
+  ],
+  "metrics": {
+    "avg_top_similarity": 0.5887407660484314,
+    "min_top_similarity": 0.47712886333465576,
+    "max_top_similarity": 0.682956874370575,
+    "avg_similarity": 0.5706612249215444,
+    "avg_exec_time": -1747504798.7809784,
+    "total_queries": 3,
+    "total_execution_time": 53.225085973739624
+  },
+  "token_usage": {},
+  "timing": {
+    "start_to_initialization": 50.39800500869751,
+    "initialization_to_end": 2.8270809650421143
+  }
+}

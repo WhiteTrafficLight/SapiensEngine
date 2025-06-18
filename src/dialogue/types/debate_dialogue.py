@@ -42,6 +42,26 @@ logger = logging.getLogger(__name__)
 # CONSTANTS & ENUMS
 # ============================================================================
 
+# LLM 작업별 최적화 전략 (일단 모두 gpt-4o로 통일)
+LLM_STRATEGY = {
+    # 고품질 필요 (창의성, 논리성)
+    "opening_argument": {"model": "gpt-4o", "max_tokens": 8000},
+    "conclusion": {"model": "gpt-4o", "max_tokens": 6000},
+    
+    # 중간 품질 (분석, 전략)
+    "attack_strategy": {"model": "gpt-4o", "max_tokens": 4000},
+    "defense_response": {"model": "gpt-4o", "max_tokens": 3000},
+    "argument_analysis": {"model": "gpt-4o", "max_tokens": 3000},
+    
+    # 빠른 처리 (간단한 작업)
+    "interactive_response": {"model": "gpt-4o", "max_tokens": 1500},
+    "rag_query_generation": {"model": "gpt-4o", "max_tokens": 500},
+    "keyword_extraction": {"model": "gpt-4o", "max_tokens": 200},
+    
+    # 기본값
+    "default": {"model": "gpt-4o", "max_tokens": 4000}
+}
+
 class DebateStage:
     """토론 단계 정의"""
     # 기본 단계
@@ -224,7 +244,7 @@ class DebateDialogue:
                 InitializationEventType.STARTED,
                 {
                     "room_id": self.room_id,
-                    "total_tasks": 4,  # stance_statements, pro_argument, con_argument, moderator_opening
+                    "total_tasks": 2,  # stance_statements, moderator_opening (입론 준비 제거)
                     "start_time": start_time
                 }
             )
@@ -258,23 +278,28 @@ class DebateDialogue:
             tasks = []
             task_trackers = []
             
-            # Pro 측 입론 준비 (에이전트가 있는 경우에만)
-            if ParticipantRole.PRO in self.agents:
-                pro_tracker = TaskProgressTracker("pro_argument", self.event_stream) if self.event_stream else None
-                task_trackers.append(pro_tracker)
-                tasks.append(self._prepare_pro_argument_async_enhanced(pro_tracker))
-            else:
-                tasks.append(self._create_dummy_task("pro_argument", None))
+            # ===== 입론 준비 부분 주석 처리 시작 =====
+            # 이제 각 에이전트가 실시간으로 자신만의 입론을 생성하도록 함
             
-            # Con 측 입론 준비 (에이전트가 있는 경우에만)
-            if ParticipantRole.CON in self.agents:
-                con_tracker = TaskProgressTracker("con_argument", self.event_stream) if self.event_stream else None
-                task_trackers.append(con_tracker)
-                tasks.append(self._prepare_con_argument_async_enhanced(con_tracker))
-            else:
-                tasks.append(self._create_dummy_task("con_argument", None))
+            # # Pro 측 입론 준비 (에이전트가 있는 경우에만)
+            # if ParticipantRole.PRO in self.agents:
+            #     pro_tracker = TaskProgressTracker("pro_argument", self.event_stream) if self.event_stream else None
+            #     task_trackers.append(pro_tracker)
+            #     tasks.append(self._prepare_pro_argument_async_enhanced(pro_tracker))
+            # else:
+            #     tasks.append(self._create_dummy_task("pro_argument", None))
             
-            # 모더레이터 오프닝 준비
+            # # Con 측 입론 준비 (에이전트가 있는 경우에만)
+            # if ParticipantRole.CON in self.agents:
+            #     con_tracker = TaskProgressTracker("con_argument", self.event_stream) if self.event_stream else None
+            #     task_trackers.append(con_tracker)
+            #     tasks.append(self._prepare_con_argument_async_enhanced(con_tracker))
+            # else:
+            #     tasks.append(self._create_dummy_task("con_argument", None))
+            
+            # ===== 입론 준비 부분 주석 처리 끝 =====
+            
+            # 모더레이터 오프닝 준비만 유지
             if ParticipantRole.MODERATOR in self.agents:
                 moderator_tracker = TaskProgressTracker("moderator_opening", self.event_stream) if self.event_stream else None
                 task_trackers.append(moderator_tracker)
@@ -282,8 +307,8 @@ class DebateDialogue:
             else:
                 tasks.append(self._create_dummy_task("moderator_opening", None))
             
-            # 병렬 작업 실행
-            logger.info(f"Starting {len(tasks)} parallel tasks with enhanced RAG processing")
+            # 병렬 작업 실행 (모더레이터 오프닝만)
+            logger.info(f"Starting {len(tasks)} parallel tasks (moderator opening only)")
             parallel_results = await asyncio.gather(*tasks, return_exceptions=True)
             
             # 모든 결과 통합 (stance_statements + 병렬 작업들)
@@ -296,7 +321,7 @@ class DebateDialogue:
             self.playing = True
             
             total_time = time.time() - start_time
-            logger.info(f"Enhanced async initialization completed in {total_time:.2f} seconds")
+            logger.info(f"Enhanced async initialization completed in {total_time:.2f} seconds (without pre-generating arguments)")
             
             # 스트리밍 이벤트 완료
             if self.event_stream:
@@ -374,168 +399,6 @@ class DebateDialogue:
             return {
                 "status": "error",
                 "task": "stance_statements",
-                "error": str(e)
-            }
-    
-    async def _prepare_pro_argument_async_enhanced(self, progress_tracker: Optional[TaskProgressTracker]) -> Dict[str, Any]:
-        """
-        찬성측 입론 준비 (개선된 버전 - 세밀한 병렬화와 스트리밍 지원)
-        """
-        try:
-            if progress_tracker:
-                progress_tracker.start([
-                    "core_arguments", "parallel_search", "evidence_integration", "final_argument"
-                ])
-            
-            pro_agents = self._get_participants_by_role(ParticipantRole.PRO)
-            if not pro_agents:
-                if progress_tracker:
-                    progress_tracker.fail("No pro agents available")
-                return {"status": "error", "task": "pro_argument", "error": "No pro agents available"}
-            
-            # 첫 번째 찬성 에이전트 사용
-            agent_id = pro_agents[0]
-            agent = self.agents.get(agent_id)
-            
-            if not agent:
-                if progress_tracker:
-                    progress_tracker.fail(f"Agent {agent_id} not found")
-                return {"status": "error", "task": "pro_argument", "error": f"Agent {agent_id} not found"}
-            
-            # 토론 주제와 찬성 입장 진술문
-            topic = self.room_data.get('topic', '토론 주제')
-            pro_stance = self.stance_statements.get("pro", "찬성 입장")
-            
-            # 진행 상황 콜백 함수 정의
-            def progress_callback(subtask_name: str, status: str, details: Dict[str, Any] = None):
-                if progress_tracker:
-                    progress_tracker.update_subtask(subtask_name, status, details)
-            
-            # RAG 병렬 처리기를 사용하여 입론 준비
-            result = await self.rag_processor.process_argument_preparation_parallel(
-                agent=agent,
-                topic=topic,
-                stance_statement=pro_stance,
-                context={"role": ParticipantRole.PRO},
-                progress_callback=progress_callback
-            )
-            
-            if result.get("status") == "success":
-                # 에이전트에 결과 저장
-                if hasattr(agent, 'opening_argument'):
-                    agent.opening_argument = result.get("final_argument", "")
-                
-                if progress_tracker:
-                    progress_tracker.complete({
-                        "agent_id": agent_id,
-                        "argument_length": len(result.get("final_argument", "")),
-                        "evidence_count": len(result.get("evidence_results", []))
-                    })
-                
-                return {
-                    "status": "success",
-                    "task": "pro_argument",
-                    "agent_id": agent_id,
-                    "result": result
-                }
-            else:
-                error_msg = result.get("error", "Unknown error in argument preparation")
-                if progress_tracker:
-                    progress_tracker.fail(error_msg)
-                return {
-                    "status": "error",
-                    "task": "pro_argument",
-                    "error": error_msg
-                }
-            
-        except Exception as e:
-            logger.error(f"Error preparing pro argument: {str(e)}")
-            if progress_tracker:
-                progress_tracker.fail(str(e))
-            return {
-                "status": "error",
-                "task": "pro_argument",
-                "error": str(e)
-            }
-    
-    async def _prepare_con_argument_async_enhanced(self, progress_tracker: Optional[TaskProgressTracker]) -> Dict[str, Any]:
-        """
-        반대측 입론 준비 (개선된 버전 - 세밀한 병렬화와 스트리밍 지원)
-        """
-        try:
-            if progress_tracker:
-                progress_tracker.start([
-                    "core_arguments", "parallel_search", "evidence_integration", "final_argument"
-                ])
-            
-            con_agents = self._get_participants_by_role(ParticipantRole.CON)
-            if not con_agents:
-                if progress_tracker:
-                    progress_tracker.fail("No con agents available")
-                return {"status": "error", "task": "con_argument", "error": "No con agents available"}
-            
-            # 첫 번째 반대 에이전트 사용
-            agent_id = con_agents[0]
-            agent = self.agents.get(agent_id)
-            
-            if not agent:
-                if progress_tracker:
-                    progress_tracker.fail(f"Agent {agent_id} not found")
-                return {"status": "error", "task": "con_argument", "error": f"Agent {agent_id} not found"}
-            
-            # 토론 주제와 반대 입장 진술문
-            topic = self.room_data.get('topic', '토론 주제')
-            con_stance = self.stance_statements.get("con", "반대 입장")
-            
-            # 진행 상황 콜백 함수 정의
-            def progress_callback(subtask_name: str, status: str, details: Dict[str, Any] = None):
-                if progress_tracker:
-                    progress_tracker.update_subtask(subtask_name, status, details)
-            
-            # RAG 병렬 처리기를 사용하여 입론 준비
-            result = await self.rag_processor.process_argument_preparation_parallel(
-                agent=agent,
-                topic=topic,
-                stance_statement=con_stance,
-                context={"role": ParticipantRole.CON},
-                progress_callback=progress_callback
-            )
-            
-            if result.get("status") == "success":
-                # 에이전트에 결과 저장
-                if hasattr(agent, 'opening_argument'):
-                    agent.opening_argument = result.get("final_argument", "")
-                
-                if progress_tracker:
-                    progress_tracker.complete({
-                        "agent_id": agent_id,
-                        "argument_length": len(result.get("final_argument", "")),
-                        "evidence_count": len(result.get("evidence_results", []))
-                    })
-                
-                return {
-                    "status": "success",
-                    "task": "con_argument",
-                    "agent_id": agent_id,
-                    "result": result
-                }
-            else:
-                error_msg = result.get("error", "Unknown error in argument preparation")
-                if progress_tracker:
-                    progress_tracker.fail(error_msg)
-                return {
-                    "status": "error",
-                    "task": "con_argument",
-                    "error": error_msg
-                }
-            
-        except Exception as e:
-            logger.error(f"Error preparing con argument: {str(e)}")
-            if progress_tracker:
-                progress_tracker.fail(str(e))
-            return {
-                "status": "error",
-                "task": "con_argument",
                 "error": str(e)
             }
     
@@ -914,7 +777,17 @@ class DebateDialogue:
             import requests
             from bs4 import BeautifulSoup
             
-            response = requests.get(url, timeout=30)
+            # User-Agent 헤더 추가하여 403 Forbidden 에러 방지
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+                'Accept-Language': 'en-US,en;q=0.5',
+                'Accept-Encoding': 'gzip, deflate',
+                'Connection': 'keep-alive',
+                'Upgrade-Insecure-Requests': '1',
+            }
+            
+            response = requests.get(url, headers=headers, timeout=30)
             response.raise_for_status()
             
             soup = BeautifulSoup(response.content, 'html.parser')
@@ -938,7 +811,7 @@ class DebateDialogue:
         except Exception as e:
             logger.error(f"URL processing failed: {str(e)}")
             return f"URL 처리 실패: {str(e)}"
-        
+    
     def _split_context_to_paragraphs(self, context: str) -> List[str]:
         """컨텍스트를 슬라이딩 윈도우 방식으로 청크화"""
         try:
@@ -1006,7 +879,7 @@ class DebateDialogue:
             
             # 모더레이터 에이전트 생성 (기본 설정)
             moderator_config = self.room_data.get('moderator', {})
-            agents[ParticipantRole.MODERATOR] = ModeratorAgent(
+            moderator_agent = ModeratorAgent(
                 agent_id=moderator_config.get("agent_id", "moderator_001"),
                 name=moderator_config.get("name", "Moderator"),
                 config={
@@ -1016,6 +889,10 @@ class DebateDialogue:
                     "personality": moderator_config.get("personality", "balanced")
                 }
             )
+            
+            # ✅ 모더레이터에 LLM Manager 설정
+            moderator_agent.set_llm_manager(self.llm_manager)
+            agents[ParticipantRole.MODERATOR] = moderator_agent
             
             # 참가자 정보에서 철학자 에이전트 생성 (배열 기반 통일 처리)
             participants_data = self.room_data.get('participants', {})
@@ -1058,6 +935,9 @@ class DebateDialogue:
                             "argumentation_style": participant.get("argumentation_style", "logical")
                         }
                     )
+                    
+                    # ✅ PRO 에이전트에 LLM Manager 설정
+                    agent.set_llm_manager(self.llm_manager)
                     
                     agents[participant_id] = agent
                     
@@ -1111,6 +991,9 @@ class DebateDialogue:
                         }
                     )
                     
+                    # ✅ CON 에이전트에 LLM Manager 설정
+                    agent.set_llm_manager(self.llm_manager)
+                    
                     agents[participant_id] = agent
                     
                     # 첫 번째 에이전트를 대표 에이전트로 설정 (하위 호환성)
@@ -1134,10 +1017,20 @@ class DebateDialogue:
             from ...agents.participant.debate_participant_agent import DebateParticipantAgent
             from ...agents.moderator.moderator_agent import ModeratorAgent
             
+            # fallback 에이전트들 생성
+            moderator_fallback = ModeratorAgent("moderator_001", "Moderator", {"stance_statements": self.stance_statements})
+            pro_fallback = DebateParticipantAgent("pro_agent", "Pro Participant", {"role": ParticipantRole.PRO, "stance_statements": self.stance_statements})
+            con_fallback = DebateParticipantAgent("con_agent", "Con Participant", {"role": ParticipantRole.CON, "stance_statements": self.stance_statements})
+            
+            # ✅ fallback 에이전트들에도 LLM Manager 설정
+            moderator_fallback.set_llm_manager(self.llm_manager)
+            pro_fallback.set_llm_manager(self.llm_manager)
+            con_fallback.set_llm_manager(self.llm_manager)
+            
             fallback_agents = {
-                ParticipantRole.MODERATOR: ModeratorAgent("moderator_001", "Moderator", {"stance_statements": self.stance_statements}),
-                ParticipantRole.PRO: DebateParticipantAgent("pro_agent", "Pro Participant", {"role": ParticipantRole.PRO, "stance_statements": self.stance_statements}),
-                ParticipantRole.CON: DebateParticipantAgent("con_agent", "Con Participant", {"role": ParticipantRole.CON, "stance_statements": self.stance_statements})
+                ParticipantRole.MODERATOR: moderator_fallback,
+                ParticipantRole.PRO: pro_fallback,
+                ParticipantRole.CON: con_fallback
             }
             
             # 사용자 에이전트들도 fallback에 추가

@@ -1,0 +1,308 @@
+{
+  "experiment_id": "65d4b7c4",
+  "experiment_dir": "merged_chunks_hybrid_sm0.3-20250518_002030",
+  "name": "merged_chunks_hybrid_sm0.3",
+  "description": "기본 설정으로 RAG 시스템 성능 테스트",
+  "timestamp": "2025-05-18T00:20:30.947826",
+  "config": {
+    "experiment_id": "65d4b7c4",
+    "name": "merged_chunks_hybrid_sm0.3",
+    "description": "기본 설정으로 RAG 시스템 성능 테스트",
+    "timestamp": "2025-05-18T00:20:30.946916",
+    "chunk_size": 500,
+    "chunk_overlap": 0.5,
+    "chunking_strategy": "hybrid",
+    "chunk_metadata": [
+      "source",
+      "page_num"
+    ],
+    "embedding_model": "BAAI/bge-large-en-v1.5",
+    "embedding_dims": 1024,
+    "query_embedding_model": "BAAI/bge-large-en-v1.5",
+    "doc_embedding_model": "BAAI/bge-large-en-v1.5",
+    "search_algorithm": "hybrid",
+    "top_k": 5,
+    "similarity_threshold": 0.6,
+    "similarity_metric": "cosine",
+    "reranker_model": "none",
+    "neighbor_threshold": 0.5,
+    "window_size": 5,
+    "window_threshold": 0.6,
+    "semantic_weight": 0.3,
+    "lambda_param": 0.7,
+    "initial_results": 20,
+    "history_weight": 0.3,
+    "query_enhancement": false,
+    "enhancement_type": "none",
+    "enhancement_model": "gpt-3.5-turbo",
+    "expansion_terms": 5,
+    "web_search_enabled": false,
+    "search_provider": "google",
+    "max_results": 5,
+    "web_content_max_tokens": 1000,
+    "fusion_strategy": "weighted",
+    "local_weight": 0.7,
+    "web_weight": 0.3,
+    "data_sources": [
+      "/Users/jihoon/sapiens_engine/sapiens_engine/context_files/LimitationsofTranshumanism.pdf"
+    ],
+    "test_queries": [
+      "transhumanism as expression of will to power",
+      "Nietzschean perspective on overcoming human limits with technology",
+      "philosophical defense of transhumanism as enhancement, not dehumanization"
+    ]
+  },
+  "query_results": [
+    {
+      "query": "transhumanism as expression of will to power",
+      "enhanced_query": "transhumanism as expression of will to power",
+      "retrieval_results": [
+        {
+          "text": "To take just one example, Ratzinger highlights the impos- sibility of the mathematical mind to compre- hend the “superfluous wonder” of beauty, its extravagance surpassing explanation by calcu- lation (Ratzinger 2004, . In the end, he insists that positivism is incapable of extin- guishing belief, that it cannot annihilate the human search for meaning and the yearning for transcendence, because faith, in its seeking for understanding, corresponds to the truth of human nature. A Deep Despair Philosophically restricted to positive catego- ries, transhumanism is incapable of grasping the depths of the human person. While not hes- itating in his acknowledgement that, as a sci- entific method, positivism “is unbelievably useful and absolutely necessary for the mastery of the problems of ever-developing humanity,” Ratzinger insists that “as a philos- ophy of life [it] is intolerable and the end of humanity” (Ratzinger 2009, ; that it “is adequate in the technical domain,” but that when it is universalized it “mutilates man” (Ratzinger 2005, . As symptomatic of this “mutilation,” trans- humanism radically underestimates the human person’s capacity for spiritual transcendence. It is, therefore, incapable of grasping the goods of man, nor of comprehending the sublime object of his hope. Informed by a neg- ative anthropology, it values human life so little that it is willing to gamble away its uniqueness, surrendering humanity to the whims of technology on the chance that it might be enhanced. Whether flowing from callous disregard, unfounded optimism or dark despair, it would seem madness to allow technological power to be wielded by those who possess such a negative conception of human nature. Hans Jonas makes a similar point. In response to the charge of pessimism over his caution of the destructive power of technology, he suggests that “the greater pessi- mism is on the side of those who consider the given to be so bad or worthless that every gamble for its possible improvement is defen- sible” (Jonas 1985, . In other words, those who consider the human condition so lightly as to risk everything should not be trusted with its future.",
+          "metadata": {
+            "chunk_id": 27,
+            "source": "/Users/jihoon/sapiens_engine/sapiens_engine/context_files/LimitationsofTranshumanism.pdf",
+            "chunk_text": "To take just one example, Ratzinger highlights the impos- sibility of the mathematical mind to compr...",
+            "type": "pdf"
+          },
+          "score": 0.75,
+          "source": "local",
+          "similarity": 0.75
+        },
+        {
+          "text": "In contrast, the prospect of transhumanism, especially in its posthuman aspirations through the hybridization of human and non-human animals, or of person and machine, is leading towards a new alter- ity-a diffusion of human distinctness and a blurring of boundaries (Pepperell 2005, . The transhuman, therefore, does not exist simply as a hyper-technologized humanity. Rather, it results from the “elimination” and “fluidization” of differences, and “the annihi- lation of all the boundaries that make ‘human’ a human being” (Valera 2014, . Because there is no ultimate reason why human beings should have evolved as they did, nothing special or final about their current form, then there is no reason why it should remain as it is. According to Max More: “Transhumanists regard human nature not as an end in itself, not as perfect, and not as having any claim on our allegiance. Rather, it is just one point along an evolutionary pathway and we can learn to reshape our own nature in ways we deem desirable and valuable” (More 2013, . Holding no claim on our alle- giance, there is no moral imperative to continue as we are, no “principled reasons to remain human if we can create creatures, or evolve into creatures, fundamentally ‘better’ than ourselves;” no objection to enhancements that “would alter or destroy human nature” (Buchanan 2011, . Transhumanist author John Harris likens the attempt to preserve our current human nature to “the absurdity of our common ape ancestors in Africa getting together with a simian agenda to block evolution so that simian nature would be preserved as ‘the common heri- tage of simian kind’” (Harris 2010, . This denial of human distinction, and the elimination of boundaries, ultimately amounts to “the negation of man” (Valera and Tambone 2014, or of what C. S. Lewis prophetically referred to as his abolition (Lewis 2009, of the human person treated as an artefact, as a mere “natural object,” or “as raw material for scien- tific manipulation to alter at will” (Lewis 2009, . Lewis warned against this end, troubled by the prospect of human beings assuming “full control” over themselves through eugen- ics and pre-natal conditioning.",
+          "metadata": {
+            "chunk_id": 13,
+            "type": "pdf",
+            "chunk_text": "In contrast, the prospect of transhumanism, especially in its posthuman aspirations through the hybr...",
+            "source": "/Users/jihoon/sapiens_engine/sapiens_engine/context_files/LimitationsofTranshumanism.pdf"
+          },
+          "score": 0.5,
+          "source": "local",
+          "similarity": 0.5
+        },
+        {
+          "text": "Holding no claim on our alle- giance, there is no moral imperative to continue as we are, no “principled reasons to remain human if we can create creatures, or evolve into creatures, fundamentally ‘better’ than ourselves;” no objection to enhancements that “would alter or destroy human nature” (Buchanan 2011, . Transhumanist author John Harris likens the attempt to preserve our current human nature to “the absurdity of our common ape ancestors in Africa getting together with a simian agenda to block evolution so that simian nature would be preserved as ‘the common heri- tage of simian kind’” (Harris 2010, . This denial of human distinction, and the elimination of boundaries, ultimately amounts to “the negation of man” (Valera and Tambone 2014, or of what C. S. Lewis prophetically referred to as his abolition (Lewis 2009, of the human person treated as an artefact, as a mere “natural object,” or “as raw material for scien- tific manipulation to alter at will” (Lewis 2009, . Lewis warned against this end, troubled by the prospect of human beings assuming “full control” over themselves through eugen- ics and pre-natal conditioning. The end would be something like that sought by the transhu- manist projects: “We shall have ‘taken the thread of life out of the hand of Clotho’ and be henceforth free to make our species what- ever we wish it to be” Lewis writes (2009, . (Clotho, a goddess from Greek mythol- ogy, and one of the three so-called Fates is a spinner who spins the thread of human life. The length of the spun thread determines how long each person’s life will be.) In this perspective, transhumanism moves beyond modernity and embraces the postmod- ern. While modernity’s exaltation of science sought a new human being based on the old, achieved through a purification by reason, the postmodern deconstruction seeks to make a new human being through the transforming force of the will. One attempts to base the independence of the human person on the self- sufficiency of his all-knowing reason; the other bases it on the autonomy of his will, a will that proposes its own truth.",
+          "metadata": {
+            "chunk_text": "Holding no claim on our alle- giance, there is no moral imperative to continue as we are, no “princi...",
+            "source": "/Users/jihoon/sapiens_engine/sapiens_engine/context_files/LimitationsofTranshumanism.pdf",
+            "type": "pdf",
+            "chunk_id": 14
+          },
+          "score": 0.5,
+          "source": "local",
+          "similarity": 0.5
+        },
+        {
+          "text": "Lewis warned against this end, troubled by the prospect of human beings assuming “full control” over themselves through eugen- ics and pre-natal conditioning. The end would be something like that sought by the transhu- manist projects: “We shall have ‘taken the thread of life out of the hand of Clotho’ and be henceforth free to make our species what- ever we wish it to be” Lewis writes (2009, . (Clotho, a goddess from Greek mythol- ogy, and one of the three so-called Fates is a spinner who spins the thread of human life. The length of the spun thread determines how long each person’s life will be.) In this perspective, transhumanism moves beyond modernity and embraces the postmod- ern. While modernity’s exaltation of science sought a new human being based on the old, achieved through a purification by reason, the postmodern deconstruction seeks to make a new human being through the transforming force of the will. One attempts to base the independence of the human person on the self- sufficiency of his all-knowing reason; the other bases it on the autonomy of his will, a will that proposes its own truth. One perceives transhumanism’s accommodation of this post- modern concept in its adoption of a fluid anthropology, emptied of any meaningful content. The concept of “human” is given no normative value, dismissed as a construct “without empirical grounding in the findings of science” (Gregory 2012, . There is no such thing as a human “project.” Just as post- modernity “seeks to rebuild the human being as an ateleological reality where the outlines of the human evaporate completely” (Pastor and García-Cuadrado 2014, , so transhu- manism, in dissolving the human specificity, “deconstructs” human beings and attempts to “create” them anew. A parallel may thus be drawn between the transhumanist project and Nietzsche’s efforts to “overcome” humanity in pursuit of the “Overman’” (Übermensch) (Nietzsche 2006, I . The Alienation of the Body The postmodern elimination of the boundaries that define what is “human” begins with the body.",
+          "metadata": {
+            "source": "/Users/jihoon/sapiens_engine/sapiens_engine/context_files/LimitationsofTranshumanism.pdf",
+            "chunk_id": 15,
+            "type": "pdf",
+            "chunk_text": "Lewis warned against this end, troubled by the prospect of human beings assuming “full control” over..."
+          },
+          "score": 0.5,
+          "source": "local",
+          "similarity": 0.5
+        },
+        {
+          "text": "To dignify human beings with an intrinsic worth simply because they are human beings would be akin to a kind of prejudice or speciesism, as professed by the likes of Peter Singer (1993, ; 2009, and his transhumanist protégé, Julian Savulescu (2009, . Without any metaphysical foundation in which to adhere, human nature is thus left devoid of any normative content. A practical consequence of this development is that the idea of “enhancement” is rendered meaning- less. Without a normative concept of human nature, enhancement makes little sense and our strivings to improve ourselves are without direction. The fluidity of human nature, and the freedom to create ourselves according to our wishes, renders “any concrete proposal for improvement vague and impre- cise” (Murillo 2014, . Kass argues: “If ... we can no longer look to our previously unalterable human nature for a standard or norm of what is good or better, how will anyone know what constitutes an improve- ment?” (Kass 2002, . For enhancement to have meaning, “[change or] becoming needs Being as its foundation” (Valera 2014, . Enhancements require a given structure in which to adhere, in the absence of which we can only speak of change. “Freedom uprooted from nature can no longer aspire to improve nature. It can only aspire to reconfigure it over and over again, as it pleases” (Murillo 2014, . And in the end, such reconfigura- tion of nature is not only without limit, but essentially without meaning and hope as well. The Philosophical Limits of Positivism Transhumanism can therefore be seen as heir to a rationalism that canonizes empirical science and critical reason as the only sources of knowledge about humanity and the world. It thus pins its hopes on the seem- ingly endless possibilities offered by scientific development. However, this exaggerated con- fidence in technological reason has drawn wide criticism from diverse quarters. One thing that Christianity and postmodernity have in common is the rejection of an exclu- sive scientific positivism as making us prison- ers of their own methods. By restricting truth to what is scientifically verifiable, reality is rendered smaller and immanent.",
+          "metadata": {
+            "chunk_text": "To dignify human beings with an intrinsic worth simply because they are human beings would be akin t...",
+            "source": "/Users/jihoon/sapiens_engine/sapiens_engine/context_files/LimitationsofTranshumanism.pdf",
+            "type": "pdf",
+            "chunk_id": 21
+          },
+          "score": 0.5,
+          "source": "local",
+          "similarity": 0.5
+        }
+      ],
+      "metrics": {
+        "avg_similarity": 0.55,
+        "top_chunk_similarity": 0.75,
+        "min_similarity": 0.5,
+        "max_similarity": 0.75,
+        "median_similarity": 0.5,
+        "execution_time": -1747520486.9258666,
+        "memory_usage": 723.796875
+      },
+      "timing": {
+        "start_to_query_enhancement": 0.000614166259765625,
+        "query_enhancement_to_retrieval": 3.7724380493164062
+      }
+    },
+    {
+      "query": "Nietzschean perspective on overcoming human limits with technology",
+      "enhanced_query": "Nietzschean perspective on overcoming human limits with technology",
+      "retrieval_results": [
+        {
+          "text": "At the root of this imperative for enhancement is a profound sense of despond- ency and frustration with our human condition. In this, transhumanists clearly respond to a valid human experience. Discontentment and disappointment are part of every life. Before our limitations, we all yearn for something more, desire to go further, strive to improve our- selves in one way or another. The human spirit has always striven towards self-improvement, and the historical advances in human culture would be unthinkable without this drive towards enhancement. The real question, however, is whether transhumanists like Savulescu and Bostrom interpret the experience of human dissatisfaction correctly, and whether their confidence in the methods of human enhancement, especially through biotechnology, corresponds to genuine human hope or masks an underlying despair. Transhumanism can be defined as a project of enhancement through the application of biotechnology to move human beings beyond their natural limitations: to make them smarter and stronger; to assist them to be happier and morally responsible; and/or to enable them to live longer. The novelty of the transhumanist project does not lie in the biotechnologies that it advances. Many of the technologies proposed are already on-line and used therapeutically. Pharmaceuticals, genetic manipulation, nanotechnology, and some brain-computer interfaces (e.g., cochlear implants for the hearing impaired) already exist in clinical practice and promise further advances to treat and cure disability and disease. The difference lies in transhuman- ism’s desire to engage such technologies toward ends surpassing the therapeutic. Transhumanists seek to enhance the human condition beyond any notion of “normal” functioning (which, as shall be seen below, they fundamentally deny); to make us, in the words of Michael Sandel, “better than well” (Sandel 2009, . In so doing, they purpose- fully disregard the therapy-enhancement dis- tinction with its presumption of normative function and render any improvement as an enhancement, that is, an “improvement” of a person’s life relative to their former condition. From this perspective, the prospects for enhancement are limitless. According to the Transhumanist Declaration, first drafted in 1988, humanity’s potential is still mostly unre- alized.",
+          "metadata": {
+            "chunk_id": 3,
+            "source": "/Users/jihoon/sapiens_engine/sapiens_engine/context_files/LimitationsofTranshumanism.pdf",
+            "type": "pdf",
+            "chunk_text": "At the root of this imperative for enhancement is a profound sense of despond- ency and frustration ..."
+          },
+          "score": 0.5714285714285714,
+          "source": "local",
+          "similarity": 0.5714285714285714
+        },
+        {
+          "text": "The novelty of the transhumanist project does not lie in the biotechnologies that it advances. Many of the technologies proposed are already on-line and used therapeutically. Pharmaceuticals, genetic manipulation, nanotechnology, and some brain-computer interfaces (e.g., cochlear implants for the hearing impaired) already exist in clinical practice and promise further advances to treat and cure disability and disease. The difference lies in transhuman- ism’s desire to engage such technologies toward ends surpassing the therapeutic. Transhumanists seek to enhance the human condition beyond any notion of “normal” functioning (which, as shall be seen below, they fundamentally deny); to make us, in the words of Michael Sandel, “better than well” (Sandel 2009, . In so doing, they purpose- fully disregard the therapy-enhancement dis- tinction with its presumption of normative function and render any improvement as an enhancement, that is, an “improvement” of a person’s life relative to their former condition. From this perspective, the prospects for enhancement are limitless. According to the Transhumanist Declaration, first drafted in 1988, humanity’s potential is still mostly unre- alized. Signatories of this declaration envision the possibility of harnessing the human poten- tial to transcend its current form by overcom- ing aging, cognitive shortcomings, physical limitations, and suffering. To this end, they favor morphological freedom-the right to modify and enhance one’s body, cognition, and emotions. This freedom includes the right to use techniques and technologies to extend life; preserve the self through cryonics, uploading, and other means; and to choose further modifications and enhancements. The term “transhumanism” was first used in 1957 by Julian Huxley in his book New Bottles for New Wine. Huxley envisaged a transhuman state at the end of an evolutionary process guided by science and technology. He con- ceives of “man remaining man, but transcend- ing himself, by realizing new possibilities of and for his human nature” (Huxley 1957, . Huxley envisions humanity as the final frontier for exploration.",
+          "metadata": {
+            "chunk_id": 4,
+            "type": "pdf",
+            "chunk_text": "The novelty of the transhumanist project does not lie in the biotechnologies that it advances. Many ...",
+            "source": "/Users/jihoon/sapiens_engine/sapiens_engine/context_files/LimitationsofTranshumanism.pdf"
+          },
+          "score": 0.5714285714285714,
+          "source": "local",
+          "similarity": 0.5714285714285714
+        },
+        {
+          "text": "In a short space of time, transhumanist ideas have moved from the fringes of philosophical inquiry into the mainstream. However, beyond the demands of public interest, the transhumanist proposal demands a response since it touches on the very meaning of human life and hope. In asking why one should take seriously the proposals of transhumanists, American bioethicist Leon Kass writes: It raises the weightiest questions of bioethics, touching on the ends and goals of the biomedical enterprise, the nature and meaning of human flourishing, and the intrinsic threat of dehuman- ization (or the promise of super humaniza tion). It compels attention to what it means to be a human being and to be active as a human being. (Kass 2003, In their pursuit to enhance and even transcend the current human condition, transhumanists cast shadows over the goodness of life while raising hopes for a bright and better future. Thus, even if many of its imaginative pros- pects do not eventuate, it demands a reflective response, for our hopes and aspirations define who we are. “What we hope for tells us a great deal about who we are,” says Gilbert Meilaender (2013, . Even if the quest for transcending our humanity turns out in the end to be no more than a “pipe dream,” the fact that it is even proposed is significant. The Object of Transhumanist Hope and its Philosophical Foundations Encouraged by the possibilities of technology, the transhumanist cause is characteristically hopeful. However, the nature of such hope is of a particular kind. In essence it is an imma- nent, this-worldly hope: what may be described as a “future-oriented ideology” (Burdett and Lorrimar 2019, that aspires to a “brave new world” (à la Julian Huxley’s more famous brother, Aldous). That which was once confided in God or is now firmly placed within the sphere of the human capacity to know and act, and increasingly finds its solace in a ratio- nality that is the product of technical science.",
+          "metadata": {
+            "chunk_text": "In a short space of time, transhumanist ideas have moved from the fringes of philosophical inquiry i...",
+            "type": "pdf",
+            "chunk_id": 8,
+            "source": "/Users/jihoon/sapiens_engine/sapiens_engine/context_files/LimitationsofTranshumanism.pdf"
+          },
+          "score": 0.4285714285714286,
+          "source": "local",
+          "similarity": 0.4285714285714286
+        },
+        {
+          "text": "This immanentization of hope is rooted in a deeper philosophical ideology, drawing spe- cifically on the Enlightenment’s confidence that human enhancement comes by way of rational knowledge alone, with knowledge itself reduced to positive categories of the ver- ifiable and demonstrable, especially in the fields of science, mathematics, and history (Ratzinger 2004, . In the process, however, critics point out that the object of rationalistic hope is narrowed and the significance of man diminished. As Joseph Ratzinger writes: The criterion of rationality is taken exclusively from the experience of technological production based on science. Rationality is oriented to func- tionality, to effectiveness, and to an increase in the quality of life for all. This entails a use- indeed a domination-of nature that is problem- atic in view of the dramatic environmental prob- lems our world now faces. But man’s domination of his own self nonchalantly takes ever greater steps toward the realization of Aldous Huxley’s vision. Man is no longer to be born in an irrational manner but is to be produced rationally. Man as a product is subject to the control of man. Imperfect individuals must be weeded out; the path of plan- ning and production must aim at the perfect man. Suffering must disappear, and life is to consist of pleasure alone. (Ratzinger 2006, In Ratzinger’s analysis, the reduction of hope to rational, technical science has immediate and negative consequences for anthropology. The relevance of his analysis to the transhu- manist cause seems quite clear, with its projec- tion of hope onto biotechnology and its quest to re-create human beings. The Anthropological Question The nature of transhumanist hope is thus rooted in its materialistic and evolutionary anthropology. Emerging from its roots in Enlightenment rationalism, and heir to an evo- lutionary philosophy, transhumanism holds to the conviction that human beings in their current form are incomplete but improvable; “a work-in-progress, a half-baked being that we can learn to remold in desirable ways” (Bostrom 2003, . They consider human enhancement to be in continuity with evolu- tion, either by giving it a helping hand or by correcting its shortcomings, to move human beings further along evolution’s trajectory by replacing natural selection with technological enhancement.",
+          "metadata": {
+            "chunk_text": "This immanentization of hope is rooted in a deeper philosophical ideology, drawing spe- cifically on...",
+            "type": "pdf",
+            "chunk_id": 10,
+            "source": "/Users/jihoon/sapiens_engine/sapiens_engine/context_files/LimitationsofTranshumanism.pdf"
+          },
+          "score": 0.4285714285714286,
+          "source": "local",
+          "similarity": 0.4285714285714286
+        },
+        {
+          "text": "Imperfect individuals must be weeded out; the path of plan- ning and production must aim at the perfect man. Suffering must disappear, and life is to consist of pleasure alone. (Ratzinger 2006, In Ratzinger’s analysis, the reduction of hope to rational, technical science has immediate and negative consequences for anthropology. The relevance of his analysis to the transhu- manist cause seems quite clear, with its projec- tion of hope onto biotechnology and its quest to re-create human beings. The Anthropological Question The nature of transhumanist hope is thus rooted in its materialistic and evolutionary anthropology. Emerging from its roots in Enlightenment rationalism, and heir to an evo- lutionary philosophy, transhumanism holds to the conviction that human beings in their current form are incomplete but improvable; “a work-in-progress, a half-baked being that we can learn to remold in desirable ways” (Bostrom 2003, . They consider human enhancement to be in continuity with evolu- tion, either by giving it a helping hand or by correcting its shortcomings, to move human beings further along evolution’s trajectory by replacing natural selection with technological enhancement. However, while transhumanism finds its rationale in the evolutionary process, it assumes a novel stance in relation to the end of evolution, and its concept of the human person is somewhat removed from the human- ist anthropology which originally guided evo- lutionary theory. The difference lies in the human person’s relation to, or distinction from, Nature. Italian philosopher Maurizio Faggioni (2009, ) explains that while classical evolutionary theory regards human beings as “the point of arrival and the apex of an ascending movement,” transhumanists have purged evolution of its anthropocentr ism and has robbed humanity of any special significance. In the classical evolutionary interpretation, the human person emerges as distinct from the world. He or she is gradually “purified” and separated from Nature, “eliminating the animal and the machine from his image” (Tintino 2014, .",
+          "metadata": {
+            "chunk_text": "Imperfect individuals must be weeded out; the path of plan- ning and production must aim at the perf...",
+            "type": "pdf",
+            "chunk_id": 11,
+            "source": "/Users/jihoon/sapiens_engine/sapiens_engine/context_files/LimitationsofTranshumanism.pdf"
+          },
+          "score": 0.4285714285714286,
+          "source": "local",
+          "similarity": 0.4285714285714286
+        }
+      ],
+      "metrics": {
+        "avg_similarity": 0.48571428571428577,
+        "top_chunk_similarity": 0.5714285714285714,
+        "min_similarity": 0.4285714285714286,
+        "max_similarity": 0.5714285714285714,
+        "median_similarity": 0.4285714285714286,
+        "execution_time": -1747520490.7125118,
+        "memory_usage": 870.6875
+      },
+      "timing": {
+        "start_to_query_enhancement": 0.00022602081298828125,
+        "query_enhancement_to_retrieval": 3.7787511348724365
+      }
+    },
+    {
+      "query": "philosophical defense of transhumanism as enhancement, not dehumanization",
+      "enhanced_query": "philosophical defense of transhumanism as enhancement, not dehumanization",
+      "retrieval_results": [
+        {
+          "text": "At the root of this imperative for enhancement is a profound sense of despond- ency and frustration with our human condition. In this, transhumanists clearly respond to a valid human experience. Discontentment and disappointment are part of every life. Before our limitations, we all yearn for something more, desire to go further, strive to improve our- selves in one way or another. The human spirit has always striven towards self-improvement, and the historical advances in human culture would be unthinkable without this drive towards enhancement. The real question, however, is whether transhumanists like Savulescu and Bostrom interpret the experience of human dissatisfaction correctly, and whether their confidence in the methods of human enhancement, especially through biotechnology, corresponds to genuine human hope or masks an underlying despair. Transhumanism can be defined as a project of enhancement through the application of biotechnology to move human beings beyond their natural limitations: to make them smarter and stronger; to assist them to be happier and morally responsible; and/or to enable them to live longer. The novelty of the transhumanist project does not lie in the biotechnologies that it advances. Many of the technologies proposed are already on-line and used therapeutically. Pharmaceuticals, genetic manipulation, nanotechnology, and some brain-computer interfaces (e.g., cochlear implants for the hearing impaired) already exist in clinical practice and promise further advances to treat and cure disability and disease. The difference lies in transhuman- ism’s desire to engage such technologies toward ends surpassing the therapeutic. Transhumanists seek to enhance the human condition beyond any notion of “normal” functioning (which, as shall be seen below, they fundamentally deny); to make us, in the words of Michael Sandel, “better than well” (Sandel 2009, . In so doing, they purpose- fully disregard the therapy-enhancement dis- tinction with its presumption of normative function and render any improvement as an enhancement, that is, an “improvement” of a person’s life relative to their former condition. From this perspective, the prospects for enhancement are limitless. According to the Transhumanist Declaration, first drafted in 1988, humanity’s potential is still mostly unre- alized.",
+          "metadata": {
+            "source": "/Users/jihoon/sapiens_engine/sapiens_engine/context_files/LimitationsofTranshumanism.pdf",
+            "chunk_id": 3,
+            "chunk_text": "At the root of this imperative for enhancement is a profound sense of despond- ency and frustration ...",
+            "type": "pdf"
+          },
+          "score": 0.4,
+          "source": "local",
+          "similarity": 0.4
+        },
+        {
+          "text": "This immanentization of hope is rooted in a deeper philosophical ideology, drawing spe- cifically on the Enlightenment’s confidence that human enhancement comes by way of rational knowledge alone, with knowledge itself reduced to positive categories of the ver- ifiable and demonstrable, especially in the fields of science, mathematics, and history (Ratzinger 2004, . In the process, however, critics point out that the object of rationalistic hope is narrowed and the significance of man diminished. As Joseph Ratzinger writes: The criterion of rationality is taken exclusively from the experience of technological production based on science. Rationality is oriented to func- tionality, to effectiveness, and to an increase in the quality of life for all. This entails a use- indeed a domination-of nature that is problem- atic in view of the dramatic environmental prob- lems our world now faces. But man’s domination of his own self nonchalantly takes ever greater steps toward the realization of Aldous Huxley’s vision. Man is no longer to be born in an irrational manner but is to be produced rationally. Man as a product is subject to the control of man. Imperfect individuals must be weeded out; the path of plan- ning and production must aim at the perfect man. Suffering must disappear, and life is to consist of pleasure alone. (Ratzinger 2006, In Ratzinger’s analysis, the reduction of hope to rational, technical science has immediate and negative consequences for anthropology. The relevance of his analysis to the transhu- manist cause seems quite clear, with its projec- tion of hope onto biotechnology and its quest to re-create human beings. The Anthropological Question The nature of transhumanist hope is thus rooted in its materialistic and evolutionary anthropology. Emerging from its roots in Enlightenment rationalism, and heir to an evo- lutionary philosophy, transhumanism holds to the conviction that human beings in their current form are incomplete but improvable; “a work-in-progress, a half-baked being that we can learn to remold in desirable ways” (Bostrom 2003, . They consider human enhancement to be in continuity with evolu- tion, either by giving it a helping hand or by correcting its shortcomings, to move human beings further along evolution’s trajectory by replacing natural selection with technological enhancement.",
+          "metadata": {
+            "type": "pdf",
+            "source": "/Users/jihoon/sapiens_engine/sapiens_engine/context_files/LimitationsofTranshumanism.pdf",
+            "chunk_id": 10,
+            "chunk_text": "This immanentization of hope is rooted in a deeper philosophical ideology, drawing spe- cifically on..."
+          },
+          "score": 0.4,
+          "source": "local",
+          "similarity": 0.4
+        },
+        {
+          "text": "Enhancements require a given structure in which to adhere, in the absence of which we can only speak of change. “Freedom uprooted from nature can no longer aspire to improve nature. It can only aspire to reconfigure it over and over again, as it pleases” (Murillo 2014, . And in the end, such reconfigura- tion of nature is not only without limit, but essentially without meaning and hope as well. The Philosophical Limits of Positivism Transhumanism can therefore be seen as heir to a rationalism that canonizes empirical science and critical reason as the only sources of knowledge about humanity and the world. It thus pins its hopes on the seem- ingly endless possibilities offered by scientific development. However, this exaggerated con- fidence in technological reason has drawn wide criticism from diverse quarters. One thing that Christianity and postmodernity have in common is the rejection of an exclu- sive scientific positivism as making us prison- ers of their own methods. By restricting truth to what is scientifically verifiable, reality is rendered smaller and immanent. Ratzinger suggests that one “who can no longer tran- scend the limits either of his consciousness or of his speech fundamentally can no longer speak of anything at all” (Ratzinger 2009, . The confining of all that can be known to the human knower similarly subverts knowledge. Challenging the absoluteness of positivistic knowledge, Ratzinger draws a dis- tinction between knowledge and understand- ing, between “, and intellectus (reason that contemplates the deeper strata of being)” (Ratzinger 2006, . He also draws on Heidegger’s categories of thought as calculating (concerned with making) and thought as reflective (concerned with meaning) (Ratzinger 2004, . Knowledge of matter, according to Ratzinger, is intrinsically positivistic, limited to what is measurable and functional. It is, therefore, incredibly useful and valid. However, such knowledge is limited in its scope. It is not concerned with truth as such. It does not “inquire what things are like on their own and in themselves, but only whether they will function for us” (Ratzinger 2004, . Structural knowledge, therefore, cannot penetrate to the essence of reality.",
+          "metadata": {
+            "chunk_text": "Enhancements require a given structure in which to adhere, in the absence of which we can only speak...",
+            "chunk_id": 22,
+            "source": "/Users/jihoon/sapiens_engine/sapiens_engine/context_files/LimitationsofTranshumanism.pdf",
+            "type": "pdf"
+          },
+          "score": 0.4,
+          "source": "local",
+          "similarity": 0.4
+        },
+        {
+          "text": "However, they need each other. In Ratzinger’s analysis, rational discourse is impoverished by the current imbalance between knowledge and understanding, in which everything is reduced to the narrow confines of ratio. He suggests that Heidegger was justified in his concern “that in an age in which calculating thought is celebrating the most amazing triumphs man is nevertheless threatened, perhaps more than ever before, by thoughtlessness” (Ratzinger 2004, . For all the knowledge gained through techni- cal and scientific thinking, humanity as a whole has not progressed in understanding. By restricting knowledge to what is practica- ble, human beings risk losing themselves and the reason for their existence. As Ratzinger writes, “man does not live on the bread of practicability alone; he lives as man and, pre- cisely in the intrinsically human part of his being, on the word, on love, on meaning” (Ratzinger 2004, ). Love, word, meaning, and other realities like the transcen- dentals of truth, goodness, and beauty, consti- tute what is truly human and cannot be reduced to positive categories. To take just one example, Ratzinger highlights the impos- sibility of the mathematical mind to compre- hend the “superfluous wonder” of beauty, its extravagance surpassing explanation by calcu- lation (Ratzinger 2004, . In the end, he insists that positivism is incapable of extin- guishing belief, that it cannot annihilate the human search for meaning and the yearning for transcendence, because faith, in its seeking for understanding, corresponds to the truth of human nature. A Deep Despair Philosophically restricted to positive catego- ries, transhumanism is incapable of grasping the depths of the human person. While not hes- itating in his acknowledgement that, as a sci- entific method, positivism “is unbelievably useful and absolutely necessary for the mastery of the problems of ever-developing humanity,” Ratzinger insists that “as a philos- ophy of life [it] is intolerable and the end of humanity” (Ratzinger 2009, ; that it “is adequate in the technical domain,” but that when it is universalized it “mutilates man” (Ratzinger 2005, .",
+          "metadata": {
+            "type": "pdf",
+            "source": "/Users/jihoon/sapiens_engine/sapiens_engine/context_files/LimitationsofTranshumanism.pdf",
+            "chunk_id": 26,
+            "chunk_text": "However, they need each other. In Ratzinger’s analysis, rational discourse is impoverished by the cu..."
+          },
+          "score": 0.4,
+          "source": "local",
+          "similarity": 0.4
+        },
+        {
+          "text": "To take just one example, Ratzinger highlights the impos- sibility of the mathematical mind to compre- hend the “superfluous wonder” of beauty, its extravagance surpassing explanation by calcu- lation (Ratzinger 2004, . In the end, he insists that positivism is incapable of extin- guishing belief, that it cannot annihilate the human search for meaning and the yearning for transcendence, because faith, in its seeking for understanding, corresponds to the truth of human nature. A Deep Despair Philosophically restricted to positive catego- ries, transhumanism is incapable of grasping the depths of the human person. While not hes- itating in his acknowledgement that, as a sci- entific method, positivism “is unbelievably useful and absolutely necessary for the mastery of the problems of ever-developing humanity,” Ratzinger insists that “as a philos- ophy of life [it] is intolerable and the end of humanity” (Ratzinger 2009, ; that it “is adequate in the technical domain,” but that when it is universalized it “mutilates man” (Ratzinger 2005, . As symptomatic of this “mutilation,” trans- humanism radically underestimates the human person’s capacity for spiritual transcendence. It is, therefore, incapable of grasping the goods of man, nor of comprehending the sublime object of his hope. Informed by a neg- ative anthropology, it values human life so little that it is willing to gamble away its uniqueness, surrendering humanity to the whims of technology on the chance that it might be enhanced. Whether flowing from callous disregard, unfounded optimism or dark despair, it would seem madness to allow technological power to be wielded by those who possess such a negative conception of human nature. Hans Jonas makes a similar point. In response to the charge of pessimism over his caution of the destructive power of technology, he suggests that “the greater pessi- mism is on the side of those who consider the given to be so bad or worthless that every gamble for its possible improvement is defen- sible” (Jonas 1985, . In other words, those who consider the human condition so lightly as to risk everything should not be trusted with its future.",
+          "metadata": {
+            "source": "/Users/jihoon/sapiens_engine/sapiens_engine/context_files/LimitationsofTranshumanism.pdf",
+            "chunk_id": 27,
+            "type": "pdf",
+            "chunk_text": "To take just one example, Ratzinger highlights the impos- sibility of the mathematical mind to compr..."
+          },
+          "score": 0.4,
+          "source": "local",
+          "similarity": 0.4
+        }
+      ],
+      "metrics": {
+        "avg_similarity": 0.4,
+        "top_chunk_similarity": 0.4,
+        "min_similarity": 0.4,
+        "max_similarity": 0.4,
+        "median_similarity": 0.4,
+        "execution_time": -1747520494.6693127,
+        "memory_usage": 981.25
+      },
+      "timing": {
+        "start_to_query_enhancement": 0.00012803077697753906,
+        "query_enhancement_to_retrieval": 3.6026620864868164
+      }
+    }
+  ],
+  "metrics": {
+    "avg_top_similarity": 0.5738095238095239,
+    "min_top_similarity": 0.4,
+    "max_top_similarity": 0.75,
+    "avg_similarity": 0.47857142857142865,
+    "avg_exec_time": -1747520490.7692301,
+    "total_queries": 3,
+    "total_execution_time": 70.92789602279663
+  },
+  "token_usage": {},
+  "timing": {
+    "start_to_initialization": 59.54323410987854,
+    "initialization_to_end": 11.38466191291809
+  }
+}

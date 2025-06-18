@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  # Frontend (Next.js)
+  frontend:
+    build:
+      context: ./agoramind
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+    depends_on:
+      - backend
+    networks:
+      - agoramind-network
+
+  # Backend (Python FastAPI)
+  backend:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - ENVIRONMENT=production
+    networks:
+      - agoramind-network
+    volumes:
+      - ./data:/app/data  # 데이터 영속성
+    restart: unless-stopped
+
+  # Optional: Database (if needed later)
+  # mongodb:
+  #   image: mongo:6.0
+  #   ports:
+  #     - "27017:27017"
+  #   volumes:
+  #     - mongodb_data:/data/db
+  #   networks:
+  #     - agoramind-network
+
+networks:
+  agoramind-network:
+    driver: bridge
+
+volumes:
+  mongodb_data: 

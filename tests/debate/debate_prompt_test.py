@@ -55,7 +55,6 @@ def load_philosophers() -> Dict[str, Dict[str, Any]]:
     
     # Try to load from standard locations
     npc_paths = [
-        Path('sapiens_engine/config/npcs.yaml'),
         Path('config/npcs.yaml'),
         Path('agoramind/src/config/npcs.yaml'),
     ]
