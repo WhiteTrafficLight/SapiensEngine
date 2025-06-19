@@ -25,7 +25,7 @@ class VectorSearcher(BaseSearcher):
         self.db_path = config.get("db_path", "./vectordb")
         self.collection_name = config.get("collection_name", "default")
         self.embedding_model = config.get("embedding_model", "BAAI/bge-large-en-v1.5")
-        self.search_algorithm = config.get("search_algorithm", "simple_top_k")
+        self.search_algorithm = config.get("search_algorithm", "merged_chunks")
         
         # RAGManager 인스턴스 (지연 초기화)
         self.rag_manager = None
@@ -63,12 +63,35 @@ class VectorSearcher(BaseSearcher):
                     query=query,
                     k=self.max_results
                 )
-            else:
-                # 기본값으로 simple_top_k 사용
-                results = self.rag_manager.simple_top_k_search(
+            elif self.search_algorithm == "merged_chunks":
+                results = self.rag_manager.merged_chunks_search(
                     collection_name=self.collection_name,
                     query=query,
-                    k=self.max_results
+                    k=self.max_results,
+                    merge_threshold=0.8
+                )
+            elif self.search_algorithm == "hybrid":
+                results = self.rag_manager.hybrid_search(
+                    collection_name=self.collection_name,
+                    query=query,
+                    k=self.max_results,
+                    semantic_weight=0.7
+                )
+            elif self.search_algorithm == "semantic_window":
+                results = self.rag_manager.semantic_window_search(
+                    collection_name=self.collection_name,
+                    query=query,
+                    k=self.max_results,
+                    window_size=5,
+                    window_threshold=0.6
+                )
+            else:
+                # 기본값으로 merged_chunks 사용 (성능이 가장 좋음)
+                results = self.rag_manager.merged_chunks_search(
+                    collection_name=self.collection_name,
+                    query=query,
+                    k=self.max_results,
+                    merge_threshold=0.8
                 )
             
             # 결과를 표준 형식으로 변환

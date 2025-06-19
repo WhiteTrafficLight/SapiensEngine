@@ -26,6 +26,9 @@ from ...rag.retrieval.vector_store import VectorStore
 from ...agents.utility.debate_emotion_inference import infer_debate_emotion, apply_debate_emotion_to_prompt
 from ...models.llm.llm_manager import LLMManager  # LLMManager import 추가
 
+# 🆕 DebateContextManager 추가
+from ..context.debate_context_manager import DebateContextManager
+
 # 새로운 개선사항 임포트 (고급 기능)
 from ..events.initialization_events import (
     get_event_stream, 
@@ -181,6 +184,10 @@ class DebateDialogue:
         
         # LLM 관리자 먼저 초기화 (stance_statements에서 사용)
         self.llm_manager = LLMManager()
+        
+        # 🆕 DebateContextManager 초기화 및 요약 생성
+        self.context_manager = self._initialize_context_manager()
+        self.context_summary = self._generate_context_summary()
         
         self.stance_statements = self._generate_stance_statements()  # agents 초기화 전에 생성
         self.agents = self._initialize_agents()  # stance_statements 이후에 초기화
@@ -886,7 +893,8 @@ class DebateDialogue:
                     "stance_statements": self.stance_statements,
                     "style": moderator_config.get("style", "neutral"),
                     "style_id": moderator_config.get("style_id", "0"),  # 기본값 "0" (Casual Young Moderator)
-                    "personality": moderator_config.get("personality", "balanced")
+                    "personality": moderator_config.get("personality", "balanced"),
+                    "context_summary": getattr(self, 'context_summary', {})  # context_summary 추가
                 }
             )
             
@@ -1018,7 +1026,10 @@ class DebateDialogue:
             from ...agents.moderator.moderator_agent import ModeratorAgent
             
             # fallback 에이전트들 생성
-            moderator_fallback = ModeratorAgent("moderator_001", "Moderator", {"stance_statements": self.stance_statements})
+            moderator_fallback = ModeratorAgent("moderator_001", "Moderator", {
+                "stance_statements": self.stance_statements,
+                "context_summary": getattr(self, 'context_summary', {})  # context_summary 추가
+            })
             pro_fallback = DebateParticipantAgent("pro_agent", "Pro Participant", {"role": ParticipantRole.PRO, "stance_statements": self.stance_statements})
             con_fallback = DebateParticipantAgent("con_agent", "Con Participant", {"role": ParticipantRole.CON, "stance_statements": self.stance_statements})
             
@@ -1114,7 +1125,7 @@ class DebateDialogue:
     def _generate_stance_statements(self) -> Dict[str, str]:
         """주제에서 찬성/반대 입장 명확화"""
         topic = self.room_data.get('title', '')
-        context = self.room_data.get('context', '')
+        #context = self.room_data.get('context', '')
             
         # 인스턴스 변수 사용 (중복 초기화 제거)
         llm_manager = self.llm_manager
@@ -1135,7 +1146,7 @@ DO NOT include any extraneous text, your response will be parsed programmaticall
 DEBATE TOPIC: "{topic}"
 
 ADDITIONAL CONTEXT (if available):
-{context if context else "No additional context provided."}
+{self.context_summary if self.context_summary else "No additional context provided."}
 
 Create a balanced pair of position statements for this debate topic:
 1. PRO (for/in favor) position statement - a concise statement (~1-2 sentences) arguing in favor of the topic
@@ -2914,3 +2925,138 @@ Important:
                 self.message_callback(speaker_id, message, message_type, stage)
             except Exception as e:
                 logger.error(f"Error in message callback: {str(e)}")
+    
+    def _initialize_context_manager(self) -> Optional[DebateContextManager]:
+        """DebateContextManager 초기화 및 컨텍스트 추가"""
+        context = self.room_data.get('context', '')
+        if not context:
+            logger.info("No context provided, skipping DebateContextManager initialization")
+            return None
+        
+        try:
+            # DebateContextManager 생성
+            context_manager = DebateContextManager(
+                llm_manager=self.llm_manager,
+                max_context_length=100000,  # 충분한 길이 설정 (8000 → 100000)
+                max_summary_points=7  # 더 많은 요약 포인트
+            )
+            
+            # 컨텍스트 타입에 따라 적절히 추가
+            if context.lower().endswith('.pdf') and os.path.exists(context):
+                logger.info(f"Adding PDF context to DebateContextManager: {context}")
+                context_id = context_manager.add_file_context(context)
+                
+            elif context.startswith(('http://', 'https://')):
+                logger.info(f"Adding URL context to DebateContextManager: {context}")
+                context_id = context_manager.add_url_context(context)
+                
+            else:
+                logger.info("Adding text context to DebateContextManager")
+                title = self.room_data.get('title', 'Debate Context')
+                context_id = context_manager.add_text_context(context, title=title)
+            
+            logger.info(f"DebateContextManager initialized with context_id: {context_id}")
+            return context_manager
+            
+        except Exception as e:
+            logger.error(f"Error initializing DebateContextManager: {str(e)}")
+            return None
+    
+    def _generate_context_summary(self) -> Dict[str, Any]:
+        """컨텍스트 요약 생성 및 저장"""
+        if not self.context_manager:
+            logger.info("No context manager available, skipping summary generation")
+            return {}
+        
+        try:
+            # 토론 주제 가져오기
+            topic = self.room_data.get('title', '토론 주제')
+            
+            # 자동 타입 판별된 요약 생성
+            summary_result = self.context_manager.generate_summary(topic)
+            
+            # 추가 정보 수집
+            bullet_points = self.context_manager.get_context_bullet_points(max_points=5)
+            context_stats = self.context_manager.get_context_stats()
+            type_summary = self.context_manager.get_context_type_summary()
+            
+            context_summary = {
+                "objective_summary": summary_result.get("summary", ""),
+                "bullet_points": bullet_points,
+                "context_stats": context_stats,
+                "type_summary": type_summary,
+                "determined_type": type_summary.get("determined_type", "general"),
+                "generation_timestamp": time.time()
+            }
+            
+            logger.info(f"Context summary generated successfully")
+            logger.info(f"Determined context type: {context_summary['determined_type']}")
+            logger.info(f"Summary length: {len(context_summary['objective_summary'])} chars")
+            logger.info(f"Bullet points: {len(bullet_points)} items")
+            
+            return context_summary
+            
+        except Exception as e:
+            logger.error(f"Error generating context summary: {str(e)}")
+            return {
+                "objective_summary": "",
+                "bullet_points": [],
+                "context_stats": {},
+                "type_summary": {},
+                "determined_type": "general", 
+                "error": str(e),
+                "generation_timestamp": time.time()
+            }
+    
+    # ========================================================================
+    # CONTEXT SUMMARY ACCESS METHODS
+    # ========================================================================
+    
+    def get_context_summary(self) -> Dict[str, Any]:
+        """컨텍스트 요약 정보 반환"""
+        return self.context_summary if hasattr(self, 'context_summary') else {}
+    
+    def get_objective_summary(self) -> str:
+        """객관적 요약 텍스트 반환"""
+        return self.context_summary.get("objective_summary", "") if hasattr(self, 'context_summary') else ""
+    
+    def get_context_bullet_points(self) -> List[str]:
+        """컨텍스트 핵심 포인트 반환"""
+        return self.context_summary.get("bullet_points", []) if hasattr(self, 'context_summary') else []
+    
+    def get_determined_context_type(self) -> str:
+        """자동 판별된 컨텍스트 타입 반환"""
+        return self.context_summary.get("determined_type", "general") if hasattr(self, 'context_summary') else "general"
+    
+    def has_context_summary(self) -> bool:
+        """컨텍스트 요약이 사용 가능한지 확인"""
+        return (hasattr(self, 'context_summary') and 
+                self.context_summary and 
+                self.context_summary.get("objective_summary", "").strip())
+    
+    def refresh_context_summary(self) -> Dict[str, Any]:
+        """컨텍스트 요약 새로고침"""
+        if self.context_manager:
+            self.context_summary = self._generate_context_summary()
+            logger.info("Context summary refreshed")
+        return self.get_context_summary()
+    
+    def get_context_for_prompt(self, include_summary: bool = True, include_bullets: bool = True) -> str:
+        """프롬프트에 포함할 컨텍스트 정보 생성"""
+        if not self.has_context_summary():
+            return ""
+        
+        context_parts = []
+        
+        if include_summary:
+            summary = self.get_objective_summary()
+            if summary:
+                context_parts.append(f"=== 컨텍스트 요약 ===\n{summary}")
+        
+        if include_bullets:
+            bullets = self.get_context_bullet_points()
+            if bullets:
+                bullet_text = "\n".join(bullets)
+                context_parts.append(f"=== 핵심 포인트 ===\n{bullet_text}")
+        
+        return "\n\n".join(context_parts)

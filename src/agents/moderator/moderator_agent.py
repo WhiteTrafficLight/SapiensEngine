@@ -42,6 +42,9 @@ class ModeratorAgent(Agent):
         # 찬반 입장 저장
         self.stance_statements = config.get("stance_statements", {})
         
+        # 컨텍스트 요약 저장
+        self.context_summary = config.get("context_summary", {})
+        
         # 중재자 상태 초기화
         self.state.update({
             "current_speaker": None,
@@ -422,6 +425,17 @@ Important: Write your response in the SAME LANGUAGE as the debate topic. If the 
                 style_template = moderator_styles[style_id]["opening"]
                 style_name = moderator_styles[style_id]["name"]
                 
+                # context_summary 정보 준비
+                context_info = ""
+                if self.context_summary and self.context_summary.get("objective_summary"):
+                    context_info = f"""
+CONTEXT INFORMATION:
+{self.context_summary.get("objective_summary", "")}
+
+KEY POINTS:
+{chr(10).join(self.context_summary.get("bullet_points", []))}
+"""
+
                 # 템플릿을 현재 토론 주제에 맞게 수정
                 system_prompt = f"""
 You are a debate moderator with the style: "{style_name}".
@@ -436,6 +450,8 @@ You are moderating a debate on: "{topic}"
 TEMPLATE STYLE (adapt this style to the current topic):
 {style_template}
 
+{context_info}
+
 PARTICIPANTS:
 - PRO side (찬성측, will speak first): {', '.join(pro_participant_names) if pro_participant_names else 'Pro participants'}
 - CON side (반대측, will speak second): {', '.join(con_participant_names) if con_participant_names else 'Con participants'}
@@ -443,13 +459,14 @@ PARTICIPANTS:
 Your task:
 1. Create an opening introduction that matches the style and tone of the template
 2. Introduce the debate topic: "{topic}"
-3. Present the two opposing viewpoints:
+3. {f"Briefly reference the context information if relevant" if context_info else ""}
+4. Present the two opposing viewpoints:
    - PRO: {pro_statement}
    - CON: {con_statement}
-4. Introduce the participants on both sides (PRO side first, then CON side)
-5. Announce that the PRO side will start first, and call on the first PRO participant: {pro_participant_names[0] if pro_participant_names else 'first pro participant'}
-6. Maintain the same personality and speaking style as shown in the template
-7. Ensure your response is complete - do not stop mid-sentence
+5. Introduce the participants on both sides (PRO side first, then CON side)
+6. Announce that the PRO side will start first, and call on the first PRO participant: {pro_participant_names[0] if pro_participant_names else 'first pro participant'}
+7. Maintain the same personality and speaking style as shown in the template
+8. Ensure your response is complete - do not stop mid-sentence
 
 Important: Write your response in the SAME LANGUAGE as the debate topic. If the topic is in Korean, respond in Korean. If in English, respond in English, etc.
 """
@@ -485,8 +502,21 @@ You will introduce the topic, explain the format, and set expectations for a res
 Write a complete, comprehensive opening statement without cutting off in the middle.
 """
 
+        # context_summary 정보 준비
+        context_info = ""
+        if self.context_summary and self.context_summary.get("objective_summary"):
+            context_info = f"""
+CONTEXT INFORMATION:
+{self.context_summary.get("objective_summary", "")}
+
+KEY POINTS:
+{chr(10).join(self.context_summary.get("bullet_points", []))}
+"""
+
         user_prompt = f"""
 You are the moderator of a formal debate on the topic: "{topic}".
+
+{context_info}
 
 PARTICIPANTS:
 - PRO side (찬성측, will speak first): {', '.join(pro_participant_names) if pro_participant_names else 'Pro participants'}
@@ -495,12 +525,13 @@ PARTICIPANTS:
 Your task is to give an opening introduction for the debate with the following details:
 1. Welcome the audience and participants
 2. Introduce the debate topic clearly
-3. Present the two opposing viewpoints:
+3. {f"Briefly reference the context information if relevant" if context_info else ""}
+4. Present the two opposing viewpoints:
    - PRO: {pro_statement}
    - CON: {con_statement}
-4. Introduce the participants on both sides (PRO side first, then CON side)
-5. Announce that the PRO side will start first, and call on the first PRO participant: {pro_participant_names[0] if pro_participant_names else 'first pro participant'}
-6. Set expectations for a respectful discussion
+5. Introduce the participants on both sides (PRO side first, then CON side)
+6. Announce that the PRO side will start first, and call on the first PRO participant: {pro_participant_names[0] if pro_participant_names else 'first pro participant'}
+7. Set expectations for a respectful discussion
 
 Important: Write your response in the SAME LANGUAGE as the debate topic. If the topic is in Korean, respond in Korean. If in English, respond in English, etc.
 

@@ -1,126 +1,297 @@
 # Sapiens Engine
 
-에이전트 기반 대화 및 검색 증강 엔진
+An AI-powered philosophical debate and conversation platform featuring autonomous philosopher agents, retrieval-augmented generation (RAG), and real-time dialogue management.
 
-## 프로젝트 구조
+## 🏗️ Architecture Overview
+
+Sapiens Engine is a full-stack application consisting of:
+
+- **Frontend**: Next.js React application (`agoramind/`) with modern UI/UX
+- **Backend**: FastAPI Python server (`api/`) with modular router architecture  
+- **AI Engine**: Sophisticated agent system (`src/`) with specialized philosopher personas
+- **RAG System**: Vector database integration for knowledge-enhanced conversations
+- **Containerization**: Docker-based deployment with docker-compose orchestration
+
+## 📁 Project Structure
 
 ```
-src/
-├── agents/                  # 모든 에이전트 관련 코드
-│   ├── base/                # 기본 에이전트 추상 클래스
-│   ├── moderator/           # 중재자 에이전트
-│   ├── participant/         # 참여자 에이전트
-│   ├── specialty/           # 전문 분야별 에이전트
-│   ├── utility/             # 유틸리티 에이전트 (감정, 유머 등)
-│   └── configs/             # 에이전트 구성 설정
+├── agoramind/                   # Next.js Frontend Application
+│   ├── src/
+│   │   ├── app/                 # Next.js 13+ App Router
+│   │   ├── components/          # React components
+│   │   ├── lib/                 # Utility functions
+│   │   ├── hooks/               # Custom React hooks
+│   │   ├── types/               # TypeScript definitions
+│   │   └── config/              # Configuration files
+│   ├── public/                  # Static assets
+│   └── package.json             # Node.js dependencies
 │
-├── rag/                     # RAG 관련 모듈
-│   ├── retrieval/           # 검색 관련 (문서, 웹 등)
-│   ├── generation/          # 생성 관련
-│   ├── evaluation/          # 평가 관련
-│   └── pipeline/            # 파이프라인 구성
+├── api/                         # FastAPI Backend Server
+│   ├── routers/                 # API route handlers
+│   │   ├── chat.py              # Chat functionality
+│   │   ├── philosophers.py      # Philosopher management
+│   │   ├── npc.py               # NPC interactions
+│   │   └── debug.py             # Debug endpoints
+│   ├── core/                    # Core functionality
+│   ├── models/                  # Pydantic models
+│   ├── utils/                   # Backend utilities
+│   └── main.py                  # FastAPI application entry point
 │
-├── dialogue/                # 대화 관리
-│   ├── types/               # 대화 유형별 구현
-│   ├── state/               # 대화 상태 관리
-│   └── strategies/          # 대화 전략
+├── src/                         # AI Agent Engine
+│   ├── agents/                  # Agent implementations
+│   │   ├── base/                # Base agent classes
+│   │   ├── moderator/           # Debate moderator agents
+│   │   ├── participant/         # Philosopher participant agents
+│   │   ├── specialty/           # Domain-specific agents
+│   │   ├── utility/             # Utility agents (emotion, humor)
+│   │   └── configs/             # Agent configuration
+│   ├── rag/                     # Retrieval Augmented Generation
+│   │   ├── retrieval/           # Document & web retrieval
+│   │   ├── generation/          # Response generation
+│   │   ├── evaluation/          # RAG quality evaluation
+│   │   └── pipeline/            # RAG processing pipeline
+│   ├── dialogue/                # Dialogue management
+│   │   ├── types/               # Dialogue type implementations
+│   │   ├── state/               # Conversation state management
+│   │   └── strategies/          # Dialogue strategies
+│   ├── models/                  # AI model interfaces
+│   │   ├── llm/                 # Large Language Model wrappers
+│   │   ├── embedding/           # Text embedding models
+│   │   └── specialized/         # Specialized AI models
+│   └── utils/                   # Shared utilities
 │
-├── utils/                   # 공통 유틸리티
-│   ├── config/              # 설정 관리
-│   ├── logging/             # 로깅
-│   └── nlp/                 # NLP 유틸리티
+├── data/                        # Data storage
+│   ├── vector_store/            # Vector database files
+│   ├── sources/                 # Source documents
+│   └── test_*/                  # Test datasets
 │
-├── models/                  # 모델 관련
-│   ├── llm/                 # LLM 래퍼 및 관리
-│   ├── embedding/           # 임베딩 모델
-│   └── specialized/         # 감정, 유머 등 특수 모델
-│
-└── api/                     # API 인터페이스
-    ├── rest/                # REST API
-    └── websocket/           # 웹소켓 API
+├── portraits/                   # Philosopher portrait images
+├── models/                      # Model files and configurations
+└── config/                      # Application configuration
 ```
 
-## 설치 방법
+## 🚀 Features
+
+### 🤖 AI-Powered Philosopher Agents
+- **Multi-Persona System**: Unique philosopher personalities with distinct argumentation styles
+- **Advanced Debate Logic**: Structured argument generation, attack/defense strategies, and follow-up responses
+- **Dynamic Response Generation**: Context-aware responses using GPT-4/GPT-4o models
+- **Emotional Intelligence**: Sentiment analysis and emotion-aware interactions
+
+### 🧠 Retrieval Augmented Generation (RAG)
+- **Vector Database Integration**: ChromaDB for efficient document retrieval
+- **Multi-Source Knowledge**: Integration of philosophical texts, academic papers, and web sources
+- **Intelligent Query Generation**: Automatic generation of search queries for argument enhancement
+- **Real-time Knowledge Augmentation**: Dynamic retrieval during conversations
+
+### 💬 Sophisticated Dialogue Management
+- **Multi-Stage Debates**: Opening statements, cross-examination, rebuttals, and closing arguments
+- **Turn-Based Logic**: Intelligent turn management and speaking order optimization
+- **Context Preservation**: Comprehensive conversation history and state management
+- **Real-time Moderation**: AI moderator for debate flow and rule enforcement
+
+### 🎯 Advanced Argumentation System
+- **Argument Structure Analysis**: Automatic extraction and analysis of argument components
+- **Vulnerability Assessment**: Identification of logical weaknesses and attack opportunities
+- **Strategic Planning**: Dynamic strategy selection based on opponent analysis
+- **Evidence Integration**: Seamless incorporation of retrieved evidence into arguments
+
+## 🛠️ Installation & Setup
+
+### Prerequisites
+- Node.js 18+ and npm/yarn
+- Python 3.9+
+- Docker and Docker Compose (optional)
+- OpenAI API key
+
+### Local Development
+
+1. **Clone the repository**
+```bash
+git clone <repository-url>
+cd sapiens_engine
+```
+
+2. **Backend Setup**
+```bash
+# Install Python dependencies
+pip install -r requirements.txt
+
+# Set up environment variables
+export OPENAI_API_KEY="your-openai-api-key"
+
+# Start the FastAPI server
+cd api
+python main.py
+```
+
+3. **Frontend Setup**
+```bash
+# Install Node.js dependencies
+cd agoramind
+npm install
+
+# Start the Next.js development server
+npm run dev
+```
+
+4. **Access the Application**
+- Frontend: http://localhost:3000
+- Backend API: http://localhost:8000
+- API Documentation: http://localhost:8000/docs
+
+### Docker Deployment
 
 ```bash
-pip install -r requirements.txt
+# Build and start all services
+docker-compose up --build
+
+# Run in background
+docker-compose up -d
 ```
 
-## 사용 예시
+## 📚 Usage Examples
+
+### Basic Philosophical Debate
 
 ```python
 from src.agents.factory import AgentFactory
 from src.dialogue.state.dialogue_state import DialogueState
 
-# 대화 상태 초기화
+# Initialize dialogue state
 dialogue_state = DialogueState(
-    dialogue_id="debate_001",
-    dialogue_type="debate",
-    topic="인공지능의 위험성"
+    dialogue_id="ethics_debate_001",
+    dialogue_type="philosophical_debate",
+    topic="The Ethics of Artificial Intelligence",
+    language="en"
 )
 
-# 에이전트 팩토리를 통한 에이전트 생성
+# Create agents using factory
 factory = AgentFactory()
-agents = factory.create_agents("debate")
+agents = factory.create_debate_agents(
+    pro_philosophers=["Aristotle", "Kant"],
+    con_philosophers=["Nietzsche", "Foucault"],
+    moderator_style="academic"
+)
 
-# 각 에이전트 역할 확인
-for role, agent in agents.items():
-    print(f"역할: {role}, 이름: {agent.name}")
+# Start the debate
+for agent_name, agent in agents.items():
+    print(f"Agent: {agent_name} - {agent.get_stance()}")
 ```
 
-## 주요 기능
+### RAG-Enhanced Conversation
 
-- 다양한 대화 유형별 에이전트 제공
-- 웹 검색 및 로컬 문서 통합 검색 기능
-- 대화 상태 관리 및 컨텍스트 유지
-- 감정 및 유머 등 특수 능력 제공
+```python
+from src.rag.pipeline.rag_pipeline import RAGPipeline
 
-# 철학자 찬반토론 실험 (Philosopher Debate Experiment)
+# Initialize RAG system
+rag = RAGPipeline(
+    vector_store_path="./data/vector_store",
+    embedding_model="sentence-transformers/all-MiniLM-L6-v2"
+)
 
-이 Streamlit 애플리케이션은 철학자들 간의 찬반토론을 실험하고 프롬프팅 기법을 테스트하기 위한 도구입니다.
+# Enhance argument with retrieved knowledge
+enhanced_response = rag.enhance_argument(
+    philosopher="Socrates",
+    topic="What is justice?",
+    argument="Justice is the harmony of the soul..."
+)
+```
 
-## 기능
+## 🔧 Configuration
 
-- 철학자들을 찬성/반대 측으로 선택 가능
-- 사용자도 토론에 참여 가능
-- 토론 진행자의 오프닝 멘트 자동 생성
-- 철학자들의 주장 자동 생성
-- 실시간으로 토론 진행 상황 확인
-- 토론 종료 후 진행자의 요약 생성
+### Environment Variables
 
-## 설치 및 실행
-
-1. 의존성 설치:
 ```bash
-pip install streamlit openai
+# OpenAI API Configuration
+OPENAI_API_KEY=your_openai_api_key
+OPENAI_MODEL=gpt-4o
+
+# RAG Configuration  
+VECTOR_DB_PATH=./data/vector_store
+EMBEDDING_MODEL=sentence-transformers/all-MiniLM-L6-v2
+
+# API Configuration
+API_HOST=0.0.0.0
+API_PORT=8000
+
+# Frontend Configuration
+NEXT_PUBLIC_API_URL=http://localhost:8000
 ```
 
-2. OpenAI API 키 설정:
+### Customizing Philosophers
+
+Add new philosophers in `src/agents/configs/philosopher_configs.json`:
+
+```json
+{
+  "custom_philosopher": {
+    "name": "Custom Philosopher",
+    "era": "Modern",
+    "style": "analytical",
+    "expertise": ["ethics", "logic"],
+    "personality_traits": ["logical", "precise", "methodical"]
+  }
+}
+```
+
+## 📊 Performance & Costs
+
+- **Average Debate Cost**: ~$1.20 per full debate (optimized to ~$0.86)
+- **Token Usage**: 74,600 input + 37,600 output tokens per debate
+- **Response Time**: 2-5 seconds per philosopher response
+- **Supported Languages**: English, Korean (expandable)
+
+## 🧪 Testing
+
 ```bash
-export OPENAI_API_KEY="your-api-key-here"
+# Run backend tests
+cd src
+python -m pytest tests/
+
+# Run frontend tests  
+cd agoramind
+npm test
+
+# Run integration tests
+python -m pytest tests/integration/
 ```
 
-3. 애플리케이션 실행:
-```bash
-streamlit run debate_experiment.py
-```
+## 📖 Documentation
 
-## 사용 방법
+- [LLM Usage Documentation](./LLM_Usage_Documentation.md) - Detailed LLM usage and cost analysis
+- [RAG Experiment Report](./rag_experiment_report.md) - RAG system performance analysis
+- [Cost Optimization Plan](./cost_optimization_plan.md) - Token usage optimization strategies
 
-1. 토론 주제를 입력합니다.
-2. 필요한 경우 배경 설명을 추가합니다.
-3. 찬성측과 반대측 철학자들을 선택합니다.
-4. 원하는 경우 사용자가 토론에 참여할 수 있습니다.
-5. "토론 시작" 버튼을 클릭하여 토론을 시작합니다.
-6. 토론이 진행됨에 따라 "다음 발언" 버튼을 클릭하여 다음 단계로 진행합니다.
-7. 사용자 차례에는 메시지를 입력하여 토론에 참여합니다.
+## 🤝 Contributing
 
-## 목적
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-이 도구는 다음 목적으로 설계되었습니다:
-- 찬반토론 프롬프팅 기법 실험
-- 발언 순서 로직 테스트
-- 철학자별 특성이 반영된 응답 생성 검증
-- 모더레이터 오프닝 및 요약 생성 최적화
+## 📄 License
 
-실험 결과는 향후 프론트엔드 애플리케이션과 연동될 예정입니다. 
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## 🔮 Roadmap
+
+- [ ] Multi-language support expansion
+- [ ] WebRTC integration for real-time audio debates
+- [ ] Advanced emotion recognition and response
+- [ ] Custom knowledge base upload functionality
+- [ ] Mobile application development
+- [ ] Integration with academic databases
+- [ ] Advanced visualization of argument structures
+
+## 🏆 Acknowledgments
+
+- OpenAI for GPT-4/GPT-4o models
+- Hugging Face for embedding models
+- ChromaDB for vector storage
+- FastAPI and Next.js communities
+
+---
+
+*Sapiens Engine - Where Philosophy Meets Artificial Intelligence* 🧠✨ 
