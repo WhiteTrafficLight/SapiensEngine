@@ -1,401 +1,401 @@
-# 🔍 LLM Manager 사용 현황 문서
+# 🔍 LLM Manager Usage Documentation
 
-## 📊 전체 요약
+## 📊 Overall Summary
 
-- **총 LLM 호출 함수**: 20개
-- **주요 모델**: GPT-4o (참가자 에이전트), GPT-4 (모더레이터), GPT-4-turbo (대화 관리)
-- **토큰 범위**: 300~10,000 max_tokens (실제 출력: 200~1,500 토큰)
-- **실제 토큰 사용량**: 입력 74,600 + 출력 37,600 = 112,200 토큰/토론
-- **1회 토론 실제 비용**: **~$1.20** (최적화 후 ~$0.86)
+- **Total LLM Function Calls**: 20 functions
+- **Primary Models**: GPT-4o (participant agents), GPT-4 (moderator), GPT-4-turbo (dialogue management)
+- **Token Range**: 300~10,000 max_tokens (actual output: 200~1,500 tokens)
+- **Actual Token Usage**: Input 74,600 + Output 37,600 = 112,200 tokens/debate
+- **Cost per Debate**: **~$1.20** (optimized to ~$0.86)
 
 ---
 
-## 🤖 1. debate_participant_agent.py - 철학자 에이전트
+## 🤖 1. debate_participant_agent.py - Philosopher Agents
 
-### 1.1 상호논증 단계 응답 생성
+### 1.1 Interactive Argument Stage Response Generation
 
 #### `_generate_interactive_argument_response` (Line 995)
-- **용도**: 상호논증에서 공격/방어/팔로우업 응답 생성
-- **모델**: GPT-4o
+- **Purpose**: Generate attack/defense/followup responses in interactive argumentation
+- **Model**: GPT-4o
 - **Max Tokens**: 10,000
-- **예상 입력 토큰**: 2,000-3,000
-- **프롬프트 내용**: 
-  - 철학자 스타일 지침
-  - 상황 분석 (공격/방어 판단)
-  - 최근 대화 기록
-  - 전략적 지침
-- **비용 영향**: ⭐⭐⭐⭐⭐ (가장 비싼 호출)
+- **Expected Input Tokens**: 2,000-3,000
+- **Prompt Content**: 
+  - Philosopher style guidelines
+  - Situation analysis (attack/defense determination)
+  - Recent conversation history
+  - Strategic guidelines
+- **Cost Impact**: ⭐⭐⭐⭐⭐ (Most expensive call)
 
-### 1.2 방어 응답 생성
+### 1.2 Defense Response Generation
 
 #### `_generate_defense_response_with_strategy` (Line 1570)
-- **용도**: 특정 방어 전략을 사용한 응답 생성
-- **모델**: GPT-4o
+- **Purpose**: Generate responses using specific defense strategies
+- **Model**: GPT-4o
 - **Max Tokens**: 1,000
-- **예상 입력 토큰**: 1,500-2,000
-- **프롬프트 내용**:
-  - 방어 전략 정보 (defense_strategies.json)
-  - 공격자 정보 및 공격 내용
-  - RAG 검색 결과 (선택적)
-  - 철학자별 방어 스타일
-- **비용 영향**: ⭐⭐⭐
+- **Expected Input Tokens**: 1,500-2,000
+- **Prompt Content**:
+  - Defense strategy information (defense_strategies.json)
+  - Attacker information and attack content
+  - RAG search results (optional)
+  - Philosopher-specific defense styles
+- **Cost Impact**: ⭐⭐⭐
 
-### 1.3 입론 단계 논증 생성
+### 1.3 Opening Statement Argument Generation
 
 #### `_generate_core_arguments` (Line 1865)
-- **용도**: 입론 단계의 핵심 논증 구조 생성
-- **모델**: GPT-4o
+- **Purpose**: Generate core argument structure for opening statements
+- **Model**: GPT-4o
 - **Max Tokens**: 1,000
-- **예상 입력 토큰**: 1,000-1,500
-- **프롬프트 내용**:
-  - 토론 주제 및 입장
-  - 철학자별 논증 스타일
-  - 3-5개 핵심 논점 요구
-- **비용 영향**: ⭐⭐
+- **Expected Input Tokens**: 1,000-1,500
+- **Prompt Content**:
+  - Debate topic and position
+  - Philosopher-specific argumentation styles
+  - Requirement for 3-5 key points
+- **Cost Impact**: ⭐⭐
 
 #### `_generate_final_opening_argument` (Line 2268)
-- **용도**: 최종 입론 발표문 생성
-- **모델**: GPT-4o
+- **Purpose**: Generate final opening statement presentation
+- **Model**: GPT-4o
 - **Max Tokens**: 1,300
-- **예상 입력 토큰**: 1,200-1,800
-- **프롬프트 내용**:
-  - 준비된 핵심 논증
-  - RAG 강화 내용
-  - 철학자 개성 반영
-- **비용 영향**: ⭐⭐⭐
+- **Expected Input Tokens**: 1,200-1,800
+- **Prompt Content**:
+  - Prepared core arguments
+  - RAG enhancement content
+  - Philosopher personality reflection
+- **Cost Impact**: ⭐⭐⭐
 
-### 1.4 RAG 관련 기능
+### 1.4 RAG-Related Functions
 
 #### `_generate_rag_queries_for_arguments` (Line 1932)
-- **용도**: 논증 강화를 위한 RAG 검색 쿼리 생성
-- **모델**: GPT-4o
+- **Purpose**: Generate RAG search queries for argument enhancement
+- **Model**: GPT-4o
 - **Max Tokens**: 1,200
-- **예상 입력 토큰**: 800-1,200
-- **프롬프트 내용**:
-  - 핵심 논증 내용
-  - 철학자 도메인 키워드
-  - 검색 쿼리 최적화 지침
-- **비용 영향**: ⭐⭐
+- **Expected Input Tokens**: 800-1,200
+- **Prompt Content**:
+  - Core argument content
+  - Philosopher domain keywords
+  - Search query optimization guidelines
+- **Cost Impact**: ⭐⭐
 
-### 1.5 논증 분석 및 전략 수립
+### 1.5 Argument Analysis and Strategy Formulation
 
 #### `extract_opponent_key_points` (Line 2741)
-- **용도**: 상대방 논점 추출 및 취약점 분석
-- **모델**: GPT-4o
+- **Purpose**: Extract opponent's key points and analyze vulnerabilities
+- **Model**: GPT-4o
 - **Max Tokens**: 1,500
-- **예상 입력 토큰**: 1,000-1,500
-- **프롬프트 내용**:
-  - 상대방 발언 전문
-  - 논증 구조 분석 요구
-  - JSON 형식 출력 지정
-- **비용 영향**: ⭐⭐⭐
+- **Expected Input Tokens**: 1,000-1,500
+- **Prompt Content**:
+  - Complete opponent statements
+  - Argument structure analysis requirements
+  - JSON format output specification
+- **Cost Impact**: ⭐⭐⭐
 
 #### `_extract_arguments_from_response` (Line 3001)
-- **용도**: 응답에서 논증 구조 추출
-- **모델**: GPT-4o
+- **Purpose**: Extract argument structure from responses
+- **Model**: GPT-4o
 - **Max Tokens**: 1,200
-- **예상 입력 토큰**: 800-1,200
-- **프롬프트 내용**:
-  - 응답 텍스트 분석
-  - 주장-근거 구조 식별
-  - 논증 품질 평가
-- **비용 영향**: ⭐⭐
+- **Expected Input Tokens**: 800-1,200
+- **Prompt Content**:
+  - Response text analysis
+  - Claim-evidence structure identification
+  - Argument quality assessment
+- **Cost Impact**: ⭐⭐
 
 #### `_score_single_argument` (Line 3159)
-- **용도**: 개별 논증의 취약성 점수 계산
-- **모델**: GPT-4o
+- **Purpose**: Calculate vulnerability scores for individual arguments
+- **Model**: GPT-4o
 - **Max Tokens**: 1,200
-- **예상 입력 토큰**: 1,000-1,500
-- **프롬프트 내용**:
-  - 논증 내용 및 구조
-  - 취약점 분석 기준
-  - 점수화 지침
-- **비용 영향**: ⭐⭐
+- **Expected Input Tokens**: 1,000-1,500
+- **Prompt Content**:
+  - Argument content and structure
+  - Vulnerability analysis criteria
+  - Scoring guidelines
+- **Cost Impact**: ⭐⭐
 
 #### `_analyze_detailed_vulnerabilities` (Line 3328)
-- **용도**: 논증 취약점 세부 분석
-- **모델**: GPT-4o
+- **Purpose**: Detailed analysis of argument vulnerabilities
+- **Model**: GPT-4o
 - **Max Tokens**: 300
-- **예상 입력 토큰**: 600-800
-- **프롬프트 내용**:
-  - 논증 세부 내용
-  - 철학적 관점별 취약점
-  - 공격 가능 지점 식별
-- **비용 영향**: ⭐
+- **Expected Input Tokens**: 600-800
+- **Prompt Content**:
+  - Detailed argument content
+  - Philosophical perspective vulnerabilities
+  - Attack point identification
+- **Cost Impact**: ⭐
 
-### 1.6 공격 전략 수립
+### 1.6 Attack Strategy Formulation
 
 #### `_select_best_strategy_for_argument` (Line 3553)
-- **용도**: 논증별 최적 공격 전략 선택
-- **모델**: GPT-4o
+- **Purpose**: Select optimal attack strategy for each argument
+- **Model**: GPT-4o
 - **Max Tokens**: 800
-- **예상 입력 토큰**: 700-1,000
-- **프롬프트 내용**:
-  - 대상 논증 분석
-  - 사용 가능한 공격 전략
-  - 효과성 예측
-- **비용 영향**: ⭐⭐
+- **Expected Input Tokens**: 700-1,000
+- **Prompt Content**:
+  - Target argument analysis
+  - Available attack strategies
+  - Effectiveness prediction
+- **Cost Impact**: ⭐⭐
 
 #### `_generate_attack_plan` (Line 3698)
-- **용도**: 구체적인 공격 계획 수립
-- **모델**: GPT-4o
+- **Purpose**: Formulate specific attack plans
+- **Model**: GPT-4o
 - **Max Tokens**: 1,500
-- **예상 입력 토큰**: 1,200-1,800
-- **프롬프트 내용**:
-  - 선택된 공격 전략
-  - 대상 논증 취약점
-  - 철학자별 공격 스타일
-- **비용 영향**: ⭐⭐⭐
+- **Expected Input Tokens**: 1,200-1,800
+- **Prompt Content**:
+  - Selected attack strategy
+  - Target argument vulnerabilities
+  - Philosopher-specific attack styles
+- **Cost Impact**: ⭐⭐⭐
 
-### 1.7 팔로우업 응답
+### 1.7 Followup Responses
 
 #### `_generate_followup_response_with_strategy` (Line 4592)
-- **용도**: 팔로우업 전략 기반 응답 생성
-- **모델**: GPT-4o
+- **Purpose**: Generate followup strategy-based responses
+- **Model**: GPT-4o
 - **Max Tokens**: 1,000
-- **예상 입력 토큰**: 1,500-2,000
-- **프롬프트 내용**:
-  - 방어자의 응답 분석
-  - 팔로우업 전략 정보
-  - 원래 공격과의 연결성
-- **비용 영향**: ⭐⭐⭐
+- **Expected Input Tokens**: 1,500-2,000
+- **Prompt Content**:
+  - Defender's response analysis
+  - Followup strategy information
+  - Connection to original attack
+- **Cost Impact**: ⭐⭐⭐
 
 ---
 
-## 🎯 2. moderator_agent.py - 모더레이터 에이전트
+## 🎯 2. moderator_agent.py - Moderator Agent
 
-### 2.1 토론 진행 관리
+### 2.1 Debate Flow Management
 
 #### `_generate_response_for_stage` (Line 305)
-- **용도**: 기본 모더레이터 전환 멘트
-- **모델**: GPT-4
+- **Purpose**: Basic moderator transition comments
+- **Model**: GPT-4
 - **Max Tokens**: 300
-- **예상 입력 토큰**: 200-400
-- **프롬프트 내용**:
-  - 현재 토론 단계
-  - 간단한 전환 멘트 요구
-  - 토론 주제 언어 매칭
-- **비용 영향**: ⭐
+- **Expected Input Tokens**: 200-400
+- **Prompt Content**:
+  - Current debate stage
+  - Simple transition comment requirements
+  - Language matching with debate topic
+- **Cost Impact**: ⭐
 
-### 2.2 토론 시작 소개
+### 2.2 Debate Opening Introduction
 
-#### `_generate_introduction` - 스타일 기반 (Line 448)
-- **용도**: 모더레이터 스타일에 따른 토론 시작 소개
-- **모델**: GPT-4
+#### `_generate_introduction` - Style-based (Line 448)
+- **Purpose**: Debate opening introduction based on moderator style
+- **Model**: GPT-4
 - **Max Tokens**: 1,500
-- **예상 입력 토큰**: 800-1,200
-- **프롬프트 내용**:
-  - 모더레이터 스타일 템플릿
-  - 토론 주제 및 참가자 정보
-  - 찬반 입장 진술문
-- **비용 영향**: ⭐⭐⭐
+- **Expected Input Tokens**: 800-1,200
+- **Prompt Content**:
+  - Moderator style template
+  - Debate topic and participant information
+  - Pro/con position statements
+- **Cost Impact**: ⭐⭐⭐
 
-#### `_generate_introduction` - 기본 (Line 501)
-- **용도**: 기본 형식의 토론 시작 소개
-- **모델**: GPT-4
+#### `_generate_introduction` - Basic (Line 501)
+- **Purpose**: Basic format debate opening introduction
+- **Model**: GPT-4
 - **Max Tokens**: 1,500
-- **예상 입력 토큰**: 600-800
-- **프롬프트 내용**:
-  - 표준 모더레이터 역할
-  - 토론 형식 안내
-  - 참가자 소개
-- **비용 영향**: ⭐⭐
+- **Expected Input Tokens**: 600-800
+- **Prompt Content**:
+  - Standard moderator role
+  - Debate format guidance
+  - Participant introductions
+- **Cost Impact**: ⭐⭐
 
-### 2.3 토론 모더레이팅
+### 2.3 Debate Moderation
 
 #### `_moderate_qa_session` (Line 605)
-- **용도**: QA 세션에서 개입 필요성 판단
-- **모델**: GPT-4
+- **Purpose**: Determine need for intervention in QA sessions
+- **Model**: GPT-4
 - **Max Tokens**: 1,500
-- **예상 입력 토큰**: 400-600
-- **프롬프트 내용**:
-  - 현재 메시지 분석
-  - 개입 기준 (적대적, 주제 이탈 등)
-  - JSON 형식 응답
-- **비용 영향**: ⭐⭐
+- **Expected Input Tokens**: 400-600
+- **Prompt Content**:
+  - Current message analysis
+  - Intervention criteria (hostility, topic deviation, etc.)
+  - JSON format response
+- **Cost Impact**: ⭐⭐
 
 #### `_check_if_intervention_needed` (Line 903)
-- **용도**: 일반적인 모더레이터 개입 필요성 판단
-- **모델**: GPT-4
+- **Purpose**: Determine general moderator intervention necessity
+- **Model**: GPT-4
 - **Max Tokens**: 300
-- **예상 입력 토큰**: 300-500
-- **프롬프트 내용**:
-  - 메시지 내용 검토
-  - 개입 필요성 판단
-  - 간단한 JSON 응답
-- **비용 영향**: ⭐
+- **Expected Input Tokens**: 300-500
+- **Prompt Content**:
+  - Message content review
+  - Intervention necessity determination
+  - Simple JSON response
+- **Cost Impact**: ⭐
 
-### 2.4 토론 요약 및 마무리
+### 2.4 Debate Summary and Conclusion
 
 #### `_generate_summary` (Line 720)
-- **용도**: 토론 중간 요약 생성
-- **모델**: GPT-4
+- **Purpose**: Generate mid-debate summaries
+- **Model**: GPT-4
 - **Max Tokens**: 1,500
-- **예상 입력 토큰**: 1,000-2,000
-- **프롬프트 내용**:
-  - 단계별 발언 기록
-  - 찬반 양측 주요 논점
-  - 중립적 요약 지침
-- **비용 영향**: ⭐⭐⭐⭐
+- **Expected Input Tokens**: 1,000-2,000
+- **Prompt Content**:
+  - Stage-by-stage speech records
+  - Key points from both sides
+  - Neutral summary guidelines
+- **Cost Impact**: ⭐⭐⭐⭐
 
 #### `_generate_conclusion` (Line 829)
-- **용도**: 토론 마무리 종료 멘트
-- **모델**: GPT-4
+- **Purpose**: Generate debate closing remarks
+- **Model**: GPT-4
 - **Max Tokens**: 1,500
-- **예상 입력 토큰**: 1,000-1,500
-- **프롬프트 내용**:
-  - 전체 토론 기록
-  - 양측 최종 결론
-  - 균형잡힌 마무리 멘트
-- **비용 영향**: ⭐⭐⭐
+- **Expected Input Tokens**: 1,000-1,500
+- **Prompt Content**:
+  - Complete debate records
+  - Final conclusions from both sides
+  - Balanced closing remarks
+- **Cost Impact**: ⭐⭐⭐
 
 ---
 
-## 💬 3. debate_dialogue.py - 대화 관리
+## 💬 3. debate_dialogue.py - Dialogue Management
 
-### 3.1 토론 초기화
+### 3.1 Debate Initialization
 
 #### `_generate_stance_statements` (Line 1313)
-- **용도**: 찬반 입장 진술문 생성
-- **모델**: GPT-4-turbo
+- **Purpose**: Generate pro/con position statements
+- **Model**: GPT-4-turbo
 - **Max Tokens**: 1,000
-- **예상 입력 토큰**: 800-1,200
-- **프롬프트 내용**:
-  - 토론 주제
-  - 찬반 입장 요구
-  - 명확하고 구체적인 진술문
-- **비용 영향**: ⭐⭐ (1회성)
+- **Expected Input Tokens**: 800-1,200
+- **Prompt Content**:
+  - Debate topic
+  - Pro/con position requirements
+  - Clear and specific statements
+- **Cost Impact**: ⭐⭐ (One-time)
 
 ---
 
-## 💰 비용 분석 (실제 예상 사용량 기준)
+## 💰 Cost Analysis (Based on Actual Expected Usage)
 
-### API 요금 (2024년 기준)
-- **GPT-4o**: 입력 $0.005/1K토큰, 출력 $0.015/1K토큰
-- **GPT-4**: 입력 $0.03/1K토큰, 출력 $0.06/1K토큰  
-- **GPT-4-turbo**: 입력 $0.01/1K토큰, 출력 $0.03/1K토큰
+### API Pricing (2024 Rates)
+- **GPT-4o**: Input $0.005/1K tokens, Output $0.015/1K tokens
+- **GPT-4**: Input $0.03/1K tokens, Output $0.06/1K tokens  
+- **GPT-4-turbo**: Input $0.01/1K tokens, Output $0.03/1K tokens
 
-### 단계별 실제 토큰 소비량 (1회 토론 기준)
+### Actual Token Consumption by Stage (Per Debate)
 
-| 단계 | 함수 | 입력 토큰 | 출력 토큰 | 모델 | 비용 ($) |
-|------|------|-----------|-----------|------|----------|
-| **초기화** | stance_statements | 400 | 300 | GPT-4-turbo | 0.013 |
-| **모더레이터 소개** | introduction | 800 | 400 | GPT-4 | 0.048 |
-| **입론 (2명)** | core_arguments (2회) | 2,000 | 1,000 | GPT-4o | 0.025 |
-| | final_opening (2회) | 3,000 | 1,600 | GPT-4o | 0.039 |
-| | rag_queries (2회) | 1,600 | 800 | GPT-4o | 0.020 |
-| **상호논증 (4사이클)** | interactive_argument (12회) | 30,000 | 18,000 | GPT-4o | 0.420 |
-| | defense_response (4회) | 8,000 | 4,000 | GPT-4o | 0.100 |
-| | followup_response (4회) | 8,000 | 4,000 | GPT-4o | 0.100 |
-| **논증 분석** | extract_opponent_points (4회) | 4,000 | 2,000 | GPT-4o | 0.050 |
-| | score_arguments (8회) | 8,000 | 2,400 | GPT-4o | 0.076 |
-| | select_strategy (4회) | 2,800 | 1,600 | GPT-4o | 0.038 |
-| **모더레이터 요약** | summary (2회) | 4,000 | 1,000 | GPT-4 | 0.180 |
-| **결론** | conclusion | 2,000 | 500 | GPT-4 | 0.090 |
-| **소계** | - | **74,600** | **37,600** | - | **$1.199** |
+| Stage | Function | Input Tokens | Output Tokens | Model | Cost ($) |
+|-------|----------|--------------|---------------|-------|----------|
+| **Initialization** | stance_statements | 400 | 300 | GPT-4-turbo | 0.013 |
+| **Moderator Intro** | introduction | 800 | 400 | GPT-4 | 0.048 |
+| **Opening (2 people)** | core_arguments (2x) | 2,000 | 1,000 | GPT-4o | 0.025 |
+| | final_opening (2x) | 3,000 | 1,600 | GPT-4o | 0.039 |
+| | rag_queries (2x) | 1,600 | 800 | GPT-4o | 0.020 |
+| **Interactive Args (4 cycles)** | interactive_argument (12x) | 30,000 | 18,000 | GPT-4o | 0.420 |
+| | defense_response (4x) | 8,000 | 4,000 | GPT-4o | 0.100 |
+| | followup_response (4x) | 8,000 | 4,000 | GPT-4o | 0.100 |
+| **Argument Analysis** | extract_opponent_points (4x) | 4,000 | 2,000 | GPT-4o | 0.050 |
+| | score_arguments (8x) | 8,000 | 2,400 | GPT-4o | 0.076 |
+| | select_strategy (4x) | 2,800 | 1,600 | GPT-4o | 0.038 |
+| **Moderator Summary** | summary (2x) | 4,000 | 1,000 | GPT-4 | 0.180 |
+| **Conclusion** | conclusion | 2,000 | 500 | GPT-4 | 0.090 |
+| **Subtotal** | - | **74,600** | **37,600** | - | **$1.199** |
 
-### 세부 분석
+### Detailed Analysis
 
-#### 🔥 고비용 함수들 (비용 순)
-1. **상호논증 응답** (12회): $0.420 (35%)
-2. **모더레이터 요약** (2회): $0.180 (15%)  
-3. **방어 응답** (4회): $0.100 (8.3%)
-4. **팔로우업 응답** (4회): $0.100 (8.3%)
-5. **결론 생성**: $0.090 (7.5%)
+#### 🔥 High-Cost Functions (By Cost)
+1. **Interactive Argument Responses** (12x): $0.420 (35%)
+2. **Moderator Summaries** (2x): $0.180 (15%)  
+3. **Defense Responses** (4x): $0.100 (8.3%)
+4. **Followup Responses** (4x): $0.100 (8.3%)
+5. **Conclusion Generation**: $0.090 (7.5%)
 
-#### 💡 저비용 함수들
-- **논증 분석**: $0.164 (13.7%)
-- **입론 생성**: $0.084 (7%)
-- **초기화**: $0.061 (5.1%)
+#### 💡 Low-Cost Functions
+- **Argument Analysis**: $0.164 (13.7%)
+- **Opening Generation**: $0.084 (7%)
+- **Initialization**: $0.061 (5.1%)
 
-### 최적화 전략
+### Optimization Strategies
 
-#### 1. 상호논증 최적화 (35% 절약 가능)
+#### 1. Interactive Argument Optimization (35% savings possible)
 ```python
-# 현재: max_tokens=10,000, 실제 출력=1,500토큰
-# 개선: max_tokens=2,000, 품질 유지하며 응답 간소화
-# 절약: 입력 토큰 압축으로 20% 절약 → $0.084 절약
+# Current: max_tokens=10,000, actual output=1,500 tokens
+# Improvement: max_tokens=2,000, maintain quality while simplifying responses
+# Savings: 20% reduction through input token compression → $0.084 saved
 ```
 
-#### 2. 모더레이터 함수 경량화 (15% 절약 가능)  
+#### 2. Moderator Function Streamlining (15% savings possible)  
 ```python
-# 현재: GPT-4 사용
-# 개선: GPT-4o로 변경 (5배 저렴)
-# 절약: $0.270 → $0.054 = $0.216 절약
+# Current: Using GPT-4
+# Improvement: Switch to GPT-4o (5x cheaper)
+# Savings: $0.270 → $0.054 = $0.216 saved
 ```
 
-#### 3. 논증 분석 배치 처리 (10% 절약 가능)
+#### 3. Argument Analysis Batch Processing (10% savings possible)
 ```python
-# 현재: 개별 API 호출
-# 개선: 여러 논증을 한 번에 분석
-# 절약: API 호출 4회 → 1회 = $0.041 절약
+# Current: Individual API calls
+# Improvement: Analyze multiple arguments in one call
+# Savings: 4 API calls → 1 call = $0.041 saved
 ```
 
-### 최적화 후 예상 비용
+### Post-Optimization Expected Costs
 
-| 항목 | 현재 비용 | 최적화 후 | 절약액 |
-|------|-----------|-----------|---------|
-| 상호논증 | $0.420 | $0.336 | $0.084 |
-| 모더레이터 | $0.318 | $0.102 | $0.216 |
-| 논증 분석 | $0.164 | $0.123 | $0.041 |
-| 기타 | $0.297 | $0.297 | $0.000 |
-| **총계** | **$1.199** | **$0.858** | **$0.341** |
+| Item | Current Cost | Post-Optimization | Savings |
+|------|--------------|-------------------|---------|
+| Interactive Args | $0.420 | $0.336 | $0.084 |
+| Moderator | $0.318 | $0.102 | $0.216 |
+| Argument Analysis | $0.164 | $0.123 | $0.041 |
+| Other | $0.297 | $0.297 | $0.000 |
+| **Total** | **$1.199** | **$0.858** | **$0.341** |
 
-**최종 최적화 효과: 28% 비용 절감**
+**Final Optimization Effect: 28% Cost Reduction**
 
-### 사용량별 월간 비용 예상
+### Monthly Cost Projections by Usage
 
-| 일일 토론 수 | 월간 비용 (현재) | 월간 비용 (최적화) | 연간 절약 |
-|-------------|-----------------|-------------------|----------|
-| 1회 | $36 | $26 | $120 |
-| 5회 | $180 | $129 | $612 |
-| 10회 | $360 | $257 | $1,236 |
-| 50회 | $1,800 | $1,287 | $6,156 |
+| Daily Debates | Monthly Cost (Current) | Monthly Cost (Optimized) | Annual Savings |
+|---------------|------------------------|--------------------------|----------------|
+| 1 debate | $36 | $26 | $120 |
+| 5 debates | $180 | $129 | $612 |
+| 10 debates | $360 | $257 | $1,236 |
+| 50 debates | $1,800 | $1,287 | $6,156 |
 
-### 실시간 모니터링 권장사항
+### Real-time Monitoring Recommendations
 
-#### 1. 토큰 사용량 추적
+#### 1. Token Usage Tracking
 ```python
-# 각 API 호출 후 실제 사용량 로깅
+# Log actual usage after each API call
 logger.info(f"Function: {func_name}, Input: {input_tokens}, Output: {output_tokens}, Cost: ${cost:.4f}")
 ```
 
-#### 2. 일일 사용량 제한
+#### 2. Daily Usage Limits
 ```python
-# 일일 예산 $50 설정 시
-daily_budget = 50.0  # 약 41회 토론 가능
+# Setting daily budget of $50
+daily_budget = 50.0  # Allows approximately 41 debates
 current_usage = get_daily_usage()
-if current_usage > daily_budget * 0.9:  # 90% 도달 시 경고
-    send_alert("일일 예산 90% 도달")
+if current_usage > daily_budget * 0.9:  # Alert at 90%
+    send_alert("Daily budget 90% reached")
 ```
 
-#### 3. 비용 효율성 메트릭
+#### 3. Cost Efficiency Metrics
 ```python
-# 토론 품질 대비 비용 추적
+# Track cost vs debate quality
 cost_per_quality_score = total_cost / debate_quality_rating
 cost_per_participant_satisfaction = total_cost / avg_satisfaction_score
 ```
 
 ---
 
-## 📝 권장사항
+## 📝 Recommendations
 
-### 개발 단계
-1. **토큰 사용량 모니터링** 추가
-2. **응답 품질 vs 비용** 벤치마킹
-3. **캐싱 시스템** 구현
+### Development Phase
+1. **Add token usage monitoring**
+2. **Benchmark response quality vs cost**
+3. **Implement caching system**
 
-### 운영 단계  
-1. **일일 사용량 제한** 설정
-2. **사용자별 할당량** 관리
-3. **비용 알림** 시스템 구축
+### Operations Phase  
+1. **Set daily usage limits**
+2. **Manage per-user quotas**
+3. **Build cost alert system**
 
-### 기술적 개선
-1. **프롬프트 최적화** (토큰 효율성)
-2. **응답 길이 제한** (품질 유지하며)
-3. **배치 처리** 도입 (분석 함수들)
+### Technical Improvements
+1. **Prompt optimization** (token efficiency)
+2. **Response length limits** (while maintaining quality)
+3. **Batch processing** implementation (for analysis functions)
 
 ---
 
-*문서 생성일: 2025-05-31*  
-*버전: 1.0* 
+*Document generated: 2025-05-31*  
+*Version: 1.0* 
