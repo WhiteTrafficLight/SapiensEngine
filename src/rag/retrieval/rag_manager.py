@@ -17,7 +17,6 @@ from typing import List, Dict, Any, Union, Optional, Tuple
 import numpy as np
 from sentence_transformers import SentenceTransformer, util
 import logging
-from sapiens_engine.core.context_manager import ContextManager
 
 # 로깅 설정
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')

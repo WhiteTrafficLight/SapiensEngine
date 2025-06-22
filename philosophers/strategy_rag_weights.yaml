@@ -1,6 +1,6 @@
 # Strategy RAG Weights Configuration
-# 각 공격 전략별로 RAG 사용 여부를 결정하는 가중치
-# 철학자의 rag_stats와 곱해서 최종 RAG 사용 점수 계산
+# Weights for determining RAG usage by each attack strategy
+# Multiplied with philosopher's rag_stats to calculate final RAG usage score
 
 strategy_rag_weights:
   "Clipping":
@@ -8,77 +8,77 @@ strategy_rag_weights:
     conceptual_precision: 0.2
     systematic_logic: 0.2
     pragmatic_orientation: 0.4
-    rhetorical_independence: -0.2  # 역가중치
-    description: "상대방 논증의 특정 부분을 잘라내어 약점 지적 - 구체적 근거와 실용적 접근 중시"
+    rhetorical_independence: -0.2  # Negative weight
+    description: "Pinpointing specific parts of opponent's argument to expose weaknesses - Emphasizes concrete evidence and practical approach"
     
   "FramingShift":
     data_respect: 0.2
     conceptual_precision: 0.5
     systematic_logic: 0.3
     pragmatic_orientation: 0.1
-    rhetorical_independence: -0.3  # 역가중치
-    description: "논의의 프레임을 바꿔서 상대방을 불리한 위치에 놓기 - 개념적 정확성 중시"
+    rhetorical_independence: -0.3  # Negative weight
+    description: "Changing discussion frame to disadvantage opponent - Emphasizes conceptual accuracy"
     
   "ReductiveParadox":
     data_respect: 0.3
     conceptual_precision: 0.2
     systematic_logic: 0.5
     pragmatic_orientation: 0.1
-    rhetorical_independence: -0.3  # 역가중치
-    description: "상대방 논리를 극단으로 밀어붙여 모순 드러내기 - 체계적 논리 중시"
+    rhetorical_independence: -0.3  # Negative weight
+    description: "Pushing opponent's logic to extremes to reveal contradictions - Emphasizes systematic logic"
     
   "ConceptualUndermining":
     data_respect: 0.1
     conceptual_precision: 0.6
     systematic_logic: 0.3
     pragmatic_orientation: 0.05
-    rhetorical_independence: -0.2  # 역가중치
-    description: "상대방이 사용한 개념 자체의 타당성 공격 - 개념적 정밀성 최우선"
+    rhetorical_independence: -0.2  # Negative weight
+    description: "Attacking validity of concepts used by opponent - Conceptual precision takes priority"
     
   "EthicalReversal":
     data_respect: 0.1
     conceptual_precision: 0.2
     systematic_logic: 0.2
     pragmatic_orientation: 0.5
-    rhetorical_independence: -0.1  # 역가중치
-    description: "윤리적 관점에서 상대방 논증의 문제점 지적 - 실용적 윤리 중시"
+    rhetorical_independence: -0.1  # Negative weight
+    description: "Pointing out ethical problems in opponent's argument - Emphasizes practical ethics"
     
   "TemporalDelay":
     data_respect: 0.5
     conceptual_precision: 0.2
     systematic_logic: 0.2
     pragmatic_orientation: 0.2
-    rhetorical_independence: -0.2  # 역가중치
-    description: "시간적 관점에서 상대방 논증의 한계 지적 - 역사적 데이터와 근거 중시"
+    rhetorical_independence: -0.2  # Negative weight
+    description: "Pointing out limitations from temporal perspective - Emphasizes historical data and evidence"
     
   "PhilosophicalReframing":
     data_respect: 0.05
     conceptual_precision: 0.4
     systematic_logic: 0.5
     pragmatic_orientation: 0.05
-    rhetorical_independence: -0.3  # 역가중치
-    description: "철학적 관점을 바꿔서 재해석 - 체계적 철학적 논리 중시"
+    rhetorical_independence: -0.3  # Negative weight
+    description: "Reinterpreting from different philosophical perspective - Emphasizes systematic philosophical logic"
 
-# RAG 사용 점수 계산 공식:
+# RAG score calculation formula:
 # rag_score = Σ(strategy_weight[i] * philosopher_rag_stat[i])
 # 
-# 예시:
-# 니체가 "Framing Shift" 전략 선택 시:
+# Example:
+# When Nietzsche selects "Framing Shift" strategy:
 # rag_score = (0.2 * 0.2) + (0.5 * 0.3) + (0.3 * 0.4) + (0.1 * 0.3) + (-0.3 * 0.9)
-#           = 0.04 + 0.15 + 0.12 + 0.03 - 0.27 = 0.07 (낮은 점수 → RAG 사용 안함)
+#           = 0.04 + 0.15 + 0.12 + 0.03 - 0.27 = 0.07 (Low score → No RAG usage)
 #
-# 칸트가 "Conceptual Undermining" 전략 선택 시:
+# When Kant selects "Conceptual Undermining" strategy:
 # rag_score = (0.1 * 0.6) + (0.6 * 0.9) + (0.3 * 0.9) + (0.05 * 0.2) + (-0.2 * 0.1)
-#           = 0.06 + 0.54 + 0.27 + 0.01 - 0.02 = 0.86 (높은 점수 → RAG 사용)
+#           = 0.06 + 0.54 + 0.27 + 0.01 - 0.02 = 0.86 (High score → RAG usage)
 
-# 임계값 설정 (추천)
+# Threshold settings (recommended)
 rag_threshold:
-  use_rag: 0.3      # 이 값 이상이면 RAG 사용
-  strong_rag: 0.6   # 이 값 이상이면 강력한 RAG 사용 (더 많은 검색)
+  use_rag: 0.3      # Use RAG if score is above this value
+  strong_rag: 0.6   # Strong RAG usage if score is above this value (more searches)
   
-# 가중치 설계 원칙:
-# 1. data_respect: 외부 근거 중시 → Clipping, Temporal Delay에서 높음
-# 2. conceptual_precision: 개념 정확성 → Conceptual Undermining, Framing Shift에서 높음  
-# 3. systematic_logic: 체계적 논리 → Reductive Paradox, Philosophical Reframing에서 높음
-# 4. pragmatic_orientation: 실용적 접근 → Ethical Reversal, Clipping에서 높음
-# 5. rhetorical_independence: 직관적 성향 → 모든 전략에서 역가중치 (높을수록 RAG 덜 사용) 
+# Weight design principles:
+# 1. data_respect: Values external evidence → High in Clipping, Temporal Delay
+# 2. conceptual_precision: Conceptual accuracy → High in Conceptual Undermining, Framing Shift  
+# 3. systematic_logic: Systematic logic → High in Reductive Paradox, Philosophical Reframing
+# 4. pragmatic_orientation: Practical approach → High in Ethical Reversal, Clipping
+# 5. rhetorical_independence: Intuitive tendency → Negative weight in all strategies (higher = less RAG usage) 

@@ -1,147 +1,147 @@
-# 철학자 데이터 구조 문서
+# Philosopher Data Structure Documentation
 
-이 문서는 `debate_optimized.yaml` 파일에 정의된 철학자 데이터의 구조와 각 항목의 의미를 설명합니다.
+This document explains the structure and meaning of philosopher data defined in the `debate_optimized.yaml` file.
 
-## 📁 파일 구조
+## 📁 File Structure
 
 ```
 philosophers/
-├── debate_optimized.yaml     # 철학자 데이터 정의
-├── strategy_rag_weights.yaml # 전략별 RAG 사용 가중치
-├── debate_strategies.json    # 공격 전략 스타일 정의
-└── README.md                 # 이 문서
+├── debate_optimized.yaml     # Philosopher data definitions
+├── strategy_rag_weights.yaml # RAG usage weights by strategy
+├── debate_strategies.json    # Attack strategy style definitions
+└── README.md                 # This document
 ```
 
-## 🧠 철학자 데이터 구조
+## 🧠 Philosopher Data Structure
 
-각 철학자는 다음과 같은 구조로 정의됩니다:
+Each philosopher is defined with the following structure:
 
 ```yaml
 philosopher_name:
-  name: "철학자 이름"
-  essence: "철학자의 핵심 정체성"
-  debate_style: "토론에서의 발언 스타일"
-  personality: "성격적 특징"
-  key_traits: ["핵심 특성 1", "핵심 특성 2", "핵심 특성 3"]
-  quote: "대표 명언"
+  name: "Philosopher Name"
+  essence: "Core philosophical identity"
+  debate_style: "Speaking style in debates"
+  personality: "Personality characteristics"
+  key_traits: ["Key trait 1", "Key trait 2", "Key trait 3"]
+  quote: "Representative quote"
   rag_affinity: 0.0-1.0
   rag_stats: { ... }
   vulnerability_sensitivity: { ... }
   strategy_weights: { ... }
 ```
 
-## 🎯 Strategy Weights (공격 전략 가중치)
+## 🎯 Strategy Weights (Attack Strategy Weights)
 
-각 철학자가 상대방을 공격할 때 선호하는 전략의 가중치입니다. 모든 값의 합은 1.0입니다.
+Weight values for attack strategies each philosopher prefers when attacking opponents. All values sum to 1.0.
 
-**전략 정의**: `debate_strategies.json` 파일에서 각 전략의 상세 정보를 확인할 수 있습니다.
+**Strategy Definitions**: Detailed information for each strategy can be found in the `debate_strategies.json` file.
 
-| 전략 | 설명 | 예시 |
-|------|------|------|
-| **Clipping** | 상대방 논증의 특정 부분을 잘라내어 약점 지적 | "당신이 말한 '자유'의 정의가 모호합니다" |
-| **Framing Shift** | 논의의 프레임을 바꿔서 상대방을 불리한 위치에 놓기 | "이것은 개인의 문제가 아니라 사회 구조의 문제입니다" |
-| **Reductive Paradox** | 상대방 논리를 극단으로 밀어붙여 모순 드러내기 | "그 논리대로라면 모든 행동이 정당화됩니다" |
-| **Conceptual Undermining** | 상대방이 사용한 개념 자체의 타당성 공격 | "당신이 말하는 '정의'라는 개념부터 재검토해야 합니다" |
-| **Ethical Reversal** | 윤리적 관점에서 상대방 논증의 문제점 지적 | "그것은 도덕적으로 받아들일 수 없는 결론입니다" |
-| **Temporal Delay** | 시간적 관점에서 상대방 논증의 한계 지적 | "그것은 과거의 관점이며, 현재에는 적용되지 않습니다" |
-| **Philosophical Reframing** | 철학적 관점을 바꿔서 재해석 | "존재론적 관점에서 보면 완전히 다른 의미입니다" |
+| Strategy | Description | Example |
+|----------|-------------|---------|
+| **Clipping** | Pinpointing specific parts of opponent's argument to expose weaknesses | "Your definition of 'freedom' is ambiguous" |
+| **Framing Shift** | Changing the discussion frame to put opponent in disadvantageous position | "This is not an individual issue but a social structural problem" |
+| **Reductive Paradox** | Pushing opponent's logic to extremes to reveal contradictions | "By that logic, all actions would be justified" |
+| **Conceptual Undermining** | Attacking the validity of concepts used by opponent | "We need to reexamine the very concept of 'justice' you're using" |
+| **Ethical Reversal** | Pointing out ethical problems in opponent's argument | "That is a morally unacceptable conclusion" |
+| **Temporal Delay** | Pointing out limitations of opponent's argument from temporal perspective | "That's an outdated perspective that doesn't apply today" |
+| **Philosophical Reframing** | Reinterpreting from a different philosophical perspective | "From an ontological perspective, it has a completely different meaning" |
 
-### 철학자별 전략 선호도 예시:
-- **소크라테스**: Clipping (0.35) - 질문을 통해 논리적 허점 지적
-- **니체**: Framing Shift (0.25) - 기존 가치관의 프레임 자체를 뒤집기
-- **칸트**: Reductive Paradox (0.3) - 논리적 일관성 추구
-- **비트겐슈타인**: Conceptual Undermining (0.5) - 언어와 개념의 명확성 추구
+### Strategy Preferences by Philosopher:
+- **Socrates**: Clipping (0.35) - Exposing logical gaps through questioning
+- **Nietzsche**: Framing Shift (0.25) - Overturning existing value frameworks
+- **Kant**: Reductive Paradox (0.3) - Pursuing logical consistency
+- **Wittgenstein**: Conceptual Undermining (0.5) - Seeking clarity in language and concepts
 
-## 🎯 Vulnerability Sensitivity (취약점 민감도)
+## 🎯 Vulnerability Sensitivity
 
-각 철학자가 상대방의 어떤 유형의 취약점에 얼마나 민감하게 반응하는지를 나타냅니다.
+Indicates how sensitively each philosopher reacts to different types of vulnerabilities in opponents.
 
-| 취약점 유형 | 설명 | 높은 민감도를 가진 철학자 |
-|-------------|------|---------------------------|
-| **conceptual_clarity** | 개념의 모호함이나 불명확성 | 소크라테스(0.9), 비트겐슈타인(0.9) |
-| **logical_leap** | 논리적 비약이나 근거 부족 | 아리스토텔레스(0.7), 보부아르(0.7) |
-| **overgeneralization** | 과도한 일반화 | 아리스토텔레스(0.8), 보부아르(0.8) |
-| **emotional_appeal** | 감정에 호소하는 논증 | 카뮈(0.9), 니체(0.8) |
-| **lack_of_concrete_evidence** | 구체적 근거나 사례 부족 | 아리스토텔레스(0.9), 마르크스(0.8) |
+| Vulnerability Type | Description | Philosophers with High Sensitivity |
+|--------------------|-------------|----------------------------------|
+| **conceptual_clarity** | Ambiguity or lack of clarity in concepts | Socrates(0.9), Wittgenstein(0.9) |
+| **logical_leap** | Logical gaps or insufficient evidence | Aristotle(0.7), Beauvoir(0.7) |
+| **overgeneralization** | Excessive generalization | Aristotle(0.8), Beauvoir(0.8) |
+| **emotional_appeal** | Arguments appealing to emotion | Camus(0.9), Nietzsche(0.8) |
+| **lack_of_concrete_evidence** | Lack of concrete evidence or examples | Aristotle(0.9), Marx(0.8) |
 
-### 민감도 점수 해석:
-- **0.8-1.0**: 매우 높은 민감도 - 이런 취약점을 발견하면 즉시 공격
-- **0.6-0.7**: 높은 민감도 - 중요한 공격 포인트로 인식
-- **0.4-0.5**: 보통 민감도 - 상황에 따라 공격 여부 결정
-- **0.1-0.3**: 낮은 민감도 - 크게 신경 쓰지 않음
+### Sensitivity Score Interpretation:
+- **0.8-1.0**: Very high sensitivity - Immediate attack when such vulnerabilities are found
+- **0.6-0.7**: High sensitivity - Recognized as important attack points
+- **0.4-0.5**: Moderate sensitivity - Attack decision depends on situation
+- **0.1-0.3**: Low sensitivity - Not much concern
 
-## 🤖 RAG Stats (RAG 사용 판별 스탯)
+## 🤖 RAG Stats (RAG Usage Determination Stats)
 
-각 철학자가 RAG(Retrieval-Augmented Generation)을 사용할 가능성을 결정하는 5가지 특성입니다.
+Five characteristics that determine each philosopher's likelihood of using RAG (Retrieval-Augmented Generation).
 
-| 스탯 | 설명 | 관련 전략 | 높은 점수 철학자 |
-|------|------|-----------|------------------|
-| **data_respect** | 외부 근거와 사실을 중시하는 성향 | Clipping, Temporal Delay | 아리스토텔레스(0.9), 마르크스(0.9) |
-| **conceptual_precision** | 개념의 정확성과 명확성을 요구하는 성향 | Conceptual Undermining, Framing Shift | 소크라테스(0.9), 칸트(0.9), 비트겐슈타인(0.9) |
-| **systematic_logic** | 논리적 구조와 체계적 연결을 선호 | Reductive Paradox, Philosophical Reframing | 헤겔(0.9), 칸트(0.9) |
-| **pragmatic_orientation** | 실제 경험/사례 기반 설득을 선호 | Clipping, Ethical Reversal | 보부아르(0.9), 공자(0.8), 마르크스(0.8) |
-| **rhetorical_independence** | 직관적이고 비형식적이며 은유적 성향<br/>(높을수록 RAG 덜 사용) | 대부분 전략에 반비례 | 라오자(0.9), 니체(0.9), 카뮈(0.8) |
+| Stat | Description | Related Strategies | High Score Philosophers |
+|------|-------------|-------------------|-------------------------|
+| **data_respect** | Tendency to value external evidence and facts | Clipping, Temporal Delay | Aristotle(0.9), Marx(0.9) |
+| **conceptual_precision** | Tendency to demand conceptual accuracy and clarity | Conceptual Undermining, Framing Shift | Socrates(0.9), Kant(0.9), Wittgenstein(0.9) |
+| **systematic_logic** | Preference for logical structure and systematic connections | Reductive Paradox, Philosophical Reframing | Hegel(0.9), Kant(0.9) |
+| **pragmatic_orientation** | Preference for persuasion based on actual experience/cases | Clipping, Ethical Reversal | Beauvoir(0.9), Confucius(0.8), Marx(0.8) |
+| **rhetorical_independence** | Intuitive, informal, and metaphorical tendencies<br/>(Higher values = less RAG usage) | Inversely related to most strategies | Laozi(0.9), Nietzsche(0.9), Camus(0.8) |
 
-### RAG 사용 결정 로직:
+### RAG Usage Decision Logic:
 ```
-기존 방식 (단순):
-RAG 사용 확률 = (data_respect + conceptual_precision + systematic_logic + pragmatic_orientation - rhetorical_independence) / 4
+Old Method (Simple):
+RAG Usage Probability = (data_respect + conceptual_precision + systematic_logic + pragmatic_orientation - rhetorical_independence) / 4
 
-새로운 방식 (전략별 가중치):
-RAG 점수 = Σ(전략_가중치[i] × 철학자_rag_stat[i])
+New Method (Strategy-weighted):
+RAG Score = Σ(strategy_weight[i] × philosopher_rag_stat[i])
 ```
 
-**전략별 RAG 가중치** (`strategy_rag_weights.yaml` 참조):
-- 각 공격 전략마다 5개 RAG 스탯에 대한 가중치가 다름
-- 철학자가 선택한 전략에 따라 RAG 사용 여부가 동적으로 결정됨
-- 임계값: 0.3 이상 RAG 사용, 0.6 이상 강력한 RAG 사용
+**RAG Weights by Strategy** (see `strategy_rag_weights.yaml`):
+- Each attack strategy has different weights for the 5 RAG stats
+- RAG usage is dynamically determined based on philosopher's chosen strategy
+- Threshold: 0.3+ for RAG usage, 0.6+ for intensive RAG usage
 
-### 철학자별 RAG 사용 성향:
-- **높은 RAG 사용**: 비트겐슈타인, 칸트, 아리스토텔레스 - 정확한 정보와 체계적 논증 선호
-- **중간 RAG 사용**: 플라톤, 헤겔, 마르크스 - 상황에 따라 선택적 사용
-- **낮은 RAG 사용**: 니체, 카뮈, 라오자 - 직관과 은유적 표현 선호
+### RAG Usage Tendencies by Philosopher:
+- **High RAG Usage**: Wittgenstein, Kant, Aristotle - Prefer accurate information and systematic arguments
+- **Medium RAG Usage**: Plato, Hegel, Marx - Selective usage depending on situation
+- **Low RAG Usage**: Nietzsche, Camus, Laozi - Prefer intuition and metaphorical expression
 
-## 📊 기타 속성
+## 📊 Other Attributes
 
-### rag_affinity (RAG 친화도)
-- **범위**: 0.0 - 1.0
-- **의미**: 해당 철학자가 외부 정보나 체계적 근거를 얼마나 선호하는지
-- **사용**: RAG 시스템 활용 여부 결정에 참고
+### rag_affinity (RAG Affinity)
+- **Range**: 0.0 - 1.0
+- **Meaning**: How much the philosopher prefers external information or systematic evidence
+- **Usage**: Reference for determining RAG system utilization
 
-### 철학자별 특성 요약
+### Philosopher Characteristic Summary
 
-| 철학자 | 주요 전략 | 주요 취약점 민감도 | RAG 성향 |
-|--------|-----------|-------------------|----------|
-| **소크라테스** | 질문을 통한 논리 공격 | 개념 불명확성 | 중간 |
-| **플라톤** | 프레임 전환 | 구체적 근거 부족 | 높음 |
-| **아리스토텔레스** | 체계적 분석 | 과도한 일반화 | 매우 높음 |
-| **칸트** | 논리적 모순 지적 | 개념적 정확성 | 매우 높음 |
-| **니체** | 가치 전복 | 감정적 호소 | 낮음 |
-| **헤겔** | 변증법적 종합 | 개념적 명확성 | 높음 |
-| **마르크스** | 사회적 프레임 전환 | 구체적 근거 부족 | 높음 |
-| **사르트르** | 실존적 관점 | 감정적 호소 | 중간 |
-| **카뮈** | 부조리 인정 | 감정적 호소 | 낮음 |
-| **보부아르** | 구체적 경험 분석 | 과도한 일반화 | 높음 |
-| **루소** | 자연성 대 사회성 | 감정적 호소 | 중간 |
-| **공자** | 실용적 윤리 | 다양한 균형 | 중간 |
-| **라오자** | 역설과 은유 | 감정적 호소 | 매우 낮음 |
-| **부처** | 중도적 접근 | 과도한 일반화 | 중간 |
-| **비트겐슈타인** | 개념 분석 | 개념적 명확성 | 매우 높음 |
+| Philosopher | Main Strategy | Main Vulnerability Sensitivity | RAG Tendency |
+|-------------|---------------|-------------------------------|--------------|
+| **Socrates** | Logical attack through questioning | Conceptual ambiguity | Medium |
+| **Plato** | Frame shifting | Lack of concrete evidence | High |
+| **Aristotle** | Systematic analysis | Overgeneralization | Very High |
+| **Kant** | Pointing out logical contradictions | Conceptual accuracy | Very High |
+| **Nietzsche** | Value subversion | Emotional appeals | Low |
+| **Hegel** | Dialectical synthesis | Conceptual clarity | High |
+| **Marx** | Social frame shifting | Lack of concrete evidence | High |
+| **Sartre** | Existential perspective | Emotional appeals | Medium |
+| **Camus** | Absurdity acknowledgment | Emotional appeals | Low |
+| **Beauvoir** | Concrete experience analysis | Overgeneralization | High |
+| **Rousseau** | Naturalness vs. sociality | Emotional appeals | Medium |
+| **Confucius** | Practical ethics | Balanced across various | Medium |
+| **Laozi** | Paradox and metaphor | Emotional appeals | Very Low |
+| **Buddha** | Middle way approach | Overgeneralization | Medium |
+| **Wittgenstein** | Conceptual analysis | Conceptual clarity | Very High |
 
-## 🔧 데이터 활용
+## 🔧 Data Usage
 
-이 데이터는 다음과 같이 활용됩니다:
+This data is utilized as follows:
 
-1. **공격 전략 선택**: `strategy_weights`를 기반으로 상황에 맞는 공격 방법 결정
-2. **취약점 탐지**: `vulnerability_sensitivity`를 통해 상대방의 약점 우선순위 결정
-3. **RAG 사용 여부**: `rag_stats`를 종합하여 외부 정보 검색 필요성 판단
-4. **발언 스타일**: `debate_style`과 `personality`를 통해 일관된 캐릭터 유지
+1. **Attack Strategy Selection**: Determine appropriate attack methods based on `strategy_weights`
+2. **Vulnerability Detection**: Prioritize opponent's weaknesses through `vulnerability_sensitivity`
+3. **RAG Usage Decision**: Determine need for external information retrieval by synthesizing `rag_stats`
+4. **Speaking Style**: Maintain consistent character through `debate_style` and `personality`
 
-## 📝 수정 가이드
+## 📝 Modification Guide
 
-새로운 철학자를 추가하거나 기존 데이터를 수정할 때:
+When adding new philosophers or modifying existing data:
 
-1. **일관성 유지**: 각 철학자의 실제 철학적 입장과 일치하도록 설정
-2. **균형 조정**: `strategy_weights`의 합이 1.0이 되도록 조정
-3. **상대적 비교**: 다른 철학자들과의 상대적 차이를 고려하여 수치 설정
-4. **테스트**: 실제 토론에서 예상되는 행동과 일치하는지 확인 
+1. **Maintain Consistency**: Configure to align with each philosopher's actual philosophical positions
+2. **Balance Adjustment**: Adjust so `strategy_weights` sum to 1.0
+3. **Relative Comparison**: Set values considering relative differences with other philosophers
+4. **Testing**: Verify alignment with expected behavior in actual debates 
