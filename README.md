@@ -2,6 +2,12 @@
 
 An AI-powered philosophical debate and conversation platform featuring autonomous philosopher agents, retrieval-augmented generation (RAG), and real-time dialogue management.
 
+## 🎬 Live Demo
+
+![Sapiens Engine Demo](docs/images/sapiens-engine-demo.png)
+
+*Experience real-time philosophical debates between AI personas with distinct argumentation styles and knowledge bases.*
+
 ## 🏗️ Architecture Overview
 
 Sapiens Engine is a full-stack application consisting of:
