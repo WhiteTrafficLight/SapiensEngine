@@ -107,7 +107,6 @@ Sapiens Engine is a full-stack application consisting of:
 ### Prerequisites
 - Node.js 18+ and npm/yarn
 - Python 3.9+
-- Docker and Docker Compose (optional)
 - OpenAI API key
 
 ### Local Development
@@ -141,68 +140,13 @@ npm install
 npm run dev
 ```
 
-4. **Access the Application**
+4. **Running Locally**
+Once both servers are running, you can access:
 - Frontend: http://localhost:3000
 - Backend API: http://localhost:8000
 - API Documentation: http://localhost:8000/docs
 
-### Docker Deployment
-
-```bash
-# Build and start all services
-docker-compose up --build
-
-# Run in background
-docker-compose up -d
-```
-
-## 📚 Usage Examples
-
-### Basic Philosophical Debate
-
-```python
-from src.agents.factory import AgentFactory
-from src.dialogue.state.dialogue_state import DialogueState
-
-# Initialize dialogue state
-dialogue_state = DialogueState(
-    dialogue_id="ethics_debate_001",
-    dialogue_type="philosophical_debate",
-    topic="The Ethics of Artificial Intelligence",
-    language="en"
-)
-
-# Create agents using factory
-factory = AgentFactory()
-agents = factory.create_debate_agents(
-    pro_philosophers=["Aristotle", "Kant"],
-    con_philosophers=["Nietzsche", "Foucault"],
-    moderator_style="academic"
-)
-
-# Start the debate
-for agent_name, agent in agents.items():
-    print(f"Agent: {agent_name} - {agent.get_stance()}")
-```
-
-### RAG-Enhanced Conversation
-
-```python
-from src.rag.pipeline.rag_pipeline import RAGPipeline
-
-# Initialize RAG system
-rag = RAGPipeline(
-    vector_store_path="./data/vector_store",
-    embedding_model="sentence-transformers/all-MiniLM-L6-v2"
-)
-
-# Enhance argument with retrieved knowledge
-enhanced_response = rag.enhance_argument(
-    philosopher="Socrates",
-    topic="What is justice?",
-    argument="Justice is the harmony of the soul..."
-)
-```
+*Note: This is a development setup for local testing and exploration.*
 
 ## 🔧 Configuration
 
@@ -267,7 +211,6 @@ python -m pytest tests/integration/
 
 - [LLM Usage Documentation](./LLM_Usage_Documentation.md) - Detailed LLM usage and cost analysis
 - [RAG Experiment Report](./rag_experiment_report.md) - RAG system performance analysis
-- [Cost Optimization Plan](./cost_optimization_plan.md) - Token usage optimization strategies
 
 ## 🤝 Contributing
 
@@ -300,4 +243,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ---
 
-*Sapiens Engine - Where Philosophy Meets Artificial Intelligence* 🧠✨ 
+*Sapiens Engine - Where Philosophy Meets Artificial Intelligence* 🧠✨
