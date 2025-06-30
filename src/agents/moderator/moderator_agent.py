@@ -319,7 +319,7 @@ Important: Write your response in the SAME LANGUAGE as the debate topic. If the 
                 response = self.llm_manager.generate_response(
                     system_prompt=system_prompt,
                     user_prompt=user_prompt,
-                    llm_model="gpt-4",
+                    llm_model="gpt-4o",
                     max_tokens=300
                 )
                 if response:
@@ -343,6 +343,98 @@ Important: Write your response in the SAME LANGUAGE as the debate topic. If the 
         Returns:
             생성된 소개 메시지
         """
+
+        # 참가자 정보 가져오기
+        participants_info = dialogue_state.get("participants_info", {}) if isinstance(dialogue_state, dict) else {}
+        pro_participants = participants_info.get("pro", [])
+        con_participants = participants_info.get("con", [])
+            
+        # 참가자 이름 추출 (character_id에서 실제 이름으로 변환)
+        pro_participant_names = []
+        con_participant_names = []
+            
+        # 철학자 데이터 로드 시도
+        try:
+            import yaml
+            import os
+            philosophers_file = os.path.join(os.getcwd(), "philosophers", "debate_optimized.yaml")
+            with open(philosophers_file, 'r', encoding='utf-8') as file:
+                philosophers = yaml.safe_load(file)
+        except Exception as e:
+            philosophers = {}
+            
+        # PRO 참가자 이름 변환
+        for participant_id in pro_participants:
+            if participant_id in philosophers:
+                name = philosophers[participant_id].get("name", participant_id)
+                pro_participant_names.append(name)
+            else:
+                pro_participant_names.append(participant_id)
+        
+        # CON 참가자 이름 변환
+        for participant_id in con_participants:
+            if participant_id in philosophers:
+                name = philosophers[participant_id].get("name", participant_id)
+                con_participant_names.append(name)
+            else:
+                con_participant_names.append(participant_id)        
+        # 캐시된 오프닝 메시지가 있는 경우 
+        if hasattr(self, '_cached_opening_message') and self._cached_opening_message:
+            logger.info("Using cached opening message with participant name adaptation")
+            # 캐시된 오프닝 메시지를 기반으로 참가자 정보만 수정하는 프롬프트
+            system_prompt = """
+You are a debate moderator. You have a pre-written opening message for a debate, but you need to update the participant names to match the current participants.
+Your task is to modify ONLY the participant names in the existing opening message while keeping everything else exactly the same.
+Write a complete, comprehensive opening statement without cutting off in the middle.
+"""
+
+            user_prompt = f"""
+Here is the original opening message:
+"{self._cached_opening_message}"
+
+CURRENT PARTICIPANTS:
+- PRO side (찬성측): {', '.join(pro_participant_names) if pro_participant_names else 'Pro participants'}
+- CON side (반대측): {', '.join(con_participant_names) if con_participant_names else 'Con participants'}
+
+Your task:
+1. Take the original opening message and update ONLY the participant names to match the current participants
+2. Keep all other content (topic, format, style, tone) exactly the same
+3. Make sure the PRO side participants are listed first, followed by CON side participants
+4. Ensure the opening still calls on the first PRO participant: {pro_participant_names[0] if pro_participant_names else 'first pro participant'}
+5. Maintain the same language and style as the original message
+6. Ensure your response is complete - do not stop mid-sentence
+
+Important: Only change the participant names. Everything else should remain identical to the original opening message.
+"""
+            
+            # LLM 호출
+            try:
+                adapted_introduction = self.llm_manager.generate_response(
+                    system_prompt=system_prompt, 
+                    user_prompt=user_prompt,
+                    llm_model="gpt-4o",
+                    max_tokens=1500
+                )
+                
+                if adapted_introduction:
+                    logger.info("Successfully adapted cached opening message with current participant names")
+                    return {
+                        "status": "success",
+                        "message": adapted_introduction,
+                        "cache_adapted": True
+                    }
+                    
+            except Exception as e:
+                logger.error(f"Error adapting cached opening message: {str(e)}")
+                # 실패 시 캐시된 메시지 그대로 사용
+                logger.info("Using original cached opening message due to adaptation failure")
+                return {
+                    "status": "success",
+                    "message": self._cached_opening_message,
+                    "cache_used": True
+                }
+        
+        # 기존 로직 실행 (캐시가 없거나 적용 실패한 경우)
         # input_data 형식 처리
         if isinstance(dialogue_state, dict) and "topic" in dialogue_state:
             topic = dialogue_state.get("topic", "the topic")
@@ -367,41 +459,7 @@ Important: Write your response in the SAME LANGUAGE as the debate topic. If the 
             if stance_statements:
                 pro_statement = stance_statements.get("pro", pro_statement)
                 con_statement = stance_statements.get("con", con_statement)
-        
-        # 참가자 정보 가져오기
-        participants_info = dialogue_state.get("participants_info", {}) if isinstance(dialogue_state, dict) else {}
-        pro_participants = participants_info.get("pro", [])
-        con_participants = participants_info.get("con", [])
-        
-        # 참가자 이름 추출 (character_id에서 실제 이름으로 변환)
-        pro_participant_names = []
-        con_participant_names = []
-        
-        # 철학자 데이터 로드 시도
-        try:
-            import yaml
-            import os
-            philosophers_file = os.path.join(os.getcwd(), "philosophers", "debate_optimized.yaml")
-            with open(philosophers_file, 'r', encoding='utf-8') as file:
-                philosophers = yaml.safe_load(file)
-        except Exception as e:
-            philosophers = {}
-        
-        # PRO 참가자 이름 변환
-        for participant_id in pro_participants:
-            if participant_id in philosophers:
-                name = philosophers[participant_id].get("name", participant_id)
-                pro_participant_names.append(name)
-            else:
-                pro_participant_names.append(participant_id)
-        
-        # CON 참가자 이름 변환
-        for participant_id in con_participants:
-            if participant_id in philosophers:
-                name = philosophers[participant_id].get("name", participant_id)
-                con_participant_names.append(name)
-            else:
-                con_participant_names.append(participant_id)
+      
         
         # 모더레이터 스타일 로드
         style_id = self.config.get("style_id", "0")  # 기본값은 "0" (Casual Young Moderator)
@@ -476,7 +534,7 @@ Important: Write your response in the SAME LANGUAGE as the debate topic. If the 
                     introduction = self.llm_manager.generate_response(
                         system_prompt=system_prompt, 
                         user_prompt=user_prompt,
-                        llm_model="gpt-4",
+                        llm_model="gpt-4o",
                         max_tokens=1500
                     )
                     
@@ -543,7 +601,7 @@ Your opening introduction should be formal, neutral, and engaging. Ensure your r
             introduction = self.llm_manager.generate_response(
                 system_prompt=system_prompt, 
                 user_prompt=user_prompt,
-                llm_model="gpt-4",
+                llm_model="gpt-4o",
                 max_tokens=1500
             )
         except Exception as e:
@@ -657,21 +715,31 @@ Ensure your messages are complete and do not cut off mid-sentence.
         # 응답 처리
         try:
             import json
-            response_json = json.loads(intervention_response.replace("'", "\""))
-            should_intervene = response_json.get("should_intervene", False)
+            import re
             
-            if should_intervene:
-                return {
-                    "status": "intervention",
-                    "should_intervene": True,
-                    "message": response_json.get("intervention_message", "토론 진행에 개입해야 할 것 같습니다. 주제에 집중해주시기 바랍니다."),
-                    "reason": response_json.get("reason", "intervention_needed")
-                }
-            else:
-                return {
-                    "status": "monitoring",
-                    "should_intervene": False
-                }
+            # JSON 형식 찾기
+            json_pattern = r'\{.*\}'
+            json_match = re.search(json_pattern, intervention_response, re.DOTALL)
+            
+            if json_match:
+                json_str = json_match.group(0)
+                response_json = json.loads(json_str)
+                
+                should_intervene = response_json.get("should_intervene", False)
+                
+                if should_intervene:
+                    return {
+                        "status": "intervention",
+                        "should_intervene": True,
+                        "message": response_json.get("intervention_message", "토론 진행에 개입해야 할 것 같습니다. 주제에 집중해주시기 바랍니다."),
+                        "reason": response_json.get("reason", "intervention_needed")
+                    }
+                else:
+                    return {
+                        "status": "monitoring",
+                        "should_intervene": False
+                    }
+            
         except Exception as e:
             logger.error(f"Error parsing intervention response: {str(e)}")
             # JSON 파싱 실패 시 기본 응답

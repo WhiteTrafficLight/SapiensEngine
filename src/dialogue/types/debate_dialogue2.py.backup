@@ -12,7 +12,6 @@
 import logging
 import time
 import asyncio
-import json
 from typing import Dict, List, Optional, Any, Union, Tuple
 from pathlib import Path
 import os
@@ -26,6 +25,9 @@ from ...agents.participant.user_participant import UserParticipant
 from ...rag.retrieval.vector_store import VectorStore
 from ...agents.utility.debate_emotion_inference import infer_debate_emotion, apply_debate_emotion_to_prompt
 from ...models.llm.llm_manager import LLMManager  # LLMManager import 추가
+
+# 🆕 DebateContextManager 추가
+from ..context.debate_context_manager import DebateContextManager
 
 # 새로운 개선사항 임포트 (고급 기능)
 from ..events.initialization_events import (
@@ -42,6 +44,26 @@ logger = logging.getLogger(__name__)
 # ============================================================================
 # CONSTANTS & ENUMS
 # ============================================================================
+
+# LLM 작업별 최적화 전략 (일단 모두 gpt-4o로 통일)
+LLM_STRATEGY = {
+    # 고품질 필요 (창의성, 논리성)
+    "opening_argument": {"model": "gpt-4o", "max_tokens": 8000},
+    "conclusion": {"model": "gpt-4o", "max_tokens": 6000},
+    
+    # 중간 품질 (분석, 전략)
+    "attack_strategy": {"model": "gpt-4o", "max_tokens": 4000},
+    "defense_response": {"model": "gpt-4o", "max_tokens": 3000},
+    "argument_analysis": {"model": "gpt-4o", "max_tokens": 3000},
+    
+    # 빠른 처리 (간단한 작업)
+    "interactive_response": {"model": "gpt-4o", "max_tokens": 1500},
+    "rag_query_generation": {"model": "gpt-4o", "max_tokens": 500},
+    "keyword_extraction": {"model": "gpt-4o", "max_tokens": 200},
+    
+    # 기본값
+    "default": {"model": "gpt-4o", "max_tokens": 4000}
+}
 
 class DebateStage:
     """토론 단계 정의"""
@@ -154,10 +176,6 @@ class DebateDialogue:
         self.enable_streaming = enable_streaming
         self.dialogue_type = self.room_data.get('dialogueType', 'debate')  # dialogue_type 추가
         
-        # 캐시 관련 초기화
-        self.cached_data = None
-        self.use_cache = False
-        
         # 기본 초기화
         self.participants = self._initialize_participants()
         self.user_participants = self._initialize_user_participants()
@@ -167,8 +185,9 @@ class DebateDialogue:
         # LLM 관리자 먼저 초기화 (stance_statements에서 사용)
         self.llm_manager = LLMManager()
         
-        # 캐시 확인 및 적용
-        self._check_and_apply_cache()
+        # 🆕 DebateContextManager 초기화 및 요약 생성
+        self.context_manager = self._initialize_context_manager()
+        self.context_summary = self._generate_context_summary()
         
         self.stance_statements = self._generate_stance_statements()  # agents 초기화 전에 생성
         self.agents = self._initialize_agents()  # stance_statements 이후에 초기화
@@ -226,96 +245,13 @@ class DebateDialogue:
         logger.info(f"Starting enhanced async parallel initialization for room {self.room_id}")
         start_time = time.time()
         
-        # 캐시 확인 로직 추가 (이미 캐시가 적용되지 않은 경우에만)
-        if not self.use_cache:
-            title = self.room_data.get('title', '')
-            context = self.room_data.get('context', '')
-            
-            # 디버그 로그 추가
-            logger.info(f"[CACHE_DEBUG] Title: '{title}'")
-            logger.info(f"[CACHE_DEBUG] Context length: {len(context) if context else 0}")
-            logger.info(f"[CACHE_DEBUG] Context: '{context[:100]}...' " if context and len(context) > 100 else f"[CACHE_DEBUG] Context: '{context}'")
-            
-            if title:  # 제목이 있는 경우에만 캐시 확인
-                logger.info(f"[CACHE_DEBUG] Checking cache for title: '{title}'")
-                cached_entry = self._find_matching_cache_entry(title, context)
-                
-                if cached_entry:
-                    logger.info(f"[CACHE_DEBUG] Found matching cache entry: {cached_entry.get('topic_id', 'unknown')}")
-                    cache_applied = self._apply_cached_data(cached_entry)
-                    
-                    if cache_applied:
-                        # 캐시가 성공적으로 적용된 경우, 에이전트만 다시 초기화하고 빠른 리턴
-                        self.agents = self._initialize_agents()
-                        self._prepare_moderator_opening_only()
-                        
-                        total_time = time.time() - start_time
-                        logger.info(f"Fast initialization with cache completed in {total_time:.2f} seconds")
-                        
-                        # 스트리밍 이벤트 완료 (캐시 사용)
-                        if self.event_stream:
-                            self.event_stream.emit_event(
-                                InitializationEventType.COMPLETED,
-                                {
-                                    "room_id": self.room_id,
-                                    "total_time": total_time,
-                                    "cache_used": True,
-                                    "cache_entry_id": cached_entry.get('topic_id', 'unknown')
-                                }
-                            )
-                        
-                        return {
-                            "status": "success",
-                            "total_time": total_time,
-                            "cache_used": True,
-                            "cache_entry_id": cached_entry.get('topic_id', 'unknown'),
-                            "room_id": self.room_id,
-                            "streaming_enabled": self.enable_streaming
-                        }
-                    else:
-                        logger.warning("[CACHE_DEBUG] Cache application failed")
-                else:
-                    logger.info("[CACHE_DEBUG] No matching cache entry found")
-            else:
-                logger.info("[CACHE_DEBUG] No title provided, skipping cache check")
-        else:
-            logger.info("[CACHE_DEBUG] Cache already applied during __init__, using cached data")
-            
-            # 이미 캐시가 적용된 경우 빠른 리턴
-            total_time = time.time() - start_time
-            logger.info(f"Fast initialization with pre-applied cache completed in {total_time:.2f} seconds")
-            
-            # 스트리밍 이벤트 완료 (캐시 사용)
-            if self.event_stream:
-                self.event_stream.emit_event(
-                    InitializationEventType.COMPLETED,
-                    {
-                        "room_id": self.room_id,
-                        "total_time": total_time,
-                        "cache_used": True,
-                        "cache_entry_id": self.cached_data.get('topic_id', 'unknown') if self.cached_data else 'unknown'
-                    }
-                )
-            
-            return {
-                "status": "success",
-                "total_time": total_time,
-                "cache_used": True,
-                "cache_entry_id": self.cached_data.get('topic_id', 'unknown') if self.cached_data else 'unknown',
-                "room_id": self.room_id,
-                "streaming_enabled": self.enable_streaming
-            }
-        
-        # 캐시가 없거나 적용 실패 시 기존 로직 실행
-        logger.info("No cache found or cache application failed, proceeding with full initialization")
-        
         # 스트리밍 이벤트 시작
         if self.event_stream:
             self.event_stream.emit_event(
                 InitializationEventType.STARTED,
                 {
                     "room_id": self.room_id,
-                    "total_tasks": 4,  # stance_statements, pro_argument, con_argument, moderator_opening
+                    "total_tasks": 2,  # stance_statements, moderator_opening (입론 준비 제거)
                     "start_time": start_time
                 }
             )
@@ -349,23 +285,28 @@ class DebateDialogue:
             tasks = []
             task_trackers = []
             
-            # Pro 측 입론 준비 (에이전트가 있는 경우에만)
-            if ParticipantRole.PRO in self.agents:
-                pro_tracker = TaskProgressTracker("pro_argument", self.event_stream) if self.event_stream else None
-                task_trackers.append(pro_tracker)
-                tasks.append(self._prepare_pro_argument_async_enhanced(pro_tracker))
-            else:
-                tasks.append(self._create_dummy_task("pro_argument", None))
+            # ===== 입론 준비 부분 주석 처리 시작 =====
+            # 이제 각 에이전트가 실시간으로 자신만의 입론을 생성하도록 함
             
-            # Con 측 입론 준비 (에이전트가 있는 경우에만)
-            if ParticipantRole.CON in self.agents:
-                con_tracker = TaskProgressTracker("con_argument", self.event_stream) if self.event_stream else None
-                task_trackers.append(con_tracker)
-                tasks.append(self._prepare_con_argument_async_enhanced(con_tracker))
-            else:
-                tasks.append(self._create_dummy_task("con_argument", None))
+            # # Pro 측 입론 준비 (에이전트가 있는 경우에만)
+            # if ParticipantRole.PRO in self.agents:
+            #     pro_tracker = TaskProgressTracker("pro_argument", self.event_stream) if self.event_stream else None
+            #     task_trackers.append(pro_tracker)
+            #     tasks.append(self._prepare_pro_argument_async_enhanced(pro_tracker))
+            # else:
+            #     tasks.append(self._create_dummy_task("pro_argument", None))
             
-            # 모더레이터 오프닝 준비
+            # # Con 측 입론 준비 (에이전트가 있는 경우에만)
+            # if ParticipantRole.CON in self.agents:
+            #     con_tracker = TaskProgressTracker("con_argument", self.event_stream) if self.event_stream else None
+            #     task_trackers.append(con_tracker)
+            #     tasks.append(self._prepare_con_argument_async_enhanced(con_tracker))
+            # else:
+            #     tasks.append(self._create_dummy_task("con_argument", None))
+            
+            # ===== 입론 준비 부분 주석 처리 끝 =====
+            
+            # 모더레이터 오프닝 준비만 유지
             if ParticipantRole.MODERATOR in self.agents:
                 moderator_tracker = TaskProgressTracker("moderator_opening", self.event_stream) if self.event_stream else None
                 task_trackers.append(moderator_tracker)
@@ -373,8 +314,8 @@ class DebateDialogue:
             else:
                 tasks.append(self._create_dummy_task("moderator_opening", None))
             
-            # 병렬 작업 실행
-            logger.info(f"Starting {len(tasks)} parallel tasks with enhanced RAG processing")
+            # 병렬 작업 실행 (모더레이터 오프닝만)
+            logger.info(f"Starting {len(tasks)} parallel tasks (moderator opening only)")
             parallel_results = await asyncio.gather(*tasks, return_exceptions=True)
             
             # 모든 결과 통합 (stance_statements + 병렬 작업들)
@@ -387,7 +328,7 @@ class DebateDialogue:
             self.playing = True
             
             total_time = time.time() - start_time
-            logger.info(f"Enhanced async initialization completed in {total_time:.2f} seconds")
+            logger.info(f"Enhanced async initialization completed in {total_time:.2f} seconds (without pre-generating arguments)")
             
             # 스트리밍 이벤트 완료
             if self.event_stream:
@@ -429,23 +370,6 @@ class DebateDialogue:
         찬반 입장 진술문 생성 (개선된 버전 - 스트리밍 지원)
         """
         try:
-            # 캐시가 적용된 경우 캐시된 stance_statements 사용
-            if self.use_cache and hasattr(self, 'stance_statements') and self.stance_statements:
-                logger.info("Using cached stance statements in async method")
-                
-                if progress_tracker:
-                    progress_tracker.start(["pro_stance", "con_stance"])
-                    progress_tracker.update_subtask("pro_stance", "completed", {"stance": self.stance_statements.get("pro", "")})
-                    progress_tracker.update_subtask("con_stance", "completed", {"stance": self.stance_statements.get("con", "")})
-                    progress_tracker.complete({"stance_statements": self.stance_statements})
-                
-                return {
-                    "status": "success",
-                    "task": "stance_statements",
-                    "result": self.stance_statements,
-                    "cache_used": True
-                }
-            
             if progress_tracker:
                 progress_tracker.start(["pro_stance", "con_stance"])
             
@@ -482,168 +406,6 @@ class DebateDialogue:
             return {
                 "status": "error",
                 "task": "stance_statements",
-                "error": str(e)
-            }
-    
-    async def _prepare_pro_argument_async_enhanced(self, progress_tracker: Optional[TaskProgressTracker]) -> Dict[str, Any]:
-        """
-        찬성측 입론 준비 (개선된 버전 - 세밀한 병렬화와 스트리밍 지원)
-        """
-        try:
-            if progress_tracker:
-                progress_tracker.start([
-                    "core_arguments", "parallel_search", "evidence_integration", "final_argument"
-                ])
-            
-            pro_agents = self._get_participants_by_role(ParticipantRole.PRO)
-            if not pro_agents:
-                if progress_tracker:
-                    progress_tracker.fail("No pro agents available")
-                return {"status": "error", "task": "pro_argument", "error": "No pro agents available"}
-            
-            # 첫 번째 찬성 에이전트 사용
-            agent_id = pro_agents[0]
-            agent = self.agents.get(agent_id)
-            
-            if not agent:
-                if progress_tracker:
-                    progress_tracker.fail(f"Agent {agent_id} not found")
-                return {"status": "error", "task": "pro_argument", "error": f"Agent {agent_id} not found"}
-            
-            # 토론 주제와 찬성 입장 진술문
-            topic = self.room_data.get('topic', '토론 주제')
-            pro_stance = self.stance_statements.get("pro", "찬성 입장")
-            
-            # 진행 상황 콜백 함수 정의
-            def progress_callback(subtask_name: str, status: str, details: Dict[str, Any] = None):
-                if progress_tracker:
-                    progress_tracker.update_subtask(subtask_name, status, details)
-            
-            # RAG 병렬 처리기를 사용하여 입론 준비
-            result = await self.rag_processor.process_argument_preparation_parallel(
-                agent=agent,
-                topic=topic,
-                stance_statement=pro_stance,
-                context={"role": ParticipantRole.PRO},
-                progress_callback=progress_callback
-            )
-            
-            if result.get("status") == "success":
-                # 에이전트에 결과 저장
-                if hasattr(agent, 'opening_argument'):
-                    agent.opening_argument = result.get("final_argument", "")
-                
-                if progress_tracker:
-                    progress_tracker.complete({
-                        "agent_id": agent_id,
-                        "argument_length": len(result.get("final_argument", "")),
-                        "evidence_count": len(result.get("evidence_results", []))
-                    })
-                
-                return {
-                    "status": "success",
-                    "task": "pro_argument",
-                    "agent_id": agent_id,
-                    "result": result
-                }
-            else:
-                error_msg = result.get("error", "Unknown error in argument preparation")
-                if progress_tracker:
-                    progress_tracker.fail(error_msg)
-                return {
-                    "status": "error",
-                    "task": "pro_argument",
-                    "error": error_msg
-                }
-            
-        except Exception as e:
-            logger.error(f"Error preparing pro argument: {str(e)}")
-            if progress_tracker:
-                progress_tracker.fail(str(e))
-            return {
-                "status": "error",
-                "task": "pro_argument",
-                "error": str(e)
-            }
-    
-    async def _prepare_con_argument_async_enhanced(self, progress_tracker: Optional[TaskProgressTracker]) -> Dict[str, Any]:
-        """
-        반대측 입론 준비 (개선된 버전 - 세밀한 병렬화와 스트리밍 지원)
-        """
-        try:
-            if progress_tracker:
-                progress_tracker.start([
-                    "core_arguments", "parallel_search", "evidence_integration", "final_argument"
-                ])
-            
-            con_agents = self._get_participants_by_role(ParticipantRole.CON)
-            if not con_agents:
-                if progress_tracker:
-                    progress_tracker.fail("No con agents available")
-                return {"status": "error", "task": "con_argument", "error": "No con agents available"}
-            
-            # 첫 번째 반대 에이전트 사용
-            agent_id = con_agents[0]
-            agent = self.agents.get(agent_id)
-            
-            if not agent:
-                if progress_tracker:
-                    progress_tracker.fail(f"Agent {agent_id} not found")
-                return {"status": "error", "task": "con_argument", "error": f"Agent {agent_id} not found"}
-            
-            # 토론 주제와 반대 입장 진술문
-            topic = self.room_data.get('topic', '토론 주제')
-            con_stance = self.stance_statements.get("con", "반대 입장")
-            
-            # 진행 상황 콜백 함수 정의
-            def progress_callback(subtask_name: str, status: str, details: Dict[str, Any] = None):
-                if progress_tracker:
-                    progress_tracker.update_subtask(subtask_name, status, details)
-            
-            # RAG 병렬 처리기를 사용하여 입론 준비
-            result = await self.rag_processor.process_argument_preparation_parallel(
-                agent=agent,
-                topic=topic,
-                stance_statement=con_stance,
-                context={"role": ParticipantRole.CON},
-                progress_callback=progress_callback
-            )
-            
-            if result.get("status") == "success":
-                # 에이전트에 결과 저장
-                if hasattr(agent, 'opening_argument'):
-                    agent.opening_argument = result.get("final_argument", "")
-                
-                if progress_tracker:
-                    progress_tracker.complete({
-                        "agent_id": agent_id,
-                        "argument_length": len(result.get("final_argument", "")),
-                        "evidence_count": len(result.get("evidence_results", []))
-                    })
-                
-                return {
-                    "status": "success",
-                    "task": "con_argument",
-                    "agent_id": agent_id,
-                    "result": result
-                }
-            else:
-                error_msg = result.get("error", "Unknown error in argument preparation")
-                if progress_tracker:
-                    progress_tracker.fail(error_msg)
-                return {
-                    "status": "error",
-                    "task": "con_argument",
-                    "error": error_msg
-                }
-            
-        except Exception as e:
-            logger.error(f"Error preparing con argument: {str(e)}")
-            if progress_tracker:
-                progress_tracker.fail(str(e))
-            return {
-                "status": "error",
-                "task": "con_argument",
                 "error": str(e)
             }
     
@@ -1022,7 +784,17 @@ class DebateDialogue:
             import requests
             from bs4 import BeautifulSoup
             
-            response = requests.get(url, timeout=30)
+            # User-Agent 헤더 추가하여 403 Forbidden 에러 방지
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+                'Accept-Language': 'en-US,en;q=0.5',
+                'Accept-Encoding': 'gzip, deflate',
+                'Connection': 'keep-alive',
+                'Upgrade-Insecure-Requests': '1',
+            }
+            
+            response = requests.get(url, headers=headers, timeout=30)
             response.raise_for_status()
             
             soup = BeautifulSoup(response.content, 'html.parser')
@@ -1046,7 +818,7 @@ class DebateDialogue:
         except Exception as e:
             logger.error(f"URL processing failed: {str(e)}")
             return f"URL 처리 실패: {str(e)}"
-        
+    
     def _split_context_to_paragraphs(self, context: str) -> List[str]:
         """컨텍스트를 슬라이딩 윈도우 방식으로 청크화"""
         try:
@@ -1119,10 +891,10 @@ class DebateDialogue:
                 name=moderator_config.get("name", "Moderator"),
                 config={
                     "stance_statements": self.stance_statements,
-                    "context_summary": getattr(self, 'context_summary', {}),  # 캐시된 컨텍스트 요약 추가
                     "style": moderator_config.get("style", "neutral"),
                     "style_id": moderator_config.get("style_id", "0"),  # 기본값 "0" (Casual Young Moderator)
-                    "personality": moderator_config.get("personality", "balanced")
+                    "personality": moderator_config.get("personality", "balanced"),
+                    "context_summary": getattr(self, 'context_summary', {})  # context_summary 추가
                 }
             )
             
@@ -1256,7 +1028,7 @@ class DebateDialogue:
             # fallback 에이전트들 생성
             moderator_fallback = ModeratorAgent("moderator_001", "Moderator", {
                 "stance_statements": self.stance_statements,
-                "context_summary": getattr(self, 'context_summary', {})  # 캐시된 컨텍스트 요약 추가
+                "context_summary": getattr(self, 'context_summary', {})  # context_summary 추가
             })
             pro_fallback = DebateParticipantAgent("pro_agent", "Pro Participant", {"role": ParticipantRole.PRO, "stance_statements": self.stance_statements})
             con_fallback = DebateParticipantAgent("con_agent", "Con Participant", {"role": ParticipantRole.CON, "stance_statements": self.stance_statements})
@@ -1351,14 +1123,9 @@ class DebateDialogue:
         logger.info("All participant argument preparation completed")
     
     def _generate_stance_statements(self) -> Dict[str, str]:
-        """주제에서 찬성/반대 입장 명확화 및 컨텍스트 요약 생성"""
-        # 캐시가 적용된 경우 캐시된 stance_statements 사용
-        if self.use_cache and hasattr(self, 'stance_statements') and self.stance_statements:
-            logger.info("Using cached stance statements")
-            return self.stance_statements
-        
+        """주제에서 찬성/반대 입장 명확화"""
         topic = self.room_data.get('title', '')
-        context = self.room_data.get('context', '')
+        #context = self.room_data.get('context', '')
             
         # 인스턴스 변수 사용 (중복 초기화 제거)
         llm_manager = self.llm_manager
@@ -1379,7 +1146,7 @@ DO NOT include any extraneous text, your response will be parsed programmaticall
 DEBATE TOPIC: "{topic}"
 
 ADDITIONAL CONTEXT (if available):
-{context if context else "No additional context provided."}
+{self.context_summary if self.context_summary else "No additional context provided."}
 
 Create a balanced pair of position statements for this debate topic:
 1. PRO (for/in favor) position statement - a concise statement (~1-2 sentences) arguing in favor of the topic
@@ -1403,7 +1170,7 @@ Important:
             stance_response = llm_manager.generate_response(
                 system_prompt=system_prompt,
                 user_prompt=user_prompt,
-                llm_model="gpt-4",
+                llm_model="gpt-4o",
                 max_tokens=1000
             )
             
@@ -1422,11 +1189,6 @@ Important:
                 # 유효한 응답인지 확인
                 if "pro" in stance_json and "con" in stance_json:
                     logger.info("Successfully generated stance statements using LLM")
-                    
-                    # context가 있는 경우 context_summary도 생성
-                    if context and context.strip():
-                        self._generate_context_summary(context)
-                    
                     return stance_json
             
             # 파싱 실패 또는 필요한 키가 없는 경우
@@ -1435,77 +1197,12 @@ Important:
         except Exception as e:
             logger.error(f"Error generating stance statements with LLM: {str(e)}")
         
-        # 실패 시 기본값 반환
-        logger.warning("Using default stance statements due to LLM failure")
-        return {
-            "pro": f"{topic}에 찬성하는 입장",
-            "con": f"{topic}에 반대하는 입장"
-        }
-    
-    def _generate_context_summary(self, context: str) -> None:
-        """컨텍스트 요약 생성"""
-        try:
-            system_prompt = """
-You are a helpful assistant that creates objective summaries of debate contexts.
-Your task is to analyze the provided context and create a structured summary.
-"""
-
-            user_prompt = f"""
-Please analyze the following debate context and create a structured summary:
-
-CONTEXT:
-{context}
-
-Create a summary with the following structure:
-1. A brief objective summary (2-3 sentences) 
-2. Key points (3-5 bullet points)
-3. Any relevant quotes or important details
-
-Your response MUST follow this exact JSON format:
-{{
-  "summary": "Brief objective summary...",
-  "key_points": ["Point 1", "Point 2", "Point 3"],
-  "relevant_quotes": ["Quote 1", "Quote 2"]
-}}
-
-Important: Be objective and neutral. Don't take sides in the debate.
-"""
-
-            response = self.llm_manager.generate_response(
-                system_prompt=system_prompt,
-                user_prompt=user_prompt,
-                llm_model="gpt-4",
-                max_tokens=800
-            )
-            
-            # JSON 파싱
-            import json
-            import re
-            
-            json_pattern = r'\{.*\}'
-            json_match = re.search(json_pattern, response, re.DOTALL)
-            
-            if json_match:
-                json_str = json_match.group(0)
-                summary_json = json.loads(json_str)
-                
-                # context_summary 인스턴스 변수에 저장
-                self.context_summary = {
-                    'objective_summary': summary_json.get('summary', ''),  # ModeratorAgent가 기대하는 키로 변경
-                    'bullet_points': summary_json.get('key_points', []),   # ModeratorAgent가 기대하는 키로 변경
-                    'summary': summary_json.get('summary', ''),            # 호환성을 위해 유지
-                    'key_points': summary_json.get('key_points', []),      # 호환성을 위해 유지
-                    'relevant_quotes': summary_json.get('relevant_quotes', [])
-                }
-                
-                logger.info("Successfully generated context summary")
-            else:
-                logger.warning("Failed to parse context summary response")
-                self.context_summary = {}
-                
-        except Exception as e:
-            logger.error(f"Error generating context summary: {str(e)}")
-            self.context_summary = {}
+            # 실패 시 기본값 반환
+            logger.warning("Using default stance statements due to LLM failure")
+            return {
+                "pro": f"{topic}에 찬성하는 입장",
+                "con": f"{topic}에 반대하는 입장"
+            }
     
     def _get_participants_by_role(self, role: str) -> List[str]:
         """역할별 참가자 목록 반환 (이미 초기화된 데이터 사용)"""
@@ -2770,18 +2467,6 @@ Important: Be objective and neutral. Don't take sides in the debate.
     def _prepare_moderator_opening_only(self) -> None:
         """모더레이터 오프닝만 미리 준비 (Option 2)"""
         try:
-            # 캐시된 오프닝 메시지가 있는 경우 사용
-            if self.use_cache and hasattr(self, 'cached_opening_message') and self.cached_opening_message:
-                logger.info("Using cached opening message for moderator")
-                # 캐시된 메시지를 모더레이터 에이전트에 설정
-                moderator_agent = self.agents.get(ParticipantRole.MODERATOR)
-                if moderator_agent and hasattr(moderator_agent, 'set_prepared_opening'):
-                    moderator_agent.set_prepared_opening(self.cached_opening_message)
-                elif moderator_agent:
-                    # 일반적인 방법으로 캐시된 메시지 저장
-                    moderator_agent._cached_opening_message = self.cached_opening_message
-                return
-            
             moderator_agent = self.agents.get(ParticipantRole.MODERATOR)
             if moderator_agent:
                 topic = self.room_data.get('title', '토론 주제')
@@ -3241,171 +2926,137 @@ Important: Be objective and neutral. Don't take sides in the debate.
             except Exception as e:
                 logger.error(f"Error in message callback: {str(e)}")
     
-    # ========================================================================
-    # CACHE METHODS
-    # ========================================================================
-    
-    def _check_and_apply_cache(self) -> None:
-        """초기화 시 캐시 확인 및 적용"""
-        title = self.room_data.get('title', '')
+    def _initialize_context_manager(self) -> Optional[DebateContextManager]:
+        """DebateContextManager 초기화 및 컨텍스트 추가"""
         context = self.room_data.get('context', '')
+        if not context:
+            logger.info("No context provided, skipping DebateContextManager initialization")
+            return None
         
-        # 디버그 로그
-        logger.info(f"[INIT_CACHE_DEBUG] Title: '{title}'")
-        logger.info(f"[INIT_CACHE_DEBUG] Context length: {len(context) if context else 0}")
-        
-        if title:  # 제목이 있는 경우에만 캐시 확인
-            logger.info(f"[INIT_CACHE_DEBUG] Checking cache for title: '{title}'")
-            cached_entry = self._find_matching_cache_entry(title, context)
+        try:
+            # DebateContextManager 생성
+            context_manager = DebateContextManager(
+                llm_manager=self.llm_manager,
+                max_context_length=100000,  # 충분한 길이 설정 (8000 → 100000)
+                max_summary_points=7  # 더 많은 요약 포인트
+            )
             
-            if cached_entry:
-                logger.info(f"[INIT_CACHE_DEBUG] Found matching cache entry: {cached_entry.get('topic_id', 'unknown')}")
-                cache_applied = self._apply_cached_data(cached_entry)
+            # 컨텍스트 타입에 따라 적절히 추가
+            if context.lower().endswith('.pdf') and os.path.exists(context):
+                logger.info(f"Adding PDF context to DebateContextManager: {context}")
+                context_id = context_manager.add_file_context(context)
                 
-                if cache_applied:
-                    logger.info("[INIT_CACHE_DEBUG] Cache successfully applied!")
-                else:
-                    logger.warning("[INIT_CACHE_DEBUG] Cache application failed")
+            elif context.startswith(('http://', 'https://')):
+                logger.info(f"Adding URL context to DebateContextManager: {context}")
+                context_id = context_manager.add_url_context(context)
+                
             else:
-                logger.info("[INIT_CACHE_DEBUG] No matching cache entry found")
-        else:
-            logger.info("[INIT_CACHE_DEBUG] No title provided, skipping cache check")
-    
-    def _load_pregenerated_cache(self) -> Optional[Dict[str, Any]]:
-        """pregenerated_debates.json 파일에서 캐시 데이터를 로드합니다."""
-        try:
-            # 현재 파일 위치 기준으로 절대 경로 계산
-            current_file = Path(__file__)  # src/dialogue/types/debate_dialogue.py
-            project_root = current_file.parent.parent.parent.parent  # sapiens_engine 루트
-            cache_file_path = project_root / "src" / "new" / "data" / "pregenerated_debates.json"
+                logger.info("Adding text context to DebateContextManager")
+                title = self.room_data.get('title', 'Debate Context')
+                context_id = context_manager.add_text_context(context, title=title)
             
-            logger.info(f"[CACHE_LOAD_DEBUG] Looking for cache file at: {cache_file_path}")
-            
-            if not cache_file_path.exists():
-                logger.info(f"[CACHE_LOAD_DEBUG] Cache file not found at: {cache_file_path}")
-                return None
-            
-            with open(cache_file_path, 'r', encoding='utf-8') as f:
-                cache_data = json.load(f)
-            
-            logger.info(f"[CACHE_LOAD_DEBUG] Successfully loaded cache with {len(cache_data.get('topics', {}))} topics")
-            return cache_data
+            logger.info(f"DebateContextManager initialized with context_id: {context_id}")
+            return context_manager
             
         except Exception as e:
-            logger.error(f"[CACHE_LOAD_DEBUG] Error loading pregenerated cache: {str(e)}")
+            logger.error(f"Error initializing DebateContextManager: {str(e)}")
             return None
     
-    def _find_matching_cache_entry(self, title: str, context: str) -> Optional[Dict[str, Any]]:
-        """제목과 컨텍스트가 일치하는 캐시 엔트리를 찾습니다."""
+    def _generate_context_summary(self) -> Dict[str, Any]:
+        """컨텍스트 요약 생성 및 저장"""
+        if not self.context_manager:
+            logger.info("No context manager available, skipping summary generation")
+            return {}
+        
         try:
-            logger.info(f"[CACHE_MATCH_DEBUG] Starting cache search for title: '{title}'")
-            logger.info(f"[CACHE_MATCH_DEBUG] Context length: {len(context) if context else 0}")
+            # 토론 주제 가져오기
+            topic = self.room_data.get('title', '토론 주제')
             
-            cache_data = self._load_pregenerated_cache()
-            if not cache_data or 'topics' not in cache_data:
-                logger.info("[CACHE_MATCH_DEBUG] No cache data or topics found")
-                return None
+            # 자동 타입 판별된 요약 생성
+            summary_result = self.context_manager.generate_summary(topic)
             
-            logger.info(f"[CACHE_MATCH_DEBUG] Cache has {len(cache_data.get('topics', {}))} topics")
+            # 추가 정보 수집
+            bullet_points = self.context_manager.get_context_bullet_points(max_points=5)
+            context_stats = self.context_manager.get_context_stats()
+            type_summary = self.context_manager.get_context_type_summary()
             
-            # 제목 정규화 (공백, 특수문자 제거)
-            def normalize_text(text: str) -> str:
-                if not text:
-                    return ""
-                return re.sub(r'[^\w\s]', '', text.lower()).strip()
+            context_summary = {
+                "objective_summary": summary_result.get("summary", ""),
+                "bullet_points": bullet_points,
+                "context_stats": context_stats,
+                "type_summary": type_summary,
+                "determined_type": type_summary.get("determined_type", "general"),
+                "generation_timestamp": time.time()
+            }
             
-            normalized_title = normalize_text(title)
-            normalized_context = normalize_text(context)
+            logger.info(f"Context summary generated successfully")
+            logger.info(f"Determined context type: {context_summary['determined_type']}")
+            logger.info(f"Summary length: {len(context_summary['objective_summary'])} chars")
+            logger.info(f"Bullet points: {len(bullet_points)} items")
             
-            logger.info(f"[CACHE_MATCH_DEBUG] Normalized title: '{normalized_title}'")
-            logger.info(f"[CACHE_MATCH_DEBUG] Normalized context length: {len(normalized_context)}")
-            
-            # 각 토픽과 비교
-            for topic_id, topic_data in cache_data['topics'].items():
-                cache_title = topic_data.get('title', '')
-                cache_context = ""
-                
-                # 컨텍스트 추출 (original_data.context.content 또는 다른 경로)
-                if 'original_data' in topic_data and 'context' in topic_data['original_data']:
-                    context_data = topic_data['original_data']['context']
-                    if isinstance(context_data, dict):
-                        cache_context = context_data.get('content', '')
-                    else:
-                        cache_context = str(context_data)
-                
-                normalized_cache_title = normalize_text(cache_title)
-                normalized_cache_context = normalize_text(cache_context)
-                
-                # 제목 일치 확인
-                title_match = normalized_title == normalized_cache_title
-                
-                if title_match:
-                    logger.info(f"[CACHE_MATCH_DEBUG] ✅ Title match found! Topic ID: {topic_id}")
-                    logger.info(f"[CACHE_MATCH_DEBUG] Cache title: '{cache_title}'")
-                    
-                    # 컨텍스트 일치 확인 (둘 다 비어있거나 일치하는 경우)
-                    context_match = (
-                        (not normalized_context and not normalized_cache_context) or
-                        (normalized_context and normalized_cache_context and 
-                         normalized_context in normalized_cache_context or 
-                         normalized_cache_context in normalized_context)
-                    )
-                    
-                    logger.info(f"[CACHE_MATCH_DEBUG] Context match: {context_match}")
-                    
-                    if context_match:
-                        logger.info(f"[CACHE_MATCH_DEBUG] 🎉 Complete match found: {topic_id}")
-                        return topic_data
-                    else:
-                        logger.info(f"[CACHE_MATCH_DEBUG] ❌ Context mismatch for topic {topic_id}")
-                        logger.info(f"[CACHE_MATCH_DEBUG] Input context preview: '{normalized_context[:100]}...'")
-                        logger.info(f"[CACHE_MATCH_DEBUG] Cache context preview: '{normalized_cache_context[:100]}...'")
-            
-            logger.info("[CACHE_MATCH_DEBUG] No matching cache entry found after checking all topics")
-            return None
+            return context_summary
             
         except Exception as e:
-            logger.error(f"[CACHE_MATCH_DEBUG] Error finding matching cache entry: {str(e)}")
-            return None
+            logger.error(f"Error generating context summary: {str(e)}")
+            return {
+                "objective_summary": "",
+                "bullet_points": [],
+                "context_stats": {},
+                "type_summary": {},
+                "determined_type": "general", 
+                "error": str(e),
+                "generation_timestamp": time.time()
+            }
     
-    def _apply_cached_data(self, cached_entry: Dict[str, Any]) -> bool:
-        """캐시된 데이터를 인스턴스 속성에 적용합니다."""
-        try:
-            generated_data = cached_entry.get('generated_data', {})
-            
-            # 찬반 입장 진술문 적용
-            stance_statements = generated_data.get('stance_statements', {})
-            if stance_statements:
-                self.stance_statements = {
-                    'pro': stance_statements.get('pro', ''),
-                    'con': stance_statements.get('con', '')
-                }
-                logger.info("Applied cached stance statements")
-            
-            # 컨텍스트 요약 적용
-            context_summary = generated_data.get('context_summary', {})
-            if context_summary:
-                self.context_summary = {
-                    'objective_summary': context_summary.get('summary', ''),  # ModeratorAgent가 기대하는 키로 변경
-                    'bullet_points': context_summary.get('key_points', []),   # ModeratorAgent가 기대하는 키로 변경
-                    'summary': context_summary.get('summary', ''),            # 호환성을 위해 유지
-                    'key_points': context_summary.get('key_points', []),      # 호환성을 위해 유지
-                    'relevant_quotes': context_summary.get('relevant_quotes', [])
-                }
-                logger.info("Applied cached context summary")
-            
-            # 모더레이터 오프닝 메시지 적용 (있는 경우)
-            opening_message = generated_data.get('opening_message', '')
-            if opening_message:
-                self.cached_opening_message = opening_message
-                logger.info("Applied cached opening message")
-            
-            self.use_cache = True
-            self.cached_data = cached_entry
-            
-            logger.info("Successfully applied cached data")
-            return True
-            
-        except Exception as e:
-            logger.error(f"Error applying cached data: {str(e)}")
-            return False
+    # ========================================================================
+    # CONTEXT SUMMARY ACCESS METHODS
+    # ========================================================================
+    
+    def get_context_summary(self) -> Dict[str, Any]:
+        """컨텍스트 요약 정보 반환"""
+        return self.context_summary if hasattr(self, 'context_summary') else {}
+    
+    def get_objective_summary(self) -> str:
+        """객관적 요약 텍스트 반환"""
+        return self.context_summary.get("objective_summary", "") if hasattr(self, 'context_summary') else ""
+    
+    def get_context_bullet_points(self) -> List[str]:
+        """컨텍스트 핵심 포인트 반환"""
+        return self.context_summary.get("bullet_points", []) if hasattr(self, 'context_summary') else []
+    
+    def get_determined_context_type(self) -> str:
+        """자동 판별된 컨텍스트 타입 반환"""
+        return self.context_summary.get("determined_type", "general") if hasattr(self, 'context_summary') else "general"
+    
+    def has_context_summary(self) -> bool:
+        """컨텍스트 요약이 사용 가능한지 확인"""
+        return (hasattr(self, 'context_summary') and 
+                self.context_summary and 
+                self.context_summary.get("objective_summary", "").strip())
+    
+    def refresh_context_summary(self) -> Dict[str, Any]:
+        """컨텍스트 요약 새로고침"""
+        if self.context_manager:
+            self.context_summary = self._generate_context_summary()
+            logger.info("Context summary refreshed")
+        return self.get_context_summary()
+    
+    def get_context_for_prompt(self, include_summary: bool = True, include_bullets: bool = True) -> str:
+        """프롬프트에 포함할 컨텍스트 정보 생성"""
+        if not self.has_context_summary():
+            return ""
+        
+        context_parts = []
+        
+        if include_summary:
+            summary = self.get_objective_summary()
+            if summary:
+                context_parts.append(f"=== 컨텍스트 요약 ===\n{summary}")
+        
+        if include_bullets:
+            bullets = self.get_context_bullet_points()
+            if bullets:
+                bullet_text = "\n".join(bullets)
+                context_parts.append(f"=== 핵심 포인트 ===\n{bullet_text}")
+        
+        return "\n\n".join(context_parts)

@@ -71,8 +71,7 @@ class OpenAIDebateService:
                                 "type": "object", 
                                 "properties": {
                                     "summary": {"type": "string", "description": "Main content summary"},
-                                    "key_points": {"type": "array", "items": {"type": "string"}},
-                                    "relevant_quotes": {"type": "array", "items": {"type": "string"}}
+                                    "key_points": {"type": "array", "items": {"type": "string"}}
                                 }
                             },
                             "opening_message": {
@@ -135,7 +134,6 @@ Your task is to create a COMPLETE debate package including:
 1. Balanced pro/con stance statements for the topic
 2. Context summary (if context provided)  
 3. Complete opening message that introduces the debate professionally
-4. Brief philosopher profiles for participants
 
 Requirements:
 - Generate balanced, fair stance statements
