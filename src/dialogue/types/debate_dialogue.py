@@ -1170,7 +1170,7 @@ Important:
             stance_response = llm_manager.generate_response(
                 system_prompt=system_prompt,
                 user_prompt=user_prompt,
-                llm_model="gpt-4",
+                llm_model="gpt-4o",
                 max_tokens=1000
             )
             

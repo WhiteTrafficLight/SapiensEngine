@@ -75,6 +75,7 @@ def get_portrait_filename(philosopher_name: str) -> str:
         'Simone de Beauvoir': 'Beauvoir',
         'Jean-Jacques Rousseau': 'Rousseau',
         'Confucius': 'Confucius',
+        'Confucius (Kong Fuzi)': 'Confucius',
         'Laozi': 'Laozi',
         'Buddha': 'Buddha',
         'Ludwig Wittgenstein': 'Wittgenstein'
@@ -84,12 +85,15 @@ def get_portrait_filename(philosopher_name: str) -> str:
     if philosopher_name in special_cases:
         return special_cases[philosopher_name]
     
+    # 괄호가 있는 경우 괄호 앞 부분만 사용
+    name = philosopher_name.split('(')[0].strip()
+    
     # 일반적인 경우: 마지막 단어(Last name) 사용
-    parts = philosopher_name.strip().split()
+    parts = name.strip().split()
     if parts:
         return parts[-1]  # 마지막 단어
     
-    return philosopher_name
+    return name
 
 # ========================================================================
 # API ENDPOINTS

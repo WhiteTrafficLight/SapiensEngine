@@ -53,6 +53,20 @@ experiments/rag/experiment_results/
 **/.cache/
 results/
 
+# Core Business Logic (Private)
+src/agents/configs/philosopher_configs.json
+src/agents/configs/strategy_weights.json
+src/rag/advanced_prompts/
+src/rag/cost_optimization/
+src/utils/proprietary_algorithms/
+philosophers/strategy_rag_weights.yaml
+src/agents/participant/advanced_strategies.py
+
+# Sensitive Data
+rag_data/
+vector_stores/
+training_data/
+
 # Next.js
 /.next/
 /out/
