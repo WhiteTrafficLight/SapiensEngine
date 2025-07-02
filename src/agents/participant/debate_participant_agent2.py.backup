@@ -54,10 +54,6 @@ class DebateParticipantAgent(Agent):
         self.llm_manager = None
         self.web_crawling = config.get("web_crawling", None)
         
-        # 토론 관련 정보 저장
-        self.topic = config.get("topic", "")
-        self.context_summary = config.get("context_summary", {})
-        
         # 토론 역할 설정
         self.role = config.get("role", "neutral")  # "pro", "con", "neutral"
         
@@ -1515,142 +1511,38 @@ Your response:"""
             return name_mapping.get(agent_id.lower(), agent_id.capitalize())
     
     def prepare_argument_with_rag(self, topic: str, stance_statement: str, context: Dict[str, Any] = None) -> None:
-        """OpenAI 웹서치를 활용한 간단한 논증 준비 - debate_argument_generator 방식 적용"""
-        print(f"📝 [{self.philosopher_name}] OpenAI 웹서치 기반 입론 준비 시작")
+        """RAG를 활용한 논증 준비 - 최적화된 방식 (LLM 호출 50% 절약)"""
+        print(f"📝 [{self.philosopher_name}] 최적화된 RAG 논증 준비 시작")
         
-        start_time = time.time()
+        # ===== 기존 방식 (주석 처리) =====
+        # 1. 핵심 논증 생성 - 모듈 사용
+        # core_arguments = self.argument_generator.generate_core_arguments(topic, stance_statement)
         
-        # 토론 주제 결정 (파라미터가 없으면 저장된 topic 사용)
-        final_topic = topic if topic else self.topic
+        # 2. RAG 쿼리 생성 및 강화 - 모듈 사용
+        # enhanced_arguments = self.rag_argument_enhancer.strengthen_arguments_with_rag(core_arguments)
         
-        try:
-            # context에서 정보 추출 (없으면 저장된 정보 사용)
-            context_summary = ""
-            key_points = []
-            
-            if context:
-                context_summary = context.get('context_summary', '')
-                key_points = context.get('key_points', [])
-            else:
-                # 저장된 context_summary 사용
-                if isinstance(self.context_summary, dict):
-                    context_summary = self.context_summary.get('summary', '')
-                    key_points = self.context_summary.get('key_points', [])
-                elif isinstance(self.context_summary, str):
-                    context_summary = self.context_summary
-            
-            # 프롬프트 생성 (debate_argument_generator 방식)
-            prompt = self._create_simple_argument_prompt(final_topic, stance_statement, context_summary, key_points)
-            
-            # OpenAI 웹서치 호출
-            response = self.llm_manager.client.responses.create(
-                model="gpt-4o", 
-                tools=[{ 
-                    "type": "web_search_preview",
-                    "search_context_size": "medium"
-                }],
-                input=prompt
-            )
-            
-            # 응답 처리 - annotations에서 직접 인용 정보 추출
-            generated_argument = ""
-            citations = []
-            
-            if hasattr(response, 'output_text'):
-                generated_argument = response.output_text
-            
-            # OpenAI 응답의 output에서 annotations 추출
-            if hasattr(response, 'output') and response.output:
-                for output_item in response.output:
-                    if hasattr(output_item, 'content') and output_item.content:
-                        for content_item in output_item.content:
-                            if hasattr(content_item, 'annotations') and content_item.annotations:
-                                for annotation in content_item.annotations:
-                                    if (hasattr(annotation, 'type') and 
-                                        annotation.type == 'url_citation' and
-                                        hasattr(annotation, 'title') and 
-                                        hasattr(annotation, 'url')):
-                                        citations.append({
-                                            "text": annotation.title,
-                                            "url": annotation.url,
-                                            "type": "web_citation"
-                                        })
-            
-            # 결과 저장
-            self.prepared_argument = generated_argument
-            self.argument_prepared = True
-            self.argument_cache_valid = True
-            
-            # RAG 정보 업데이트 (인용 정보 포함)
-            self.rag_info = {
-                "rag_used": True,
-                "rag_source_count": len(citations),
-                "rag_sources": ["openai_web_search"],
-                "citations": citations  # 인용 링크 정보 추가
-            }
-            
-            end_time = time.time()
-            generation_time = end_time - start_time
-            
-            print(f"📝 [{self.philosopher_name}] 입론 준비 완료 ({generation_time:.2f}초)")
-            print(f"   📄 생성된 입론 길이: {len(generated_argument)} 문자")
-            print(f"   🔗 추출된 인용 개수: {len(citations)}")
-            
-        except Exception as e:
-            logger.error(f"[{self.agent_id}] 입론 준비 실패: {str(e)}")
-            self.prepared_argument = f"죄송합니다. 기술적 문제로 입론을 준비하지 못했습니다."
-            self.argument_prepared = False
-            self.argument_cache_valid = False
-    
-    def _create_simple_argument_prompt(self, topic: str, stance_statement: str, context_summary: str = "", key_points: List[str] = None) -> str:
-        """간단한 입론 프롬프트 생성 - debate_argument_generator 방식"""
-        if key_points is None:
-            key_points = []
+        # ===== 새로운 최적화 방식 =====
+        # 1. 핵심 논증과 RAG 쿼리를 한 번에 생성 (LLM 호출 1번 절약)
+        core_arguments_with_queries = self.argument_generator.generate_arguments_with_queries(topic, stance_statement)
         
-        # 입장 영어 변환
-        stance_position = "supporting" if self.role == "pro" else "opposing"
+        # 2. RAG 검색으로 논증 강화 (쿼리 생성 단계 스킵)
+        enhanced_arguments = self.rag_argument_enhancer.strengthen_arguments_with_rag(core_arguments_with_queries)
         
-        prompt = f"""You are {self.philosopher_name} participating in a philosophical debate.
-
-**Debate Topic**: {topic}
-
-**Context**: 
-{context_summary if context_summary else 'This is a philosophical debate on the given topic.'}
-
-**Key Issues**:
-{chr(10).join([f"• {point}" for point in key_points]) if key_points else "• Various philosophical and practical considerations"}
-
-**Your Position**: You are {stance_position} the topic. {stance_statement}
-
-**Your Philosophical Identity**:
-• Essence: {self.philosopher_essence}
-• Debate Style: {self.philosopher_debate_style}
-• Personality: {self.philosopher_personality}
-• Key Traits: {', '.join(self.philosopher_key_traits) if self.philosopher_key_traits else 'Thoughtful reasoning'}
-• Signature Quote: "{self.philosopher_quote}"
-
-**Task**:
-Deliver a compelling and authentic opening statement for this debate that truly sounds like YOU speaking. Your argument should flow naturally and embody your unique philosophical voice, reasoning style, and personality.
-
-Your opening statement should include (but not be formatted as structured sections):
-- A clear core argument that reflects your philosophical perspective
-- Two major lines of reasoning that support your position
-- A powerful conclusion that reinforces your stance
-
-**Critical Requirements**:
-1. **Authentic Voice**: Write as if you are actually speaking these words in your characteristic style. Use language, tone, and rhetorical patterns that match your philosophical persona.
-
-2. **Web Research Integration**: Use web search to find recent studies, statistics, expert opinions, contemporary examples, or current events that strengthen your arguments. Weave these seamlessly into your natural speaking style.
-
-3. **Philosophical Consistency**: Ensure your reasoning aligns with your philosophical framework and methodology.
-
-4. **Natural Flow**: Avoid rigid formatting. Make it sound like a real debate opening - passionate, persuasive, and authentically yours.
-
-5. **Language**: Write your ENTIRE response in the SAME LANGUAGE as the debate topic. If the topic is in Korean, respond in Korean. If in English, respond in English.
-
-Remember: This should sound like {self.philosopher_name} actually delivering an opening statement, not a formal academic paper. Let your philosophical personality shine through every sentence."""
-
-        return prompt
+        # 3. 최종 논증 생성 - 모듈 사용
+        final_argument = self.argument_generator.generate_final_opening_argument(
+            topic, stance_statement, enhanced_arguments
+        )
+        
+        # 4. 캐시에 저장
+        self.argument_cache_manager.cache_prepared_argument(final_argument, topic, stance_statement, context)
+        
+        print(f"📝 [{self.philosopher_name}] 최적화된 RAG 논증 준비 완료 (LLM 호출 1회 절약)")
+        
+        # 성능 통계 로깅
+        total_queries = sum(len(arg.get("rag_queries", [])) for arg in enhanced_arguments)
+        strengthened_count = sum(1 for arg in enhanced_arguments if arg.get("strengthened", False))
+        print(f"   📊 생성된 쿼리: {total_queries}개")
+        print(f"   💪 강화된 논증: {strengthened_count}/{len(enhanced_arguments)}개")
     
     def _generate_core_arguments(self, topic: str, stance_statement: str) -> None:
         """핵심 논증 생성 - 모듈로 위임"""
@@ -2032,36 +1924,10 @@ Remember: This should sound like {self.philosopher_name} actually delivering an 
         )
 
     def get_prepared_argument_or_generate(self, topic: str, stance_statement: str, context: Dict[str, Any] = None) -> tuple[str, Dict[str, Any]]:
-        """새로운 OpenAI 웹서치 방식으로 입론 생성"""
-        print(f"🚀 [{self.philosopher_name}] 새로운 OpenAI 웹서치 방식으로 입론 생성")
-        
-        try:
-            # 새로운 방식으로 입론 생성
-            self.prepare_argument_with_rag(topic, stance_statement, context)
-            
-            # 생성된 입론과 RAG 정보 반환
-            if self.argument_prepared and self.prepared_argument:
-                message = self.prepared_argument
-                rag_info = getattr(self, 'rag_info', {
-                    "rag_used": False,
-                    "rag_source_count": 0,
-                    "rag_sources": []
-                })
-                
-                print(f"✅ [{self.philosopher_name}] 새로운 방식 입론 생성 성공")
-                print(f"   📊 RAG 사용: {rag_info.get('rag_used', False)}")
-                print(f"   🔗 인용 개수: {len(rag_info.get('citations', []))}")
-                
-                return message, rag_info
-            else:
-                # 실패 시 기본 메시지
-                print(f"❌ [{self.philosopher_name}] 새로운 방식 입론 생성 실패")
-                return f"죄송합니다. 입론 준비 중 문제가 발생했습니다.", {}
-                
-        except Exception as e:
-            logger.error(f"[{self.agent_id}] 새로운 방식 입론 생성 실패: {str(e)}")
-            print(f"❌ [{self.philosopher_name}] 입론 생성 오류: {str(e)}")
-            return f"기술적 문제로 입론을 준비하지 못했습니다.", {}
+        """준비된 논증 가져오기 또는 생성 - 모듈로 위임"""
+        return self.argument_cache_manager.get_prepared_argument_or_generate(
+            topic, stance_statement, context, self.argument_generator, self.rag_argument_enhancer
+        )
     
     def invalidate_argument_cache(self):
         """논증 캐시 무효화 - 모듈로 위임"""
@@ -2157,7 +2023,7 @@ Remember: This should sound like {self.philosopher_name} actually delivering an 
     
     def _prepare_argument(self, input_data: Dict[str, Any]) -> Dict[str, Any]:
         """
-        입론 준비 처리 - 새로운 OpenAI 웹서치 방식 사용
+        입론 준비 처리
         
         Args:
             input_data: 입론 준비에 필요한 데이터
@@ -2169,42 +2035,19 @@ Remember: This should sound like {self.philosopher_name} actually delivering an 
         stance_statement = input_data.get("stance_statement", "")
         context = input_data.get("context", {})
         
-        print(f"🔧 [{self.philosopher_name}] _prepare_argument 호출 - 새로운 방식 사용")
+        self.prepare_argument_with_rag(topic, stance_statement, context)
         
-        try:
-            # 새로운 방식으로 입론 생성
-            self.prepare_argument_with_rag(topic, stance_statement, context)
-            
-            # RAG 정보 가져오기
-            rag_info = getattr(self, 'rag_info', {
-                "rag_used": False,
-                "rag_source_count": 0,
-                "rag_sources": []
-            })
-            
-            return {
-                "status": "success" if self.argument_prepared else "failed",
-                "message": self.prepared_argument if self.prepared_argument else "입론 생성에 실패했습니다.",
-                "prepared": self.argument_prepared,
-                # 새로운 방식의 RAG 정보
-                "rag_used": rag_info.get("rag_used", False),
-                "rag_source_count": rag_info.get("rag_source_count", 0),
-                "rag_sources": rag_info.get("rag_sources", []),
-                "citations": rag_info.get("citations", []),
-                "generation_method": "openai_web_search_direct"
-            }
-            
-        except Exception as e:
-            logger.error(f"[{self.agent_id}] _prepare_argument 실패: {str(e)}")
-            return {
-                "status": "failed",
-                "message": "기술적 문제로 입론 생성에 실패했습니다.",
-                "prepared": False,
-                "rag_used": False,
-                "rag_source_count": 0,
-                "rag_sources": [],
-                "error": str(e)
-            }
+        return {
+            "status": "success" if self.argument_prepared else "failed",
+            "message": self.prepared_argument if self.prepared_argument else "입론 생성에 실패했습니다.",
+            "prepared": self.argument_prepared,
+            "core_arguments_count": len(self.core_arguments),
+            "queries_count": len(self.argument_queries),
+            # RAG 정보 추가
+            "rag_used": self.rag_info.get("rag_used", False),
+            "rag_source_count": self.rag_info.get("rag_source_count", 0),
+            "rag_sources": self.rag_info.get("rag_sources", [])
+        }
     
     def _generate_attack_rag_query_for_strategy(self, target_argument: Dict[str, Any], strategy_type: str) -> str:
         """공격 RAG 쿼리 생성 - 모듈로 위임"""

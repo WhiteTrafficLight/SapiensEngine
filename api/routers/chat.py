@@ -293,7 +293,8 @@ async def generate_message_async(room_id: str, dialogue, speaker_id: str, speake
                         rag_info = {
                             "rag_used": last_message.get("rag_used", False),
                             "rag_source_count": last_message.get("rag_source_count", 0),
-                            "rag_sources": last_message.get("rag_sources", [])
+                            "rag_sources": last_message.get("rag_sources", []),
+                            "citations": last_message.get("citations", [])
                         }
                         if rag_info["rag_used"]:
                             logger.info(f"🔍 RAG was used: {rag_info['rag_source_count']} sources")
@@ -400,7 +401,8 @@ async def process_user_message(room_id: str, request: dict):
                     "event_type": "user_message",
                     "rag_used": False,  # 사용자 메시지는 RAG 사용 안함
                     "rag_source_count": 0,
-                    "rag_sources": []
+                    "rag_sources": [],
+                    "citations": []
                 }
             }
             

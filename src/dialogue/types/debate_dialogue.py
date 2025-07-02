@@ -1166,6 +1166,8 @@ class DebateDialogue:
                         role=ParticipantRole.PRO,
                         config={
                             "stance_statements": self.stance_statements,
+                            "context_summary": getattr(self, 'context_summary', {}),  # 컨텍스트 요약 추가
+                            "topic": self.room_data.get('title', ''),  # 토론 주제 추가
                             "personality": participant.get("personality", "balanced"),
                             "style": participant.get("style", "formal"),
                             "argumentation_style": participant.get("argumentation_style", "logical")
@@ -1221,6 +1223,8 @@ class DebateDialogue:
                         role=ParticipantRole.CON,
                         config={
                             "stance_statements": self.stance_statements,
+                            "context_summary": getattr(self, 'context_summary', {}),  # 컨텍스트 요약 추가
+                            "topic": self.room_data.get('title', ''),  # 토론 주제 추가
                             "personality": participant.get("personality", "balanced"),
                             "style": participant.get("style", "formal"),
                             "argumentation_style": participant.get("argumentation_style", "logical")
@@ -1258,8 +1262,18 @@ class DebateDialogue:
                 "stance_statements": self.stance_statements,
                 "context_summary": getattr(self, 'context_summary', {})  # 캐시된 컨텍스트 요약 추가
             })
-            pro_fallback = DebateParticipantAgent("pro_agent", "Pro Participant", {"role": ParticipantRole.PRO, "stance_statements": self.stance_statements})
-            con_fallback = DebateParticipantAgent("con_agent", "Con Participant", {"role": ParticipantRole.CON, "stance_statements": self.stance_statements})
+            pro_fallback = DebateParticipantAgent("pro_agent", "Pro Participant", {
+                "role": ParticipantRole.PRO, 
+                "stance_statements": self.stance_statements,
+                "context_summary": getattr(self, 'context_summary', {}),  # 컨텍스트 요약 추가
+                "topic": self.room_data.get('title', '')  # 토론 주제 추가
+            })
+            con_fallback = DebateParticipantAgent("con_agent", "Con Participant", {
+                "role": ParticipantRole.CON, 
+                "stance_statements": self.stance_statements,
+                "context_summary": getattr(self, 'context_summary', {}),  # 컨텍스트 요약 추가
+                "topic": self.room_data.get('title', '')  # 토론 주제 추가
+            })
             
             # ✅ fallback 에이전트들에도 LLM Manager 설정
             moderator_fallback.set_llm_manager(self.llm_manager)
@@ -1625,7 +1639,8 @@ Important: Be objective and neutral. Don't take sides in the debate.
                     rag_info = {
                         "rag_used": result.get("rag_used", False),
                         "rag_source_count": result.get("rag_source_count", 0),
-                        "rag_sources": result.get("rag_sources", [])
+                        "rag_sources": result.get("rag_sources", []),
+                        "citations": result.get("citations", [])
                     }
             
             # 대화 상태 업데이트
@@ -2918,7 +2933,8 @@ Important: Be objective and neutral. Don't take sides in the debate.
                 rag_info = {
                     "rag_used": result.get("rag_used", False),
                     "rag_source_count": result.get("rag_source_count", 0),
-                    "rag_sources": result.get("rag_sources", [])
+                    "rag_sources": result.get("rag_sources", []),
+                    "citations": result.get("citations", [])
                 }
                 return message, rag_info
             else:

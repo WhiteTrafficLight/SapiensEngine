@@ -1,0 +1,76 @@
+2025-07-01 17:01:31,686 - google_serial_search - INFO - Google Serial Searcher 초기화 완료
+2025-07-01 17:01:31,686 - performance_comparison - INFO - ✅ Google Serial Searcher 준비 완료
+2025-07-01 17:01:31,751 - openai_parallel_search - INFO - OpenAI Parallel Searcher 초기화 완료 (모델: gpt-4o)
+2025-07-01 17:01:31,751 - performance_comparison - INFO - ✅ OpenAI Parallel Searcher 준비 완료
+2025-07-01 17:01:31,751 - performance_comparison - INFO - 🧬 AI 인간 진화 주제 웹서치 성능 비교 실험 시작
+2025-07-01 17:01:31,751 - performance_comparison - INFO - 📋 테스트 쿼리 3개:
+2025-07-01 17:01:31,752 - performance_comparison - INFO -    1. AI artificial intelligence human evolution next step technological enhancement
+2025-07-01 17:01:31,752 - performance_comparison - INFO -    2. machine learning augmented human capabilities cognitive enhancement future evolution
+2025-07-01 17:01:31,752 - performance_comparison - INFO -    3. artificial intelligence symbiosis human development evolutionary leap biological technology
+2025-07-01 17:01:31,752 - performance_comparison - INFO - 🔬 웹서치 성능 비교 시작 (3개 쿼리)
+2025-07-01 17:01:31,752 - performance_comparison - INFO - 🔍 Google API 직렬 검색 실행 중...
+2025-07-01 17:01:31,752 - google_serial_search - INFO - 🎯 Google API 직렬 검색 시작: 3개 쿼리
+2025-07-01 17:01:31,752 - google_serial_search - INFO -   [1/3] 검색 중: 'AI artificial intelligence human evolution next step technological enhancement'
+2025-07-01 17:01:31,752 - google_serial_search - INFO - 🔍 Google API 검색 시작: 'AI artificial intelligence human evolution next step technological enhancement'
+2025-07-01 17:01:32,622 - google_serial_search - INFO - ✅ Google API 검색 완료: 5개 결과 (0.87초)
+2025-07-01 17:01:32,728 - google_serial_search - INFO -   [2/3] 검색 중: 'machine learning augmented human capabilities cognitive enhancement future evolution'
+2025-07-01 17:01:32,728 - google_serial_search - INFO - 🔍 Google API 검색 시작: 'machine learning augmented human capabilities cognitive enhancement future evolution'
+2025-07-01 17:01:33,390 - google_serial_search - INFO - ✅ Google API 검색 완료: 5개 결과 (0.66초)
+2025-07-01 17:01:33,495 - google_serial_search - INFO -   [3/3] 검색 중: 'artificial intelligence symbiosis human development evolutionary leap biological technology'
+2025-07-01 17:01:33,495 - google_serial_search - INFO - 🔍 Google API 검색 시작: 'artificial intelligence symbiosis human development evolutionary leap biological technology'
+2025-07-01 17:01:34,127 - google_serial_search - INFO - ✅ Google API 검색 완료: 5개 결과 (0.63초)
+2025-07-01 17:01:34,128 - google_serial_search - INFO - 🏁 Google API 직렬 검색 완료:
+2025-07-01 17:01:34,128 - google_serial_search - INFO -    📊 총 3개 쿼리, 15개 결과
+2025-07-01 17:01:34,128 - google_serial_search - INFO -    ⏱️  총 소요시간: 2.38초
+2025-07-01 17:01:34,128 - google_serial_search - INFO -    📈 쿼리당 평균: 0.79초
+2025-07-01 17:01:34,128 - performance_comparison - INFO - ✅ Google 직렬 검색 완료:
+2025-07-01 17:01:34,128 - performance_comparison - INFO -    ⏱️  소요시간: 2.38초
+2025-07-01 17:01:34,128 - performance_comparison - INFO -    📊 총 결과: 15개
+2025-07-01 17:01:34,128 - performance_comparison - INFO - 🚀 OpenAI 병렬 검색 실행 중...
+2025-07-01 17:01:34,128 - openai_parallel_search - INFO - 🔥 OpenAI 병렬 웹서치 시작: 3개 쿼리
+2025-07-01 17:01:34,128 - openai_parallel_search - INFO -   [1/3] 태스크 생성: 'AI artificial intelligence human evolution next step technological enhancement'
+2025-07-01 17:01:34,128 - openai_parallel_search - INFO -   [2/3] 태스크 생성: 'machine learning augmented human capabilities cognitive enhancement future evolution'
+2025-07-01 17:01:34,128 - openai_parallel_search - INFO -   [3/3] 태스크 생성: 'artificial intelligence symbiosis human development evolutionary leap biological technology'
+2025-07-01 17:01:34,128 - openai_parallel_search - INFO - ⚡ 3개 검색 태스크 병렬 실행 중...
+2025-07-01 17:01:34,128 - openai_parallel_search - INFO - 🚀 OpenAI 웹서치 시작: 'AI artificial intelligence human evolution next step technological enhancement'
+2025-07-01 17:01:34,259 - openai_parallel_search - INFO - 🚀 OpenAI 웹서치 시작: 'machine learning augmented human capabilities cognitive enhancement future evolution'
+2025-07-01 17:01:34,259 - openai_parallel_search - INFO - 🚀 OpenAI 웹서치 시작: 'artificial intelligence symbiosis human development evolutionary leap biological technology'
+2025-07-01 17:01:45,029 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-07-01 17:01:45,062 - openai_parallel_search - INFO - ✅ OpenAI 웹서치 완료: 8개 결과 (10.93초)
+2025-07-01 17:01:47,641 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-07-01 17:01:47,642 - openai_parallel_search - INFO - ✅ OpenAI 웹서치 완료: 11개 결과 (13.38초)
+2025-07-01 17:01:48,013 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2025-07-01 17:01:48,016 - openai_parallel_search - INFO - ✅ OpenAI 웹서치 완료: 6개 결과 (13.76초)
+2025-07-01 17:01:48,016 - openai_parallel_search - INFO - 🏁 OpenAI 병렬 웹서치 완료:
+2025-07-01 17:01:48,016 - openai_parallel_search - INFO -    📊 총 3개 쿼리, 25개 결과
+2025-07-01 17:01:48,016 - openai_parallel_search - INFO -    ⏱️  총 소요시간: 13.89초
+2025-07-01 17:01:48,016 - openai_parallel_search - INFO -    📈 쿼리당 평균: 4.63초
+2025-07-01 17:01:48,016 - openai_parallel_search - INFO -    🚀 병렬 효율성: 2.74
+2025-07-01 17:01:48,017 - performance_comparison - INFO - ✅ OpenAI 병렬 검색 완료:
+2025-07-01 17:01:48,017 - performance_comparison - INFO -    ⏱️  소요시간: 13.89초
+2025-07-01 17:01:48,017 - performance_comparison - INFO -    📊 총 결과: 25개
+2025-07-01 17:01:48,017 - performance_comparison - INFO -    🚀 병렬 효율성: 2.74
+2025-07-01 17:01:48,018 - performance_comparison - INFO - 
+======================================================================
+2025-07-01 17:01:48,018 - performance_comparison - INFO - 🏆 웹서치 성능 비교 결과 요약
+2025-07-01 17:01:48,018 - performance_comparison - INFO - ======================================================================
+2025-07-01 17:01:48,018 - performance_comparison - INFO - 📊 시간 성능:
+2025-07-01 17:01:48,018 - performance_comparison - INFO -    🔍 Google 직렬:    2.38초
+2025-07-01 17:01:48,018 - performance_comparison - INFO -    🚀 OpenAI 병렬:    13.89초
+2025-07-01 17:01:48,018 - performance_comparison - INFO -    ⚡ 시간 차이:      -11.51초
+2025-07-01 17:01:48,018 - performance_comparison - INFO -    📈 속도 비율:      0.17배
+2025-07-01 17:01:48,018 - performance_comparison - INFO - 
+📋 결과 수:
+2025-07-01 17:01:48,018 - performance_comparison - INFO -    🔍 Google 결과:    15개
+2025-07-01 17:01:48,018 - performance_comparison - INFO -    🚀 OpenAI 결과:    25개
+2025-07-01 17:01:48,018 - performance_comparison - INFO - 
+⚡ 효율성:
+2025-07-01 17:01:48,018 - performance_comparison - INFO -    🔍 Google 효율:    6.31 결과/초
+2025-07-01 17:01:48,018 - performance_comparison - INFO -    🚀 OpenAI 효율:    1.80 결과/초
+2025-07-01 17:01:48,019 - performance_comparison - INFO -    🎯 병렬 효율성:    2.74
+2025-07-01 17:01:48,019 - performance_comparison - INFO - 
+🏆 승자: Google Serial
+2025-07-01 17:01:48,019 - performance_comparison - INFO - 📈 성능 향상: 82.9%
+2025-07-01 17:01:48,019 - performance_comparison - INFO - ======================================================================
+
+2025-07-01 17:01:48,024 - performance_comparison - INFO - 📄 결과가 websearch_comparison_20250701_170148.json에 저장되었습니다.
