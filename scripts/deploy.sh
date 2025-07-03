@@ -10,8 +10,8 @@ YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
 # Configuration
-DOMAIN=${DOMAIN:-"your-domain.com"}
-EMAIL=${EMAIL:-"your-email@domain.com"}
+DOMAIN=${DOMAIN:-"agoramind.net"}
+EMAIL=${EMAIL:-"jhyu7703@gmail.com"}
 APP_DIR="/opt/sapiens-engine"
 BACKUP_DIR="/opt/backups"
 
@@ -63,7 +63,7 @@ cd $APP_DIR
 # 3. Clone Repository (if not exists)
 if [ ! -d ".git" ]; then
     print_status "Cloning repository..."
-    git clone https://github.com/yourusername/sapiens_engine.git .
+    git clone https://github.com/WhiteTrafficLight/SapiensEngine.git .
 else
     print_status "Pulling latest changes..."
     git pull origin main

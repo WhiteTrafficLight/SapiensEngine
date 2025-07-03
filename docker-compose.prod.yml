@@ -24,7 +24,7 @@ services:
     volumes:
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
-    command: certonly --webroot -w /var/www/certbot --force-renewal --email your-email@domain.com -d your-domain.com --agree-tos
+    command: certonly --webroot -w /var/www/certbot --force-renewal --email jhyu7703@gmail.com -d agoramind.net -d www.agoramind.net --agree-tos
     networks:
       - sapiens-network
 
