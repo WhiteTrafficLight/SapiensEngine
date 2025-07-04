@@ -111,6 +111,13 @@ deprecated/
 old/
 backup/
 
+# Large directories not needed for backend
+rag_data/
+vectordb/
+portraits/
+AgoraMind/
+philosophers/
+
 # Conda environment files
 environment.yml
 conda-env.yml
