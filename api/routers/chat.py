@@ -42,8 +42,8 @@ class CreateDebateRoomRequest(BaseModel):
 # Socket.IO 클라이언트 인스턴스
 sio = socketio.AsyncClient()
 
-# Next.js 서버 URL
-NEXTJS_SERVER_URL = "http://localhost:3000"
+# Next.js 서버 URL (환경변수에서 읽기)
+NEXTJS_SERVER_URL = os.getenv('NEXTJS_SERVER_URL', 'http://localhost:3000')
 
 @sio.event
 async def connect():
