@@ -2,7 +2,7 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main, develop, backend-deploy-clean ]
   pull_request:
     branches: [ main ]
 
@@ -52,7 +52,7 @@ jobs:
   build:
     needs: test
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/backend-deploy-clean'
     
     outputs:
       image-digest: ${{ steps.build.outputs.digest }}
@@ -81,6 +81,7 @@ jobs:
           type=ref,event=pr
           type=sha,prefix={{branch}}-
           type=raw,value=latest,enable={{is_default_branch}}
+          type=raw,value=backend-latest,enable=${{ github.ref == 'refs/heads/backend-deploy-clean' }}
 
     - name: Build and push Docker image
       id: build
@@ -97,7 +98,7 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/backend-deploy-clean'
     environment: production
 
     steps:
@@ -115,8 +116,10 @@ jobs:
           # Navigate to application directory
           cd /opt/sapiens-engine
           
-          # Pull latest code
-          git pull origin main
+          # Pull latest code from backend branch
+          git fetch origin
+          git checkout backend-deploy-clean
+          git pull origin backend-deploy-clean
           
           # Copy environment file
           cp .env.production .env
@@ -148,7 +151,7 @@ jobs:
       uses: 8398a7/action-slack@v3
       with:
         status: success
-        text: "🚀 Deployment successful! New version is live at https://${{ secrets.DOMAIN }}"
+        text: "🚀 Backend deployment successful! New version is live at https://${{ secrets.DOMAIN }}"
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
@@ -157,6 +160,6 @@ jobs:
       uses: 8398a7/action-slack@v3
       with:
         status: failure
-        text: "❌ Deployment failed! Check GitHub Actions for details."
+        text: "❌ Backend deployment failed! Check GitHub Actions for details."
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} 
