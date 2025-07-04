@@ -1,0 +1,54 @@
+services:
+  # Redis for state management and caching
+  redis:
+    image: redis:7-alpine
+    container_name: sapiens-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes --maxmemory 2gb --maxmemory-policy allkeys-lru
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - sapiens-network
+
+  # Sapiens Engine API (Minimal)
+  api:
+    image: ghcr.io/whitetrafficlight/sapiensengine:backend-latest
+    container_name: sapiens-api
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - ENVIRONMENT=${ENVIRONMENT}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - DOMAIN=${DOMAIN}
+      - NEXTJS_SERVER_URL=${NEXTJS_SERVER_URL}
+      - REDIS_URL=redis://redis:6379
+      - PYTHONPATH=/app
+      - PYTHONUNBUFFERED=1
+    depends_on:
+      - redis
+    volumes:
+      - ./logs:/app/logs
+    networks:
+      - sapiens-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  redis_data:
+
+networks:
+  sapiens-network:
+    driver: bridge 
