@@ -1,0 +1,53 @@
+# Minimal Backend Requirements (EC2 deployment)
+# Total size: ~50MB instead of 3GB+
+
+# Core Web Framework
+fastapi==0.115.9
+uvicorn==0.34.3
+starlette==0.45.3
+
+# Data Validation
+pydantic==2.11.7
+pydantic_core==2.33.2
+
+# Socket.IO Support (for real-time communication)
+python-socketio==5.13.0
+python-engineio==4.12.2
+websockets==15.0.1
+
+# AI/LLM Support (minimal)
+openai==1.86.0
+tiktoken==0.9.0
+
+# Database & Caching
+redis==6.2.0
+
+# HTTP & Networking
+httpx==0.28.1
+httpcore==1.0.9
+requests==2.32.4
+aiohttp==3.12.13
+
+# Configuration & Environment
+python-dotenv==1.1.0
+PyYAML==6.0.2
+
+# System Monitoring
+psutil==7.0.0
+
+# Utilities
+click==8.2.1
+rich==13.9.4
+
+# Text Processing (if needed)
+beautifulsoup4==4.13.4
+
+# Core Dependencies
+certifi==2025.6.15
+charset-normalizer==3.4.2
+idna==3.10
+urllib3==2.4.0
+typing_extensions==4.14.0
+
+# Async Support
+anyio==4.9.0 
