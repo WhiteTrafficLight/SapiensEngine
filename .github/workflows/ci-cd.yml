@@ -19,6 +19,13 @@ jobs:
       with:
         submodules: recursive
         token: ${{ secrets.GITHUB_TOKEN }}
+        fetch-depth: 0
+      continue-on-error: true
+
+    - name: Initialize submodules safely
+      run: |
+        git submodule update --init --recursive || echo "Submodule update failed, continuing..."
+        git submodule status || echo "Submodule status check failed, continuing..."
 
     - name: Set up Python 3.11
       uses: actions/setup-python@v4
@@ -66,6 +73,13 @@ jobs:
       with:
         submodules: recursive
         token: ${{ secrets.GITHUB_TOKEN }}
+        fetch-depth: 0
+      continue-on-error: true
+
+    - name: Initialize submodules safely
+      run: |
+        git submodule update --init --recursive || echo "Submodule update failed, continuing..."
+        git submodule status || echo "Submodule status check failed, continuing..."
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
@@ -117,6 +131,13 @@ jobs:
       with:
         submodules: recursive
         token: ${{ secrets.GITHUB_TOKEN }}
+        fetch-depth: 0
+      continue-on-error: true
+
+    - name: Initialize submodules safely
+      run: |
+        git submodule update --init --recursive || echo "Submodule update failed, continuing..."
+        git submodule status || echo "Submodule status check failed, continuing..."
 
     - name: Deploy to production server
       uses: appleboy/ssh-action@v1.0.0
@@ -167,7 +188,7 @@ jobs:
 
     steps:
     - name: Notify Slack on success
-      if: needs.deploy.result == 'success'
+      if: needs.deploy.result == 'success' && vars.SLACK_WEBHOOK_URL != ''
       uses: 8398a7/action-slack@v3
       with:
         status: success
@@ -176,7 +197,7 @@ jobs:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
     - name: Notify Slack on failure
-      if: needs.deploy.result == 'failure' || needs.build.result == 'failure' || needs.test.result == 'failure'
+      if: (needs.deploy.result == 'failure' || needs.build.result == 'failure' || needs.test.result == 'failure') && vars.SLACK_WEBHOOK_URL != ''
       uses: 8398a7/action-slack@v3
       with:
         status: failure
