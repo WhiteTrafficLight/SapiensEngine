@@ -167,7 +167,7 @@ jobs:
 
     steps:
     - name: Notify Slack on success
-      if: ${{ needs.deploy.result == 'success' && secrets.SLACK_WEBHOOK_URL != '' }}
+      if: needs.deploy.result == 'success'
       uses: 8398a7/action-slack@v3
       with:
         status: success
@@ -176,7 +176,7 @@ jobs:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
     - name: Notify Slack on failure
-      if: ${{ (needs.deploy.result == 'failure' || needs.build.result == 'failure' || needs.test.result == 'failure') && secrets.SLACK_WEBHOOK_URL != '' }}
+      if: needs.deploy.result == 'failure' || needs.build.result == 'failure' || needs.test.result == 'failure'
       uses: 8398a7/action-slack@v3
       with:
         status: failure
