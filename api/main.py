@@ -30,7 +30,13 @@ fastapi_app = FastAPI(
 # CORS 설정
 fastapi_app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # 실제 배포 시에는 구체적인 오리진으로 변경
+    allow_origins=[
+        "http://localhost:3000",
+        "https://agoramind.net", 
+        "https://www.agoramind.net",
+        "https://agoramind.vercel.app",
+        "https://agora-mind-*.vercel.app"  # Vercel 프리뷰 URL 패턴
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -38,7 +44,13 @@ fastapi_app.add_middleware(
 
 # Socket.IO 서버 생성 - 프로토콜 버전 명시적 지정
 sio = socketio.AsyncServer(
-    cors_allowed_origins="*",
+    cors_allowed_origins=[
+        "http://localhost:3000",
+        "https://agoramind.net",
+        "https://www.agoramind.net", 
+        "https://agoramind.vercel.app",
+        "https://*.vercel.app"  # 모든 Vercel 서브도메인 허용
+    ],
     async_mode='asgi',
     logger=False,  # ping/pong 로그 비활성화
     engineio_logger=False,  # engine.io 로그 비활성화
