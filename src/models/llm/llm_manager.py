@@ -38,6 +38,10 @@ class LLMManager:
             self.config_loader = ConfigLoader()
             self.llm_config = self.config_loader.get_main_config().get("llm", {})
             
+        # 🆕 강제 중단 시그널
+        self._force_stop_signal = False
+        self._active_requests = set()  # 진행 중인 요청들 추적
+        
         # ✅ 컨텍스트별 LLM 설정 (토큰 최적화용)
         self.context_configs = {
             # 고품질 필요 (창의성, 논리성)
@@ -109,6 +113,50 @@ class LLMManager:
             logger.info(f"Using Anthropic API key: {masked_key}")
         else:
             logger.warning(f"No API key found for provider: {self.llm_config.get('provider', 'openai')}")
+    
+    def cancel_all_requests(self):
+        """모든 진행 중인 LLM 요청을 강제 취소"""
+        logger.info(f"🛑 Cancelling all LLM requests")
+        
+        # 강제 중단 시그널 설정
+        self._force_stop_signal = True
+        
+        # 진행 중인 요청들 강제 취소
+        for request_id in list(self._active_requests):
+            try:
+                logger.info(f"🛑 Cancelling request: {request_id}")
+            except Exception as e:
+                logger.warning(f"⚠️ Error cancelling request {request_id}: {e}")
+        
+        self._active_requests.clear()
+        
+        # HTTP 연결 강제 종료 시도
+        try:
+            import httpx
+            import httpcore
+            
+            # 기존 OpenAI 클라이언트의 HTTP 연결들 강제 종료
+            if hasattr(self, 'client') and hasattr(self.client, '_client'):
+                try:
+                    if hasattr(self.client._client, 'close'):
+                        self.client._client.close()
+                        logger.info(f"🛑 Closed OpenAI client HTTP connections")
+                except Exception as e:
+                    logger.warning(f"⚠️ Error closing OpenAI client: {e}")
+                    
+            # 글로벌 HTTP 연결 풀 정리
+            try:
+                # httpx의 기본 클라이언트 연결들 종료
+                import asyncio
+                if hasattr(httpx, '_client'):
+                    logger.info(f"🛑 Attempting to close httpx connections")
+            except Exception as e:
+                logger.warning(f"⚠️ Error in httpx cleanup: {e}")
+                
+        except Exception as e:
+            logger.warning(f"⚠️ Error in HTTP cleanup: {e}")
+        
+        logger.info(f"🛑 LLM request cancellation completed")
         
     def _setup_clients(self):
         """Set up API clients based on configured provider"""
@@ -146,6 +194,11 @@ class LLMManager:
         Returns:
             생성된 응답 텍스트
         """
+        # 🛑 강제 중단 시그널 체크 (최우선)
+        if self._force_stop_signal:
+            logger.info(f"🛑 LLM request cancelled due to force stop signal")
+            return ""
+        
         # ✅ 컨텍스트별 최적 설정 자동 적용
         context_config = self.context_configs.get(context_type, self.context_configs["default"])
         
@@ -186,6 +239,18 @@ class LLMManager:
                 
                 # API 요청
                 try:
+                    # 🛑 API 호출 직전 중단 시그널 재체크
+                    if self._force_stop_signal:
+                        logger.info(f"🛑 LLM request cancelled before API call")
+                        return ""
+                    
+                    # 요청 ID 생성 및 추적 시작
+                    import uuid
+                    request_id = f"req_{uuid.uuid4().hex[:8]}"
+                    self._active_requests.add(request_id)
+                    
+                    logger.info(f"🔄 Starting OpenAI API request: {request_id}")
+                    
                     response = client.chat.completions.create(
                         model=llm_model,
                         messages=[
@@ -196,31 +261,23 @@ class LLMManager:
                         temperature=temperature
                     )
                     
-                    # logger.info(f"[LLM_DEBUG] API 응답 받음")
-                    
-                    if not response or not hasattr(response, 'choices') or not response.choices:
-                        logger.error(f"[LLM_DEBUG] 유효하지 않은 응답 형식: {response}")
+                    # 🛑 API 응답 후 중단 시그널 재체크
+                    if self._force_stop_signal:
+                        logger.info(f"🛑 LLM request cancelled after API call")
                         return ""
                     
-                    # 응답 처리
-                    content = response.choices[0].message.content
+                    # 요청 완료 후 추적에서 제거
+                    self._active_requests.discard(request_id)
                     
-                    if not content:
-                        logger.error("[LLM_DEBUG] 빈 응답을 받았습니다")
+                    logger.info(f"✅ Completed OpenAI API request: {request_id}")
+                    result = response.choices[0].message.content
+                    
+                    # 🛑 결과 반환 직전 최종 체크
+                    if self._force_stop_signal:
+                        logger.info(f"🛑 LLM response discarded due to force stop signal")
                         return ""
                     
-                    # logger.info(f"[LLM_DEBUG] 응답 길이: {len(content)}")
-                    # logger.info(f"[LLM_DEBUG] 응답 내용: {content[:100]}..." if len(content) > 100 else f"[LLM_DEBUG] 응답 내용: {content}")
-                    
-                    # 오리지널 언어 감지
-                    try:
-                        detected_language = self.detect_language(content)
-                        # logger.info(f"[LLM_DEBUG] 감지된 언어: {detected_language}")
-                    except Exception as lang_error:
-                        logger.error(f"[LLM_DEBUG] 언어 감지 오류: {str(lang_error)}")
-                        detected_language = "en"  # 기본값으로 영어 설정
-                    
-                    return content
+                    return result
                 
                 except Exception as api_error:
                     logger.error(f"[LLM_DEBUG] OpenAI API 호출 오류: {str(api_error)}", exc_info=True)

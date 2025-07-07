@@ -1,33 +1,34 @@
 """
 새로운 구조의 Sapiens Engine API Server
-- 라우터 기반 모듈화된 구조
+- 라우터 기반 모듈화된 구조  
 - 도메인별 엔드포인트 분리
+- python-socketio를 통한 실제 Socket.IO 통합
 """
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+import socketio
+from pydantic import BaseModel
 import logging
 import os
 
 # 라우터 임포트
-from routers import debug, philosophers, chat, npc
-# TODO: 다른 라우터들도 순차적으로 추가
-# from routers import chat, debate, dialogue, moderator, npc, rooms
+from routers import debug, philosophers, chat, npc, upload
 
 # 로깅 설정
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 # FastAPI 앱 생성
-app = FastAPI(
+fastapi_app = FastAPI(
     title="Sapiens Engine API (New Structure)",
     description="철학자 AI와의 대화 및 토론 시스템 - 리팩토링된 구조",
     version="2.0.0"
 )
 
 # CORS 설정
-app.add_middleware(
+fastapi_app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # 실제 배포 시에는 구체적인 오리진으로 변경
     allow_credentials=True,
@@ -35,93 +36,187 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# 정적 파일 서빙 (초상화)
-# API 폴더에서 실행되므로 상위 디렉토리의 portraits를 참조
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-PORTRAITS_DIR = os.path.join(BASE_DIR, "portraits")
-if os.path.isdir(PORTRAITS_DIR):
-    app.mount("/portraits", StaticFiles(directory=PORTRAITS_DIR), name="portraits")
-    logger.info(f"Mounted portraits from {PORTRAITS_DIR} at /portraits")
-else:
-    logger.error(f"Portraits directory not found: {PORTRAITS_DIR}")
-    # 대안 경로들 시도
-    alternative_paths = [
-        os.path.join(os.getcwd(), "portraits"),
-        os.path.join(os.getcwd(), "..", "portraits"),
-        "/Users/jihoon/sapiens_engine/portraits"
-    ]
-    for alt_path in alternative_paths:
-        if os.path.isdir(alt_path):
-            app.mount("/portraits", StaticFiles(directory=alt_path), name="portraits")
-            logger.info(f"Mounted portraits from alternative path: {alt_path}")
-            break
-    else:
-        logger.warning("Could not find portraits directory in any expected location")
+# Socket.IO 서버 생성 - 프로토콜 버전 명시적 지정
+sio = socketio.AsyncServer(
+    cors_allowed_origins="*",
+    async_mode='asgi',
+    logger=False,  # ping/pong 로그 비활성화
+    engineio_logger=False,  # engine.io 로그 비활성화
+    # Engine.IO 설정 명시적 지정
+    ping_timeout=60,
+    ping_interval=25,
+    max_http_buffer_size=1000000,
+    allow_upgrades=True,
+    transports=['polling', 'websocket']
+)
+
+# Socket.IO ASGI 앱 생성
+sio_app = socketio.ASGIApp(sio, fastapi_app)
+
+# Socket.IO 데이터 저장
+room_users = {}  # room_id -> set of user_ids
+
+# ========================================================================
+# Socket.IO 이벤트 핸들러
+# ========================================================================
+
+@sio.event
+async def connect(sid, environ):
+    """클라이언트 연결 시 처리"""
+    logger.info(f"🔌 Client {sid} connected")
+
+@sio.event
+async def disconnect(sid):
+    """클라이언트 연결 해제 시 처리"""
+    logger.info(f"🔌 Client {sid} disconnected")
+
+@sio.event
+async def join_room(sid, data):
+    """사용자가 방에 참여할 때 처리"""
+    room_id = data.get('room_id')
+    user_id = data.get('user_id')
+    
+    if not room_id or not user_id:
+        return {"error": "room_id and user_id required"}
+    
+    # 방에 사용자 추가
+    if room_id not in room_users:
+        room_users[room_id] = set()
+    room_users[room_id].add(user_id)
+    
+    # Socket.IO 방에 참여
+    await sio.enter_room(sid, room_id)
+    
+    logger.info(f"📥 User {user_id} joined room {room_id}")
+    logger.info(f"📊 Room {room_id} now has {len(room_users[room_id])} users")
+    
+    # 방의 다른 사용자들에게 알림
+    await sio.emit("user_joined", {
+        "user_id": user_id,
+        "message": f"{user_id}님이 방에 참여했습니다",
+        "room_count": len(room_users[room_id])
+    }, room=room_id, skip_sid=sid)
+    
+    return {"success": True, "message": f"Successfully joined room {room_id}"}
+
+@sio.event
+async def leave_room(sid, data):
+    """사용자가 방을 떠날 때 처리"""
+    room_id = data.get('room_id')
+    user_id = data.get('user_id')
+    
+    if not room_id or not user_id:
+        return {"error": "room_id and user_id required"}
+    
+    # 방에서 사용자 제거
+    if room_id in room_users and user_id in room_users[room_id]:
+        room_users[room_id].remove(user_id)
+        if not room_users[room_id]:  # 방이 비어있으면 삭제
+            del room_users[room_id]
+    
+    # Socket.IO 방에서 떠나기
+    await sio.leave_room(sid, room_id)
+    
+    logger.info(f"📤 User {user_id} left room {room_id}")
+    
+    # 방의 다른 사용자들에게 알림
+    if room_id in room_users:
+        await sio.emit("user_left", {
+            "user_id": user_id,
+            "message": f"{user_id}님이 방을 떠났습니다",
+            "room_count": len(room_users[room_id])
+        }, room=room_id)
+    
+    return {"success": True, "message": f"Successfully left room {room_id}"}
+
+@sio.event
+async def send_message(sid, data):
+    """메시지 전송 처리"""
+    room_id = data.get('room_id')
+    user_id = data.get('user_id')
+    message = data.get('message')
+    
+    if not all([room_id, user_id, message]):
+        return {"error": "room_id, user_id, and message required"}
+    
+    logger.info(f"📨 Message from {user_id} in room {room_id}: {message[:50]}...")
+    
+    # 방의 모든 사용자에게 메시지 브로드캐스트
+    await sio.emit("new_message", {
+        "roomId": room_id,
+        "message": {
+            "id": f"msg_{sid}_{len(message)}",
+            "text": message,
+            "sender": user_id,
+            "timestamp": "now",
+            "isUser": True
+        }
+    }, room=room_id)
+    
+    return {"success": True, "message": "Message sent"}
+
+# ========================================================================
+# Socket.IO 브로드캐스트 함수 (chat.py에서 사용)
+# ========================================================================
+
+async def send_message_to_room(room_id: str, message_data: dict):
+    """Socket.IO를 통해 특정 방에 메시지 전송"""
+    try:
+        # 방에 있는 클라이언트 수 확인
+        client_count = len(room_users.get(room_id, set()))
+        
+        logger.info(f"📢 Broadcasting to room {room_id}: new_message")
+        logger.info(f"📢 Clients in room: {client_count}")
+        
+        # Socket.IO emit
+        await sio.emit("new_message", message_data, room=room_id)
+        
+        logger.info(f"✅ Message sent to room {room_id}")
+        return True
+        
+    except Exception as e:
+        logger.error(f"❌ Failed to send message to room {room_id}: {e}")
+        return False
+
+# ========================================================================
+# FastAPI 라우터 등록
+# ========================================================================
+
+# 정적 파일 서빙 설정 (portraits 폴더)
+fastapi_app.mount("/portraits", StaticFiles(directory="../portraits"), name="portraits")
 
 # 라우터 등록
-app.include_router(
-    philosophers.router, 
-    prefix="/api", 
-    tags=["철학자"]
-)
+fastapi_app.include_router(debug.router, prefix="/debug", tags=["debug"])
+fastapi_app.include_router(philosophers.router, prefix="/api/philosophers", tags=["philosophers"])
+fastapi_app.include_router(chat.router, prefix="/api/chat", tags=["chat"])
+fastapi_app.include_router(npc.router, prefix="/api/npc", tags=["npc"])
+fastapi_app.include_router(upload.router, prefix="/api/upload", tags=["upload"])
 
-app.include_router(
-    debug.router, 
-    prefix="/api", 
-    tags=["디버그"]
-)
-
-app.include_router(
-    chat.router, 
-    prefix="/api", 
-    tags=["채팅"]
-)
-
-app.include_router(
-    npc.router, 
-    prefix="/api", 
-    tags=["NPC"]
-)
-
-# TODO: 다른 라우터들도 순차적으로 추가
-# app.include_router(chat.router, prefix="/api", tags=["채팅"])
-# app.include_router(debate.router, prefix="/api", tags=["토론"])
-# app.include_router(dialogue.router, prefix="/api", tags=["대화시스템"])
-# app.include_router(moderator.router, prefix="/api", tags=["모더레이터"])
-# app.include_router(rooms.router, prefix="/api", tags=["방관리"])
-
-@app.get("/")
-def read_root():
-    """API 루트 엔드포인트"""
+@fastapi_app.get("/health")
+async def health_check():
+    """서버 상태 확인"""
     return {
-        "message": "Sapiens Engine API - New Structure",
+        "status": "healthy",
         "version": "2.0.0",
-        "status": "operational",
-        "available_endpoints": {
-            "philosophers": "/api/philosophers",
-            "debug": "/api/debug/system-status",
-            "docs": "/docs",
-            "redoc": "/redoc"
-        }
+        "socket_io": "enabled",
+        "active_rooms": len(room_users),
+        "total_users": sum(len(users) for users in room_users.values())
     }
 
-@app.get("/health")
-def health_check():
-    """헬스체크 엔드포인트"""
-    return {"status": "healthy", "version": "2.0.0"}
+# ========================================================================
+# ASGI 앱 - Socket.IO와 FastAPI 통합
+# ========================================================================
+
+# Socket.IO와 FastAPI를 통합한 ASGI 앱
+app = sio_app
 
 if __name__ == "__main__":
     import uvicorn
     
-    logger.info("🚀 Starting Sapiens Engine API (New Structure)")
+    logger.info("🚀 Starting Sapiens Engine API with python-socketio")
     logger.info("📚 Available at: http://localhost:8000")
     logger.info("📖 API Docs: http://localhost:8000/docs")
+    logger.info("🔌 Socket.IO: http://localhost:8000/socket.io/")
     
-    # 기존 api_server.py를 대체하므로 동일한 포트 사용
-    uvicorn.run(
-        "main:app", 
-        host="0.0.0.0", 
-        port=8000,  # 8001 → 8000으로 변경
-        reload=True,
-        log_level="info"
-    ) 
+    # Socket.IO와 통합된 앱 실행
+    uvicorn.run(app, host="0.0.0.0", port=8000, reload=True) 

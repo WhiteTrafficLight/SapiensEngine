@@ -19,6 +19,7 @@ import os
 import re
 import requests
 from bs4 import BeautifulSoup
+import concurrent.futures
 
 from ..state.dialogue_state import DialogueState
 from ...agents.base.agent import Agent
@@ -185,6 +186,7 @@ class DebateDialogue:
         
         # 기타 초기화
         self.playing = True
+        self._force_stop_signal = False  # 강제 정지 시그널 추가
         
         # 스트리밍 관련 초기화 (기존 코드 유지)
         self.event_stream = None
@@ -1767,9 +1769,20 @@ Important: Be objective and neutral. Don't take sides in the debate.
                     
                     def run_analysis_in_new_loop():
                         try:
+                            # 정지 시그널 체크
+                            if getattr(self, '_force_stop_signal', False):
+                                logger.info(f"🛑 Background analysis cancelled due to force stop signal: {speaker_id}")
+                                return
+                            
                             # 새 이벤트 루프 생성
                             new_loop = asyncio.new_event_loop()
                             asyncio.set_event_loop(new_loop)
+                            
+                            # 논지 분석 실행 전 다시 한번 체크
+                            if getattr(self, '_force_stop_signal', False):
+                                logger.info(f"🛑 Background analysis cancelled before execution: {speaker_id}")
+                                new_loop.close()
+                                return
                             
                             # 논지 분석 실행
                             new_loop.run_until_complete(
@@ -1778,7 +1791,10 @@ Important: Be objective and neutral. Don't take sides in the debate.
                             
                             logger.info(f"Background argument analysis completed for {speaker_id}")
                         except Exception as e:
-                            logger.error(f"Error in background argument analysis: {str(e)}")
+                            if not getattr(self, '_force_stop_signal', False):
+                                logger.error(f"Error in background argument analysis: {str(e)}")
+                            else:
+                                logger.info(f"Background argument analysis stopped due to force signal: {speaker_id}")
                         finally:
                             # 이벤트 루프 정리
                             try:
@@ -2719,18 +2735,32 @@ Important: Be objective and neutral. Don't take sides in the debate.
                 
                 def run_analysis_in_new_loop():
                     try:
+                        # 정지 시그널 체크
+                        if getattr(self, '_force_stop_signal', False):
+                            logger.info(f"🛑 Background analysis cancelled due to force stop signal: {user_id}")
+                            return
+                        
                         # 새 이벤트 루프 생성
                         new_loop = asyncio.new_event_loop()
                         asyncio.set_event_loop(new_loop)
+                        
+                        # 논지 분석 실행 전 다시 한번 체크
+                        if getattr(self, '_force_stop_signal', False):
+                            logger.info(f"🛑 Background analysis cancelled before execution: {user_id}")
+                            new_loop.close()
+                            return
                         
                         # 논지 분석 실행
                         new_loop.run_until_complete(
                             self._trigger_argument_analysis_async(user_id, message, user_role)
                         )
                         
-                        logger.info(f"[process_message] Background argument analysis completed for {user_id}")
+                        logger.info(f"Background argument analysis completed for {user_id}")
                     except Exception as e:
-                        logger.error(f"[process_message] Error in background argument analysis: {str(e)}")
+                        if not getattr(self, '_force_stop_signal', False):
+                            logger.error(f"Error in background argument analysis: {str(e)}")
+                        else:
+                            logger.info(f"Background argument analysis stopped due to force signal: {user_id}")
                     finally:
                         # 이벤트 루프 정리
                         try:
@@ -3026,6 +3056,11 @@ Important: Be objective and neutral. Don't take sides in the debate.
             speaker_role: 발언자 역할
         """
         try:
+            # 정지 시그널 체크
+            if getattr(self, '_force_stop_signal', False):
+                logger.info(f"🛑 _trigger_argument_analysis_async cancelled due to force stop signal: {speaker_id}")
+                return
+            
             logger.info(f"🔍 [_trigger_argument_analysis_async] 시작: speaker_id={speaker_id}, speaker_role={speaker_role}")
             
             # 상대편 참가자들 찾기
@@ -3036,9 +3071,19 @@ Important: Be objective and neutral. Don't take sides in the debate.
             
             logger.info(f"🔍 [_trigger_argument_analysis_async] 상대편 참가자들: {opponent_participants}")
             
+            # 다시 한번 정지 시그널 체크
+            if getattr(self, '_force_stop_signal', False):
+                logger.info(f"🛑 _trigger_argument_analysis_async cancelled before processing opponents: {speaker_id}")
+                return
+            
             # 각 상대편 참가자에게 논지 분석 요청 (병렬 처리)
             analysis_tasks = []
             for opponent_id in opponent_participants:
+                # 정지 시그널 체크
+                if getattr(self, '_force_stop_signal', False):
+                    logger.info(f"🛑 _trigger_argument_analysis_async cancelled during opponent processing: {speaker_id}")
+                    return
+                
                 logger.info(f"🔍 [_trigger_argument_analysis_async] 상대편 {opponent_id} 처리 중...")
                 
                 opponent_agent = self.agents.get(opponent_id)
@@ -3055,6 +3100,14 @@ Important: Be objective and neutral. Don't take sides in the debate.
             
             # 모든 분석 태스크를 병렬로 실행
             if analysis_tasks:
+                # 정지 시그널 체크
+                if getattr(self, '_force_stop_signal', False):
+                    logger.info(f"🛑 _trigger_argument_analysis_async cancelled before executing tasks: {speaker_id}")
+                    # 생성된 태스크들 모두 취소
+                    for task in analysis_tasks:
+                        task.cancel()
+                    return
+                
                 logger.info(f"🚀 [_trigger_argument_analysis_async] {len(analysis_tasks)}개 분석 태스크 시작")
                 await asyncio.gather(*analysis_tasks, return_exceptions=True)
                 logger.info(f"✅ [_trigger_argument_analysis_async] {len(analysis_tasks)}개 분석 태스크 완료")
@@ -3062,7 +3115,10 @@ Important: Be objective and neutral. Don't take sides in the debate.
                 logger.warning(f"❌ [_trigger_argument_analysis_async] 실행할 분석 태스크가 없음")
                 
         except Exception as e:
-            logger.error(f"❌ [_trigger_argument_analysis_async] 오류: {str(e)}", exc_info=True)
+            if not getattr(self, '_force_stop_signal', False):
+                logger.error(f"❌ [_trigger_argument_analysis_async] 오류: {str(e)}", exc_info=True)
+            else:
+                logger.info(f"🛑 [_trigger_argument_analysis_async] stopped due to force signal: {speaker_id}")
     
     async def _analyze_single_opponent_async(self, opponent_agent, opponent_id: str, speaker_id: str, response_text: str):
         """
@@ -3075,6 +3131,11 @@ Important: Be objective and neutral. Don't take sides in the debate.
             response_text: 발언 내용 (분석할 내용)
         """
         try:
+            # 정지 시그널 체크
+            if getattr(self, '_force_stop_signal', False):
+                logger.info(f"🛑 _analyze_single_opponent_async cancelled due to force stop signal: {opponent_id} → {speaker_id}")
+                return
+            
             # 사용자인지 AI인지 확인
             is_user_speaker = speaker_id in self.user_participants
             
@@ -3084,11 +3145,24 @@ Important: Be objective and neutral. Don't take sides in the debate.
                 # 🎯 유저 논지 분석: AI가 유저의 논지를 분석
                 logger.info(f"🔍 [{opponent_id}] 유저 {speaker_id} 논지 분석 시작")
                 
+                # 정지 시그널 체크
+                if getattr(self, '_force_stop_signal', False):
+                    logger.info(f"🛑 User analysis cancelled before execution: {opponent_id} → {speaker_id}")
+                    return
+                
                 def analyze_user_sync():
+                    # 정지 시그널 체크
+                    if getattr(self, '_force_stop_signal', False):
+                        return {"cancelled": True}
                     # AI 에이전트가 유저 논지를 분석
                     return opponent_agent.analyze_user_arguments(response_text, speaker_id)
                 
                 analysis_result = await loop.run_in_executor(None, analyze_user_sync)
+                
+                # 취소된 경우 종료
+                if analysis_result.get("cancelled"):
+                    logger.info(f"🛑 User analysis cancelled during execution: {opponent_id} → {speaker_id}")
+                    return
                 
                 arguments_count = analysis_result.get('total_arguments', 0)
                 avg_vulnerability = analysis_result.get('average_vulnerability', 0.0)
@@ -3098,13 +3172,26 @@ Important: Be objective and neutral. Don't take sides in the debate.
                 
                 # 분석 결과를 기반으로 공격 전략 준비
                 if arguments_count > 0:
+                    # 정지 시그널 체크
+                    if getattr(self, '_force_stop_signal', False):
+                        logger.info(f"🛑 Strategy preparation cancelled: {opponent_id} → {speaker_id}")
+                        return
+                    
                     def prepare_strategies_sync():
+                        # 정지 시그널 체크
+                        if getattr(self, '_force_stop_signal', False):
+                            return {"cancelled": True}
                         return opponent_agent.process({
                             "action": "prepare_attack_strategies",
                             "target_speaker_id": speaker_id
                         })
                     
                     strategy_result = await loop.run_in_executor(None, prepare_strategies_sync)
+                    
+                    # 취소된 경우 종료
+                    if strategy_result.get("cancelled"):
+                        logger.info(f"🛑 Strategy preparation cancelled during execution: {opponent_id} → {speaker_id}")
+                        return
                     
                     strategies_count = len(strategy_result.get("strategies", []))
                     rag_usage_count = strategy_result.get("rag_usage_count", 0)
@@ -3114,7 +3201,15 @@ Important: Be objective and neutral. Don't take sides in the debate.
                 # 🤖 AI vs AI 논지 분석 (기존 방식)
                 logger.info(f"🔍 [{opponent_id}] AI {speaker_id} 논지 분석 시작")
                 
+                # 정지 시그널 체크
+                if getattr(self, '_force_stop_signal', False):
+                    logger.info(f"🛑 AI analysis cancelled before execution: {opponent_id} → {speaker_id}")
+                    return
+                
                 def analyze_sync():
+                    # 정지 시그널 체크
+                    if getattr(self, '_force_stop_signal', False):
+                        return {"cancelled": True}
                     return opponent_agent.process({
                         "action": "analyze_opponent_arguments",
                         "opponent_response": response_text,
@@ -3123,12 +3218,25 @@ Important: Be objective and neutral. Don't take sides in the debate.
                 
                 analysis_result = await loop.run_in_executor(None, analyze_sync)
                 
+                # 취소된 경우 종료
+                if analysis_result.get("cancelled"):
+                    logger.info(f"🛑 AI analysis cancelled during execution: {opponent_id} → {speaker_id}")
+                    return
+                
                 logger.info(f"✅ [{opponent_id}] → AI {speaker_id} 논지 분석 완료: "
                           f"{analysis_result.get('arguments_count', 0)} arguments found")
                 
                 # 공격 전략 준비
                 if analysis_result.get("status") == "success":
+                    # 정지 시그널 체크
+                    if getattr(self, '_force_stop_signal', False):
+                        logger.info(f"🛑 AI strategy preparation cancelled: {opponent_id} → {speaker_id}")
+                        return
+                    
                     def prepare_strategies_sync():
+                        # 정지 시그널 체크
+                        if getattr(self, '_force_stop_signal', False):
+                            return {"cancelled": True}
                         return opponent_agent.process({
                             "action": "prepare_attack_strategies",
                             "target_speaker_id": speaker_id
@@ -3136,15 +3244,24 @@ Important: Be objective and neutral. Don't take sides in the debate.
                     
                     strategy_result = await loop.run_in_executor(None, prepare_strategies_sync)
                     
+                    # 취소된 경우 종료
+                    if strategy_result.get("cancelled"):
+                        logger.info(f"🛑 AI strategy preparation cancelled during execution: {opponent_id} → {speaker_id}")
+                        return
+                    
                     strategies_count = len(strategy_result.get("strategies", []))
                     rag_usage_count = strategy_result.get("rag_usage_count", 0)
                     logger.info(f"✅ [{opponent_id}] → AI {speaker_id} 공격 전략 {strategies_count}개 준비 완료 (RAG 사용: {rag_usage_count}개)")
             
             # 🎯 분석 완료 상태 업데이트 (유저든 AI든 동일하게 처리)
-            self._mark_analysis_completed(opponent_id, speaker_id)
+            if not getattr(self, '_force_stop_signal', False):
+                self._mark_analysis_completed(opponent_id, speaker_id)
                 
         except Exception as e:
-            logger.error(f"❌ Error in argument analysis for {opponent_id} → {speaker_id}: {str(e)}")
+            if not getattr(self, '_force_stop_signal', False):
+                logger.error(f"❌ Error in argument analysis for {opponent_id} → {speaker_id}: {str(e)}")
+            else:
+                logger.info(f"🛑 Analysis stopped due to force signal: {opponent_id} → {speaker_id}")
     
     def get_attack_strategy_for_response(self, attacker_id: str, target_id: str, context: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         """
@@ -3425,3 +3542,154 @@ Important: Be objective and neutral. Don't take sides in the debate.
         except Exception as e:
             logger.error(f"Error applying cached data: {str(e)}")
             return False
+
+    def force_stop_all_background_work(self):
+        """모든 백그라운드 작업 강제 정지 (더 강화된 버전)"""
+        logger.info(f"🛑 Aggressively stopping all background work for room {self.room_id}")
+        
+        # 1. 기본 정지 시그널들 설정
+        self.playing = False
+        self._force_stop_signal = True
+        
+        # 2. 모든 백그라운드 준비 작업 취소
+        if hasattr(self, 'background_preparation_tasks'):
+            for task_id, task in self.background_preparation_tasks.items():
+                try:
+                    if hasattr(task, 'cancel') and not task.done():
+                        task.cancel()
+                        logger.info(f"✅ Cancelled background task: {task_id}")
+                except Exception as e:
+                    logger.warning(f"⚠️ Error cancelling task {task_id}: {e}")
+        
+        # 3. 에이전트별 정리 (강화된 방식)
+        total_agents = len(self.agents) if hasattr(self, 'agents') else 0
+        logger.info(f"🎭 Aggressively stopping {total_agents} agents")
+        
+        if hasattr(self, 'agents'):
+            for agent_name, agent in self.agents.items():
+                try:
+                    # LLM 매니저 강제 정지
+                    if hasattr(agent, 'llm_manager'):
+                        agent.llm_manager._force_stop_signal = True
+                        agent.llm_manager.cancel_all_requests()
+                        logger.info(f"✅ Force stopped LLM manager for: {agent_name}")
+                    
+                    # 에이전트별 백그라운드 작업 정지
+                    if hasattr(agent, '_force_stop_signal'):
+                        agent._force_stop_signal = True
+                    
+                    logger.info(f"✅ Aggressively stopped agent: {agent_name}")
+                except Exception as e:
+                    logger.warning(f"⚠️ Error stopping agent {agent_name}: {e}")
+        
+        # 4. 실행 중인 스레드 강제 정지 (더 강화)
+        import threading
+        import time
+        import concurrent.futures
+        
+        # 토론 관련 스레드들 찾기
+        current_threads = threading.enumerate()
+        target_threads = []
+        executor_threads = []
+        
+        for thread in current_threads:
+            thread_name = str(thread.name).lower()
+            # ThreadPoolExecutor 스레드 별도 처리
+            if 'threadpoolexecutor' in thread_name:
+                executor_threads.append(thread)
+            # 기타 백그라운드 스레드들
+            elif any(keyword in thread_name for keyword in [
+                'analysis', 'background', 'argument', 'debate', 'strategy', 
+                'attack', 'executor'
+            ]) and thread.is_alive() and thread != threading.current_thread():
+                target_threads.append(thread)
+        
+        logger.info(f"🎯 Found {len(target_threads)} background threads to stop")
+        logger.info(f"🧵 Found {len(executor_threads)} ThreadPoolExecutor threads to stop")
+        
+        # 일반 백그라운드 스레드들 정지
+        for thread in target_threads:
+            try:
+                logger.info(f"🛑 Signaling stop to thread: {thread.name}")
+                thread.join(timeout=1.0)
+                if not thread.is_alive():
+                    logger.info(f"✅ Thread stopped: {thread.name}")
+                else:
+                    logger.warning(f"⚠️ Thread still running: {thread.name}")
+            except Exception as e:
+                logger.warning(f"⚠️ Error stopping thread {thread.name}: {e}")
+        
+        # ThreadPoolExecutor 강제 종료 (세마포어 리크 방지)
+        for executor_thread in executor_threads:
+            try:
+                logger.info(f"🔥 Force shutting down executor thread: {executor_thread.name}")
+                
+                # 글로벌 ThreadPoolExecutor들 강제 종료
+                try:
+                    # asyncio 기본 executor 종료
+                    import asyncio
+                    try:
+                        loop = asyncio.get_running_loop()
+                        if hasattr(loop, '_default_executor') and loop._default_executor:
+                            loop._default_executor.shutdown(wait=False, cancel_futures=True)
+                            logger.info(f"🛑 Shutdown asyncio default executor")
+                    except Exception:
+                        pass  # 이벤트 루프가 없을 수 있음
+                    
+                    # concurrent.futures의 ThreadPoolExecutor들 종료
+                    if hasattr(concurrent.futures, '_base'):
+                        # 모든 활성 executor들을 찾아서 종료
+                        import gc
+                        for obj in gc.get_objects():
+                            if isinstance(obj, concurrent.futures.ThreadPoolExecutor):
+                                try:
+                                    if not obj._shutdown:
+                                        obj.shutdown(wait=False, cancel_futures=True)
+                                        logger.info(f"🛑 Shutdown ThreadPoolExecutor: {id(obj)}")
+                                except Exception as e:
+                                    logger.warning(f"⚠️ Error shutting down executor {id(obj)}: {e}")
+                    
+                    # 스레드가 실제로 종료될 시간을 줌
+                    executor_thread.join(timeout=2.0)
+                    
+                    if not executor_thread.is_alive():
+                        logger.info(f"✅ Executor thread stopped: {executor_thread.name}")
+                    else:
+                        logger.warning(f"⚠️ Executor thread still alive: {executor_thread.name}")
+                        
+                except Exception as e:
+                    logger.warning(f"⚠️ Error during executor shutdown: {e}")
+                    
+            except Exception as e:
+                logger.warning(f"⚠️ Error stopping executor thread {executor_thread.name}: {e}")
+        
+        # 5. 세마포어 정리 강화 (추가)
+        try:
+            # multiprocessing 리소스 정리
+            import multiprocessing
+            if hasattr(multiprocessing, 'resource_tracker'):
+                # 수동으로 리소스 트래커 정리 시도
+                logger.info(f"🧹 Cleaning up multiprocessing resources")
+        except Exception as e:
+            logger.warning(f"⚠️ Error in multiprocessing cleanup: {e}")
+        
+        # 6. ThreadPoolExecutor 안전한 정리 (기존 코드 유지하되 로깅 개선)
+        remaining_executor_threads = []
+        for thread in threading.enumerate():
+            if 'ThreadPoolExecutor' in thread.name:
+                remaining_executor_threads.append(thread.name)
+        
+        if remaining_executor_threads:
+            logger.warning(f"⚠️ {len(remaining_executor_threads)} executor threads still running: {remaining_executor_threads}")
+        else:
+            logger.info(f"✅ All ThreadPoolExecutor threads successfully stopped")
+        
+        # 7. 메모리 정리
+        try:
+            import gc
+            collected = gc.collect()
+            logger.info(f"🧹 Collected {collected} objects during aggressive cleanup")
+        except Exception as e:
+            logger.warning(f"⚠️ Error in memory cleanup: {e}")
+        
+        logger.info(f"✅ Aggressive cleanup completed for room {self.room_id}")

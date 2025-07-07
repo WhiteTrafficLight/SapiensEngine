@@ -1,118 +1,237 @@
 """
-철학자 관련 API 엔드포인트
-- 철학자 목록 조회
-- 철학자 상세 정보 조회
+철학자 정보 API
+
+기본 철학자 목록과 상세 정보를 제공하는 라우터
 """
 
-from fastapi import APIRouter, HTTPException
-from typing import Dict, Any, List
 import logging
-import os
-import yaml
+from typing import List, Optional, Dict, Any
+from fastapi import APIRouter, HTTPException
+from pydantic import BaseModel
 
-router = APIRouter()
 logger = logging.getLogger(__name__)
 
-# 철학자 데이터 로드
-def load_philosophers_data():
-    """철학자 데이터를 YAML 파일에서 로드"""
-    try:
-        BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-        PHILOSOPHERS_FILE = os.path.join(BASE_DIR, "config/philosophers.yaml")
-        
-        with open(PHILOSOPHERS_FILE, 'r', encoding='utf-8') as file:
-            return yaml.safe_load(file)
-    except Exception as e:
-        logger.error(f"Error loading philosophers data: {e}")
-        return []
+# ========================================================================
+# 데이터 모델
+# ========================================================================
 
-# 철학자 초상화 매핑
-PORTRAITS_MAP = {
-    "socrates": "Socrates.png",
-    "plato": "Plato.png", 
-    "aristotle": "Aristotle.png",
-    "kant": "Kant.png",
-    "nietzsche": "Nietzsche.png",
-    "hegel": "Hegel.png",
-    "marx": "Marx.png",
-    "sartre": "Sartre.png",
-    "camus": "Camus.png",
-    "beauvoir": "Beauvoir.png",
-    "rousseau": "Rousseau.png",
-    "confucius": "Confucius.png",
-    "laozi": "Laozi.png",
-    "buddha": "Buddha.png",
-    "wittgenstein": "Wittgenstein.png"
-}
+class Philosopher(BaseModel):
+    id: str
+    name: str
+    era: Optional[str] = None
+    school: Optional[str] = None
+    description: Optional[str] = None
+    key_ideas: Optional[List[str]] = None
 
-@router.get("/philosophers")
-async def get_philosophers():
-    """철학자 목록 조회"""
-    try:
-        philosophers_data = load_philosophers_data()
-        
-        if not philosophers_data:
-            logger.warning("No philosophers data found")
-            return []
-        
-        # 철학자 목록 정리 - 딕셔너리 구조로 처리
-        philosophers_list = []
-        for key, data in philosophers_data.items():  # 딕셔너리로 처리
-            philosopher_info = {
-                "id": key,  # 키가 id
-                "name": data.get("name", ""),
-                "korean_name": data.get("korean_name", ""),  # 추가하면 좋겠지만 없을 수도
-                "period": data.get("period", ""),
-                "school": data.get("school", ""),  # 추가하면 좋겠지만 없을 수도
-                "description": data.get("description", "")[:200] + "..." if data.get("description", "") else "",
-                "portrait_url": f"/portraits/{PORTRAITS_MAP.get(key, 'default.png')}"
-            }
-            philosophers_list.append(philosopher_info)
-        
-        logger.info(f"철학자 목록 조회 성공: {len(philosophers_list)}명")
-        return {"philosophers": philosophers_list}
-        
-    except Exception as e:
-        logger.error(f"철학자 목록 조회 오류: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"철학자 목록을 가져오는 중 오류가 발생했습니다: {str(e)}")
+# ========================================================================
+# 라우터 초기화
+# ========================================================================
 
-@router.get("/philosophers/{philosopher_id}")
-async def get_philosopher_details(philosopher_id: str):
-    """특정 철학자의 상세 정보 조회"""
+router = APIRouter()
+
+# ========================================================================
+# 기본 철학자 데이터
+# ========================================================================
+
+PHILOSOPHERS_DATA = [
+    {
+        "id": "socrates",
+        "name": "Socrates",
+        "era": "Ancient Greece (470-399 BCE)",
+        "school": "Classical Philosophy",
+        "description": "Known for the Socratic method and the idea that 'the only thing I know is that I know nothing'",
+        "key_ideas": ["Know thyself", "Socratic method", "Virtue is knowledge", "Examined life"]
+    },
+    {
+        "id": "plato",
+        "name": "Plato",
+        "era": "Ancient Greece (428-348 BCE)",
+        "school": "Platonism",
+        "description": "Student of Socrates, founded the Academy in Athens",
+        "key_ideas": ["Theory of Forms", "Philosopher kings", "Allegory of the Cave", "Justice"]
+    },
+    {
+        "id": "aristotle",
+        "name": "Aristotle",
+        "era": "Ancient Greece (384-322 BCE)",
+        "school": "Aristotelianism",
+        "description": "Student of Plato, tutor to Alexander the Great",
+        "key_ideas": ["Virtue ethics", "Golden mean", "Four causes", "Logic"]
+    },
+    {
+        "id": "kant",
+        "name": "Immanuel Kant",
+        "era": "Enlightenment (1724-1804)",
+        "school": "German Idealism",
+        "description": "Central figure of modern philosophy, known for categorical imperative",
+        "key_ideas": ["Categorical imperative", "Transcendental idealism", "Synthetic a priori", "Moral autonomy"]
+    },
+    {
+        "id": "nietzsche",
+        "name": "Friedrich Nietzsche",
+        "era": "19th Century (1844-1900)",
+        "school": "Existentialism/Nihilism",
+        "description": "Influential German philosopher and cultural critic",
+        "key_ideas": ["Will to power", "Übermensch", "Eternal recurrence", "God is dead"]
+    },
+    {
+        "id": "sartre",
+        "name": "Jean-Paul Sartre",
+        "era": "20th Century (1905-1980)",
+        "school": "Existentialism",
+        "description": "Leading figure in 20th-century French philosophy",
+        "key_ideas": ["Existence precedes essence", "Bad faith", "Freedom and responsibility", "Being-for-others"]
+    },
+    {
+        "id": "camus",
+        "name": "Albert Camus",
+        "era": "20th Century (1913-1960)",
+        "school": "Absurdism",
+        "description": "French-Algerian philosopher and Nobel Prize winner",
+        "key_ideas": ["Absurdism", "The stranger", "Revolt", "The myth of Sisyphus"]
+    },
+    {
+        "id": "simone_de_beauvoir",
+        "name": "Simone de Beauvoir",
+        "era": "20th Century (1908-1986)",
+        "school": "Existentialism/Feminism",
+        "description": "French existentialist philosopher and feminist theorist",
+        "key_ideas": ["The Second Sex", "Women's liberation", "Situated ethics", "Existential feminism"]
+    },
+    {
+        "id": "marx",
+        "name": "Karl Marx",
+        "era": "19th Century (1818-1883)",
+        "school": "Marxism",
+        "description": "German philosopher, economist, and revolutionary socialist",
+        "key_ideas": ["Historical materialism", "Class struggle", "Alienation", "Communist manifesto"]
+    },
+    {
+        "id": "rousseau",
+        "name": "Jean-Jacques Rousseau",
+        "era": "Enlightenment (1712-1778)",
+        "school": "Social Contract Theory",
+        "description": "Genevan philosopher, writer, and composer",
+        "key_ideas": ["Social contract", "General will", "Natural goodness", "Education philosophy"]
+    },
+    {
+        "id": "confucius",
+        "name": "Confucius",
+        "era": "Ancient China (551-479 BCE)",
+        "school": "Confucianism",
+        "description": "Chinese philosopher and politician of the Spring and Autumn period",
+        "key_ideas": ["Ren (benevolence)", "Li (ritual propriety)", "Junzi (exemplary person)", "Filial piety"]
+    },
+    {
+        "id": "laozi",
+        "name": "Laozi",
+        "era": "Ancient China (6th century BCE)",
+        "school": "Taoism",
+        "description": "Ancient Chinese philosopher and writer, founder of Taoism",
+        "key_ideas": ["Tao (the Way)", "Wu wei (non-action)", "Yin and Yang", "Te (virtue/power)"]
+    }
+]
+
+# ========================================================================
+# API 엔드포인트들
+# ========================================================================
+
+@router.get("/")
+@router.get("/list")
+async def get_philosophers(limit: Optional[int] = None) -> Dict[str, Any]:
+    """모든 철학자 목록 조회"""
     try:
-        philosophers_data = load_philosophers_data()
+        philosophers = PHILOSOPHERS_DATA.copy()
         
-        if not philosophers_data:
-            raise HTTPException(status_code=404, detail="철학자 데이터를 찾을 수 없습니다")
+        if limit:
+            philosophers = philosophers[:limit]
         
-        # 철학자 검색 - 딕셔너리에서 키로 직접 접근
-        philosopher_id_lower = philosopher_id.lower()
-        if philosopher_id_lower not in philosophers_data:
-            raise HTTPException(status_code=404, detail=f"철학자 '{philosopher_id}'를 찾을 수 없습니다")
+        # Philosopher 모델로 변환
+        philosopher_objects = [Philosopher(**p) for p in philosophers]
         
-        data = philosophers_data[philosopher_id_lower]
+        logger.info(f"📚 Returning {len(philosopher_objects)} philosophers")
         
-        # 상세 정보 구성
-        philosopher_details = {
-            "id": philosopher_id_lower,
-            "name": data.get("name", ""),
-            "korean_name": data.get("korean_name", ""),  
-            "period": data.get("period", ""),
-            "school": data.get("school", ""),
-            "description": data.get("description", ""),
-            "key_concepts": data.get("key_concepts", []),
-            "famous_quotes": data.get("famous_quotes", []),
-            "major_works": data.get("major_works", []),
-            "portrait_url": f"/portraits/{PORTRAITS_MAP.get(philosopher_id_lower, 'default.png')}",
-            "communication_style": data.get("communication_style", {}),
-            "debate_approach": data.get("debate_approach", {})
+        return {
+            "philosophers": philosopher_objects,
+            "total": len(philosopher_objects)
         }
         
-        logger.info(f"철학자 상세 정보 조회 성공: {philosopher_id}")
-        return philosopher_details
+    except Exception as e:
+        logger.error(f"❌ Failed to get philosophers: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/{philosopher_id}")
+async def get_philosopher_by_id(philosopher_id: str) -> Philosopher:
+    """특정 철학자 정보 조회"""
+    try:
+        # ID로 철학자 찾기
+        philosopher_data = next(
+            (p for p in PHILOSOPHERS_DATA if p["id"] == philosopher_id), 
+            None
+        )
+        
+        if not philosopher_data:
+            raise HTTPException(status_code=404, detail=f"Philosopher '{philosopher_id}' not found")
+        
+        philosopher = Philosopher(**philosopher_data)
+        
+        logger.info(f"📚 Returning philosopher: {philosopher.name}")
+        
+        return philosopher
         
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"철학자 상세 정보 조회 오류: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"철학자 정보를 가져오는 중 오류가 발생했습니다: {str(e)}") 
+        logger.error(f"❌ Failed to get philosopher {philosopher_id}: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/search/{query}")
+async def search_philosophers(query: str) -> Dict[str, Any]:
+    """철학자 검색"""
+    try:
+        query_lower = query.lower()
+        
+        # 이름, 학파, 시대, 주요 아이디어에서 검색
+        matching_philosophers = []
+        
+        for p_data in PHILOSOPHERS_DATA:
+            if (query_lower in p_data["name"].lower() or
+                (p_data.get("school") and query_lower in p_data["school"].lower()) or
+                (p_data.get("era") and query_lower in p_data["era"].lower()) or
+                (p_data.get("key_ideas") and any(query_lower in idea.lower() for idea in p_data["key_ideas"]))):
+                matching_philosophers.append(Philosopher(**p_data))
+        
+        logger.info(f"🔍 Search '{query}' found {len(matching_philosophers)} philosophers")
+        
+        return {
+            "philosophers": matching_philosophers,
+            "total": len(matching_philosophers),
+            "query": query
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Failed to search philosophers: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/by-era/{era}")
+async def get_philosophers_by_era(era: str) -> Dict[str, Any]:
+    """시대별 철학자 조회"""
+    try:
+        era_lower = era.lower()
+        
+        matching_philosophers = []
+        for p_data in PHILOSOPHERS_DATA:
+            if p_data.get("era") and era_lower in p_data["era"].lower():
+                matching_philosophers.append(Philosopher(**p_data))
+        
+        logger.info(f"📅 Era '{era}' has {len(matching_philosophers)} philosophers")
+        
+        return {
+            "philosophers": matching_philosophers,
+            "total": len(matching_philosophers),
+            "era": era
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Failed to get philosophers by era: {e}")
+        raise HTTPException(status_code=500, detail=str(e)) 
