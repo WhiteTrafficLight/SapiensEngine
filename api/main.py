@@ -57,7 +57,7 @@ sio_app = socketio.ASGIApp(sio, fastapi_app)
 room_users = {}  # room_id -> set of user_ids
 
 # ========================================================================
-# Socket.IO 이벤트 핸들러
+# Socket.IO 이벤트 핸들러 (chat.py에서 일부 덮어쓸 예정)
 # ========================================================================
 
 @sio.event
@@ -67,8 +67,11 @@ async def connect(sid, environ):
 
 @sio.event
 async def disconnect(sid):
-    """클라이언트 연결 해제 시 처리"""
+    """클라이언트 연결 해제 시 처리 - 전체 정리"""
     logger.info(f"🔌 Client {sid} disconnected")
+    
+    # 해당 sid와 연결된 사용자/방 정보가 있다면 정리
+    # (실제로는 프론트엔드에서 명시적으로 user_disconnected를 호출해야 함)
 
 @sio.event
 async def join_room(sid, data):
@@ -99,35 +102,21 @@ async def join_room(sid, data):
     
     return {"success": True, "message": f"Successfully joined room {room_id}"}
 
-@sio.event
-async def leave_room(sid, data):
-    """사용자가 방을 떠날 때 처리"""
-    room_id = data.get('room_id')
-    user_id = data.get('user_id')
-    
-    if not room_id or not user_id:
-        return {"error": "room_id and user_id required"}
-    
-    # 방에서 사용자 제거
-    if room_id in room_users and user_id in room_users[room_id]:
-        room_users[room_id].remove(user_id)
-        if not room_users[room_id]:  # 방이 비어있으면 삭제
-            del room_users[room_id]
-    
-    # Socket.IO 방에서 떠나기
-    await sio.leave_room(sid, room_id)
-    
-    logger.info(f"📤 User {user_id} left room {room_id}")
-    
-    # 방의 다른 사용자들에게 알림
-    if room_id in room_users:
-        await sio.emit("user_left", {
-            "user_id": user_id,
-            "message": f"{user_id}님이 방을 떠났습니다",
-            "room_count": len(room_users[room_id])
-        }, room=room_id)
-    
-    return {"success": True, "message": f"Successfully left room {room_id}"}
+# ========================================================================
+# 아래 핸들러들은 chat.py에서 덮어쓸 예정이므로 주석 처리
+# ========================================================================
+
+# @sio.event
+# async def leave_room(sid, data):
+#     """사용자가 방을 떠날 때 처리 - chat.py에서 덮어쓸 예정"""
+#     # chat.py의 register_socketio_handlers()에서 이 핸들러를 덮어씁니다
+#     pass
+
+# @sio.event
+# async def user_disconnected(sid, data):
+#     """사용자 연결 해제 시 자동 정리 - chat.py에서 덮어쓸 예정"""
+#     # chat.py의 register_socketio_handlers()에서 이 핸들러를 덮어씁니다
+#     pass
 
 @sio.event
 async def send_message(sid, data):
