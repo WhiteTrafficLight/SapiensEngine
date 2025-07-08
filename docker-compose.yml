@@ -27,6 +27,11 @@ services:
     environment:
       - REDIS_URL=redis://redis:6379
       - NEXTJS_SERVER_URL=http://localhost:3000
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_REGION=${AWS_REGION}
+      - AWS_S3_BUCKET_NAME=${AWS_S3_BUCKET_NAME}
       - MAX_ACTIVE_ROOMS=50
       - MAX_MEMORY_USAGE_GB=8
       - MEMORY_CHECK_INTERVAL=10
