@@ -49,7 +49,9 @@ sio = socketio.AsyncServer(
         "https://agoramind.net",
         "https://www.agoramind.net", 
         "https://agoramind.vercel.app",
-        "https://*.vercel.app"  # 모든 Vercel 서브도메인 허용
+        "https://*.vercel.app",  # 모든 Vercel 서브도메인 허용
+        "https://*.agoramind.net",  # 모든 agoramind 서브도메인 허용
+        "*"  # 임시로 모든 도메인 허용 (문제 해결 후 제거 가능)
     ],
     async_mode='asgi',
     logger=False,  # ping/pong 로그 비활성화
