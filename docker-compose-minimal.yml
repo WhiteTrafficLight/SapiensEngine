@@ -22,8 +22,9 @@ services:
     image: ghcr.io/whitetrafficlight/sapiensengine:backend-latest
     container_name: sapiens-api
     restart: unless-stopped
-    ports:
-      - "8000:8000"
+    # 포트를 내부로만 노출 (nginx를 통해서만 접근)
+    expose:
+      - "8000"
     environment:
       - ENVIRONMENT=${ENVIRONMENT}
       - REDIS_PASSWORD=${REDIS_PASSWORD}
@@ -49,6 +50,35 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
+
+  # Nginx Reverse Proxy (HTTPS 지원)
+  nginx:
+    image: nginx:alpine
+    container_name: sapiens-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./certbot/conf:/etc/letsencrypt:ro
+      - ./certbot/www:/var/www/certbot:ro
+    depends_on:
+      - api
+    networks:
+      - sapiens-network
+
+  # Certbot for SSL certificates
+  certbot:
+    image: certbot/certbot
+    container_name: sapiens-certbot
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    command: certonly --webroot -w /var/www/certbot --force-renewal --email ${EMAIL:-admin@agoramind.net} -d agoramind.net -d www.agoramind.net --agree-tos
+    networks:
+      - sapiens-network
 
 volumes:
   redis_data:
