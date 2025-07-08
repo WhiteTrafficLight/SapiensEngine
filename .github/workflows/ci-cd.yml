@@ -199,9 +199,40 @@ jobs:
           # Clean up old images
           docker image prune -f
           
-          # Health check
-          sleep 30
-          curl -f https://${{ secrets.DOMAIN }}/health || exit 1
+          # Wait for containers to be ready
+          echo "⏳ Waiting for containers to start..."
+          sleep 45
+          
+          # Check Docker container health
+          echo "🔍 Checking container status..."
+          docker-compose -f docker-compose-minimal.yml ps
+          
+          # Robust health check with retries
+          echo "🏥 Running health check..."
+          for i in {1..10}; do
+            echo "Attempt $i/10..."
+            
+            # First check if nginx is responding
+            if curl -f --connect-timeout 10 --max-time 30 http://localhost/health 2>/dev/null; then
+              echo "✅ HTTP health check passed"
+              break
+            elif curl -f --connect-timeout 10 --max-time 30 https://${{ secrets.DOMAIN }}/health 2>/dev/null; then
+              echo "✅ HTTPS health check passed"
+              break
+            else
+              echo "❌ Health check failed (attempt $i/10)"
+              if [ $i -eq 10 ]; then
+                echo "🚨 Health check failed after 10 attempts"
+                echo "📋 Container logs:"
+                docker-compose -f docker-compose-minimal.yml logs --tail=20 api
+                docker-compose -f docker-compose-minimal.yml logs --tail=20 nginx
+                exit 1
+              fi
+              sleep 15
+            fi
+          done
+          
+          echo "🎉 Deployment successful!"
 
   notify:
     needs: [test, build, deploy]
