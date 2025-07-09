@@ -1792,7 +1792,7 @@ Important: Be objective and neutral. Don't take sides in the debate.
                             logger.info(f"Background argument analysis completed for {speaker_id}")
                         except Exception as e:
                             if not getattr(self, '_force_stop_signal', False):
-                            logger.error(f"Error in background argument analysis: {str(e)}")
+                                logger.error(f"Error in background argument analysis: {str(e)}")
                             else:
                                 logger.info(f"Background argument analysis stopped due to force signal: {speaker_id}")
                         finally:
@@ -3116,7 +3116,7 @@ Important: Be objective and neutral. Don't take sides in the debate.
                 
         except Exception as e:
             if not getattr(self, '_force_stop_signal', False):
-            logger.error(f"❌ [_trigger_argument_analysis_async] 오류: {str(e)}", exc_info=True)
+                logger.error(f"❌ [_trigger_argument_analysis_async] 오류: {str(e)}", exc_info=True)
             else:
                 logger.info(f"🛑 [_trigger_argument_analysis_async] stopped due to force signal: {speaker_id}")
     
@@ -3255,11 +3255,11 @@ Important: Be objective and neutral. Don't take sides in the debate.
             
             # 🎯 분석 완료 상태 업데이트 (유저든 AI든 동일하게 처리)
             if not getattr(self, '_force_stop_signal', False):
-            self._mark_analysis_completed(opponent_id, speaker_id)
+                self._mark_analysis_completed(opponent_id, speaker_id)
                 
         except Exception as e:
             if not getattr(self, '_force_stop_signal', False):
-            logger.error(f"❌ Error in argument analysis for {opponent_id} → {speaker_id}: {str(e)}")
+                logger.error(f"❌ Error in argument analysis for {opponent_id} → {speaker_id}: {str(e)}")
             else:
                 logger.info(f"🛑 Analysis stopped due to force signal: {opponent_id} → {speaker_id}")
     
