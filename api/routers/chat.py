@@ -761,6 +761,9 @@ async def get_next_message(room_id: str):
             
             return response_data
             
+    except HTTPException:
+        # 이미 의미 있는 상태코드가 설정된 HTTPException은 그대로 전달
+        raise
     except Exception as e:
         logger.error(f"❌ Error getting next speaker info: {str(e)}")
         raise HTTPException(status_code=500, detail=f"다음 발언자 정보 조회 실패: {str(e)}")
