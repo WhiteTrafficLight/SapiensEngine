@@ -9,7 +9,21 @@ import logging
 import json
 from typing import List, Dict, Any, Optional
 from datetime import datetime
-import pandas as pd
+
+# 조건부 임포트 - pandas
+try:
+    import pandas as pd
+    PANDAS_AVAILABLE = True
+except ImportError:
+    PANDAS_AVAILABLE = False
+    logging.warning("pandas not available. Data analysis features disabled.")
+
+# 프로젝트 루트 경로 추가
+import os
+import sys
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..'))
+sys.path.insert(0, project_root)
+
 import matplotlib.pyplot as plt
 
 # 절대 import로 변경

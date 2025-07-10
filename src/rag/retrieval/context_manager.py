@@ -15,23 +15,53 @@ import re
 import requests
 from bs4 import BeautifulSoup
 from typing import List, Dict, Any, Union, Optional, Tuple
-import chromadb
-from chromadb.utils import embedding_functions
-from langchain_text_splitters import (
-    RecursiveCharacterTextSplitter,
-    SentenceTransformersTokenTextSplitter
-)
-from sentence_transformers import SentenceTransformer
-import nltk
-import logging
 from pathlib import Path
 import hashlib
+import logging
 
-# NLTK 데이터 다운로드
+# 조건부 임포트 - chromadb
 try:
-    nltk.data.find('tokenizers/punkt')
-except LookupError:
-    nltk.download('punkt')
+    import chromadb
+    from chromadb.utils import embedding_functions
+    CHROMADB_AVAILABLE = True
+except ImportError:
+    CHROMADB_AVAILABLE = False
+    logging.warning("chromadb not available. Context manager will operate in limited mode.")
+
+# 조건부 임포트 - sentence_transformers
+try:
+    from sentence_transformers import SentenceTransformer
+    SENTENCE_TRANSFORMERS_AVAILABLE = True
+except ImportError:
+    SENTENCE_TRANSFORMERS_AVAILABLE = False
+    logging.warning("sentence_transformers not available. Context manager will operate in limited mode.")
+
+# 조건부 임포트 - langchain_text_splitters
+try:
+    from langchain_text_splitters import (
+        RecursiveCharacterTextSplitter,
+        SentenceTransformersTokenTextSplitter
+    )
+    LANGCHAIN_AVAILABLE = True
+except ImportError:
+    LANGCHAIN_AVAILABLE = False
+    logging.warning("langchain_text_splitters not available. Using basic text splitting.")
+
+# 조건부 임포트 - nltk
+try:
+    import nltk
+    NLTK_AVAILABLE = True
+    # NLTK 데이터 다운로드
+    try:
+        nltk.data.find('tokenizers/punkt')
+    except LookupError:
+        try:
+            nltk.download('punkt')
+        except:
+            logging.warning("Failed to download NLTK punkt data")
+except ImportError:
+    NLTK_AVAILABLE = False
+    logging.warning("nltk not available. Using basic sentence splitting.")
 
 # 로깅 설정
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -74,35 +104,142 @@ class ContextManager:
         # 경로가 없으면 생성
         os.makedirs(db_path, exist_ok=True)
         
-        # ChromaDB 클라이언트 초기화
-        self.client = chromadb.PersistentClient(path=db_path)
+        # ChromaDB 클라이언트 초기화 (가능한 경우)
+        if CHROMADB_AVAILABLE:
+            try:
+                self.client = chromadb.PersistentClient(path=db_path)
+                # 임베딩 함수 초기화
+                self.embedding_function = embedding_functions.SentenceTransformerEmbeddingFunction(
+                    model_name=embedding_model
+                )
+                logger.info(f"ChromaDB initialized at {db_path}")
+            except Exception as e:
+                logger.error(f"Failed to initialize ChromaDB: {str(e)}")
+                self.client = None
+                self.embedding_function = None
+        else:
+            self.client = None
+            self.embedding_function = None
+            logger.warning("ChromaDB not available. Vector storage disabled.")
         
-        # 임베딩 함수 초기화
-        self.embedding_function = embedding_functions.SentenceTransformerEmbeddingFunction(
-            model_name=embedding_model
-        )
+        # 임베딩 모델 로드 (가능한 경우)
+        if SENTENCE_TRANSFORMERS_AVAILABLE:
+            try:
+                self.embedding_model = SentenceTransformer(embedding_model)
+                logger.info(f"Sentence transformer model loaded: {embedding_model}")
+            except Exception as e:
+                logger.error(f"Failed to load embedding model: {str(e)}")
+                self.embedding_model = None
+        else:
+            self.embedding_model = None
+            logger.warning("SentenceTransformers not available. Embedding disabled.")
         
-        # 임베딩 모델 로드 (직접 토큰 카운팅용)
-        self.embedding_model = SentenceTransformer(embedding_model)
+        # 토큰 스플리터 초기화 (가능한 경우)
+        if LANGCHAIN_AVAILABLE and SENTENCE_TRANSFORMERS_AVAILABLE:
+            try:
+                self.token_splitter = SentenceTransformersTokenTextSplitter(
+                    model_name=embedding_model,
+                    chunk_size=chunk_size,
+                    chunk_overlap=int(chunk_size * chunk_overlap)
+                )
+                logger.info("Token splitter initialized")
+            except Exception as e:
+                logger.error(f"Failed to initialize token splitter: {str(e)}")
+                self.token_splitter = None
+        else:
+            self.token_splitter = None
+            logger.warning("Advanced token splitting not available. Using basic splitting.")
+
+    def _basic_text_split(self, text: str, chunk_size: int = 500) -> List[str]:
+        """기본 텍스트 분할 (fallback)"""
+        words = text.split()
+        chunks = []
+        current_chunk = []
+        current_size = 0
         
-        # 토큰 스플리터 초기화
-        self.token_splitter = SentenceTransformersTokenTextSplitter(
-            model_name=embedding_model,
-            chunk_size=chunk_size,
-            chunk_overlap=int(chunk_size * chunk_overlap)
-        )
+        for word in words:
+            if current_size + len(word) > chunk_size and current_chunk:
+                chunks.append(' '.join(current_chunk))
+                current_chunk = [word]
+                current_size = len(word)
+            else:
+                current_chunk.append(word)
+                current_size += len(word) + 1  # +1 for space
         
-        # 문장 스플리터 초기화
-        self.sentence_splitter = RecursiveCharacterTextSplitter(
-            chunk_size=chunk_size * 4,  # 문자 기준으로 크기 조정
-            chunk_overlap=int(chunk_size * 4 * chunk_overlap),
-            separators=["\n\n", "\n", ". ", "! ", "? ", ";", ":", " ", ""]
-        )
+        if current_chunk:
+            chunks.append(' '.join(current_chunk))
         
-        # 문장 토크나이저 초기화
-        self.nltk_tokenizer = nltk.data.load('tokenizers/punkt/english.pickle')
+        return chunks
+
+    def load_and_store_context(
+        self,
+        context_data: Union[str, Dict[str, Any]],
+        collection_name: str = "context_collection",
+        metadata: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
+        """
+        컨텍스트 로드 및 저장 (조건부 기능)
         
-        logger.info(f"ContextManager 초기화 완료: {chunk_size} 토큰, {chunk_overlap*100}% 오버랩, {chunking_method} 방식")
+        Args:
+            context_data: 컨텍스트 데이터
+            collection_name: 컬렉션 이름
+            metadata: 메타데이터
+            
+        Returns:
+            처리 결과
+        """
+        if not self.client:
+            logger.warning("ChromaDB not available. Context storage skipped.")
+            return {
+                "status": "skipped",
+                "reason": "ChromaDB not available",
+                "chunks_processed": 0
+            }
+        
+        try:
+            # 기본 텍스트 추출
+            if isinstance(context_data, str):
+                text = context_data
+            else:
+                text = str(context_data)
+            
+            # 텍스트 청킹
+            if self.token_splitter:
+                chunks = self.token_splitter.split_text(text)
+            else:
+                chunks = self._basic_text_split(text, self.chunk_size)
+            
+            logger.info(f"Created {len(chunks)} chunks from context")
+            
+            # ChromaDB에 저장
+            collection = self.client.get_or_create_collection(
+                name=collection_name,
+                embedding_function=self.embedding_function
+            )
+            
+            # 청크 저장
+            ids = [f"chunk_{i}" for i in range(len(chunks))]
+            metadatas = [metadata or {} for _ in chunks]
+            
+            collection.add(
+                documents=chunks,
+                metadatas=metadatas,
+                ids=ids
+            )
+            
+            return {
+                "status": "success",
+                "chunks_processed": len(chunks),
+                "collection": collection_name
+            }
+            
+        except Exception as e:
+            logger.error(f"Error in context processing: {str(e)}")
+            return {
+                "status": "error",
+                "error": str(e),
+                "chunks_processed": 0
+            }
     
     def load_pdf(self, file_path: str) -> str:
         """

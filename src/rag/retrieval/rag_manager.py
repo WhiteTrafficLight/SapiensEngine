@@ -11,12 +11,33 @@ context_manager.py에서 생성된 벡터 데이터베이스를 기반으로 상
 """
 
 import os
-import chromadb
-from chromadb.utils import embedding_functions
 from typing import List, Dict, Any, Union, Optional, Tuple
-import numpy as np
-from sentence_transformers import SentenceTransformer, util
 import logging
+
+# 조건부 임포트 - chromadb
+try:
+    import chromadb
+    from chromadb.utils import embedding_functions
+    CHROMADB_AVAILABLE = True
+except ImportError:
+    CHROMADB_AVAILABLE = False
+    logging.warning("chromadb not available. RAG manager will operate in limited mode.")
+
+# 조건부 임포트 - sentence_transformers
+try:
+    from sentence_transformers import SentenceTransformer, util
+    SENTENCE_TRANSFORMERS_AVAILABLE = True
+except ImportError:
+    SENTENCE_TRANSFORMERS_AVAILABLE = False
+    logging.warning("sentence_transformers not available. RAG manager will operate in limited mode.")
+
+# 조건부 임포트 - numpy
+try:
+    import numpy as np
+    NUMPY_AVAILABLE = True
+except ImportError:
+    NUMPY_AVAILABLE = False
+    logging.warning("numpy not available. Advanced numerical operations disabled.")
 
 # 로깅 설정
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -44,16 +65,35 @@ class RAGManager:
         self.db_path = db_path
         self.embedding_model_name = embedding_model
         
-        # ChromaDB 클라이언트 초기화
-        self.client = chromadb.PersistentClient(path=db_path)
+        # ChromaDB 클라이언트 초기화 (가능한 경우)
+        if CHROMADB_AVAILABLE:
+            try:
+                self.client = chromadb.PersistentClient(path=db_path)
+                # 임베딩 함수 초기화
+                self.embedding_function = embedding_functions.SentenceTransformerEmbeddingFunction(
+                    model_name=embedding_model
+                )
+                logger.info(f"ChromaDB initialized at {db_path}")
+            except Exception as e:
+                logger.error(f"Failed to initialize ChromaDB: {str(e)}")
+                self.client = None
+                self.embedding_function = None
+        else:
+            self.client = None
+            self.embedding_function = None
+            logger.warning("ChromaDB not available. Vector search disabled.")
         
-        # 임베딩 함수 초기화
-        self.embedding_function = embedding_functions.SentenceTransformerEmbeddingFunction(
-            model_name=embedding_model
-        )
-        
-        # 임베딩 모델 로드 (직접 계산용)
-        self.embedding_model = SentenceTransformer(embedding_model)
+        # 임베딩 모델 로드 (가능한 경우)
+        if SENTENCE_TRANSFORMERS_AVAILABLE:
+            try:
+                self.embedding_model = SentenceTransformer(embedding_model)
+                logger.info(f"Embedding model loaded: {embedding_model}")
+            except Exception as e:
+                logger.error(f"Failed to load embedding model: {str(e)}")
+                self.embedding_model = None
+        else:
+            self.embedding_model = None
+            logger.warning("SentenceTransformers not available. Embedding disabled.")
         
         logger.info(f"RAGManager 초기화 완료: DB 경로 {db_path}, 모델 {embedding_model}")
     
@@ -77,6 +117,10 @@ class RAGManager:
         Returns:
             검색 결과 목록
         """
+        if not self.client or not self.embedding_function:
+            logger.warning("ChromaDB or embedding function not available. Skipping simple_top_k_search.")
+            return []
+
         try:
             collection = self.client.get_collection(
                 name=collection_name,
@@ -117,6 +161,10 @@ class RAGManager:
         Returns:
             임계값을 넘는 검색 결과 목록
         """
+        if not self.client or not self.embedding_function:
+            logger.warning("ChromaDB or embedding function not available. Skipping threshold_search.")
+            return []
+
         try:
             # 일단 max_results만큼 가져옴
             results = self.simple_top_k_search(collection_name, query, max_results)
@@ -156,6 +204,10 @@ class RAGManager:
         Returns:
             검색 결과 목록 (인접 청크 포함)
         """
+        if not self.client or not self.embedding_function:
+            logger.warning("ChromaDB or embedding function not available. Skipping adjacent_chunks_search.")
+            return []
+
         try:
             # 기본 검색 수행
             base_results = self.simple_top_k_search(collection_name, query, k)
@@ -244,6 +296,10 @@ class RAGManager:
         Returns:
             병합된 검색 결과 목록
         """
+        if not self.client or not self.embedding_function:
+            logger.warning("ChromaDB or embedding function not available. Skipping merged_chunks_search.")
+            return []
+
         try:
             # 인접 청크 포함 검색 수행
             results = self.adjacent_chunks_search(collection_name, query, k, True, 0.5)
@@ -325,6 +381,10 @@ class RAGManager:
         Returns:
             의미적 윈도우 검색 결과 목록
         """
+        if not self.client or not self.embedding_function:
+            logger.warning("ChromaDB or embedding function not available. Skipping semantic_window_search.")
+            return []
+
         try:
             # 기본 검색 수행
             base_results = self.simple_top_k_search(collection_name, query, k)
@@ -422,6 +482,10 @@ class RAGManager:
         Returns:
             하이브리드 검색 결과 목록
         """
+        if not self.client or not self.embedding_function:
+            logger.warning("ChromaDB or embedding function not available. Skipping hybrid_search.")
+            return []
+
         try:
             # 벡터 검색 (의미적 검색)
             semantic_results = self.simple_top_k_search(collection_name, query, k*2)
@@ -520,6 +584,10 @@ class RAGManager:
         Returns:
             MMR 기반 검색 결과 목록
         """
+        if not self.client or not self.embedding_function:
+            logger.warning("ChromaDB or embedding function not available. Skipping mmr_search.")
+            return []
+
         try:
             # 초기 검색 결과 가져오기
             initial_set = self.simple_top_k_search(collection_name, query, initial_results)
@@ -604,6 +672,10 @@ class RAGManager:
         Returns:
             컬렉션별 검색 결과와 통합 결과
         """
+        if not self.client or not self.embedding_function:
+            logger.warning("ChromaDB or embedding function not available. Skipping multi_collection_search.")
+            return {}
+
         try:
             all_results = {}
             
@@ -670,6 +742,10 @@ class RAGManager:
         Returns:
             대화 맥락을 고려한 검색 결과 목록
         """
+        if not self.client or not self.embedding_function:
+            logger.warning("ChromaDB or embedding function not available. Skipping conversational_search.")
+            return []
+
         try:
             # 현재 쿼리로 검색
             current_results = self.simple_top_k_search(collection_name, query, k*2)

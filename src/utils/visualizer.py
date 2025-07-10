@@ -1,3 +1,97 @@
+"""
+Visualization utilities for the Sapiens Engine.
+"""
+
+# 조건부 임포트 - numpy
+try:
+    import numpy as np
+    NUMPY_AVAILABLE = True
+except ImportError:
+    NUMPY_AVAILABLE = False
+    import logging
+    logging.warning("numpy not available. Advanced numerical operations disabled.")
+
+# 조건부 임포트 - pandas
+try:
+    import pandas as pd
+    PANDAS_AVAILABLE = True
+except ImportError:
+    PANDAS_AVAILABLE = False
+    import logging
+    logging.warning("pandas not available. Data analysis features disabled.")
+
+import matplotlib.pyplot as plt
+import logging
+
+logger = logging.getLogger(__name__)
+
+class Visualizer:
+    """
+    Visualization class for Sapiens Engine data and results.
+    """
+    
+    def __init__(self):
+        """Initialize the visualizer."""
+        self.setup_matplotlib()
+    
+    def setup_matplotlib(self):
+        """Setup matplotlib with appropriate settings."""
+        try:
+            plt.style.use('seaborn-v0_8')
+        except OSError:
+            try:
+                plt.style.use('seaborn')
+            except OSError:
+                # Fallback to default style
+                pass
+    
+    def plot_data(self, data, title="Data Visualization", **kwargs):
+        """
+        Plot data with fallback options.
+        
+        Args:
+            data: Data to plot (supports various formats)
+            title: Plot title
+            **kwargs: Additional plotting arguments
+        """
+        if not PANDAS_AVAILABLE and not NUMPY_AVAILABLE:
+            logger.warning("Neither pandas nor numpy available. Cannot plot data.")
+            return None
+        
+        try:
+            fig, ax = plt.subplots(figsize=kwargs.get('figsize', (10, 6)))
+            
+            # Handle different data types
+            if PANDAS_AVAILABLE and isinstance(data, pd.DataFrame):
+                data.plot(ax=ax, **kwargs)
+            elif PANDAS_AVAILABLE and isinstance(data, pd.Series):
+                data.plot(ax=ax, **kwargs)
+            elif NUMPY_AVAILABLE and isinstance(data, np.ndarray):
+                ax.plot(data, **kwargs)
+            elif isinstance(data, (list, tuple)):
+                ax.plot(data, **kwargs)
+            else:
+                logger.warning(f"Unsupported data type: {type(data)}")
+                return None
+            
+            ax.set_title(title)
+            ax.grid(True)
+            plt.tight_layout()
+            
+            return fig
+            
+        except Exception as e:
+            logger.error(f"Error creating plot: {str(e)}")
+            return None
+
+    def create_dataframe_fallback(self, data):
+        """Create a DataFrame-like structure when pandas is not available."""
+        if PANDAS_AVAILABLE:
+            return pd.DataFrame(data)
+        else:
+            logger.warning("pandas not available. Returning raw data.")
+            return data
+
 import os
 import json
 import matplotlib.pyplot as plt

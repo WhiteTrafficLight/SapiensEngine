@@ -20,8 +20,22 @@ import re
 from pathlib import Path
 
 from bs4 import BeautifulSoup
-from sentence_transformers import SentenceTransformer, util
-import numpy as np
+
+# 조건부 임포트 - sentence_transformers
+try:
+    from sentence_transformers import SentenceTransformer, util
+    SENTENCE_TRANSFORMERS_AVAILABLE = True
+except ImportError:
+    SENTENCE_TRANSFORMERS_AVAILABLE = False
+    logging.warning("sentence_transformers not available. Web retriever will operate in limited mode.")
+
+# 조건부 임포트 - numpy
+try:
+    import numpy as np
+    NUMPY_AVAILABLE = True
+except ImportError:
+    NUMPY_AVAILABLE = False
+    logging.warning("numpy not available. Advanced numerical operations disabled.")
 
 # .env 파일 로드 시도 (.env.local이 있는 경우)
 try:
@@ -51,14 +65,14 @@ logger = logging.getLogger(__name__)
 
 class WebSearchRetriever:
     """
-    웹 검색 및 콘텐츠 추출을 위한 클래스
+    웹 검색을 통한 실시간 정보 검색 및 추출 클래스
     
-    웹 검색 API를 활용해 쿼리 관련 정보를 검색하고,
-    웹 페이지 스크래핑, 텍스트 추출, 관련성 평가 등을 수행합니다.
+    다양한 검색 API를 활용하여 실시간 정보를 검색하고,
+    스크래핑을 통해 콘텐츠를 추출하여 임베딩 기반 관련도 평가를 수행합니다.
     """
     
-    # 클래스 레벨의 임베딩 모델 캐시 (모델별 1회만 로드)
-    _embedding_model_cache: Dict[str, "SentenceTransformer"] = {}
+    # 클래스 레벨 캐시 (여러 인스턴스에서 공유)
+    _embedding_model_cache = {}
     
     def __init__(
         self,
@@ -71,21 +85,24 @@ class WebSearchRetriever:
         trusted_domains: Optional[List[str]] = None
     ):
         """
-        WebSearchRetriever 초기화
+        초기화 함수
         
         Args:
-            embedding_model: 텍스트 임베딩 모델 이름
-            search_provider: 검색 API 제공자
-            api_key: 검색 API 키
-            max_results: 반환할 최대 검색 결과 수
-            cache_dir: 검색 결과 캐싱 디렉토리
+            embedding_model: 임베딩 모델 이름
+            search_provider: 검색 제공자 ('serpapi', 'google', 'bing')
+            api_key: API 키
+            max_results: 최대 검색 결과 수
+            cache_dir: 캐시 디렉토리
             cache_expiry: 캐시 만료 시간 (시간)
-            trusted_domains: 신뢰할 수 있는 도메인 목록 (예: ['edu', 'gov', 'wikipedia.org'])
+            trusted_domains: 신뢰할 수 있는 도메인 목록
         """
         self.search_provider = search_provider
         self.max_results = max_results
         self.cache_dir = cache_dir
         self.cache_expiry = cache_expiry
+        
+        # 캐시 디렉토리 생성
+        os.makedirs(cache_dir, exist_ok=True)
         
         # API 키 설정
         if api_key:
@@ -104,7 +121,7 @@ class WebSearchRetriever:
             logger.warning("GOOGLE_SEARCH_CX가 설정되지 않았습니다. Google 검색이 작동하지 않을 수 있습니다.")
             
         # 임베딩 모델 로드 (캐시 활용)
-        if embedding_model:
+        if embedding_model and SENTENCE_TRANSFORMERS_AVAILABLE:
             if embedding_model in WebSearchRetriever._embedding_model_cache:
                 self.embedding_model = WebSearchRetriever._embedding_model_cache[embedding_model]
                 logger.debug(f"임베딩 모델 '{embedding_model}' 캐시 재사용")
@@ -116,6 +133,10 @@ class WebSearchRetriever:
                 except Exception as e:
                     logger.error(f"임베딩 모델 로드 실패: {str(e)}")
                     self.embedding_model = None
+        else:
+            self.embedding_model = None
+            if not SENTENCE_TRANSFORMERS_AVAILABLE:
+                logger.warning("SentenceTransformers not available. Similarity calculation disabled.")
             
         # 신뢰할 수 있는 도메인 설정
         self.trusted_domains = trusted_domains or [
@@ -123,10 +144,21 @@ class WebSearchRetriever:
             'arxiv.org', 'scholar.google.com', 'researchgate.net',
             'nature.com', 'science.org', 'ieee.org', 'acm.org'
         ]
+
+    def _calculate_similarity_fallback(self, text1: str, text2: str) -> float:
+        """기본 유사도 계산 (fallback)"""
+        # 간단한 단어 기반 유사도
+        words1 = set(text1.lower().split())
+        words2 = set(text2.lower().split())
         
-        # 캐시 디렉토리 생성
-        os.makedirs(self.cache_dir, exist_ok=True)
+        if not words1 or not words2:
+            return 0.0
         
+        intersection = len(words1.intersection(words2))
+        union = len(words1.union(words2))
+        
+        return intersection / union if union > 0 else 0.0
+
     def search(self, query: str, num_results: Optional[int] = None) -> List[Dict[str, Any]]:
         """
         웹 검색을 수행하여 관련 URL 목록을 반환합니다.
