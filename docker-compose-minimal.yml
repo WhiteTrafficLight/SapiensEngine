@@ -49,6 +49,24 @@ services:
       retries: 3
       start_period: 40s
 
+  # Nginx reverse proxy to expose API over 80/443 (TLS)
+  nginx:
+    image: nginx:1.29
+    container_name: sapiens-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./certbot:/var/www/certbot
+      - /etc/letsencrypt:/etc/letsencrypt
+    depends_on:
+      - api
+    networks:
+      - sapiens-network
+
 volumes:
   redis_data:
 
