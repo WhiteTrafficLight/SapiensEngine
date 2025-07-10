@@ -6,10 +6,24 @@ import re
 import requests
 from typing import Dict, Any, List, Optional, Union, Tuple
 import openai
-import anthropic
 from dotenv import load_dotenv, dotenv_values
-import chromadb
-from chromadb.utils import embedding_functions
+
+# 조건부 임포트 - anthropic
+try:
+    import anthropic
+    ANTHROPIC_AVAILABLE = True
+except ImportError:
+    ANTHROPIC_AVAILABLE = False
+    logging.warning("anthropic not available. Anthropic models disabled.")
+
+# 조건부 임포트 - chromadb
+try:
+    import chromadb
+    from chromadb.utils import embedding_functions
+    CHROMADB_AVAILABLE = True
+except ImportError:
+    CHROMADB_AVAILABLE = False
+    logging.warning("chromadb not available. RAG functionality disabled.")
 
 from src.utils.config.config_loader import ConfigLoader
 from src.utils.context_manager import UserContextManager
@@ -169,6 +183,9 @@ class LLMManager:
             self.client = openai.Client(api_key=self.openai_api_key)
             print(f"Using OpenAI with API key: {self.openai_api_key[:5]}...{self.openai_api_key[-5:]}")
         elif provider == "anthropic":
+            if not ANTHROPIC_AVAILABLE:
+                logger.error("Anthropic provider requested but anthropic package not available. Install with: pip install anthropic")
+                raise ValueError("Anthropic package not available. Install with: pip install anthropic")
             if not self.anthropic_api_key:
                 raise ValueError("Anthropic API key not found. Set ANTHROPIC_API_KEY environment variable.")
             self.client = anthropic.Anthropic(api_key=self.anthropic_api_key)
@@ -609,27 +626,28 @@ Create a natural flowing dialogue that genuinely captures how YOU as this specif
 
     def get_relevant_content_with_rag(self, npc_id: str, topic: str, query: str) -> Tuple[str, Dict[str, Any]]:
         """
-        Retrieve relevant content for an NPC using RAG
+        RAG를 사용하여 관련 콘텐츠를 검색합니다.
         
         Args:
-            npc_id: The ID of the NPC
-            topic: The current discussion topic
-            query: The query to search for (usually the most recent message)
+            npc_id: NPC ID (철학자명)
+            topic: 주제
+            query: 검색 쿼리
             
         Returns:
-            Tuple containing (relevant content, metadata)
+            (검색된 콘텐츠, 메타데이터)의 튜플
         """
         try:
-            # Lowercase NPC ID for standard format
+            # ChromaDB 가용성 체크
+            if not CHROMADB_AVAILABLE:
+                logger.warning("❌ ChromaDB not available. RAG functionality disabled.")
+                return "", {"status": "chromadb_unavailable", "error": "ChromaDB package not installed"}
+            
+            logger.info(f"🔍 RAG 검색 시작 - NPC: {npc_id}, Topic: {topic}, Query: {query[:50]}...")
+            
             npc_id_lower = npc_id.lower()
+            rag_path = self.rag_paths.get(npc_id_lower)
             
-            # Get RAG path for this NPC
-            rag_path = None
-            collection_name = None
-            
-            # Check if in standard mapping
-            if npc_id_lower in self.rag_paths:
-                rag_path = self.rag_paths[npc_id_lower]
+            if rag_path:
                 collection_name = self.rag_collections.get(npc_id_lower, "langchain")
             
             # If no RAG path found, return empty result
